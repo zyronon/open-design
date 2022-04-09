@@ -1,22 +1,43 @@
 import * as React from "react";
-import {Routes, Route, Link} from "react-router-dom";
+import {Routes, Route, Link, Redirect} from "react-router-dom";
 import "./App.css";
 import Home from "./pages/home/Home";
-import About from "./pages/about/About";
+import Redux from "./pages/reduxPage/Redux";
 import {Button} from "antd";
+import asyncRoutes from "./router/asyncRoutes";
+import constant from "./router/constant";
 
 function App() {
+  const [router, setRouter] = React.useState(asyncRoutes);
   return (
-    <div className="App">
-      <h1>App</h1>
-      <Button type="primary">Button</Button>
-      <p>
-        <Link to="/home">Home</Link>
-      </p>
-      <p>
-        <Link to="/about">About</Link>
-      </p>
-    </div>
+    <Routes>
+      <Route path={'/'} element={<Redux/>}/>
+      {
+        router.map(v => {
+          return <Route key={v.path} path={v.path} element={<v.component/>}>
+            {
+              v.children.map(v => {
+                return <Route key={v.path} path={v.path} element={<v.component/>}/>
+              })
+            }
+            <Route
+              path="*"
+              element={
+                <main style={{padding: "1rem"}}>
+                  <p>There's nothing here!</p>
+                </main>
+              }
+            />
+          </Route>
+        })
+      }
+      {constant.map(v => {
+        return <Route
+          path={v.path}
+          key={v.path}
+          element={<v.component/>}/>
+      })}
+    </Routes>
   );
 }
 

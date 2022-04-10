@@ -4,6 +4,7 @@ import About from "../pages/about/About";
 import BaseLayout from "../pages/layout/BaseLayout";
 import Hooks from "../pages/hooks/Hooks";
 import Redux from "../pages/reduxPage/Redux";
+import Hoc from "../pages/hoc/Hoc";
 
 export default [
   {
@@ -25,6 +26,10 @@ export default [
       {
         path: '/layout/reduxPage',
         component: Redux,
+      },
+      {
+        path: '/layout/hoc',
+        component: Hoc,
       }
     ]
   }

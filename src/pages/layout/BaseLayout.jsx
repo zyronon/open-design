@@ -63,6 +63,9 @@ export default class BaseLayout extends Component {
             <p>
               <Link to="/layout/redux">Redux</Link>
             </p>
+            <p>
+              <Link to="/layout/hoc">hoc</Link>
+            </p>
           </nav>
         </Sider>
         <Layout className="site-layout">

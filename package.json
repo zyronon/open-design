@@ -59,7 +59,8 @@
     "webpack": "^5.64.4",
     "webpack-dev-server": "^4.6.0",
     "webpack-manifest-plugin": "^4.0.2",
-    "workbox-webpack-plugin": "^6.4.1"
+    "workbox-webpack-plugin": "^6.4.1",
+    "react-redux": "^7.2.8"
   },
   "devDependencies": {
     "less": "^4.1.2",

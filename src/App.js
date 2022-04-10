@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Routes, Route, Link, Redirect} from "react-router-dom";
+import {Routes, Route, Link, Navigate} from "react-router-dom";
 import "./App.css";
 import Home from "./pages/home/Home";
 import Redux from "./pages/reduxPage/Redux";
@@ -11,7 +11,8 @@ function App() {
   const [router, setRouter] = React.useState(asyncRoutes);
   return (
     <Routes>
-      <Route path={'/'} element={<Redux/>}/>
+      {/*<Route path={'/'} element={<Redux/>}/>*/}
+      <Route path={'/'} element={ <Navigate to="/layout/hoc" />}/>
       {
         router.map(v => {
           return <Route key={v.path} path={v.path} element={<v.component/>}>

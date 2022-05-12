@@ -5,7 +5,7 @@ import asyncRoutes from "./router/asyncRoutes";
 import constant from "./router/constant";
 import {BaseSyntheticEvent, SyntheticEvent, useEffect, useRef} from "react";
 
-function App2() {
+function App() {
   const [router, setRouter] = React.useState(asyncRoutes);
   return (
     <Routes>
@@ -40,33 +40,3 @@ function App2() {
   );
 }
 
-export default function Canvas() {
-  let canvasRef: any = useRef()
-  let ctx: CanvasRenderingContext2D
-
-  useEffect(() => {
-    let canvas: any = canvasRef.current
-    ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.strokeRect(0, 0, canvas.width, canvas.height)
-
-
-    ctx.strokeRect(10, 10, 150, 150)
-    ctx.strokeRect(0, 0, 170, 170)
-  },)
-
-  function move(e: any) {
-    let x = e.clientX
-    let y = e.clientY
-    let is = ctx.isPointInPath(x, y)
-    console.log(is)
-  }
-
-  return (
-    <div>
-      <canvas
-        onMouseMove={move}
-        id="canvas" ref={canvasRef} width={500} height={500}/>
-    </div>
-  )
-}

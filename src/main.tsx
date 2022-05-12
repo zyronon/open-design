@@ -21,11 +21,12 @@ import {createRoot} from "react-dom/client";
 import App from "./App";
 import {store} from './store/store.js';
 import {Provider} from "react-redux";
+import Canvas from "./pages/canvas/Canvas";
 
 createRoot(document.getElementById("root")).render(
-    <BrowserRouter>
-        <Provider store={store}>
-            <App/>
-        </Provider>
-    </BrowserRouter>,
+  <BrowserRouter>
+    <Provider store={store}>
+      <Canvas/>
+    </Provider>
+  </BrowserRouter>,
 );

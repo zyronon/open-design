@@ -1,0 +1,14 @@
+.components {
+  display: flex;
+
+  .component {
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: gray;
+    $w: 50px;
+    height: $w;
+    width: $w;
+  }
+}

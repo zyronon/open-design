@@ -12,7 +12,7 @@ class About extends React.Component {
 
   tt() {
     console.log(this)
-    this.setState({test: 2},()=>{
+    this.setState({test: 2}, () => {
       console.log(this.state.test)
     })
   }

@@ -30,7 +30,7 @@ export default function Hooks() {
   //   console.log(`Text: ${text}`); // 每次输出都是初始值
   // }, [text]); // 把`text`写在依赖数组里
 
-  let handleSubmit = ()=>{
+  let handleSubmit = () => {
     console.log(`Text: ${text}`); // 每次输出都是初始值
   }
 
@@ -42,11 +42,11 @@ export default function Hooks() {
   }, [])
   return (
     <>
-      <input value={text} onChange={(e) => updateText(e.target.value)} />
+      <input value={text} onChange={(e) => updateText(e.target.value)}/>
       <p onClick={handleSubmit}>useCallback(fn, deps)</p>
 
       <p>{clickCount}</p>
-      <MemoizedButton  handleClick={handleClick}>Click</MemoizedButton>
+      <MemoizedButton handleClick={handleClick}>Click</MemoizedButton>
     </>
   )
 }

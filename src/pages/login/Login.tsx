@@ -1,4 +1,3 @@
-import {Link} from "react-router-dom";
 import * as React from "react";
 import style from './Login.scss'
 import {Button, message, Card, Checkbox, Form, Input} from "antd";
@@ -8,7 +7,7 @@ function Login() {
   const [loading, setLoading] = React.useState(false);
   let navigate = useNavigate()
 
-  const onFinish = (values) => {
+  const onFinish = (values: any) => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
@@ -17,7 +16,7 @@ function Login() {
     console.log('Success:', values);
   };
 
-  const onFinishFailed = (errorInfo) => {
+  const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
     message.warning('请填写完整信息')
   };

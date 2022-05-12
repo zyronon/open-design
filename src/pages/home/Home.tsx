@@ -18,7 +18,7 @@ function Home() {
 
   const [count, setCount] = useState(0);
 
-  const prevCountRef = useRef();
+  const prevCountRef: any = useRef();
   useEffect(() => {
     prevCountRef.current = count;
     console.log('useEffect', count)

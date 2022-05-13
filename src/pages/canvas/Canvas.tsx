@@ -33,23 +33,44 @@ export default function Canvas() {
 
   useEffect(() => {
     canvas = canvasRef.current
+    // @ts-ignore
     ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.strokeRect(0, 0, canvas.width, canvas.height)
     canvasRect = canvas.getBoundingClientRect()
+    // console.log(canvasRect)
     draw()
   })
 
+  function renderBox(x: number, y: number, w: number, h: number, color: any) {
+    ctx.fillStyle = color
+    ctx.fillRect(x, y, w, h)
+  }
+
+  function renderLine(x: number, y: number, w: number, h: number, color: any) {
+    ctx.strokeStyle = color
+    ctx.strokeRect(x, y, w, h)
+  }
+
+  function clear(x: number, y: number, w: number, h: number) {
+    ctx.clearRect(x, y, w, h)
+  }
 
   function draw() {
-    // d = 5
-    // ctx.clearRect(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d)
+    // renderBox(one.x, one.y, one.w, one.h, 'black')
+    // d = 1.5
+    // ctx.lineWidth = 2 * d
+    // renderLine(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
     ctx.strokeStyle = 'black'
-    ctx.fillRect(one.x, one.y, one.w, one.h)
-    d = 1.5
-    ctx.lineWidth = 2 * d
-    ctx.strokeStyle = 'rgb(139,80,255)'
-    ctx.strokeRect(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d)
+    ctx.beginPath()
+    for (let i = 0; i < 500; i += 5) {
+      ctx.moveTo(i, 0);
+      ctx.lineTo(i, 500);
+      // ctx.moveTo(20, 0);
+      // ctx.lineTo(20, 300);
+    }
+    ctx.stroke()
+
   }
 
   let is = false
@@ -98,6 +119,9 @@ export default function Canvas() {
   }
 
 
+  let clearStartX = one.x - 2 * d
+  let clearEndX = one.w + 2 * d
+
   function move(e: any) {
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
@@ -107,17 +131,28 @@ export default function Canvas() {
 
     if (mouseLeftKeyDown) {
 
-      console.log('startX', startX)
+      // console.log('startX', startX)
       console.log('x', x)
-      console.log('one.w - (x - startX)', one.w - (x - startX))
-      ctx.strokeStyle = 'black'
-      ctx.clearRect(one.x, one.y, one.w, one.h)
-      ctx.fillRect(x, one.y, one.w - (x - startX), one.h)
-      // d = 1.5
-      // ctx.lineWidth = 2 * d
-      // ctx.strokeStyle = 'rgb(139,80,255)'
-      // ctx.strokeRect(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d)
-      console.log('return')
+      // console.log('one.w - (x - startX)', one.w - (x - startX))
+
+      if (x < clearStartX) {
+        clearStartX = x - 2 * d
+        clearEndX = one.x - clearStartX + one.w
+      }
+
+      if (x > clearEndX) {
+        clearEndX = x + 2 * d
+      }
+
+      console.log('clearEndX', clearEndX)
+
+
+      // clear(0, 0, canvas.width, canvas.height)
+      // renderBox(x, one.y, one.w - (x - startX), one.h, 'white')
+      clear(clearStartX, one.y, clearEndX, one.h)
+      renderBox(x, one.y, one.w - (x - startX), one.h, 'black')
+      renderLine(x - d, one.y - d, (one.w - (x - startX)) + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
+
       return
     }
 
@@ -126,13 +161,13 @@ export default function Canvas() {
     ) {
       canvas.addEventListener('mousedown', onMouseDown)
       canvas.addEventListener('mouseup', onMouseUp)
-      console.log('1')
+      // console.log('1')
       body.style.cursor = "e-resize"
     } else {
       canvas.removeEventListener('mousedown', onMouseDown)
       canvas.removeEventListener('mouseup', onMouseUp)
       mouseLeftKeyDown = false
-      console.log('2')
+      // console.log('2')
       body.style.cursor = "default"
     }
   }
@@ -140,14 +175,14 @@ export default function Canvas() {
   return (
     <div>
       <div className='components'>
-        <div className="component">
+        <div className="component" onClick={() => location.reload()}>
           矩形
         </div>
 
       </div>
       <canvas
         onMouseMove={move}
-        id="canvas" ref={canvasRef} width={300} height={300}/>
+        id="canvas" ref={canvasRef} width={500} height={500}/>
     </div>
   )
 }

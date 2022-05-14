@@ -11,7 +11,7 @@ export default function Canvas() {
   let one = {
     x: 50,
     y: 50,
-    w: 150,
+    w: 50,
     h: 150
   }
   let s = {
@@ -57,10 +57,14 @@ export default function Canvas() {
   }
 
   function draw() {
-    // renderBox(one.x, one.y, one.w, one.h, 'black')
-    // d = 1.5
-    // ctx.lineWidth = 2 * d
-    // renderLine(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
+    d = 2
+    ctx.lineWidth = 2 * d
+    renderBox(one.x, one.y, one.w, one.h, 'black')
+    renderLine(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
+    //这里x必须多1d，w要多2d，y和h同理
+    // clear(one.x - 2 * d, one.y - 2 * d, one.w + 4 * d, one.h + 4 * d)
+    // d = 1
+    ctx.lineWidth = 1
     ctx.strokeStyle = 'black'
     ctx.beginPath()
     for (let i = 0; i < 500; i += 5) {
@@ -101,16 +105,17 @@ export default function Canvas() {
 
   let startX: any
   let startY
+  let dd: any
 
   function onMouseDown(e: any) {
     if (e.which === 1) {
       mouseLeftKeyDown = true
       startX = e.clientX - canvasRect.left
-      if (startX < one.x) startX = one.x
+      // if (startX < one.x) startX = one.x
+      dd = startX - one.x
     }
     console.log('onMouseDown')
   }
-
 
   function onMouseUp(e: any) {
     mouseLeftKeyDown = false
@@ -118,41 +123,54 @@ export default function Canvas() {
     console.log('onMouseUp')
   }
 
-
   let clearStartX = one.x - 2 * d
-  let clearEndX = one.w + 2 * d
+  let clearEndX = one.w + 4 * d
 
   function move(e: any) {
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
-
-
-    let dis = 5
-
+    let dis = 20
     if (mouseLeftKeyDown) {
 
       // console.log('startX', startX)
-      console.log('x', x)
+      // console.log('x', x)
       // console.log('one.w - (x - startX)', one.w - (x - startX))
+      // console.log('前前前前前前x - d', x - d)
+      // console.log('前前前前前前clearStartX', clearStartX)
+      // if (x - d <= clearStartX) {
+      //   clearStartX = x - d - 2 * d - d
+      //   clearEndX = one.x - clearStartX + one.w
+      // }
+      //
+      // if (x - d - clearStartX >= clearEndX) {
+      //   clearEndX = x - d - clearStartX + 2 * d + d
+      // }
 
-      if (x < clearStartX) {
-        clearStartX = x - 2 * d
-        clearEndX = one.x - clearStartX + one.w
+      if (x - d - dd - d <= clearStartX) {
+        clearStartX = x - d - dd - d
+        clearEndX = (x - d - dd - d) - clearStartX + ((one.w - (x - startX)) + 2 * d) + 2 * d
+      }
+      //
+      if (x - d - dd - d - clearStartX >= clearEndX) {
+        console.log('1')
+        //todo
+        clearEndX = x - d - dd - clearStartX + 3 * d
       }
 
-      if (x > clearEndX) {
-        clearEndX = x + 2 * d
-      }
-
-      console.log('clearEndX', clearEndX)
-
+      // console.log('------------------')
+      // console.log('------------------')
+      // console.log('后后后后后后x - d', x - d - one.x)
+      // console.log('后后后后后后x', x)
+      // console.log('后后后后后后clearStartX', clearStartX)
+      // console.log('后后后后后后clearEndX', clearEndX)
 
       // clear(0, 0, canvas.width, canvas.height)
       // renderBox(x, one.y, one.w - (x - startX), one.h, 'white')
-      clear(clearStartX, one.y, clearEndX, one.h)
-      renderBox(x, one.y, one.w - (x - startX), one.h, 'black')
-      renderLine(x - d, one.y - d, (one.w - (x - startX)) + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
+      ctx.lineWidth = 2 * d
 
+      clear(clearStartX, one.y, clearEndX, one.h)
+      renderBox(x - dd, one.y, one.w - (x - startX), one.h, 'black')
+      renderLine(x - d - dd, one.y - d, (one.w - (x - startX)) + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
       return
     }
 

@@ -1,6 +1,7 @@
 import * as React from 'react'
 import {Ref, useEffect, useRef} from "react";
 import './index.scss'
+import _ from 'lodash'
 
 export default function Canvas() {
   let canvasRef: any = useRef()
@@ -121,56 +122,42 @@ export default function Canvas() {
     mouseLeftKeyDown = false
     body.style.cursor = "default"
     console.log('onMouseUp')
+    active = {
+      startX: one.x - d,
+      endX: one.x - d + one.w + 2 * d,
+      startY: one.y - d,
+      endY: one.y - d + one.h + 2 * d,
+    }
+    oldOne = _.clone(one)
   }
 
   let clearStartX = one.x - 2 * d
   let clearEndX = one.w + 4 * d
 
-  function move(e: any) {
+  let oldOne = _.clone(one)
+
+  function moveStretch(e: any) {
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
     let dis = 20
     if (mouseLeftKeyDown) {
-
-      // console.log('startX', startX)
-      // console.log('x', x)
-      // console.log('one.w - (x - startX)', one.w - (x - startX))
-      // console.log('前前前前前前x - d', x - d)
-      // console.log('前前前前前前clearStartX', clearStartX)
-      // if (x - d <= clearStartX) {
-      //   clearStartX = x - d - 2 * d - d
-      //   clearEndX = one.x - clearStartX + one.w
-      // }
-      //
-      // if (x - d - clearStartX >= clearEndX) {
-      //   clearEndX = x - d - clearStartX + 2 * d + d
-      // }
-
       if (x - d - dd - d <= clearStartX) {
         clearStartX = x - d - dd - d
-        clearEndX = (x - d - dd - d) - clearStartX + ((one.w - (x - startX)) + 2 * d) + 2 * d
+        clearEndX = ((oldOne.w - (x - startX)) + 2 * d) + 2 * d
       }
-      //
-      if (x - d - dd - d - clearStartX >= clearEndX) {
-        console.log('1')
-        //todo
-        clearEndX = x - d - dd - clearStartX + 3 * d
+      if (x - dd - clearStartX >= clearEndX) {
+        clearEndX = x - dd - clearStartX
       }
 
-      // console.log('------------------')
-      // console.log('------------------')
-      // console.log('后后后后后后x - d', x - d - one.x)
-      // console.log('后后后后后后x', x)
-      // console.log('后后后后后后clearStartX', clearStartX)
-      // console.log('后后后后后后clearEndX', clearEndX)
-
-      // clear(0, 0, canvas.width, canvas.height)
-      // renderBox(x, one.y, one.w - (x - startX), one.h, 'white')
+      // console.log(oldOne)
       ctx.lineWidth = 2 * d
-
-      clear(clearStartX, one.y, clearEndX, one.h)
-      renderBox(x - dd, one.y, one.w - (x - startX), one.h, 'black')
-      renderLine(x - d - dd, one.y - d, (one.w - (x - startX)) + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
+      clear(clearStartX, one.y - 2 * d, clearEndX, one.h + 4 * d)
+      one.x = x - dd
+      // one.y = one.y
+      one.w = oldOne.w - (x - startX)
+      // one.h = one.h
+      renderBox(one.x, one.y, one.w, one.h, 'black')
+      renderLine(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
       return
     }
 
@@ -190,6 +177,34 @@ export default function Canvas() {
     }
   }
 
+  active = {
+    startX: one.x - d,
+    endX: one.x - d + one.w + 2 * d,
+    startY: one.y - d,
+    endY: one.y - d + one.h + 2 * d,
+  }
+
+  function moveScale(e: any) {
+    let x = e.clientX - canvasRect.left
+    let y = e.clientY - canvasRect.top
+    let dis = 20
+
+    if ((active.endX - dis < x && x < active.endX + dis) &&
+      (active.startY - dis < y && y < active.startY + dis)
+    ) {
+      canvas.addEventListener('mousedown', onMouseDown)
+      canvas.addEventListener('mouseup', onMouseUp)
+      // console.log('1')
+      body.style.cursor = "ne-resize"
+    } else {
+      canvas.removeEventListener('mousedown', onMouseDown)
+      canvas.removeEventListener('mouseup', onMouseUp)
+      mouseLeftKeyDown = false
+      // console.log('2')
+      body.style.cursor = "default"
+    }
+  }
+
   return (
     <div>
       <div className='components'>
@@ -199,7 +214,7 @@ export default function Canvas() {
 
       </div>
       <canvas
-        onMouseMove={move}
+        onMouseMove={moveScale}
         id="canvas" ref={canvasRef} width={500} height={500}/>
     </div>
   )

@@ -15,6 +15,8 @@ export default function Canvas() {
     w: 50,
     h: 150
   }
+  let oldOne = _.clone(one)
+
   let s = {
     startX: one.x,
     endX: one.x + one.w,
@@ -71,11 +73,9 @@ export default function Canvas() {
     for (let i = 0; i < 500; i += 5) {
       ctx.moveTo(i, 0);
       ctx.lineTo(i, 500);
-      // ctx.moveTo(20, 0);
-      // ctx.lineTo(20, 300);
     }
-    ctx.stroke()
-
+    // ctx.stroke()
+    ctx.lineWidth = 2 * d
   }
 
   let is = false
@@ -105,15 +105,18 @@ export default function Canvas() {
   let mouseLeftKeyDown = false
 
   let startX: any
-  let startY
+  let startY: any
   let dd: any
 
   function onMouseDown(e: any) {
     if (e.which === 1) {
       mouseLeftKeyDown = true
       startX = e.clientX - canvasRect.left
-      // if (startX < one.x) startX = one.x
+      startY = e.clientY - canvasRect.top
       dd = startX - one.x
+
+      //rotate
+      ctx.translate(oldOne.x + oldOne.w / 2, oldOne.y + oldOne.h / 2);
     }
     console.log('onMouseDown')
   }
@@ -129,12 +132,12 @@ export default function Canvas() {
       endY: one.y - d + one.h + 2 * d,
     }
     oldOne = _.clone(one)
+    ctx.translate(0, 0);
   }
 
   let clearStartX = one.x - 2 * d
   let clearEndX = one.w + 4 * d
 
-  let oldOne = _.clone(one)
 
   function moveStretch(e: any) {
     let x = e.clientX - canvasRect.left
@@ -177,17 +180,47 @@ export default function Canvas() {
     }
   }
 
-  active = {
-    startX: one.x - d,
-    endX: one.x - d + one.w + 2 * d,
-    startY: one.y - d,
-    endY: one.y - d + one.h + 2 * d,
+
+  function getAngle(cx, cy, x1, y1, x2, y2) {
+
+
+    //2个点之间的角度获取
+    let c1 = Math.atan2(y1 - cy, x1 - cx) * 180 / (Math.PI);
+    let c2 = Math.atan2(y2 - cy, x2 - cx) * 180 / (Math.PI);
+    let angle;
+    c1 = c1 <= -90 ? (360 + c1) : c1;
+    c2 = c2 <= -90 ? (360 + c2) : c2;
+
+    //夹角获取
+    angle = Math.floor(c2 - c1);
+    angle = angle < 0 ? angle + 360 : angle;
+    return angle;
   }
 
-  function moveScale(e: any) {
+
+  function moveRotate(e: any) {
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
+
+
     let dis = 20
+    if (mouseLeftKeyDown) {
+      // console.log('x-------', x, '          y--------', y)
+
+      let a = getAngle(oldOne.x + oldOne.w / 2, oldOne.y + oldOne.h / 2, startX, startY, x, y)
+      console.log(a)
+
+
+      // console.log(angle)
+      ctx.save()
+      ctx.rotate((a * Math.PI) / 180);
+      // ctx.rotate(angle);
+      clear(-one.w / 2 + 2 * d, -one.h / 2 + 2 * d, one.w + 4 * d, one.h + 4 * d, 'black')
+      renderBox(-one.w / 2, -one.h / 2, one.w, one.h, 'black')
+      renderLine(-one.w / 2 - d, -one.h / 2 - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
+      ctx.restore()
+      return
+    }
 
     if ((active.endX - dis < x && x < active.endX + dis) &&
       (active.startY - dis < y && y < active.startY + dis)
@@ -214,7 +247,7 @@ export default function Canvas() {
 
       </div>
       <canvas
-        onMouseMove={moveScale}
+        onMouseMove={moveRotate}
         id="canvas" ref={canvasRef} width={500} height={500}/>
     </div>
   )

@@ -69,13 +69,19 @@ export default function Canvas() {
     // d = 1
     ctx.lineWidth = 1
     ctx.strokeStyle = 'black'
-    ctx.beginPath()
-    for (let i = 0; i < 500; i += 5) {
-      ctx.moveTo(i, 0);
-      ctx.lineTo(i, 500);
-    }
+    // ctx.beginPath()
+    // for (let i = 0; i < 500; i += 5) {
+    //   ctx.moveTo(i, 0);
+    //   ctx.lineTo(i, 500);
+    // }
     // ctx.stroke()
+
     ctx.lineWidth = 2 * d
+    ctx.translate(oldOne.x + oldOne.w / 2, oldOne.y + oldOne.h / 2);
+    ctx.arc(0, 0, 100, 0, 2 * Math.PI);
+    ctx.fillStyle = 'white'
+    ctx.fill();
+
   }
 
   let is = false
@@ -125,14 +131,14 @@ export default function Canvas() {
     mouseLeftKeyDown = false
     body.style.cursor = "default"
     console.log('onMouseUp')
-    active = {
-      startX: one.x - d,
-      endX: one.x - d + one.w + 2 * d,
-      startY: one.y - d,
-      endY: one.y - d + one.h + 2 * d,
-    }
+    // active = {
+    //   startX: one.x - d,
+    //   endX: one.x - d + one.w + 2 * d,
+    //   startY: one.y - d,
+    //   endY: one.y - d + one.h + 2 * d,
+    // }
+    ctx.translate(-(oldOne.x + oldOne.w / 2), -(oldOne.y + oldOne.h / 2));
     oldOne = _.clone(one)
-    ctx.translate(0, 0);
   }
 
   let clearStartX = one.x - 2 * d
@@ -180,42 +186,21 @@ export default function Canvas() {
     }
   }
 
-
-  function getAngle(cx, cy, x1, y1, x2, y2) {
-
-
-    //2个点之间的角度获取
-    let c1 = Math.atan2(y1 - cy, x1 - cx) * 180 / (Math.PI);
-    let c2 = Math.atan2(y2 - cy, x2 - cx) * 180 / (Math.PI);
-    let angle;
-    c1 = c1 <= -90 ? (360 + c1) : c1;
-    c2 = c2 <= -90 ? (360 + c2) : c2;
-
-    //夹角获取
-    angle = Math.floor(c2 - c1);
-    angle = angle < 0 ? angle + 360 : angle;
-    return angle;
-  }
-
-
   function moveRotate(e: any) {
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
 
-
     let dis = 20
     if (mouseLeftKeyDown) {
       // console.log('x-------', x, '          y--------', y)
-
       let a = getAngle(oldOne.x + oldOne.w / 2, oldOne.y + oldOne.h / 2, startX, startY, x, y)
-      console.log(a)
-
+      // console.log(a)
 
       // console.log(angle)
       ctx.save()
       ctx.rotate((a * Math.PI) / 180);
       // ctx.rotate(angle);
-      clear(-one.w / 2 + 2 * d, -one.h / 2 + 2 * d, one.w + 4 * d, one.h + 4 * d, 'black')
+      clear(-one.w / 2 - 4 * d, -one.h / 2 - 4 * d, one.w + 6 * d, one.h + 6 * d, 'black')
       renderBox(-one.w / 2, -one.h / 2, one.w, one.h, 'black')
       renderLine(-one.w / 2 - d, -one.h / 2 - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
       ctx.restore()
@@ -236,6 +221,20 @@ export default function Canvas() {
       // console.log('2')
       body.style.cursor = "default"
     }
+  }
+
+  function getAngle(cx, cy, x1, y1, x2, y2) {
+    //2个点之间的角度获取
+    let c1 = Math.atan2(y1 - cy, x1 - cx) * 180 / (Math.PI);
+    let c2 = Math.atan2(y2 - cy, x2 - cx) * 180 / (Math.PI);
+    let angle;
+    c1 = c1 <= -90 ? (360 + c1) : c1;
+    c2 = c2 <= -90 ? (360 + c2) : c2;
+
+    //夹角获取
+    angle = Math.floor(c2 - c1);
+    angle = angle < 0 ? angle + 360 : angle;
+    return angle;
   }
 
   return (

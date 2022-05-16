@@ -2,16 +2,17 @@ import * as React from 'react'
 import {Ref, useEffect, useRef} from "react";
 import './index.scss'
 import _ from 'lodash'
+import {getAngle, getHypotenuse} from "../../utils";
 
-export default function Canvas() {
+export default function Canvas(x: number) {
   let canvasRef: any = useRef()
   let ctx: CanvasRenderingContext2D
   let canvas: HTMLCanvasElement
   let body: any = document.querySelector("body")
 
   let one = {
-    x: 50,
-    y: 50,
+    x: 150,
+    y: 150,
     w: 50,
     h: 150
   }
@@ -67,7 +68,7 @@ export default function Canvas() {
     //这里x必须多1d，w要多2d，y和h同理
     // clear(one.x - 2 * d, one.y - 2 * d, one.w + 4 * d, one.h + 4 * d)
     // d = 1
-    ctx.lineWidth = 1
+    // ctx.lineWidth = 1
     ctx.strokeStyle = 'black'
     // ctx.beginPath()
     // for (let i = 0; i < 500; i += 5) {
@@ -75,13 +76,6 @@ export default function Canvas() {
     //   ctx.lineTo(i, 500);
     // }
     // ctx.stroke()
-
-    ctx.lineWidth = 2 * d
-    ctx.translate(oldOne.x + oldOne.w / 2, oldOne.y + oldOne.h / 2);
-    ctx.arc(0, 0, 100, 0, 2 * Math.PI);
-    ctx.fillStyle = 'white'
-    ctx.fill();
-
   }
 
   let is = false
@@ -193,14 +187,19 @@ export default function Canvas() {
     let dis = 20
     if (mouseLeftKeyDown) {
       // console.log('x-------', x, '          y--------', y)
-      let a = getAngle(oldOne.x + oldOne.w / 2, oldOne.y + oldOne.h / 2, startX, startY, x, y)
+      let a = getAngle([oldOne.x + oldOne.w / 2, oldOne.y + oldOne.h / 2],
+        [startX, startY],
+        [x, y]
+      )
       // console.log(a)
-
-      // console.log(angle)
       ctx.save()
+
+      let hypotenuse = getHypotenuse([one.x - d, one.y - d],
+        [one.x - d + (one.w + 2 * d) / 2, one.y - d + (one.h + 2 * d) / 2,])
+      // ctx.arc(0, 0, hypotenuse + 4, 0, 2 * Math.PI);
+      ctx.fillStyle = 'white'
+      ctx.fillRect(-hypotenuse - 2 * d, -hypotenuse - 2 * d, hypotenuse * 2 + 4 * d, hypotenuse * 2 + 4 * d,);
       ctx.rotate((a * Math.PI) / 180);
-      // ctx.rotate(angle);
-      clear(-one.w / 2 - 4 * d, -one.h / 2 - 4 * d, one.w + 6 * d, one.h + 6 * d, 'black')
       renderBox(-one.w / 2, -one.h / 2, one.w, one.h, 'black')
       renderLine(-one.w / 2 - d, -one.h / 2 - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
       ctx.restore()
@@ -221,20 +220,6 @@ export default function Canvas() {
       // console.log('2')
       body.style.cursor = "default"
     }
-  }
-
-  function getAngle(cx, cy, x1, y1, x2, y2) {
-    //2个点之间的角度获取
-    let c1 = Math.atan2(y1 - cy, x1 - cx) * 180 / (Math.PI);
-    let c2 = Math.atan2(y2 - cy, x2 - cx) * 180 / (Math.PI);
-    let angle;
-    c1 = c1 <= -90 ? (360 + c1) : c1;
-    c2 = c2 <= -90 ? (360 + c2) : c2;
-
-    //夹角获取
-    angle = Math.floor(c2 - c1);
-    angle = angle < 0 ? angle + 360 : angle;
-    return angle;
   }
 
   return (

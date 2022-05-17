@@ -60,22 +60,60 @@ export default function Canvas(x: number) {
     ctx.clearRect(x, y, w, h)
   }
 
+  function renderBox2(x: number, y: number, w: number, h: number, color: any) {
+    ctx.fillStyle = color
+    ctx.beginPath()
+    ctx.moveTo(x, y)
+    ctx.lineTo(x + w, y);
+    ctx.lineTo(x + w, y + h);
+    ctx.lineTo(x, y + h);
+    ctx.lineTo(x, y);
+    ctx.fill()
+  }
+
+  function renderLine2(x: number, y: number, w: number, h: number, color: any) {
+    ctx.strokeStyle = color
+    ctx.beginPath()
+    ctx.moveTo(x, y)
+    ctx.lineTo(x + w, y);
+    ctx.lineTo(x + w, y + h);
+    ctx.lineTo(x, y + h);
+    ctx.lineTo(x, y);
+    // ctx.lineTo(x, y - d);
+    ctx.stroke()
+  }
+
   function draw() {
     d = 2
-    ctx.lineWidth = 2 * d
-    renderBox(one.x, one.y, one.w, one.h, 'black')
-    renderLine(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
+    ctx.strokeStyle = 'black'
+
+    // renderBox2(one.x, one.y, one.w, one.h, 'black')
+    // ctx.lineWidth = 2 * d
+    // ctx.lineCap = 'square'
+    // renderLine2(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
+
+
+    ctx.beginPath()
+    ctx.moveTo(one.x, one.y)
+    ctx.lineTo(one.x + one.w, one.y);
+    ctx.lineTo(one.x - one.w, one.y + one.h);
+    // ctx.lineTo(x, y + h);
+    // ctx.lineTo(x, y);
+    // ctx.lineTo(x, y - d);
+    ctx.stroke()
+
+    // renderBox(one.x, one.y, one.w, one.h, 'black')
+    // renderLine(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
     //这里x必须多1d，w要多2d，y和h同理
     // clear(one.x - 2 * d, one.y - 2 * d, one.w + 4 * d, one.h + 4 * d)
     // d = 1
     // ctx.lineWidth = 1
-    ctx.strokeStyle = 'black'
     // ctx.beginPath()
     // for (let i = 0; i < 500; i += 5) {
     //   ctx.moveTo(i, 0);
     //   ctx.lineTo(i, 500);
     // }
-    // ctx.stroke()
+    // ctx.fill()
   }
 
   let is = false

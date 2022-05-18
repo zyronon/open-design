@@ -83,6 +83,10 @@ export default function Canvas(x: number) {
     ctx.stroke()
   }
 
+  function clearAll() {
+    clear(0, 0, canvas.width, canvas.height)
+  }
+
   function draw() {
     d = 2
     ctx.strokeStyle = 'black'
@@ -90,17 +94,8 @@ export default function Canvas(x: number) {
     // renderBox2(one.x, one.y, one.w, one.h, 'black')
     // ctx.lineWidth = 2 * d
     // ctx.lineCap = 'square'
-    // renderLine2(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
-
-
-    ctx.beginPath()
-    ctx.moveTo(one.x, one.y)
-    ctx.lineTo(one.x + one.w, one.y);
-    ctx.lineTo(one.x - one.w, one.y + one.h);
-    // ctx.lineTo(x, y + h);
-    // ctx.lineTo(x, y);
-    // ctx.lineTo(x, y - d);
-    ctx.stroke()
+    ctx.rotate((10 * Math.PI) / 180);
+    renderLine2(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
 
     // renderBox(one.x, one.y, one.w, one.h, 'black')
     // renderLine(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
@@ -154,7 +149,9 @@ export default function Canvas(x: number) {
       dd = startX - one.x
 
       //rotate
-      ctx.translate(oldOne.x + oldOne.w / 2, oldOne.y + oldOne.h / 2);
+      // ctx.translate(oldOne.x + oldOne.w / 2, oldOne.y + oldOne.h / 2);
+
+
     }
     console.log('onMouseDown')
   }
@@ -169,7 +166,12 @@ export default function Canvas(x: number) {
     //   startY: one.y - d,
     //   endY: one.y - d + one.h + 2 * d,
     // }
-    ctx.translate(-(oldOne.x + oldOne.w / 2), -(oldOne.y + oldOne.h / 2));
+
+
+    //rotate
+    // ctx.translate(-(oldOne.x + oldOne.w / 2), -(oldOne.y + oldOne.h / 2));
+
+
     oldOne = _.clone(one)
   }
 
@@ -218,7 +220,7 @@ export default function Canvas(x: number) {
     }
   }
 
-  function moveRotate(e: any) {
+  function moveRotate2(e: any) {
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
 
@@ -246,6 +248,36 @@ export default function Canvas(x: number) {
 
     if ((active.endX - dis < x && x < active.endX + dis) &&
       (active.startY - dis < y && y < active.startY + dis)
+    ) {
+      canvas.addEventListener('mousedown', onMouseDown)
+      canvas.addEventListener('mouseup', onMouseUp)
+      // console.log('1')
+      body.style.cursor = "ne-resize"
+    } else {
+      canvas.removeEventListener('mousedown', onMouseDown)
+      canvas.removeEventListener('mouseup', onMouseUp)
+      mouseLeftKeyDown = false
+      // console.log('2')
+      body.style.cursor = "default"
+    }
+  }
+
+  function moveRotate(e: any) {
+    let x = e.clientX - canvasRect.left
+    let y = e.clientY - canvasRect.top
+
+    let dis = 20
+    if (mouseLeftKeyDown) {
+      // console.log('x-------', x, '          y--------', y)
+      console.log(one.x - d - (x - startX))
+      clearAll()
+      renderLine2(one.x - d, one.y - d, one.w + 2 * d + (x - startX), one.h + 2 * d + (y - startY), 'rgb(139,80,255)')
+
+      return
+    }
+
+    if ((170 - dis < x && x < 170 + dis) &&
+      (180 - dis < y && y < 180 + dis)
     ) {
       canvas.addEventListener('mousedown', onMouseDown)
       canvas.addEventListener('mouseup', onMouseUp)

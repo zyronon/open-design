@@ -2,16 +2,16 @@ import * as React from 'react'
 import {Ref, useEffect, useRef} from "react";
 import './index.scss'
 import _ from 'lodash'
-import {getAngle, getHypotenuse} from "../../utils";
+import {getAngle, getHypotenuse, getRoundOtherPoint} from "../../utils";
 
-export default function Canvas(x: number) {
+export default function Canvas() {
   let canvasRef: any = useRef()
   let ctx: CanvasRenderingContext2D
   let canvas: HTMLCanvasElement
   let body: any = document.querySelector("body")
 
   let one = {
-    x: 150,
+    x: 350,
     y: 150,
     w: 50,
     h: 150
@@ -94,8 +94,13 @@ export default function Canvas(x: number) {
     // renderBox2(one.x, one.y, one.w, one.h, 'black')
     // ctx.lineWidth = 2 * d
     // ctx.lineCap = 'square'
-    ctx.rotate((10 * Math.PI) / 180);
+    ctx.save()
+    renderLine2(one.x, one.y, one.w, one.h, 'black')
+
+    ctx.rotate((20 * Math.PI) / 180);
+    ctx.strokeRect(0, 0, canvas.width, canvas.height)
     renderLine2(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
+    // renderLine2(one.x, one.y, one.w, one.h, 'black')
 
     // renderBox(one.x, one.y, one.w, one.h, 'black')
     // renderLine(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
@@ -179,7 +184,7 @@ export default function Canvas(x: number) {
   let clearEndX = one.w + 4 * d
 
 
-  function moveStretch(e: any) {
+  function moveStretch2(e: any) {
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
     let dis = 20
@@ -220,6 +225,59 @@ export default function Canvas(x: number) {
     }
   }
 
+  function moveStretch(e: any) {
+    let x = e.clientX - canvasRect.left
+    let y = e.clientY - canvasRect.top
+    let dis = 20
+
+
+    if (mouseLeftKeyDown) {
+      let hypotenuse = getHypotenuse([0, 0], [x, y])
+      // console.log('hypotenuse', hypotenuse)
+
+      let r = getRoundOtherPoint([0, 0], hypotenuse, 40)
+      console.log('x-------', x, '          y--------', y)
+      console.log('r', r)
+      // if (x - d - dd - d <= clearStartX) {
+      //   clearStartX = x - d - dd - d
+      //   clearEndX = ((oldOne.w - (x - startX)) + 2 * d) + 2 * d
+      // }
+      // if (x - dd - clearStartX >= clearEndX) {
+      //   clearEndX = x - dd - clearStartX
+      // }
+      //
+      // // console.log(oldOne)
+      // ctx.lineWidth = 2 * d
+      // x = r[0]
+      // y = r[1]
+      // clearAll()
+      // one.x = x
+      // one.y = y
+      // console.log(one)
+      // // one.w = oldOne.w - (x - startX)
+      // // one.h = oldOne.h - (y - startY)
+      // renderBox(one.x, one.y, one.w, one.h, 'black')
+      // renderLine(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
+      return
+    }
+
+    let a = 276, b = 258
+    if ((a - dis < x && x < a + dis) &&
+      (b - dis < y && y < b + dis)
+    ) {
+      canvas.addEventListener('mousedown', onMouseDown)
+      canvas.addEventListener('mouseup', onMouseUp)
+      // console.log('1')
+      body.style.cursor = "e-resize"
+    } else {
+      canvas.removeEventListener('mousedown', onMouseDown)
+      canvas.removeEventListener('mouseup', onMouseUp)
+      mouseLeftKeyDown = false
+      // console.log('2')
+      body.style.cursor = "default"
+    }
+  }
+
   function moveRotate2(e: any) {
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
@@ -234,6 +292,9 @@ export default function Canvas(x: number) {
       // console.log(a)
       ctx.save()
 
+      //一参：原点
+      //二参：矩形中心点
+      //结果：原点到矩形中心点的距离
       let hypotenuse = getHypotenuse([one.x - d, one.y - d],
         [one.x - d + (one.w + 2 * d) / 2, one.y - d + (one.h + 2 * d) / 2,])
       // ctx.arc(0, 0, hypotenuse + 4, 0, 2 * Math.PI);
@@ -265,19 +326,29 @@ export default function Canvas(x: number) {
   function moveRotate(e: any) {
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
+    // console.log('x-------', x, '          y--------', y)
 
     let dis = 20
     if (mouseLeftKeyDown) {
-      // console.log('x-------', x, '          y--------', y)
       console.log(one.x - d - (x - startX))
+      // ctx.restore()
       clearAll()
-      renderLine2(one.x - d, one.y - d, one.w + 2 * d + (x - startX), one.h + 2 * d + (y - startY), 'rgb(139,80,255)')
+      // renderLine2(one.x - d, y - dd, one.w + 2 * d + (x - startX), one.h + 2 * d, 'rgb(139,80,255)')
+      // one.x = one.x
+      one.y = y - d - (oldOne.y - 20)
+      one.w = oldOne.w + (x - startX)
+      one.h = oldOne.h - (y - startY)
+      renderLine2(one.x, one.y, one.w, one.h, 'black')
+
+      // renderBox(one.x, one.y, one.w, one.h, 'black')
+      // renderLine(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
 
       return
     }
 
-    if ((170 - dis < x && x < 170 + dis) &&
-      (180 - dis < y && y < 180 + dis)
+    let a = 322, b = 274
+    if ((a - dis < x && x < a + dis) &&
+      (b - dis < y && y < b + dis)
     ) {
       canvas.addEventListener('mousedown', onMouseDown)
       canvas.addEventListener('mouseup', onMouseUp)
@@ -301,7 +372,7 @@ export default function Canvas(x: number) {
 
       </div>
       <canvas
-        onMouseMove={moveRotate}
+        onMouseMove={moveStretch}
         id="canvas" ref={canvasRef} width={500} height={500}/>
     </div>
   )

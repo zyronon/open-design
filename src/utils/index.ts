@@ -1,10 +1,18 @@
 //获取斜边长度
+//给一个圆心点和其他点
 export function getHypotenuse(one: number[], two: number[]) {
   let [oneX, oneY] = one
   let [twoX, twoY] = two
   let dx = twoX - oneX
   let dy = twoY - oneY
   return Math.sqrt(dx * dx + dy * dy)
+}
+
+export function getRoundOtherPoint(center: number[], r: number, angle: number) {
+  let [x, y] = center
+  let x1 = x + r * Math.cos(angle * Math.PI / 180)
+  let y1 = y + r * Math.sin(angle * Math.PI / 180)
+  return [x1, y1]
 }
 
 //获取两点之间角度

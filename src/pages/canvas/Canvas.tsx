@@ -225,6 +225,14 @@ export default function Canvas() {
     }
   }
 
+  function hudu2juedu(v: number) {
+    return v * 180 / Math.PI
+  }
+
+  function juedu2hudu(v: number) {
+    return (v * Math.PI) / 180
+  }
+
   function moveStretch(e: any) {
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
@@ -233,31 +241,38 @@ export default function Canvas() {
 
     if (mouseLeftKeyDown) {
       let hypotenuse = getHypotenuse([0, 0], [x, y])
-      // console.log('hypotenuse', hypotenuse)
+      console.log('hypotenuse', hypotenuse)
+      let s = Math.abs(y) / Math.abs(hypotenuse)
+      // console.log(s)
+      let a = Math.acos(s)
+      // console.log(a)
+      let b = hudu2juedu(a) + 20
+      console.log(b)
+      let x1 = Math.sin(juedu2hudu(b)) * Math.abs(hypotenuse)
+      let y1 = Math.cos(juedu2hudu(b)) * Math.abs(hypotenuse)
 
-      let r = getRoundOtherPoint([0, 0], hypotenuse, 40)
+
+      // let r = getRoundOtherPoint([0, 0], hypotenuse, 40)
       console.log('x-------', x, '          y--------', y)
-      console.log('r', r)
-      // if (x - d - dd - d <= clearStartX) {
-      //   clearStartX = x - d - dd - d
-      //   clearEndX = ((oldOne.w - (x - startX)) + 2 * d) + 2 * d
-      // }
-      // if (x - dd - clearStartX >= clearEndX) {
-      //   clearEndX = x - dd - clearStartX
-      // }
-      //
-      // // console.log(oldOne)
-      // ctx.lineWidth = 2 * d
-      // x = r[0]
-      // y = r[1]
-      // clearAll()
-      // one.x = x
-      // one.y = y
+      console.log('x1-------', x1, '          y1--------', y1)
+      // console.log('r', r)
+      if (x - d - dd - d <= clearStartX) {
+        clearStartX = x - d - dd - d
+        clearEndX = ((oldOne.w - (x - startX)) + 2 * d) + 2 * d
+      }
+      if (x - dd - clearStartX >= clearEndX) {
+        clearEndX = x - dd - clearStartX
+      }
+
+      ctx.lineWidth = 2 * d
+      clearAll()
+      one.x = x1
+      one.y = y1
       // console.log(one)
-      // // one.w = oldOne.w - (x - startX)
-      // // one.h = oldOne.h - (y - startY)
-      // renderBox(one.x, one.y, one.w, one.h, 'black')
-      // renderLine(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
+      one.w = oldOne.w - (x1 - startX)
+      one.h = oldOne.h - (y1 - startY)
+      renderBox(one.x, one.y, one.w, one.h, 'black')
+      renderLine(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
       return
     }
 

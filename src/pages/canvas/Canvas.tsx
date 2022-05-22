@@ -157,6 +157,9 @@ export default function Canvas() {
       // ctx.translate(oldOne.x + oldOne.w / 2, oldOne.y + oldOne.h / 2);
 
 
+      let [x1, y1] = getX1y1(startX, startY)
+      startX = x1
+      startY = y1
     }
     console.log('onMouseDown')
   }
@@ -229,8 +232,22 @@ export default function Canvas() {
     return v * 180 / Math.PI
   }
 
-  function juedu2hudu(v: number) {
+  function jiaodu2hudu(v: number) {
     return (v * Math.PI) / 180
+  }
+
+  function getX1y1(x: number, y: number) {
+    let hypotenuse = getHypotenuse([0, 0], [x, y])
+    // console.log('hypotenuse', hypotenuse)
+    let s = Math.abs(y) / Math.abs(hypotenuse)
+    // console.log(s)
+    let a = Math.acos(s)
+    // console.log(a)
+    let b = hudu2juedu(a) + 20
+    // console.log(b)
+    let x1 = Math.sin(jiaodu2hudu(b)) * Math.abs(hypotenuse)
+    let y1 = Math.cos(jiaodu2hudu(b)) * Math.abs(hypotenuse)
+    return [x1, y1]
   }
 
   function moveStretch(e: any) {
@@ -248,8 +265,8 @@ export default function Canvas() {
       // console.log(a)
       let b = hudu2juedu(a) + 20
       console.log(b)
-      let x1 = Math.sin(juedu2hudu(b)) * Math.abs(hypotenuse)
-      let y1 = Math.cos(juedu2hudu(b)) * Math.abs(hypotenuse)
+      let x1 = Math.sin(jiaodu2hudu(b)) * Math.abs(hypotenuse)
+      let y1 = Math.cos(jiaodu2hudu(b)) * Math.abs(hypotenuse)
 
 
       // let r = getRoundOtherPoint([0, 0], hypotenuse, 40)
@@ -265,7 +282,10 @@ export default function Canvas() {
       }
 
       ctx.lineWidth = 2 * d
+      // ctx.rotate((-20 * Math.PI) / 180);
       clearAll()
+      // draw()
+
       one.x = x1
       one.y = y1
       // console.log(one)

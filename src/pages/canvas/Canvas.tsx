@@ -1,13 +1,16 @@
 import * as React from 'react'
-import {Ref, useEffect, useRef} from "react";
+import {Ref, useEffect, useRef, useState} from "react";
 import './index.scss'
-import _ from 'lodash'
+import _, {clone} from 'lodash'
 import {getAngle, getHypotenuse, getRoundOtherPoint} from "../../utils";
+
+enum BlockType {
+  LINE = 0,
+  FILL = 1
+}
 
 export default function Canvas() {
   let canvasRef: any = useRef()
-  let ctx: CanvasRenderingContext2D
-  let canvas: HTMLCanvasElement
   let body: any = document.querySelector("body")
 
   let one = {
@@ -25,7 +28,6 @@ export default function Canvas() {
     endY: one.y + one.h,
   }
   let d = 2
-  let canvasRect: DOMRect
 
   let hover = {}
   let active = {
@@ -35,29 +37,81 @@ export default function Canvas() {
     endY: one.y - d + one.h + 2 * d,
   }
 
+  const [canvas, setCanvas] = useState<HTMLCanvasElement>(null)
+  const [ctx, setCtx] = useState<CanvasRenderingContext2D>(null)
+  const [blocks, setBlocks] = useState<any[]>([])
+  const [canvasRect, setCanvasRect] = useState<DOMRect>(null)
+
   useEffect(() => {
-    canvas = canvasRef.current
+    let canvas = canvasRef.current
+    setCanvas(canvas)
     // @ts-ignore
-    ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.strokeRect(0, 0, canvas.width, canvas.height)
-    canvasRect = canvas.getBoundingClientRect()
-    // console.log(canvasRect)
-    draw()
-  })
+    setCtx(canvas.getContext('2d'))
+    setCanvasRect(canvas.getBoundingClientRect())
+    let allLine = {
+      x: 0,
+      y: 0,
+      w: canvas.width,
+      h: canvas.height,
+      rotate: 0,
+      lineWidth: 1,
+      type: BlockType.LINE,
+      color: 'black'
+    }
+    let oneBox = {
+      x: 350,
+      y: 150,
+      w: 50,
+      h: 150,
+      rotate: 20,
+      lineWidth: 1,
+      type: BlockType.FILL,
+      color: 'black'
+    }
+    let oneBoxLine = {
+      x: oneBox.x - d,
+      y: oneBox.y - d,
+      w: oneBox.w + 2 * d,
+      h: oneBox.h + 2 * d,
+      rotate: 20,
+      lineWidth: 4,
+      type: BlockType.LINE,
+      color: 'rgb(139,80,255)'
+    }
+    setBlocks(o => {
+      o.push(allLine)
+      o.push(oneBox)
+      o.push(oneBoxLine)
+      return clone(o)
+    })
+  }, [])
 
-  function renderBox(x: number, y: number, w: number, h: number, color: any) {
-    ctx.fillStyle = color
-    ctx.fillRect(x, y, w, h)
-  }
+  useEffect(() => {
+    ctx && draw2()
+  }, [blocks])
 
-  function renderLine(x: number, y: number, w: number, h: number, color: any) {
-    ctx.strokeStyle = color
-    ctx.strokeRect(x, y, w, h)
+  function draw2() {
+    clear(0, 0, canvas.width, canvas.height);
+    ctx.lineCap = 'square'
+    blocks.map(v => {
+      ctx.save()
+      ctx.rotate((v.rotate * Math.PI) / 180);
+      ctx.lineWidth = v.lineWidth
+      if (v.type === BlockType.LINE) {
+        renderLine2(v.x, v.y, v.w, v.h, v.color)
+      } else {
+        renderBox2(v.x, v.y, v.w, v.h, v.color)
+      }
+      ctx.restore()
+    })
   }
 
   function clear(x: number, y: number, w: number, h: number) {
     ctx.clearRect(x, y, w, h)
+  }
+
+  function clearAll() {
+    clear(0, 0, canvas.width, canvas.height)
   }
 
   function renderBox2(x: number, y: number, w: number, h: number, color: any) {
@@ -81,39 +135,6 @@ export default function Canvas() {
     ctx.lineTo(x, y);
     // ctx.lineTo(x, y - d);
     ctx.stroke()
-  }
-
-  function clearAll() {
-    clear(0, 0, canvas.width, canvas.height)
-  }
-
-  function draw() {
-    d = 2
-    ctx.strokeStyle = 'black'
-
-    // renderBox2(one.x, one.y, one.w, one.h, 'black')
-    // ctx.lineWidth = 2 * d
-    // ctx.lineCap = 'square'
-    ctx.save()
-    renderLine2(one.x, one.y, one.w, one.h, 'black')
-
-    ctx.rotate((20 * Math.PI) / 180);
-    ctx.strokeRect(0, 0, canvas.width, canvas.height)
-    renderLine2(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
-    // renderLine2(one.x, one.y, one.w, one.h, 'black')
-
-    // renderBox(one.x, one.y, one.w, one.h, 'black')
-    // renderLine(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
-    //这里x必须多1d，w要多2d，y和h同理
-    // clear(one.x - 2 * d, one.y - 2 * d, one.w + 4 * d, one.h + 4 * d)
-    // d = 1
-    // ctx.lineWidth = 1
-    // ctx.beginPath()
-    // for (let i = 0; i < 500; i += 5) {
-    //   ctx.moveTo(i, 0);
-    //   ctx.lineTo(i, 500);
-    // }
-    // ctx.fill()
   }
 
   let is = false
@@ -251,6 +272,8 @@ export default function Canvas() {
   }
 
   function moveStretch(e: any) {
+    // console.log(canvasRect)
+    return;
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
     let dis = 20

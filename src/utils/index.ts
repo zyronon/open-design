@@ -8,10 +8,25 @@ export function getHypotenuse(one: number[], two: number[]) {
   return Math.sqrt(dx * dx + dy * dy)
 }
 
-export function getRoundOtherPoint(center: number[], r: number, angle: number) {
-  let [x, y] = center
-  let x1 = x + r * Math.cos(angle * Math.PI / 180)
-  let y1 = y + r * Math.sin(angle * Math.PI / 180)
+function hudu2juedu(v: number) {
+  return v * 180 / Math.PI
+}
+
+function jiaodu2hudu(v: number) {
+  return (v * Math.PI) / 180
+}
+
+export function getRoundOtherPoint(x: number, y: number) {
+  let hypotenuse = getHypotenuse([0, 0], [x, y])
+  // console.log('hypotenuse', hypotenuse)
+  let s = Math.abs(y) / Math.abs(hypotenuse)
+  // console.log(s)
+  let a = Math.acos(s)
+  // console.log(a)
+  let b = hudu2juedu(a) + 20
+  // console.log(b)
+  let x1 = Math.sin(jiaodu2hudu(b)) * Math.abs(hypotenuse)
+  let y1 = Math.cos(jiaodu2hudu(b)) * Math.abs(hypotenuse)
   return [x1, y1]
 }
 

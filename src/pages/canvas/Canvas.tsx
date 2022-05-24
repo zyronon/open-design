@@ -1,5 +1,5 @@
 import * as React from 'react'
-import {Ref, useEffect, useRef, useState} from "react";
+import {MouseEvent, Ref, useEffect, useRef, useState} from "react";
 import './index.scss'
 import _, {clone} from 'lodash'
 import {getAngle, getHypotenuse, getRoundOtherPoint} from "../../utils";
@@ -7,6 +7,21 @@ import {getAngle, getHypotenuse, getRoundOtherPoint} from "../../utils";
 enum BlockType {
   LINE = 0,
   FILL = 1
+}
+
+interface Box {
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  rotate: number,
+  lineWidth: number,
+  type: BlockType,
+  color: string,
+  leftX?: number,
+  leftY?: number,
+  rightX?: number,
+  rightY?: number,
 }
 
 export default function Canvas() {
@@ -37,10 +52,10 @@ export default function Canvas() {
     endY: one.y - d + one.h + 2 * d,
   }
 
-  const [canvas, setCanvas] = useState<HTMLCanvasElement>(null)
-  const [ctx, setCtx] = useState<CanvasRenderingContext2D>(null)
+  const [canvas, setCanvas] = useState<HTMLCanvasElement>(null!)
+  const [ctx, setCtx] = useState<CanvasRenderingContext2D>(null!)
   const [blocks, setBlocks] = useState<any[]>([])
-  const [canvasRect, setCanvasRect] = useState<DOMRect>(null)
+  const [canvasRect, setCanvasRect] = useState<DOMRect>(null!)
 
   useEffect(() => {
     let canvas = canvasRef.current
@@ -78,10 +93,32 @@ export default function Canvas() {
       type: BlockType.LINE,
       color: 'rgb(139,80,255)'
     }
+    let towBox = {
+      x: 50,
+      y: 50,
+      w: 150,
+      h: 150,
+      rotate: 0,
+      lineWidth: 1,
+      type: BlockType.FILL,
+      color: 'black'
+    }
+    let threeBox = {
+      x: 350,
+      y: 50,
+      w: 50,
+      h: 200,
+      rotate: 0,
+      lineWidth: 1,
+      type: BlockType.FILL,
+      color: 'black'
+    }
     setBlocks(o => {
-      o.push(allLine)
-      o.push(oneBox)
-      o.push(oneBoxLine)
+      // o.push(getPath(allLine))
+      o.push(getPath(oneBox))
+      // o.push(getPath(oneBoxLine))
+      o.push(getPath(towBox))
+      o.push(getPath(threeBox))
       return clone(o)
     })
   }, [])
@@ -104,6 +141,25 @@ export default function Canvas() {
       }
       ctx.restore()
     })
+  }
+
+  function draw() {
+    d = 2
+    ctx.lineWidth = 2 * d
+    renderBox2(one.x, one.y, one.w, one.h, 'black')
+    renderLine2(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
+    //这里x必须多1d，w要多2d，y和h同理
+    // clear(one.x - 2 * d, one.y - 2 * d, one.w + 4 * d, one.h + 4 * d)
+    // d = 1
+    ctx.lineWidth = 1
+    ctx.strokeStyle = 'black'
+    ctx.beginPath()
+    for (let i = 0; i < 500; i += 5) {
+      ctx.moveTo(i, 0);
+      ctx.lineTo(i, 500);
+    }
+    // ctx.stroke()
+    ctx.lineWidth = 2 * d
   }
 
   function clear(x: number, y: number, w: number, h: number) {
@@ -228,8 +284,8 @@ export default function Canvas() {
       // one.y = one.y
       one.w = oldOne.w - (x - startX)
       // one.h = one.h
-      renderBox(one.x, one.y, one.w, one.h, 'black')
-      renderLine(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
+      renderBox2(one.x, one.y, one.w, one.h, 'black')
+      renderLine2(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
       return
     }
 
@@ -314,8 +370,8 @@ export default function Canvas() {
       // console.log(one)
       one.w = oldOne.w - (x1 - startX)
       one.h = oldOne.h - (y1 - startY)
-      renderBox(one.x, one.y, one.w, one.h, 'black')
-      renderLine(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
+      renderBox2(one.x, one.y, one.w, one.h, 'black')
+      renderLine2(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
       return
     }
 
@@ -359,8 +415,8 @@ export default function Canvas() {
       ctx.fillStyle = 'white'
       ctx.fillRect(-hypotenuse - 2 * d, -hypotenuse - 2 * d, hypotenuse * 2 + 4 * d, hypotenuse * 2 + 4 * d,);
       ctx.rotate((a * Math.PI) / 180);
-      renderBox(-one.w / 2, -one.h / 2, one.w, one.h, 'black')
-      renderLine(-one.w / 2 - d, -one.h / 2 - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
+      renderBox2(-one.w / 2, -one.h / 2, one.w, one.h, 'black')
+      renderLine2(-one.w / 2 - d, -one.h / 2 - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
       ctx.restore()
       return
     }
@@ -421,6 +477,41 @@ export default function Canvas() {
     }
   }
 
+  function getPath(box: Box) {
+    box.leftX = box.x
+    box.leftY = box.y
+    box.rightX = box.leftX + box.w
+    box.rightY = box.leftY + box.h
+    return box
+  }
+
+  function isPointInPath(x: number, y: number, box: Box) {
+    if (box.leftX! < x && x < box.rightX! && box.leftY! < y && y < box.rightY!) {
+      console.log('在里面')
+      //这里要加一个判断，如果有一个在里面了，后面就不需要再去判断了，
+      // 否则后面判断时会走到else逻辑里面，给清除掉
+      d = 3.5
+      ctx.lineWidth = 2 * d
+      renderLine2(box.x - d, box.y - d, box.w + 2 * d, box.h + 2 * d, 'rgb(139,80,255)')
+    } else {
+      draw2()
+    }
+  }
+
+  function m(e: MouseEvent) {
+    // console.log(e.clientX)
+    // console.log(canvasRect.left)
+    let x = e.clientX - canvasRect.left
+    let y = e.clientY - canvasRect.top
+
+    // console.log(blocks[4])
+    // isPointInPath(x, y, blocks[1])
+    blocks.map(b => {
+      isPointInPath(x, y, b)
+    })
+
+  }
+
   return (
     <div>
       <div className='components'>
@@ -430,8 +521,8 @@ export default function Canvas() {
 
       </div>
       <canvas
-        onMouseMove={moveStretch}
-        id="canvas" ref={canvasRef} width={500} height={500}/>
+        onMouseMove={m}
+        id="canvas" ref={canvasRef} width={450} height={500}/>
     </div>
   )
 }

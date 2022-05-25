@@ -111,13 +111,13 @@ export default function Canvas() {
       rotate: 0,
       lineWidth: 1,
       type: BlockType.FILL,
-      color: 'black'
+      color: 'white'
     }
     setBlocks(o => {
       // o.push(getPath(allLine))
       o.push(getPath(oneBox))
       // o.push(getPath(oneBoxLine))
-      o.push(getPath(towBox))
+      // o.push(getPath(towBox))
       o.push(getPath(threeBox))
       return clone(o)
     })
@@ -490,25 +490,29 @@ export default function Canvas() {
       console.log('在里面')
       //这里要加一个判断，如果有一个在里面了，后面就不需要再去判断了，
       // 否则后面判断时会走到else逻辑里面，给清除掉
-      d = 3.5
-      ctx.lineWidth = 2 * d
-      renderLine2(box.x - d, box.y - d, box.w + 2 * d, box.h + 2 * d, 'rgb(139,80,255)')
+      d = 1
+      // ctx.save()
+      ctx.lineWidth = 1
+      renderLine2(box.x + d, box.y + d, box.w - 2 * d, box.h - 2 * d, 'rgb(139,80,255)')
+      // renderLine2(box.x, box.y, box.w, box.h, 'rgb(139,80,255)')
+      // ctx.restore()
+      return true
     } else {
       draw2()
     }
   }
 
   function m(e: MouseEvent) {
-    // console.log(e.clientX)
-    // console.log(canvasRect.left)
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
 
-    // console.log(blocks[4])
     // isPointInPath(x, y, blocks[1])
-    blocks.map(b => {
-      isPointInPath(x, y, b)
-    })
+
+    for (let i = 0; i < blocks.length; i++) {
+      let b = blocks[i]
+      let r = isPointInPath(x, y, b)
+      if (r) break
+    }
 
   }
 

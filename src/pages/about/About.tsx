@@ -2,18 +2,50 @@ import {Link} from "react-router-dom";
 import * as React from "react";
 import {Button} from "antd";
 
+class Ws {
+  public onJson?: Function
+
+  constructor() {
+    // setTimeout(() => {
+    //   this.onJson && this.onJson()
+    // })
+  }
+
+  send(val: any) {
+    this.onJson && this.onJson(val)
+  }
+}
+
 class About extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      test: 1
+      test: 1,
+      ws: null,
+      list: []
+    }
+  }
+
+  componentDidMount() {
+    let ws = new Ws()
+    this.setState({ws})
+    this.bindWs(ws)
+  }
+
+  bindWs(ws: any) {
+    ws.onJson = (val) => {
+      console.log('onJson', val)
+      console.log(this.state.list)
     }
   }
 
   tt() {
-    console.log(this)
-    this.setState({test: 2}, () => {
-      console.log(this.state.test)
+    this.state.ws.send(1)
+  }
+
+  add() {
+    this.setState(s => {
+      s.list.push(s.list.length)
     })
   }
 
@@ -30,6 +62,7 @@ class About extends React.Component {
             {this.state.test}
           </p>
           <Button onClick={this.tt.bind(this)}>点我</Button>
+          <Button onClick={this.add.bind(this)}>点我</Button>
         </main>
         <nav>
           <Link to="/layout/Home">Home</Link>

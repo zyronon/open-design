@@ -111,7 +111,7 @@ export default function Canvas() {
       rotate: 0,
       lineWidth: 1,
       type: BlockType.FILL,
-      color: 'white'
+      color: 'WHITE'
     }
     setBlocks(o => {
       // o.push(getPath(allLine))
@@ -128,6 +128,24 @@ export default function Canvas() {
   }, [blocks])
 
   function draw2() {
+    ctx.lineWidth = 7
+    ctx.fillRect(10.5, 10.5, 1, 100)
+    ctx.fillRect(10, 120, 1, 100)
+
+    ctx.beginPath()
+    ctx.moveTo(15, 10)
+    ctx.lineTo(115, 10)
+    ctx.stroke()
+
+    ctx.beginPath()
+    ctx.moveTo(15, 20.5)
+    ctx.lineTo(115, 20.5)
+    ctx.stroke()
+
+
+    return
+    ctx.save()
+    // ctx.translate(0.5, 0.5);
     clear(0, 0, canvas.width, canvas.height);
     ctx.lineCap = 'square'
     blocks.map(v => {
@@ -141,6 +159,7 @@ export default function Canvas() {
       }
       ctx.restore()
     })
+    ctx.restore()
   }
 
   function draw() {
@@ -492,10 +511,13 @@ export default function Canvas() {
       // 否则后面判断时会走到else逻辑里面，给清除掉
       d = 1
       // ctx.save()
-      ctx.lineWidth = 1
-      renderLine2(box.x + d, box.y + d, box.w - 2 * d, box.h - 2 * d, 'rgb(139,80,255)')
+      ctx.lineWidth = 2.5
+      // renderLine2(box.x + d, box.y + d, box.w - 2 * d, box.h - 2 * d, 'rgb(139,80,255)')
+      ctx.save()
+
+      renderLine2(box.x - d, box.y - d, box.w + 2 * d, box.h + 2 * d, 'rgb(139,80,255)')
       // renderLine2(box.x, box.y, box.w, box.h, 'rgb(139,80,255)')
-      // ctx.restore()
+      ctx.restore()
       return true
     } else {
       draw2()
@@ -510,8 +532,8 @@ export default function Canvas() {
 
     for (let i = 0; i < blocks.length; i++) {
       let b = blocks[i]
-      let r = isPointInPath(x, y, b)
-      if (r) break
+      // let r = isPointInPath(x, y, b)
+      // if (r) break
     }
 
   }

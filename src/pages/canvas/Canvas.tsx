@@ -61,7 +61,23 @@ export default function Canvas() {
     let canvas = canvasRef.current
     setCanvas(canvas)
     // @ts-ignore
-    setCtx(canvas.getContext('2d'))
+    let ctx = canvas.getContext('2d')
+    setCtx(ctx)
+    let width = canvas.width, height = canvas.height;
+    // if (window.devicePixelRatio) {
+    //   canvas.style.width = width + "px";
+    //   canvas.style.height = height + "px";
+    //   canvas.height = height * window.devicePixelRatio;
+    //   canvas.width = width * window.devicePixelRatio;
+    //   ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    // }
+    canvas.style.width = width + "px";
+    canvas.style.height = height + "px";
+    canvas.height = height * 2;
+    canvas.width = width * 2;
+    ctx.scale(2, 2);
+
+
     setCanvasRect(canvas.getBoundingClientRect())
     let allLine = {
       x: 0,
@@ -79,9 +95,9 @@ export default function Canvas() {
       w: 50,
       h: 150,
       rotate: 20,
-      lineWidth: 1,
-      type: BlockType.FILL,
-      color: 'black'
+      lineWidth: 2,
+      type: BlockType.LINE,
+      color: 'gray'
     }
     let oneBoxLine = {
       x: oneBox.x - d,
@@ -101,7 +117,7 @@ export default function Canvas() {
       rotate: 0,
       lineWidth: 1,
       type: BlockType.FILL,
-      color: 'black'
+      color: 'white'
     }
     let a = 0
     let threeBox = {
@@ -116,10 +132,10 @@ export default function Canvas() {
     }
     setBlocks(o => {
       // o.push(getPath(allLine))
-      // o.push(getPath(oneBox))
-      o.push(getPath(oneBoxLine))
-      // o.push(getPath(towBox))
-      // o.push(getPath(threeBox))
+      o.push(getPath(oneBox))
+      // o.push(getPath(oneBoxLine))
+      o.push(getPath(towBox))
+      o.push(getPath(threeBox))
       return clone(o)
     })
   }, [])
@@ -129,26 +145,32 @@ export default function Canvas() {
   }, [blocks])
 
   function draw2() {
-    //
-    // ctx.lineWidth = 3
-    //
+    // ctx.lineWidth = 8
+    // let s = 4
+    // x = 150.5 * s, y = 150.5 * s, w = 50 * s, h = 50 * s
+    // ctx.scale(.25, .25)
+    // ctx.rotate(20 * Math.PI / 180)
+    // ctx.imageSmoothingEnabled = true;
     // ctx.beginPath()
-    // ctx.moveTo(15, 10)
-    // ctx.lineTo(115, 10)
+    // ctx.moveTo(x, y)
+    // ctx.lineTo(x + w, y);
+    // ctx.lineTo(x + w, y + h);
+    // ctx.lineTo(x, y + h);
+    // ctx.lineTo(x, y);
+    // ctx.closePath()
     // ctx.stroke()
-    //
     // ctx.beginPath()
     // ctx.moveTo(15, 20.5)
     // ctx.lineTo(115, 20.5)
     // ctx.stroke()
-    // return
+    clearAll()
     ctx.save()
     // ctx.translate(0.5, 0.5);
-    clearAll();
     ctx.lineCap = 'square'
     blocks.map(v => {
       ctx.save()
       ctx.rotate((v.rotate * Math.PI) / 180);
+
       ctx.lineWidth = v.lineWidth
       if (v.type === BlockType.LINE) {
         renderLine2(v.x, v.y, v.w, v.h, v.color)
@@ -520,12 +542,12 @@ export default function Canvas() {
       console.log('在里面')
       //这里要加一个判断，如果有一个在里面了，后面就不需要再去判断了，
       // 否则后面判断时会走到else逻辑里面，给清除掉
-      d = 4
+      d = .5
       ctx.save()
       ctx.lineWidth = 2
       ctx.lineCap = 'square'
       ctx.rotate((box.rotate * Math.PI) / 180);
-      renderLine2(box.x - d, box.y - d, box.w + 2 * d, box.h + 2 * d, 'rgb(139,80,255)')
+      renderLine2(box.x - d, box.y - d, box.w + 2 * d, box.h + 2 * d, 'rgb(81,131,247)')
       // renderBox2(box.x, box.y, box.w, box.h, box.color)
       ctx.restore()
       return true
@@ -545,7 +567,6 @@ export default function Canvas() {
       let r = isPointInPath(x, y, b)
       if (r) break
     }
-
   }
 
   return (

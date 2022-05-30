@@ -16,6 +16,7 @@ function jiaodu2hudu(v: number) {
   return (v * Math.PI) / 180
 }
 
+//获取圆上的另一个点
 export function getRoundOtherPoint(x: number, y: number) {
   let hypotenuse = getHypotenuse([0, 0], [x, y])
   // console.log('hypotenuse', hypotenuse)

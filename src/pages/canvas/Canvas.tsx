@@ -96,18 +96,18 @@ export default function Canvas() {
       h: 150,
       rotate: 20,
       lineWidth: 2,
-      type: BlockType.LINE,
+      type: BlockType.FILL,
       color: 'gray'
     }
     let oneBoxLine = {
-      x: oneBox.x - d,
-      y: oneBox.y - d,
-      w: oneBox.w + 2 * d,
-      h: oneBox.h + 2 * d,
-      rotate: 20,
+      x: 150,
+      y: 150,
+      w: 50,
+      h: 150,
+      rotate: 70,
       lineWidth: 2,
       type: BlockType.LINE,
-      color: 'rgb(139,80,255)'
+      color: 'gray'
     }
     let towBox = {
       x: 50,
@@ -132,10 +132,10 @@ export default function Canvas() {
     }
     setBlocks(o => {
       // o.push(getPath(allLine))
-      o.push(getPath(oneBox))
-      // o.push(getPath(oneBoxLine))
-      o.push(getPath(towBox))
-      o.push(getPath(threeBox))
+      // o.push(getPath(oneBox))
+      o.push(getPath(oneBoxLine))
+      // o.push(getPath(towBox))
+      // o.push(getPath(threeBox))
       return clone(o)
     })
   }, [])
@@ -168,50 +168,40 @@ export default function Canvas() {
     // ctx.translate(0.5, 0.5);
     ctx.lineCap = 'square'
     blocks.map(v => {
-      ctx.save()
-      ctx.rotate((v.rotate * Math.PI) / 180);
-
-      ctx.lineWidth = v.lineWidth
-      if (v.type === BlockType.LINE) {
-        renderLine2(v.x, v.y, v.w, v.h, v.color)
-      } else {
-        renderBox2(v.x, v.y, v.w, v.h, v.color)
-      }
-      ctx.restore()
+      render(v)
     })
     ctx.restore()
   }
 
-  function renderBox3(x: number, y: number, w: number, h: number, color: any) {
-    ctx.fillStyle = color
-    let d = 0.5
+
+  function render(black: Box) {
+    ctx.save()
+    let {x, y, w, h, color, rotate, lineWidth, type} = black
+    if (rotate) {
+      ctx.translate(x + w / 2, y + h / 2)
+      ctx.rotate(rotate * Math.PI / 180)
+      x = -w / 2
+      y = -h / 2
+    }
+    ctx.lineWidth = lineWidth
+
+    // ctx.strokeRect(x, y, w, h)
     ctx.beginPath()
-    ctx.moveTo(x + d, y + d)
-    ctx.lineTo(x + w + d, y + d);
-    ctx.lineTo(x + w + d, y + h + d);
-    ctx.lineTo(x + d, y + h + d);
-    ctx.lineTo(x + d, y + d);
-    ctx.fill()
+    ctx.moveTo(x, y)
+    ctx.lineTo(x + w, y);
+    ctx.lineTo(x + w, y + h);
+    ctx.lineTo(x, y + h);
+    ctx.lineTo(x, y);
+    if (type === BlockType.FILL) {
+      ctx.fillStyle = color
+      ctx.fill()
+    } else {
+      ctx.strokeStyle = color
+      ctx.stroke()
+    }
+    ctx.restore()
   }
 
-  function draw() {
-    d = 2
-    ctx.lineWidth = 2 * d
-    renderBox2(one.x, one.y, one.w, one.h, 'black')
-    renderLine2(one.x - d, one.y - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
-    //这里x必须多1d，w要多2d，y和h同理
-    // clear(one.x - 2 * d, one.y - 2 * d, one.w + 4 * d, one.h + 4 * d)
-    // d = 1
-    ctx.lineWidth = 1
-    ctx.strokeStyle = 'black'
-    ctx.beginPath()
-    for (let i = 0; i < 500; i += 5) {
-      ctx.moveTo(i, 0);
-      ctx.lineTo(i, 500);
-    }
-    // ctx.stroke()
-    ctx.lineWidth = 2 * d
-  }
 
   function clear(x: number, y: number, w: number, h: number) {
     ctx.clearRect(x, y, w, h)
@@ -234,6 +224,7 @@ export default function Canvas() {
 
 
   function renderLine2(x: number, y: number, w: number, h: number, color: any) {
+
     ctx.strokeStyle = color
     ctx.beginPath()
     ctx.moveTo(x, y)
@@ -542,14 +533,18 @@ export default function Canvas() {
       console.log('在里面')
       //这里要加一个判断，如果有一个在里面了，后面就不需要再去判断了，
       // 否则后面判断时会走到else逻辑里面，给清除掉
-      d = .5
-      ctx.save()
-      ctx.lineWidth = 2
-      ctx.lineCap = 'square'
-      ctx.rotate((box.rotate * Math.PI) / 180);
-      renderLine2(box.x - d, box.y - d, box.w + 2 * d, box.h + 2 * d, 'rgb(81,131,247)')
+      let d = .5
+      let t = clone(box)
+      t.lineWidth = 2
+      t.x = t.x - d
+      t.y = t.y - d
+      t.w = t.w + 2 * d
+      t.h = t.h + 2 * d
+      t.color = 'rgb(139,80,255)'
+      render(t)
+      // ctx.rotate((box.rotate * Math.PI) / 180);
+      // renderLine2(box.x - d, box.y - d, box.w + 2 * d, box.h + 2 * d, 'rgb(81,131,247)')
       // renderBox2(box.x, box.y, box.w, box.h, box.color)
-      ctx.restore()
       return true
     } else {
       draw2()

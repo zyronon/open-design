@@ -57,7 +57,42 @@ export default function Canvas() {
   const [blocks, setBlocks] = useState<any[]>([])
   const [canvasRect, setCanvasRect] = useState<DOMRect>(null!)
 
+
+//获取圆上的另一个点
+  function getRoundOtherPoint2(p1: any, c: any, angle: number) {
+    let {x, y} = p1
+    let {cx, cy} = c
+    let hypotenuse = getHypotenuse([cx, cy], [x, y])
+    // console.log('hypotenuse', hypotenuse)
+    let s = Math.abs(y) / Math.abs(hypotenuse)
+    // console.log(s)
+    let a = Math.acos(s)
+    // console.log(a)
+    let b = hudu2juedu(a) + angle
+    // console.log(b)
+    let x1 = Math.sin(jiaodu2hudu(b)) * Math.abs(hypotenuse)
+    let y1 = Math.cos(jiaodu2hudu(b)) * Math.abs(hypotenuse)
+    return [x1, y1]
+  }
+
+  function rotate2(p1: any, c: any, angle: number) {
+    let {x, y} = p1
+    let {cx, cy} = c
+    let radians = (Math.PI / 180) * angle,
+      cos = Math.cos(radians),
+      sin = Math.sin(radians),
+      nx = (cos * (x - cx)) + (sin * (y - cy)) + cx,
+      ny = (cos * (y - cy)) - (sin * (x - cx)) + cy;
+    return [nx, ny];
+  }
+
   useEffect(() => {
+    let c = {cx: 0, cy: 0}
+    // c = {cx: 175, cy: 225}
+    // let p1 = {x: 150, y: 150}
+    // console.log(getRoundOtherPoint2(p1, c, -90))
+    // console.log(rotate2(p1, c, -90))
+
     let canvas = canvasRef.current
     setCanvas(canvas)
     // @ts-ignore
@@ -94,9 +129,9 @@ export default function Canvas() {
       y: 150,
       w: 50,
       h: 150,
-      rotate: 20,
+      rotate: 0,
       lineWidth: 2,
-      type: BlockType.FILL,
+      type: BlockType.LINE,
       color: 'gray'
     }
     let oneBoxLine = {
@@ -168,6 +203,7 @@ export default function Canvas() {
     // ctx.translate(0.5, 0.5);
     ctx.lineCap = 'square'
     blocks.map(v => {
+      // console.log(v)
       render(v)
     })
     ctx.restore()
@@ -177,14 +213,25 @@ export default function Canvas() {
   function render(black: Box) {
     ctx.save()
     let {x, y, w, h, color, rotate, lineWidth, type} = black
+
+    ctx.lineWidth = lineWidth
     if (rotate) {
+      let p1 = {x, y}
+      let p2 = {x: x + w, y}
+      let p3 = {x: x + w, y: y + h}
+      let p4 = {x, y: y + h}
+      let c = {cx: x + w / 2, cy: y + h / 2}
       ctx.translate(x + w / 2, y + h / 2)
       ctx.rotate(rotate * Math.PI / 180)
       x = -w / 2
       y = -h / 2
-    }
-    ctx.lineWidth = lineWidth
 
+      // console.log(rotate2(p1, c, -rotate))
+      // console.log(rotate2(p2, c, -rotate))
+      // console.log(rotate2(p3, c, -rotate))
+      // console.log(rotate2(p4, c, -rotate))
+
+    }
     // ctx.strokeRect(x, y, w, h)
     ctx.beginPath()
     ctx.moveTo(x, y)
@@ -192,6 +239,7 @@ export default function Canvas() {
     ctx.lineTo(x + w, y + h);
     ctx.lineTo(x, y + h);
     ctx.lineTo(x, y);
+
     if (type === BlockType.FILL) {
       ctx.fillStyle = color
       ctx.fill()
@@ -525,29 +573,89 @@ export default function Canvas() {
     box.leftY = box.y
     box.rightX = box.leftX + box.w
     box.rightY = box.leftY + box.h
+    box = getRotatePath(box)
     return box
   }
 
-  function isPointInPath(x: number, y: number, box: Box) {
-    if (box.leftX! < x && x < box.rightX! && box.leftY! < y && y < box.rightY!) {
-      console.log('在里面')
-      //这里要加一个判断，如果有一个在里面了，后面就不需要再去判断了，
-      // 否则后面判断时会走到else逻辑里面，给清除掉
-      let d = .5
-      let t = clone(box)
-      t.lineWidth = 2
-      t.x = t.x - d
-      t.y = t.y - d
-      t.w = t.w + 2 * d
-      t.h = t.h + 2 * d
-      t.color = 'rgb(139,80,255)'
-      render(t)
-      // ctx.rotate((box.rotate * Math.PI) / 180);
-      // renderLine2(box.x - d, box.y - d, box.w + 2 * d, box.h + 2 * d, 'rgb(81,131,247)')
-      // renderBox2(box.x, box.y, box.w, box.h, box.color)
-      return true
+  function getRotatePath(box: any) {
+    let {x, y, w, h, rotate} = box
+    if (rotate === 0) {
+      box.p1 = box.p2 = box.p3 = box.p4 = {x: 0, y: 0}
     } else {
-      draw2()
+      let p1 = {x, y}
+      let p2 = {x: x + w, y}
+      let p3 = {x: x + w, y: y + h}
+      let p4 = {x, y: y + h}
+      let c = {cx: x + w / 2, cy: y + h / 2}
+      box.p1 = rotate2(p1, c, -rotate)
+      box.p2 = rotate2(p2, c, -rotate)
+      box.p3 = rotate2(p3, c, -rotate)
+      box.p4 = rotate2(p4, c, -rotate)
+    }
+    box.ract = [box.p1, box.p2, box.p3, box.p4]
+    return box
+    // console.log(rotate2(p1, c, -rotate))
+    // console.log(rotate2(p2, c, -rotate))
+    // console.log(rotate2(p3, c, -rotate))
+    // console.log(rotate2(p4, c, -rotate))
+  }
+
+  function isPointInRect(point, rect) {
+    const [touchX, touchY] = point;
+    // 长方形四个点的坐标
+    const [[x1, y1], [x2, y2], [x3, y3], [x4, y4]] = rect;
+    // 四个向量
+    const v1 = [x1 - touchX, y1 - touchY];
+    const v2 = [x2 - touchX, y2 - touchY];
+    const v3 = [x3 - touchX, y3 - touchY];
+    const v4 = [x4 - touchX, y4 - touchY];
+    if (
+      (v1[0] * v2[1] - v2[0] * v1[1]) > 0
+      && (v2[0] * v4[1] - v4[0] * v2[1]) > 0
+      && (v4[0] * v3[1] - v3[0] * v4[1]) > 0
+      && (v3[0] * v1[1] - v1[0] * v3[1]) > 0
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  function isPointInPath(x: number, y: number, box: Box) {
+    if (box.rotate === 0) {
+      if (box.leftX! < x && x < box.rightX! && box.leftY! < y && y < box.rightY!) {
+        console.log('在里面')
+        //这里要加一个判断，如果有一个在里面了，后面就不需要再去判断了，
+        // 否则后面判断时会走到else逻辑里面，给清除掉
+        let d = .5
+        let t = clone(box)
+        t.lineWidth = 2
+        t.x = t.x - d
+        t.y = t.y - d
+        t.w = t.w + 2 * d
+        t.h = t.h + 2 * d
+        t.color = 'rgb(139,80,255)'
+        render(t)
+        // ctx.rotate((box.rotate * Math.PI) / 180);
+        // renderLine2(box.x - d, box.y - d, box.w + 2 * d, box.h + 2 * d, 'rgb(81,131,247)')
+        // renderBox2(box.x, box.y, box.w, box.h, box.color)
+        return true
+      } else {
+        draw2()
+      }
+    } else {
+      let {w, h, rotate} = box
+      let p1 = {x, y}
+      console.log(p1)
+      let c = {cx: box.x + w / 2, cy: box.y + h / 2}
+      let s = rotate2(p1, c, -rotate)
+      console.log(s)
+      x = s[0]
+      y = s[1]
+      if (box.leftX! < x && x < box.rightX! && box.leftY! < y && y < box.rightY!) {
+        console.log('在里面')
+      }
+      // let r = isPointInRect([x, y], box.ract)
+      // console.log(r)
     }
   }
 
@@ -555,13 +663,16 @@ export default function Canvas() {
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
 
-    // isPointInPath(x, y, blocks[1])
 
-    for (let i = 0; i < blocks.length; i++) {
-      let b = blocks[i]
-      let r = isPointInPath(x, y, b)
-      if (r) break
-    }
+    // return console.log(x, y)
+
+    isPointInPath(x, y, blocks[0])
+
+    // for (let i = 0; i < blocks.length; i++) {
+    //   let b = blocks[i]
+    //   let r = isPointInPath(x, y, b)
+    //   if (r) break
+    // }
   }
 
   return (

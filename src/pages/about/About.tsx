@@ -1,72 +1,37 @@
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import * as React from "react";
-import {Button} from "antd";
+import { Button } from "antd";
+import { useState } from "react";
+import eventBus from "../../utils/event-bus";
 
-class Ws {
-  public onJson?: Function
-
-  constructor() {
-    // setTimeout(() => {
-    //   this.onJson && this.onJson()
-    // })
-  }
-
-  send(val: any) {
-    this.onJson && this.onJson(val)
-  }
+function Child() {
+  let [c, setC] = useState(1)
+  return <Button onClick={() => eventBus.emit('notice', ++c)}>child{c}</Button>
 }
 
-class About extends React.Component {
-  constructor(props) {
+class About extends React.Component<any, any> {
+  constructor(props: any) {
     super(props);
     this.state = {
-      test: 1,
-      ws: null,
-      list: []
+      count: 2
     }
-  }
-
-  componentDidMount() {
-    let ws = new Ws()
-    this.setState({ws})
-    this.bindWs(ws)
-  }
-
-  bindWs(ws: any) {
-    ws.onJson = (val) => {
-      console.log('onJson', val)
-      console.log(this.state.list)
-    }
-  }
-
-  tt() {
-    this.state.ws.send(1)
-  }
-
-  add() {
-    this.setState(s => {
-      s.list.push(s.list.length)
+    eventBus.on('notice', (e: any) => {
+      console.log('e', this.state.count)
     })
   }
+
+  t() {
+    console.log('t')
+    this.setState({ count: this.state.count + 1 })
+  }
+
 
   render() {
     return (
       <>
-        <main>
-          <h2>Who are we?</h2>
-          <p>
-            That feels like an existential question, don't you
-            think?
-          </p>
-          <p>
-            {this.state.test}
-          </p>
-          <Button onClick={this.tt.bind(this)}>点我</Button>
-          <Button onClick={this.add.bind(this)}>点我</Button>
-        </main>
-        <nav>
-          <Link to="/layout/Home">Home</Link>
-        </nav>
+        {this.state.count}
+        <Button onClick={() => this.t()}>Click</Button>
+        <Child/>
       </>
     );
   }

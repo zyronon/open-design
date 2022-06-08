@@ -3,11 +3,21 @@ import {memo} from "react";
 import * as React from 'react'
 
 import {Button} from "antd";
+import eventBus from "../../utils/event-bus";
+
+function Child() {
+  let [c, setC] = useState(1)
+  return <Button onClick={() => eventBus.emit('notice', ++c)}>child{c}</Button>
+}
 
 export default function Hooks() {
 
   let [count, setCount] = useState(0)
   useEffect(() => {
+    eventBus.on('notice', e => {
+      console.log('e-count', count)
+    })
+
     console.log('count-start', count)
     return () => {
       setCount(o => {
@@ -16,7 +26,6 @@ export default function Hooks() {
         return o
       })
       console.log('count-end', count)
-
     }
   }, [])
 
@@ -24,7 +33,7 @@ export default function Hooks() {
     <>
       <p>{count}</p>
       <Button onClick={() => setCount(++count)}>Click</Button>
-      {/*<Button onClick={handleClick}>Click2</Button>*/}
+      <Child/>
     </>
   )
 }

@@ -22,11 +22,12 @@ import App from "./App";
 import {store} from './store/store.js';
 import {Provider} from "react-redux";
 import Canvas from "./pages/canvas/Canvas";
+import Test from "./pages/test/Test";
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <Provider store={store}>
-      <Canvas/>
+      <Test/>
     </Provider>
   </BrowserRouter>,
 );

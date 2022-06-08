@@ -1,4 +1,4 @@
-import {Layout} from "antd";
+import { Layout } from "antd";
 import Home from "../pages/home/Home";
 import About from "../pages/about/About";
 import BaseLayout from "../pages/layout/BaseLayout";
@@ -6,6 +6,7 @@ import Hooks from "../pages/hooks/Hooks";
 import Redux from "../pages/reduxPage/Redux";
 import Hoc from "../pages/hoc/Hoc";
 import Canvas from "../pages/canvas/Canvas";
+import Test from "../pages/test/Test"
 
 export default [
   {
@@ -35,6 +36,10 @@ export default [
       {
         path: '/layout/canvas',
         component: Canvas,
+      },
+      {
+        path: '/layout/test',
+        component: Test,
       }
     ]
   }

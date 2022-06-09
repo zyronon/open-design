@@ -27,7 +27,7 @@ import Test from "./pages/test/Test";
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <Provider store={store}>
-      <Test/>
+      <Canvas/>
     </Provider>
   </BrowserRouter>,
 );

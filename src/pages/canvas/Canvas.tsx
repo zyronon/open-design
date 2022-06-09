@@ -1,7 +1,7 @@
-import React, {RefObject, MouseEvent} from "react";
+import React, { RefObject, MouseEvent } from "react";
 import './index.scss'
-import _, {clone} from 'lodash'
-import {getAngle, getHypotenuse, getRoundOtherPoint} from "../../utils";
+import _, { clone } from 'lodash'
+import { getAngle, getHypotenuse, getRoundOtherPoint } from "../../utils";
 
 enum BoxType {
   LINE = 0,
@@ -154,9 +154,9 @@ class Canvas extends React.Component<any, IState> {
   }
 
   renderCanvas(box: Box, parent?: Box) {
-    let {ctx} = this.state
+    let { ctx } = this.state
     ctx.save()
-    let {x, y, w, h, color, rotate, lineWidth, type} = box
+    let { x, y, w, h, color, rotate, lineWidth, type } = box
     if (parent) {
       x = parent.x
       y = parent.y
@@ -173,11 +173,11 @@ class Canvas extends React.Component<any, IState> {
 
     ctx.lineWidth = lineWidth
     if (rotate) {
-      let p1 = {x, y}
-      let p2 = {x: x + w, y}
-      let p3 = {x: x + w, y: y + h}
-      let p4 = {x, y: y + h}
-      let c = {cx: x + w / 2, cy: y + h / 2}
+      let p1 = { x, y }
+      let p2 = { x: x + w, y }
+      let p3 = { x: x + w, y: y + h }
+      let p4 = { x, y: y + h }
+      let c = { cx: x + w / 2, cy: y + h / 2 }
       ctx.translate(x + w / 2, y + h / 2)
       ctx.rotate(rotate * Math.PI / 180)
       x = -w / 2
@@ -283,9 +283,9 @@ class Canvas extends React.Component<any, IState> {
   }
 
   renderRoundRect(rect: any, r: number) {
-    let {ctx} = this.state
+    let { ctx } = this.state
     ctx.lineWidth = rect.lineWidth
-    let {x, y, w, h} = rect
+    let { x, y, w, h } = rect
     ctx.beginPath()
     ctx.moveTo(x + w / 2, y)
     ctx.arcTo(x + w, y, x + w, y + h, r)
@@ -319,40 +319,10 @@ class Canvas extends React.Component<any, IState> {
     return box
   }
 
-  m = (e: MouseEvent) => {
-    let {canvasRect, enter, selectBox, startX, startY, boxList} = this.state
-    let x = e.clientX - canvasRect.left
-    let y = e.clientY - canvasRect.top
-
-    if (enter) {
-      if (!selectBox?.id) return
-      // console.log('startX')
-      // console.log('按下了')
-      let dx = x - startX
-      let dy = y - startY
-      let old = clone(boxList)
-      let rIndex = old.findIndex(v => v.id === selectBox?.id)
-      if (rIndex !== -1) {
-        let now = old[rIndex]
-        now.x = selectBox.x + dx
-        now.y = selectBox.y + dy
-        now = this.getPath(now)
-      }
-      this.setState({boxList: old})
-      return
-    }
-    // return console.log(x, y)
-    // isPointInPath(x, y, blocks[0])
-    for (let i = 0; i < boxList.length; i++) {
-      let b = boxList[i]
-      let r = this.isPointInPath(x, y, b)
-      if (r) break
-    }
-  }
 
   rotate33(p1: any, c: any, angle: number) {
-    let {x, y} = p1
-    let {cx, cy} = c
+    let { x, y } = p1
+    let { cx, cy } = c
     let radians = (Math.PI / 180) * angle,
       cos = Math.cos(radians),
       sin = Math.sin(radians),
@@ -362,10 +332,10 @@ class Canvas extends React.Component<any, IState> {
   }
 
   onMouseDown1 = (e: any) => {
-    let {selectBox, boxList, canvasRect} = this.state
+    let { selectBox, boxList, canvasRect } = this.state
     if (!selectBox) return
     if (e.which === 1) {
-      this.setState({enter: true})
+      this.setState({ enter: true })
 
       let old = clone(boxList)
       let rIndex = old.findIndex(v => v.id === selectBox?.id)
@@ -396,25 +366,34 @@ class Canvas extends React.Component<any, IState> {
         boxList: old,
         startX: e.clientX - canvasRect.left,
         startY: e.clientY - canvasRect.top,
-      })
+      }, this.draw2)
     }
     console.log('onMouseDown', e.clientX - canvasRect.left)
   }
 
   onMouseUp1 = (e: any) => {
-    this.setState({enter: false, selectBox: undefined})
+    let { selectBox, boxList } = this.state
+    let old = clone(boxList)
+    let rIndex = old.findIndex(v => v.id === selectBox?.id)
+    if (rIndex !== -1) {
+      let selectIndex = old[rIndex].children.findIndex(w => w.type === BoxType.SELECT)
+      if (selectIndex !== -1) {
+        old[rIndex].children.splice(selectIndex, 1)
+      }
+    }
+    this.setState({ boxList: old, enter: false, selectBox: undefined }, this.draw2)
     // console.log(blocks)
     this.body.style.cursor = "default"
     console.log('onMouseUp')
   }
 
   isPointInPath(x: number, y: number, box: Box) {
-    let {canvas} = this.state
+    let { canvas } = this.state
     // console.log('box.x', box.x, 'box.y', box.y)
     if (box.rotate !== 0) {
-      let {w, h, rotate} = box
-      let p1 = {x, y}
-      let c = {cx: box.x + w / 2, cy: box.y + h / 2}
+      let { w, h, rotate } = box
+      let p1 = { x, y }
+      let c = { cx: box.x + w / 2, cy: box.y + h / 2 }
       let s = this.rotate33(p1, c, -rotate)
       x = s[0]
       y = s[1]
@@ -423,20 +402,24 @@ class Canvas extends React.Component<any, IState> {
       // console.log(r)
     }
     if (box.leftX! < x && x < box.rightX! && box.leftY! < y && y < box.rightY!) {
-      console.log('在里面')
-      //这里要加一个判断，如果有一个在里面了，后面就不需要再去判断了，
-      // 否则后面判断时会走到else逻辑里面，给清除掉
-      let d = .5
-      let t = clone(box)
-      t.lineWidth = 2
-      t.x = t.x - d
-      t.y = t.y - d
-      t.w = t.w + 2 * d
-      t.h = t.h + 2 * d
-      console.log(t)
-      t.type = BoxType.WRAPPER
-      this.renderCanvas(t)
-      this.setState({selectBox: clone(box)})
+      let isSelect = box.children.find(v => v.type === BoxType.SELECT)
+      if (!isSelect) {
+        // console.log('在里面')
+        //这里要加一个判断，如果有一个在里面了，后面就不需要再去判断了，
+        // 否则后面判断时会走到else逻辑里面，给清除掉
+        let d = .5
+        let t = clone(box)
+        t.id = Date.now()
+        t.lineWidth = 2
+        t.x = t.x - d
+        t.y = t.y - d
+        t.w = t.w + 2 * d
+        t.h = t.h + 2 * d
+        // console.log(t)
+        t.type = BoxType.WRAPPER
+        this.renderCanvas(t)
+      }
+      this.setState({ selectBox: clone(box) })
       canvas.addEventListener('mousedown', this.onMouseDown1)
       canvas.addEventListener('mouseup', this.onMouseUp1)
       // console.log('1')
@@ -446,12 +429,43 @@ class Canvas extends React.Component<any, IState> {
       return true
     } else {
       // console.log('不在里面')
-      this.setState({selectBox: undefined})
+      this.setState({ selectBox: undefined })
       canvas.removeEventListener('mousedown', this.onMouseDown1)
       canvas.removeEventListener('mouseup', this.onMouseUp1)
       // console.log('2')
       this.body.style.cursor = "default"
       this.draw2()
+    }
+  }
+
+  m = (e: MouseEvent) => {
+    let { canvasRect, enter, selectBox, startX, startY, boxList } = this.state
+    let x = e.clientX - canvasRect.left
+    let y = e.clientY - canvasRect.top
+
+    if (enter) {
+      if (!selectBox?.id) return
+      // console.log('startX')
+      // console.log('按下了')
+      let dx = x - startX
+      let dy = y - startY
+      let old = clone(boxList)
+      let rIndex = old.findIndex(v => v.id === selectBox?.id)
+      if (rIndex !== -1) {
+        let now = old[rIndex]
+        now.x = selectBox.x + dx
+        now.y = selectBox.y + dy
+        now = this.getPath(now)
+      }
+      this.setState({ boxList: old }, this.draw2)
+      return
+    }
+    // return console.log(x, y)
+    // isPointInPath(x, y, blocks[0])
+    for (let i = 0; i < boxList.length; i++) {
+      let b = boxList[i]
+      let r = this.isPointInPath(x, y, b)
+      if (r) break
     }
   }
 
@@ -465,6 +479,8 @@ class Canvas extends React.Component<any, IState> {
       </div>
       <canvas
         onMouseMove={this.m}
+        onMouseDown={this.onMouseDown1}
+        onMouseUp={this.onMouseUp1}
         id="canvas" ref={this.canvasRef} width={450} height={500}/>
     </div>
   }

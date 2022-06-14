@@ -333,58 +333,68 @@ class Canvas extends React.Component<any, IState> {
 
   onMouseDown1 = (e: any) => {
     let { selectBox, boxList, canvasRect } = this.state
-    if (!selectBox) return
-    if (e.which === 1) {
-      this.setState({ enter: true })
+    console.log('s',selectBox)
+    if (selectBox) {
+      if (e.button === 0) {
+        this.setState({ enter: true })
 
-      let old = clone(boxList)
-      let rIndex = old.findIndex(v => v.id === selectBox?.id)
-      if (rIndex !== -1) {
-        let now = old[rIndex]
+        let old = clone(boxList)
+        let rIndex = old.findIndex(v => v.id === selectBox?.id)
+        if (rIndex !== -1) {
+          let now = old[rIndex]
 
-        let d = 0.5
-        let t = clone(now)
-        t.id = Date.now()
-        t.lineWidth = 2
-        // t.x = t.x - d
-        // t.y = t.y - d
-        // t.w = t.w + 2 * d
-        // t.h = t.h + 2 * d
-        t.type = BoxType.SELECT
-        t.children = []
-        let cIndex = now.children.findIndex(v => v.type === BoxType.WRAPPER)
-        console.log(cIndex)
-        if (cIndex !== -1) {
-          now.children[cIndex] = t
-        } else {
-          now.children.push(t)
+          let d = 0.5
+          let t = clone(now)
+          t.id = Date.now()
+          t.lineWidth = 2
+          // t.x = t.x - d
+          // t.y = t.y - d
+          // t.w = t.w + 2 * d
+          // t.h = t.h + 2 * d
+          t.type = BoxType.SELECT
+          t.children = []
+          let cIndex = now.children.findIndex(v => v.type === BoxType.WRAPPER)
+          // console.log(cIndex)
+          if (cIndex !== -1) {
+            now.children[cIndex] = t
+          } else {
+            now.children.push(t)
+          }
+          // // console.log(t)
+          // render(now)
         }
-        // // console.log(t)
-        // render(now)
+        this.setState({
+          boxList: old,
+          startX: e.clientX - canvasRect.left,
+          startY: e.clientY - canvasRect.top,
+        }, this.draw2)
       }
-      this.setState({
-        boxList: old,
-        startX: e.clientX - canvasRect.left,
-        startY: e.clientY - canvasRect.top,
-      }, this.draw2)
+    } else {
+      let x = e.clientX
+      let y = e.clientY
+      let old = clone(boxList)
+      for (let i = 0; i < boxList.length; i++) {
+        let b = boxList[i]
+        let r = this.isPointInPath(x, y, b)
+        console.log('r',r)
+        if (r) {
+          break
+        } else {
+          let selectIndex = old[i].children.findIndex(w => w.type === BoxType.SELECT)
+          if (selectIndex !== -1) {
+            old[i].children.splice(selectIndex, 1)
+          }
+        }
+      }
+      this.setState({ boxList: old }, this.draw2)
     }
-    console.log('onMouseDown', e.clientX - canvasRect.left)
+    console.log('onMouseDown')
   }
 
   onMouseUp1 = (e: any) => {
-    let { selectBox, boxList } = this.state
-    let old = clone(boxList)
-    let rIndex = old.findIndex(v => v.id === selectBox?.id)
-    if (rIndex !== -1) {
-      let selectIndex = old[rIndex].children.findIndex(w => w.type === BoxType.SELECT)
-      if (selectIndex !== -1) {
-        old[rIndex].children.splice(selectIndex, 1)
-      }
-    }
-    this.setState({ boxList: old, enter: false, selectBox: undefined }, this.draw2)
-    // console.log(blocks)
+    this.setState({ enter: false, })
     this.body.style.cursor = "default"
-    console.log('onMouseUp')
+    // console.log('onMouseUp')
   }
 
   isPointInPath(x: number, y: number, box: Box) {
@@ -420,8 +430,8 @@ class Canvas extends React.Component<any, IState> {
         this.renderCanvas(t)
       }
       this.setState({ selectBox: clone(box) })
-      canvas.addEventListener('mousedown', this.onMouseDown1)
-      canvas.addEventListener('mouseup', this.onMouseUp1)
+      // canvas.addEventListener('mousedown', this.onMouseDown1)
+      // canvas.addEventListener('mouseup', this.onMouseUp1)
       // console.log('1')
       // body.style.cursor = "ne-resize"
       // body.style.cursor = "pointer"
@@ -430,11 +440,12 @@ class Canvas extends React.Component<any, IState> {
     } else {
       // console.log('不在里面')
       this.setState({ selectBox: undefined })
-      canvas.removeEventListener('mousedown', this.onMouseDown1)
-      canvas.removeEventListener('mouseup', this.onMouseUp1)
+      // canvas.removeEventListener('mousedown', this.onMouseDown1)
+      // canvas.removeEventListener('mouseup', this.onMouseUp1)
       // console.log('2')
       this.body.style.cursor = "default"
       this.draw2()
+      return false
     }
   }
 

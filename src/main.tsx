@@ -28,6 +28,7 @@ createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <Provider store={store}>
       <Canvas/>
+      {/*<App/>*/}
     </Provider>
   </BrowserRouter>,
 );

@@ -141,8 +141,8 @@ export default function Canvas() {
       children: []
     }
     let oneBox = {
-      x: 150,
-      y: 150,
+      x: 276,
+      y: 258,
       w: 50,
       h: 150,
       rotate: 0,
@@ -199,8 +199,8 @@ export default function Canvas() {
     }
     setBlocks(o => {
       // o.push(getPath(allLine))
-      // o.push(getPath(oneBox))
-      o.push(getPath(oneBoxLine))
+      o.push(getPath(oneBox))
+      // o.push(getPath(oneBoxLine))
       // o.push(getPath(selectBox))
       // o.push(getPath(towBox))
       // o.push(getPath(threeBox))
@@ -559,7 +559,7 @@ export default function Canvas() {
 
   function moveStretch(e: any) {
     // console.log(canvasRect)
-    return;
+    // return;
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
     let dis = 20
@@ -898,7 +898,7 @@ export default function Canvas() {
 
       </div>
       <canvas
-        onMouseMove={m}
+        onMouseMove={moveStretch}
         id="canvas" ref={canvasRef} width={450} height={500}/>
     </div>
   )

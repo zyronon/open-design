@@ -1,4 +1,3 @@
-import { Layout } from "antd";
 import Home from "../pages/home/Home";
 import About from "../pages/about/About";
 import BaseLayout from "../pages/layout/BaseLayout";

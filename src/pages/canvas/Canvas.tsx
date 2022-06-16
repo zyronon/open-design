@@ -1,7 +1,7 @@
-import React, { RefObject, MouseEvent } from "react";
+import React, {RefObject, MouseEvent} from "react";
 import './index.scss'
-import _, { clone } from 'lodash'
-import { getAngle, getHypotenuse, getRoundOtherPoint } from "../../utils";
+import _, {clone} from 'lodash'
+import {getAngle, getHypotenuse, getRoundOtherPoint} from "../../utils";
 
 enum BoxType {
   LINE = 0,
@@ -33,6 +33,7 @@ type IState = {
   ctx: CanvasRenderingContext2D,
   canvasRect: DOMRect,
   enter: boolean,
+  hoverOn: boolean,
   selectBox?: Box,
   startX: number,
   startY: number,
@@ -157,9 +158,9 @@ class Canvas extends React.Component<any, IState> {
   }
 
   renderCanvas(box: Box, parent?: Box) {
-    let { ctx } = this.state
+    let {ctx} = this.state
     ctx.save()
-    let { x, y, w, h, color, rotate, lineWidth, type } = box
+    let {x, y, w, h, color, rotate, lineWidth, type} = box
     if (parent) {
       x = parent.x
       y = parent.y
@@ -176,11 +177,11 @@ class Canvas extends React.Component<any, IState> {
 
     ctx.lineWidth = lineWidth
     if (rotate) {
-      let p1 = { x, y }
-      let p2 = { x: x + w, y }
-      let p3 = { x: x + w, y: y + h }
-      let p4 = { x, y: y + h }
-      let c = { cx: x + w / 2, cy: y + h / 2 }
+      let p1 = {x, y}
+      let p2 = {x: x + w, y}
+      let p3 = {x: x + w, y: y + h}
+      let p4 = {x, y: y + h}
+      let c = {cx: x + w / 2, cy: y + h / 2}
       ctx.translate(x + w / 2, y + h / 2)
       ctx.rotate(rotate * Math.PI / 180)
       x = -w / 2
@@ -286,9 +287,9 @@ class Canvas extends React.Component<any, IState> {
   }
 
   renderRoundRect(rect: any, r: number) {
-    let { ctx } = this.state
+    let {ctx} = this.state
     ctx.lineWidth = rect.lineWidth
-    let { x, y, w, h } = rect
+    let {x, y, w, h} = rect
     ctx.beginPath()
     ctx.moveTo(x + w / 2, y)
     ctx.arcTo(x + w, y, x + w, y + h, r)
@@ -325,8 +326,8 @@ class Canvas extends React.Component<any, IState> {
 
   //旋转鼠标坐标，
   rotate33(p1: any, c: any, angle: number) {
-    let { x, y } = p1
-    let { cx, cy } = c
+    let {x, y} = p1
+    let {cx, cy} = c
     let radians = (Math.PI / 180) * angle,
       cos = Math.cos(radians),
       sin = Math.sin(radians),
@@ -336,11 +337,13 @@ class Canvas extends React.Component<any, IState> {
   }
 
   onMouseDown1 = (e: any) => {
-    let { selectBox, boxList, canvasRect } = this.state
+    let {selectBox, boxList, canvasRect} = this.state
+    console.log('selectBox',selectBox)
+
     if (selectBox) {
-      // console.log('selectBox',selectBox)
       if (e.button === 0) {
-        this.setState({ enter: true })
+        // if ()
+        this.setState({enter: true})
 
         let old = clone(boxList)
         let rIndex = old.findIndex(v => v.id === selectBox!.id)
@@ -376,6 +379,7 @@ class Canvas extends React.Component<any, IState> {
       for (let i = 0; i < boxList.length; i++) {
         let b = boxList[i]
         let r = this.isPointInPath(x, y, b)
+        console.log('in',r)
         if (r) {
           break
         } else {
@@ -385,24 +389,24 @@ class Canvas extends React.Component<any, IState> {
           }
         }
       }
-      this.setState({ boxList: old }, this.draw2)
+      this.setState({boxList: old}, this.draw2)
     }
     // console.log('onMouseDown')
   }
 
   onMouseUp1 = (e: any) => {
-    this.setState({ enter: false, })
+    this.setState({enter: false,})
     this.body.style.cursor = "default"
     // console.log('onMouseUp')
   }
 
   isPointInPath(x: number, y: number, box: Box) {
-    let { canvas } = this.state
+    let {canvas} = this.state
     // console.log('box.x', box.x, 'box.y', box.y)
     if (box.rotate !== 0) {
-      let { w, h, rotate } = box
-      let p1 = { x, y }
-      let c = { cx: box.x + w / 2, cy: box.y + h / 2 }
+      let {w, h, rotate} = box
+      let p1 = {x, y}
+      let c = {cx: box.x + w / 2, cy: box.y + h / 2}
       let s = this.rotate33(p1, c, -rotate)
       x = s[0]
       y = s[1]
@@ -432,7 +436,7 @@ class Canvas extends React.Component<any, IState> {
         t.type = BoxType.WRAPPER
         this.renderCanvas(t)
       }
-      this.setState({ selectBox: clone(box) })
+      this.setState({selectBox: clone(box)})
       // canvas.addEventListener('mousedown', this.onMouseDown1)
       // canvas.addEventListener('mouseup', this.onMouseUp1)
       // console.log('1')
@@ -442,7 +446,7 @@ class Canvas extends React.Component<any, IState> {
       isIn = true
     } else {
       // console.log('不在里面')
-      this.setState({ selectBox: undefined })
+      this.setState({selectBox: undefined})
       // canvas.removeEventListener('mousedown', this.onMouseDown1)
       // canvas.removeEventListener('mouseup', this.onMouseUp1)
       // console.log('2')
@@ -451,24 +455,25 @@ class Canvas extends React.Component<any, IState> {
       isIn = false
     }
 
-    if (isSelect) {
-      let dis = 10
-      if ((box.leftX! - dis < x && x < box.leftX! + dis) &&
-        (box.topY! - dis < y && y < box.bottomY! + dis)
-      ) {
-        console.log('1')
-        this.body.style.cursor = "e-resize"
-      } else {
-        console.log(2)
-        this.body.style.cursor = "default"
-      }
-    }
+    // if (isSelect) {
+    //   let dis = 10
+    //   if ((box.leftX! - dis < x && x < box.leftX! + dis) &&
+    //     (box.topY! - dis < y && y < box.bottomY! + dis)
+    //   ) {
+    //     this.setState({hoverOn: true})
+    //     console.log('1')
+    //     this.body.style.cursor = "e-resize"
+    //   } else {
+    //     this.setState({hoverOn: false})
+    //     console.log(2)
+    //     this.body.style.cursor = "default"
+    //   }
+    // }
     return isIn
   }
 
-
   m = (e: MouseEvent) => {
-    let { canvasRect, enter, selectBox, startX, startY, boxList } = this.state
+    let {canvasRect, enter, selectBox, startX, startY, boxList} = this.state
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
 
@@ -486,7 +491,7 @@ class Canvas extends React.Component<any, IState> {
         now.y = selectBox.y + dy
         now = this.getPath(now)
       }
-      this.setState({ boxList: old }, this.draw2)
+      this.setState({boxList: old}, this.draw2)
       return
     }
     // return console.log(x, y)

@@ -36,10 +36,6 @@ export default [
         path: '/layout/canvas',
         component: Canvas,
       },
-      {
-        path: '/layout/test',
-        component: Test,
-      }
     ]
-  }
+  },
 ]

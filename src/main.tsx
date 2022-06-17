@@ -19,14 +19,15 @@ import { createRoot } from "react-dom/client";
 import { store } from './store/store.js';
 import { Provider } from "react-redux";
 import Canvas from "./pages/canvas/Canvas";
+import App from "./App";
 // import Canvas from "./pages/canvas/Canvas-hooks";
 
 
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <Provider store={store}>
-      <Canvas/>
-      {/*<App/>*/}
+      {/*<Canvas/>*/}
+      <App/>
     </Provider>
   </BrowserRouter>,
 );

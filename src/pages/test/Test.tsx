@@ -28,8 +28,6 @@ export default function Test(props: any) {
     })
   })
 
-  const [callList, setCallList] = useState<any>([])
-
   function add() {
     setList((o: any[]) => {
       o.push({
@@ -52,10 +50,6 @@ export default function Test(props: any) {
       time: Date.now()
     }
     setList((o: any[]) => {
-      o.push(item)
-      return clone(o)
-    })
-    setCallList((o: any[]) => {
       o.push(item)
       return clone(o)
     })
@@ -143,11 +137,6 @@ export default function Test(props: any) {
     })
   }
 
-
-  function test() {
-    ob.observe(document.querySelector('#a5'));
-  }
-
   function toEnd() {
     listRef.current.scrollTop = listRef.current.scrollHeight
   }
@@ -188,7 +177,6 @@ export default function Test(props: any) {
         <Button onClick={add}>添加</Button>
         <Button onClick={jumpTo}>跳转</Button>
         <Button onClick={toEnd}>到底</Button>
-        <Button onClick={test}>test</Button>
         <Button onClick={() => setShow(!show)}>显示</Button>
         {/*<SpaceShareModal2*/}
         {/*    visible={visible}*/}

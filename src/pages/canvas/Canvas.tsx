@@ -1,7 +1,6 @@
-import React, {RefObject, MouseEvent} from "react";
+import React, {MouseEvent, RefObject} from "react";
 import './index.scss'
-import _, {clone} from 'lodash'
-import {getAngle, getHypotenuse, getRoundOtherPoint} from "../../utils";
+import {clone} from 'lodash'
 
 enum BoxType {
   LINE = 0,
@@ -33,10 +32,12 @@ type IState = {
   ctx: CanvasRenderingContext2D,
   canvasRect: DOMRect,
   enter: boolean,
+  enterLeft: boolean,
   hoverOn: boolean,
   selectBox?: Box,
   startX: number,
   startY: number,
+  offsetX: number,
 }
 
 class Canvas extends React.Component<any, IState> {
@@ -323,7 +324,6 @@ class Canvas extends React.Component<any, IState> {
     return box
   }
 
-
   //旋转鼠标坐标，
   rotate33(p1: any, c: any, angle: number) {
     let {x, y} = p1
@@ -337,20 +337,43 @@ class Canvas extends React.Component<any, IState> {
   }
 
   onMouseDown1 = (e: any) => {
-    let {selectBox, boxList, canvasRect} = this.state
-    console.log('selectBox',selectBox)
+    if (e.button !== 0) return;
+    let {selectBox, boxList, canvasRect, hoverOn} = this.state
+    // console.log('selectBox', selectBox)
+    let x = e.clientX - canvasRect.left
+    let y = e.clientY - canvasRect.top
 
+    let old = clone(boxList)
+    let select
     if (selectBox) {
-      if (e.button === 0) {
-        // if ()
-        this.setState({enter: true})
-
-        let old = clone(boxList)
-        let rIndex = old.findIndex(v => v.id === selectBox!.id)
-        // console.log(rIndex)
+      if (hoverOn) {
+        this.setState({
+          startX: x,
+          startY: y,
+          enterLeft: true,
+          offsetX: x - selectBox.x
+        })
+        return
+      }
+      let r = this.isPointInPath(x, y, selectBox)
+      if (!r) {
+        let rIndex = old.findIndex(o => o.id === selectBox!.id)
         if (rIndex !== -1) {
-          let now = old[rIndex]
-
+          let selectIndex = old[rIndex].children.findIndex(w => w.type === BoxType.SELECT)
+          if (selectIndex !== -1) {
+            old[rIndex].children.splice(selectIndex, 1)
+          }
+        }
+      } else {
+        select = selectBox
+      }
+    } else {
+      for (let i = 0; i < boxList.length; i++) {
+        let b = boxList[i]
+        let r = this.isPointInPath(x, y, b)
+        console.log('in', r)
+        if (r) {
+          let now = old[i]
           let t = clone(now)
           t.id = Date.now()
           t.lineWidth = 2
@@ -363,24 +386,7 @@ class Canvas extends React.Component<any, IState> {
           } else {
             now.children.push(t)
           }
-          // // console.log(t)
-          // render(now)
-        }
-        this.setState({
-          boxList: old,
-          startX: e.clientX - canvasRect.left,
-          startY: e.clientY - canvasRect.top,
-        }, this.draw2)
-      }
-    } else {
-      let x = e.clientX
-      let y = e.clientY
-      let old = clone(boxList)
-      for (let i = 0; i < boxList.length; i++) {
-        let b = boxList[i]
-        let r = this.isPointInPath(x, y, b)
-        console.log('in',r)
-        if (r) {
+          select = now
           break
         } else {
           let selectIndex = old[i].children.findIndex(w => w.type === BoxType.SELECT)
@@ -389,13 +395,26 @@ class Canvas extends React.Component<any, IState> {
           }
         }
       }
-      this.setState({boxList: old}, this.draw2)
     }
+    this.setState({
+      boxList: old,
+      selectBox: clone(select),
+      startX: x,
+      enter: true,
+      startY: y,
+    }, this.draw2)
     // console.log('onMouseDown')
   }
 
   onMouseUp1 = (e: any) => {
-    this.setState({enter: false,})
+    let {hoverOn, selectBox, boxList} = this.state
+    if (selectBox) {
+      let rIndex = boxList.findIndex(v => v.id === selectBox?.id)
+      if (rIndex !== -1) {
+        this.setState({selectBox: clone(boxList[rIndex])})
+      }
+    }
+    this.setState({enter: false, enterLeft: false})
     this.body.style.cursor = "default"
     // console.log('onMouseUp')
   }
@@ -436,7 +455,7 @@ class Canvas extends React.Component<any, IState> {
         t.type = BoxType.WRAPPER
         this.renderCanvas(t)
       }
-      this.setState({selectBox: clone(box)})
+      // this.setState({selectBox: clone(box)})
       // canvas.addEventListener('mousedown', this.onMouseDown1)
       // canvas.addEventListener('mouseup', this.onMouseUp1)
       // console.log('1')
@@ -444,9 +463,10 @@ class Canvas extends React.Component<any, IState> {
       // body.style.cursor = "pointer"
       // body.style.cursor = "move"
       isIn = true
+      // console.log('在里面')
     } else {
       // console.log('不在里面')
-      this.setState({selectBox: undefined})
+      // this.setState({selectBox: undefined})
       // canvas.removeEventListener('mousedown', this.onMouseDown1)
       // canvas.removeEventListener('mouseup', this.onMouseUp1)
       // console.log('2')
@@ -455,28 +475,45 @@ class Canvas extends React.Component<any, IState> {
       isIn = false
     }
 
-    // if (isSelect) {
-    //   let dis = 10
-    //   if ((box.leftX! - dis < x && x < box.leftX! + dis) &&
-    //     (box.topY! - dis < y && y < box.bottomY! + dis)
-    //   ) {
-    //     this.setState({hoverOn: true})
-    //     console.log('1')
-    //     this.body.style.cursor = "e-resize"
-    //   } else {
-    //     this.setState({hoverOn: false})
-    //     console.log(2)
-    //     this.body.style.cursor = "default"
-    //   }
-    // }
+    if (isSelect) {
+      let dis = 10
+      if ((box.leftX! - dis < x && x < box.leftX! + dis) &&
+        (box.topY! - dis < y && y < box.bottomY! + dis)
+      ) {
+        this.setState({hoverOn: true})
+        // console.log('1')
+        this.body.style.cursor = "e-resize"
+      } else {
+        this.setState({hoverOn: false})
+        // console.log(2)
+        this.body.style.cursor = "default"
+      }
+    }
     return isIn
   }
 
   m = (e: MouseEvent) => {
-    let {canvasRect, enter, selectBox, startX, startY, boxList} = this.state
+    let {canvasRect, enter, offsetX, enterLeft, selectBox, startX, startY, boxList} = this.state
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
 
+    if (enterLeft) {
+      console.log('enterLeft', offsetX)
+      if (!selectBox) return;
+
+      let dx = x - startX
+      let dy = y - startY
+      let old = clone(boxList)
+      let rIndex = old.findIndex(v => v.id === selectBox?.id)
+      if (rIndex !== -1) {
+        let now = old[rIndex]
+        now.x = x - offsetX
+        // one.y = one.y
+        now.w = selectBox.w - (x - startX)
+        now = this.getPath(now)
+      }
+      this.setState({boxList: old}, this.draw2)
+    }
     if (enter) {
       if (!selectBox?.id) return
       // console.log('startX')

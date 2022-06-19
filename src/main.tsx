@@ -26,8 +26,8 @@ import App from "./App";
 createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <Provider store={store}>
-      {/*<Canvas/>*/}
-      <App/>
+      <Canvas/>
+      {/*<App/>*/}
     </Provider>
   </BrowserRouter>,
 );

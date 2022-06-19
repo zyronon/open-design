@@ -7,12 +7,13 @@
     justify-content: center;
     align-items: center;
     background: gray;
-    $w: 50px;
-    height: $w;
-    width: $w;
+    $w: 30px;
+    //height: $w;
+    width: $w * 2;
   }
 }
 
 #canvas {
   margin-left: 50px;
+  border: 1px solid gray;
 }

@@ -18,9 +18,9 @@ import 'antd/dist/antd.css';
 import { createRoot } from "react-dom/client";
 import { store } from './store/store.js';
 import { Provider } from "react-redux";
-import Canvas from "./pages/canvas/Canvas";
+// import Canvas from "./pages/canvas/Canvas";
+import Canvas from "./pages/canvas/Canvas-hooks";
 import App from "./App";
-// import Canvas from "./pages/canvas/Canvas-hooks";
 
 
 createRoot(document.getElementById("root")).render(

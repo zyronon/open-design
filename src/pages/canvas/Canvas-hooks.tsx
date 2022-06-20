@@ -141,8 +141,8 @@ export default function Canvas() {
       children: []
     }
     let oneBox = {
-      x: 276,
-      y: 258,
+      x: 350,
+      y: 150,
       w: 50,
       h: 150,
       rotate: 0,
@@ -460,8 +460,8 @@ export default function Canvas() {
       startY = e.clientY - canvasRect.top
       dd = startX - one.x
 
-      //rotate
-      // ctx.translate(oldOne.x + oldOne.w / 2, oldOne.y + oldOne.h / 2);
+      // rotate
+      ctx.translate(oldOne.x + oldOne.w / 2, oldOne.y + oldOne.h / 2);
 
 
       let [x1, y1] = getX1y1(startX, startY)
@@ -628,7 +628,7 @@ export default function Canvas() {
 
     let dis = 20
     if (mouseLeftKeyDown) {
-      // console.log('x-------', x, '          y--------', y)
+      console.log('x-------', x, '          y--------', y)
       let a = getAngle([oldOne.x + oldOne.w / 2, oldOne.y + oldOne.h / 2],
         [startX, startY],
         [x, y]
@@ -898,7 +898,7 @@ export default function Canvas() {
 
       </div>
       <canvas
-        onMouseMove={moveStretch}
+        onMouseMove={moveRotate2}
         id="canvas" ref={canvasRef} width={450} height={500}/>
     </div>
   )

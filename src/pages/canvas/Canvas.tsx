@@ -1,6 +1,7 @@
 import React, {MouseEvent, RefObject} from "react";
 import './index.scss'
 import {clone} from 'lodash'
+import {getAngle, getHypotenuse} from "../../utils";
 
 enum BoxType {
   LINE = 0,
@@ -33,7 +34,9 @@ type IState = {
   canvasRect: DOMRect,
   enter: boolean,
   enterLeft: boolean,
-  hoverOn: boolean,
+  hoverLeft: boolean,
+  hoverLT: boolean,
+  enterLT: boolean,
   selectBox?: Box,
   startX: number,
   startY: number,
@@ -338,7 +341,7 @@ class Canvas extends React.Component<any, IState> {
 
   onMouseDown1 = (e: any) => {
     if (e.button !== 0) return;
-    let {selectBox, boxList, canvasRect, hoverOn} = this.state
+    let {selectBox, boxList, canvasRect, hoverLeft, hoverLT: hoverLT} = this.state
     // console.log('selectBox', selectBox)
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
@@ -346,11 +349,20 @@ class Canvas extends React.Component<any, IState> {
     let old = clone(boxList)
     let select
     if (selectBox) {
-      if (hoverOn) {
+      if (hoverLeft) {
         this.setState({
           startX: x,
           startY: y,
           enterLeft: true,
+          offsetX: x - selectBox.x
+        })
+        return
+      }
+      if (hoverLT) {
+        this.setState({
+          startX: x,
+          startY: y,
+          enterLT: true,
           offsetX: x - selectBox.x
         })
         return
@@ -407,14 +419,20 @@ class Canvas extends React.Component<any, IState> {
   }
 
   onMouseUp1 = (e: any) => {
-    let {hoverOn, selectBox, boxList} = this.state
+    let {hoverLeft, selectBox, boxList} = this.state
     if (selectBox) {
       let rIndex = boxList.findIndex(v => v.id === selectBox?.id)
       if (rIndex !== -1) {
         this.setState({selectBox: clone(boxList[rIndex])})
       }
     }
-    this.setState({enter: false, enterLeft: false})
+    this.setState({
+      enter: false,
+      hoverLeft: false,
+      hoverLT: false,
+      enterLeft: false,
+      enterLT: false
+    })
     this.body.style.cursor = "default"
     // console.log('onMouseUp')
   }
@@ -478,13 +496,24 @@ class Canvas extends React.Component<any, IState> {
     if (isSelect) {
       let dis = 10
       if ((box.leftX! - dis < x && x < box.leftX! + dis) &&
-        (box.topY! - dis < y && y < box.bottomY! + dis)
+        (box.topY! + dis < y && y < box.bottomY! - dis)
       ) {
-        this.setState({hoverOn: true})
+        this.setState({hoverLeft: true})
         // console.log('1')
-        this.body.style.cursor = "e-resize"
+        this.body.style.cursor = "col-resize"
       } else {
-        this.setState({hoverOn: false})
+        this.setState({hoverLeft: false})
+        // console.log(2)
+        this.body.style.cursor = "default"
+      }
+      if ((box.leftX! - dis < x && x < box.leftX! + dis) &&
+        (box.topY! - dis < y && y < box.topY! + dis)
+      ) {
+        this.setState({hoverLT: true})
+        // console.log('1')
+        this.body.style.cursor = "nwse-resize"
+      } else {
+        this.setState({hoverLT: false})
         // console.log(2)
         this.body.style.cursor = "default"
       }
@@ -493,10 +522,47 @@ class Canvas extends React.Component<any, IState> {
   }
 
   m = (e: MouseEvent) => {
-    let {canvasRect, enter, offsetX, enterLeft, selectBox, startX, startY, boxList} = this.state
+    let {canvasRect, enter, offsetX, enterLeft, enterLT, selectBox, startX, startY, boxList} = this.state
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
 
+    if (enterLT) {
+      console.log('enterLT', offsetX)
+      if (!selectBox) return;
+
+      // console.log('x-------', x, '          y--------', y)
+      let a = getAngle([selectBox.x + selectBox.w / 2, selectBox.y + selectBox.h / 2],
+        [startX, startY],
+        [x, y]
+      )
+
+      let dx = x - startX
+      let dy = y - startY
+      let old = clone(boxList)
+      let rIndex = old.findIndex(v => v.id === selectBox?.id)
+      if (rIndex !== -1) {
+        let now = old[rIndex]
+        now.x = x - offsetX
+        // one.y = one.y
+        now.w = selectBox.w - (x - startX)
+        now = this.getPath(now)
+        let d = 2
+        //一参：原点
+        //二参：矩形中心点
+        //结果：原点到矩形中心点的距离
+        let hypotenuse = getHypotenuse([now.x - d, now.y - d],
+          [now.x - d + (now.w + 2 * d) / 2, now.y - d + (now.h + 2 * d) / 2,])
+        // ctx.arc(0, 0, hypotenuse + 4, 0, 2 * Math.PI);
+
+        // ctx.rotate((a * Math.PI) / 180);
+        // renderBox2(-one.w / 2, -one.h / 2, one.w, one.h, 'black')
+        // renderLine2(-one.w / 2 - d, -one.h / 2 - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
+        // ctx.restore()
+      }
+
+      this.setState({boxList: old}, this.draw2)
+      return;
+    }
     if (enterLeft) {
       console.log('enterLeft', offsetX)
       if (!selectBox) return;
@@ -513,6 +579,7 @@ class Canvas extends React.Component<any, IState> {
         now = this.getPath(now)
       }
       this.setState({boxList: old}, this.draw2)
+      return;
     }
     if (enter) {
       if (!selectBox?.id) return

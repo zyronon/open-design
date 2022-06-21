@@ -33,10 +33,12 @@ type IState = {
   ctx: CanvasRenderingContext2D,
   canvasRect: DOMRect,
   enter: boolean,
-  enterLeft: boolean,
   hoverLeft: boolean,
+  enterLeft: boolean,
   hoverLT: boolean,
   enterLT: boolean,
+  hoverLTR: boolean,//左上角 旋转
+  enterLTR: boolean,
   selectBox?: Box,
   startX: number,
   startY: number,
@@ -144,7 +146,7 @@ class Canvas extends React.Component<any, IState> {
       canvasRect,
       boxList: [
         this.getPath(oneBox),
-        // this.getPath(threeBox),
+        this.getPath(threeBox),
       ]
     }, this.draw2)
   }
@@ -341,7 +343,7 @@ class Canvas extends React.Component<any, IState> {
 
   onMouseDown1 = (e: any) => {
     if (e.button !== 0) return;
-    let {selectBox, boxList, canvasRect, hoverLeft, hoverLT: hoverLT} = this.state
+    let {selectBox, boxList, canvasRect, hoverLeft, hoverLT, hoverLTR} = this.state
     // console.log('selectBox', selectBox)
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
@@ -349,20 +351,24 @@ class Canvas extends React.Component<any, IState> {
     let old = clone(boxList)
     let select
     if (selectBox) {
-      if (hoverLeft) {
+      console.log('hoverLeft', hoverLeft)
+      console.log('hoverLT', hoverLT)
+      console.log('hoverLTR', hoverLTR)
+      if (hoverLeft || hoverLT) {
         this.setState({
           startX: x,
           startY: y,
-          enterLeft: true,
+          enterLeft: hoverLeft,
+          enterLT: hoverLT,
           offsetX: x - selectBox.x
         })
         return
       }
-      if (hoverLT) {
+      if (hoverLTR) {
         this.setState({
-          startX: x,
-          startY: y,
-          enterLT: true,
+          startX: selectBox.x,
+          startY: selectBox.y,
+          enterLTR: true,
           offsetX: x - selectBox.x
         })
         return
@@ -428,10 +434,12 @@ class Canvas extends React.Component<any, IState> {
     }
     this.setState({
       enter: false,
+      enterLeft: false,
+      enterLT: false,
+      enterLTR: false,
       hoverLeft: false,
       hoverLT: false,
-      enterLeft: false,
-      enterLT: false
+      hoverLTR: false
     })
     this.body.style.cursor = "default"
     // console.log('onMouseUp')
@@ -473,47 +481,37 @@ class Canvas extends React.Component<any, IState> {
         t.type = BoxType.WRAPPER
         this.renderCanvas(t)
       }
-      // this.setState({selectBox: clone(box)})
-      // canvas.addEventListener('mousedown', this.onMouseDown1)
-      // canvas.addEventListener('mouseup', this.onMouseUp1)
-      // console.log('1')
-      // body.style.cursor = "ne-resize"
-      // body.style.cursor = "pointer"
-      // body.style.cursor = "move"
       isIn = true
-      // console.log('在里面')
     } else {
-      // console.log('不在里面')
-      // this.setState({selectBox: undefined})
-      // canvas.removeEventListener('mousedown', this.onMouseDown1)
-      // canvas.removeEventListener('mouseup', this.onMouseUp1)
-      // console.log('2')
-      // this.body.style.cursor = "default"
       this.draw2()
       isIn = false
     }
 
     if (isSelect) {
-      let dis = 10
-      if ((box.leftX! - dis < x && x < box.leftX! + dis) &&
-        (box.topY! + dis < y && y < box.bottomY! - dis)
+      let edge = 10
+      let angle = 7
+      let rotate = 17
+      if ((box.leftX! - edge < x && x < box.leftX! + edge) &&
+        (box.topY! + edge < y && y < box.bottomY! - edge)
       ) {
         this.setState({hoverLeft: true})
-        // console.log('1')
         this.body.style.cursor = "col-resize"
-      } else {
-        this.setState({hoverLeft: false})
-        // console.log(2)
-        this.body.style.cursor = "default"
-      }
-      if ((box.leftX! - dis < x && x < box.leftX! + dis) &&
-        (box.topY! - dis < y && y < box.topY! + dis)
+      } else if ((box.leftX! - angle < x && x < box.leftX! + angle) &&
+        (box.topY! - angle < y && y < box.topY! + angle)
       ) {
         this.setState({hoverLT: true})
-        // console.log('1')
         this.body.style.cursor = "nwse-resize"
+      } else if ((box.leftX! - rotate < x && x < box.leftX! - angle) &&
+        (box.topY! - rotate < y && y < box.topY! - angle)
+      ) {
+        this.setState({hoverLTR: true})
+        this.body.style.cursor = "pointer"
       } else {
-        this.setState({hoverLT: false})
+        this.setState({
+          hoverLT: false,
+          hoverLeft: false,
+          hoverLTR: false,
+        })
         // console.log(2)
         this.body.style.cursor = "default"
       }
@@ -522,12 +520,12 @@ class Canvas extends React.Component<any, IState> {
   }
 
   m = (e: MouseEvent) => {
-    let {canvasRect, enter, offsetX, enterLeft, enterLT, selectBox, startX, startY, boxList} = this.state
+    let {canvasRect, enter, offsetX, enterLeft, enterLT, enterLTR, selectBox, startX, startY, boxList} = this.state
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
 
-    if (enterLT) {
-      console.log('enterLT', offsetX)
+    if (enterLTR) {
+      console.log('enterLTR')
       if (!selectBox) return;
 
       // console.log('x-------', x, '          y--------', y)
@@ -535,6 +533,22 @@ class Canvas extends React.Component<any, IState> {
         [startX, startY],
         [x, y]
       )
+      console.log('getAngle', a)
+      // return;
+
+      let old = clone(boxList)
+      let rIndex = old.findIndex(v => v.id === selectBox?.id)
+      if (rIndex !== -1) {
+        let now = old[rIndex]
+        now.rotate = a
+      }
+
+      this.setState({boxList: old}, this.draw2)
+      return;
+    }
+    if (enterLT) {
+      console.log('enterLT')
+      if (!selectBox) return;
 
       let dx = x - startX
       let dy = y - startY
@@ -543,28 +557,16 @@ class Canvas extends React.Component<any, IState> {
       if (rIndex !== -1) {
         let now = old[rIndex]
         now.x = x - offsetX
-        // one.y = one.y
+        now.y = y
         now.w = selectBox.w - (x - startX)
+        now.h = selectBox.h - (y - startY)
         now = this.getPath(now)
-        let d = 2
-        //一参：原点
-        //二参：矩形中心点
-        //结果：原点到矩形中心点的距离
-        let hypotenuse = getHypotenuse([now.x - d, now.y - d],
-          [now.x - d + (now.w + 2 * d) / 2, now.y - d + (now.h + 2 * d) / 2,])
-        // ctx.arc(0, 0, hypotenuse + 4, 0, 2 * Math.PI);
-
-        // ctx.rotate((a * Math.PI) / 180);
-        // renderBox2(-one.w / 2, -one.h / 2, one.w, one.h, 'black')
-        // renderLine2(-one.w / 2 - d, -one.h / 2 - d, one.w + 2 * d, one.h + 2 * d, 'rgb(139,80,255)')
-        // ctx.restore()
       }
-
       this.setState({boxList: old}, this.draw2)
       return;
     }
     if (enterLeft) {
-      console.log('enterLeft', offsetX)
+      console.log('enterLeft')
       if (!selectBox) return;
 
       let dx = x - startX

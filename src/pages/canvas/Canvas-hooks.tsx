@@ -633,7 +633,7 @@ export default function Canvas() {
         [startX, startY],
         [x, y]
       )
-      // console.log(a)
+      console.log('getAngle', a)
       ctx.save()
 
       //一参：原点

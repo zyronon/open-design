@@ -2,6 +2,7 @@ import React, {MouseEvent, RefObject} from "react";
 import './index.scss'
 import {clone} from 'lodash'
 import getCenterPoint, {getAngle, getHypotenuse2, getRotatedPoint} from "../../utils";
+import Input from "../../components/Input";
 
 enum BoxType {
   LINE = 0,
@@ -700,18 +701,43 @@ class Canvas extends React.Component<any, IState> {
   }
 
   render() {
-    return <div>
+    return <div className={'design'}>
+      <div className="header">
+
+      </div>
+      <div className="content">
+        <div className="left">
+
+        </div>
+        <div className="wrapper">
+          <div className="tool-bar">
+
+          </div>
+          <canvas
+            onMouseMove={this.m}
+            onMouseDown={this.onMouseDown1}
+            onMouseUp={this.onMouseUp1}
+            id="canvas" ref={this.canvasRef} width={450} height={500}/>
+        </div>
+        <div className="right">
+          <div className="config-wrapper">
+            <div className="base-info">
+              <div className="row">
+                <Input></Input>
+                <Input></Input>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <div className='components'>
         <div className="component" onClick={() => location.reload()}>
           矩形
         </div>
 
       </div>
-      <canvas
-        onMouseMove={this.m}
-        onMouseDown={this.onMouseDown1}
-        onMouseUp={this.onMouseUp1}
-        id="canvas" ref={this.canvasRef} width={450} height={500}/>
+
     </div>
   }
 }

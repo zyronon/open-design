@@ -17,3 +17,31 @@
   margin-left: 50px;
   border: 1px solid gray;
 }
+
+.design {
+  font-size: 14rem;
+
+  .header {
+
+  }
+
+  .content {
+    display: flex;
+
+    & > .right {
+      width: 200rem;
+      background: rgb(33, 33, 33);
+      padding: 10rem;
+
+      .config-wrapper {
+        .base-info {
+          .row {
+            display: flex;
+          }
+        }
+      }
+
+    }
+  }
+
+}

@@ -38,7 +38,7 @@ export function getRoundOtherPoint(x: number, y: number) {
 }
 
 //获取圆上的另一个点
-export function getRoundOtherPoint2(x: number, y: number, x2, y2) {
+export function getRoundOtherPoint2(x: number, y: number, x2: any, y2: any) {
   let hypotenuse = getHypotenuse([x2, y2], [x, y])
   // console.log('hypotenuse', hypotenuse)
   let s = Math.abs(y) / Math.abs(hypotenuse)
@@ -88,7 +88,7 @@ export function getAngle(center: number[], one: number[], two: number[]) {
   return angle;
 }
 
-export function getRotatedPoint(point, center, rotate) {
+export function getRotatedPoint(point: any, center: any, rotate: any) {
   /**
    * 旋转公式：
    *  点a(x, y)
@@ -110,7 +110,7 @@ export function getRotatedPoint(point, center, rotate) {
  * @param  {Object} p2 点2的坐标
  * @return {Object}    中点坐标
  */
-export default function getCenterPoint(p1, p2) {
+export default function getCenterPoint(p1: any, p2: any) {
   return {
     x: p1.x + ((p2.x - p1.x) / 2),
     y: p1.y + ((p2.y - p1.y) / 2)

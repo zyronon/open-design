@@ -4,12 +4,19 @@
   display: flex;
   align-items: center;
   border-radius: 5rem;
-  //box-sizing: border-box;
-  //width: 100rem;
   border: 2rem solid transparent;
   transition: all .3s;
+  height: $input-height;
+
+  &.padding {
+    padding: 0 10rem;
+  }
 
   .prefix {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin: 0 10rem;
   }
 
@@ -24,7 +31,5 @@
     border: none;
     height: 30rem;
     background: transparent;
-
   }
-
 }

@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@icon-park/react": "^1.4.1",
     "@reduxjs/toolkit": "^1.8.1",
     "antd": "^4.20.2",
     "classnames": "^2.3.1",

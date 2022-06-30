@@ -1,0 +1,13 @@
+.d-button {
+  width: 100%;
+  height: $input-height;
+  border-radius: 6px;
+  background: $input-bg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: rgb(80, 80, 80);;
+  }
+}

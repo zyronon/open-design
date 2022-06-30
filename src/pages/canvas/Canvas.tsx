@@ -2,7 +2,14 @@ import React, {MouseEvent, RefObject} from "react";
 import './index.scss'
 import {clone} from 'lodash'
 import getCenterPoint, {getAngle, getHypotenuse2, getRotatedPoint} from "../../utils";
-import Input from "../../components/Input";
+import BaseInput from "../../components/BaseInput";
+import {FullScreen, Unlock} from "@icon-park/react";
+import BaseIcon from "../../components/BaseIcon";
+import {Col, Row} from "antd";
+import BaseButton from "../../components/BaseButton";
+import FlipIcon from "../../assets/icon/FlipIcon";
+import RotateIcon from "../../assets/icon/RotateIcon";
+import AngleIcon from "../../assets/icon/AngleIcon";
 
 enum BoxType {
   LINE = 0,
@@ -61,9 +68,10 @@ class Canvas extends React.Component<any, IState> {
 
   componentDidMount() {
     let canvas: HTMLCanvasElement = this.canvasRef.current!
+
     let canvasRect = canvas.getBoundingClientRect()
     let ctx: CanvasRenderingContext2D = canvas.getContext('2d')!
-    let width = canvas.width, height = canvas.height;
+    let {width, height} = canvasRect
     if (window.devicePixelRatio) {
       canvas.style.width = width + "px";
       canvas.style.height = height + "px";
@@ -707,37 +715,77 @@ class Canvas extends React.Component<any, IState> {
       </div>
       <div className="content">
         <div className="left">
-
+          <div className='components'>
+            <div className="component" onClick={() => location.reload()}>
+              矩形
+            </div>
+          </div>
         </div>
-        <div className="wrapper">
+        <div className="canvas-wrapper">
           <div className="tool-bar">
 
           </div>
-          <canvas
-            onMouseMove={this.m}
-            onMouseDown={this.onMouseDown1}
-            onMouseUp={this.onMouseUp1}
-            id="canvas" ref={this.canvasRef} width={450} height={500}/>
+          <div id="canvasArea">
+            <canvas
+              onMouseMove={this.m}
+              onMouseDown={this.onMouseDown1}
+              onMouseUp={this.onMouseUp1}
+              id="canvas" ref={this.canvasRef}/>
+          </div>
         </div>
         <div className="right">
           <div className="config-wrapper">
             <div className="base-info">
               <div className="row">
-                <Input></Input>
-                <Input></Input>
-
+                <div className="col">
+                  <BaseInput prefix={<span className={'gray'}>X</span>}/>
+                </div>
+                <div className="col">
+                  <BaseInput prefix={<span className={'gray'}>Y</span>}/>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col">
+                  <BaseInput prefix={<span className={'gray'}>W</span>}/>
+                </div>
+                <div className="col">
+                  <BaseInput prefix={<span className={'gray'}>H</span>}/>
+                </div>
+                <div className="col">
+                  <BaseIcon active={false}>
+                    <Unlock theme="outline" size="16" fill="#929596"/>
+                  </BaseIcon>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col">
+                  <BaseInput prefix={<RotateIcon style={{fontSize: "16rem"}}/>}/>
+                </div>
+                <div className="col">
+                  <BaseButton>
+                    <FlipIcon style={{fontSize: "16rem"}}/>
+                  </BaseButton>
+                  <BaseButton>
+                    <FlipIcon style={{fontSize: "16rem", 'transform': 'rotate(0deg)'}}/>
+                  </BaseButton>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col">
+                  <BaseInput prefix={<AngleIcon style={{fontSize: "16rem"}}/>}/>
+                </div>
+                <div className="col">
+                </div>
+                <div className="col">
+                  <BaseIcon active={false}>
+                    <FullScreen theme="outline" size="16" fill="#929596"/>
+                  </BaseIcon>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div className='components'>
-        <div className="component" onClick={() => location.reload()}>
-          矩形
-        </div>
-
-      </div>
-
     </div>
   }
 }

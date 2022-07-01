@@ -35,6 +35,7 @@
       .tool-bar {
         height: 42rem;
         background: $dark-bg;
+        background: white;
       }
 
       #canvasArea {
@@ -51,10 +52,12 @@
 
     & > .left {
       width: 240rem;
-      background: $dark-bg;
+      //background: $dark-bg;
+      background: white;
     }
 
     & > .right {
+      opacity: 0;
       width: 240rem;
       background: $dark-bg;
       padding: 10rem;

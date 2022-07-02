@@ -5,7 +5,7 @@ import Hooks from "../pages/hooks/Hooks";
 import Redux from "../pages/reduxPage/Redux";
 import Hoc from "../pages/hoc/Hoc";
 import Canvas from "../pages/canvas/Canvas";
-import Test from "../pages/test/Test"
+import Test from "../pages/test/Test-list-call"
 
 export default [
   {

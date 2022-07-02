@@ -7,8 +7,8 @@
     justify-content: center;
     align-items: center;
     background: gray;
-    $w: 30px;
-    //height: $w;
+    $w: 30rem;
+    height: $w * 2;
     width: $w * 2;
   }
 }
@@ -35,7 +35,7 @@
       .tool-bar {
         height: 42rem;
         background: $dark-bg;
-        background: white;
+        //background: white;
       }
 
       #canvasArea {
@@ -52,12 +52,12 @@
 
     & > .left {
       width: 240rem;
-      //background: $dark-bg;
-      background: white;
+      background: $dark-bg;
+      //background: white;
     }
 
     & > .right {
-      opacity: 0;
+      //opacity: 0;
       width: 240rem;
       background: $dark-bg;
       padding: 10rem;

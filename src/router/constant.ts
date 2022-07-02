@@ -1,5 +1,5 @@
 import Login from "../pages/login/Login";
-import Test from "../pages/test/Test";
+import Test from "../pages/test/Test-list-call";
 
 export default [
   {

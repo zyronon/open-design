@@ -89,17 +89,26 @@ class Canvas extends React.Component<any, IState> {
       ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
     }
 
-    let allLine = {
-      x: 0,
-      y: 0,
-      w: canvas.width,
-      h: canvas.height,
-      rotate: 0,
-      lineWidth: 1,
-      type: BoxType.LINE,
-      color: 'black',
-      children: []
-    }
+
+    this.setState({
+      canvas,
+      ctx,
+      canvasRect
+    }, this.init)
+  }
+
+  init() {
+    // let allLine = {
+    //   x: 0,
+    //   y: 0,
+    //   w: canvas.width,
+    //   h: canvas.height,
+    //   rotate: 0,
+    //   lineWidth: 1,
+    //   type: BoxType.LINE,
+    //   color: 'black',
+    //   children: []
+    // }
     let oneBox = {
       x: 50,
       y: 50,
@@ -184,9 +193,7 @@ class Canvas extends React.Component<any, IState> {
     }
 
     this.setState({
-      canvas,
-      ctx,
-      canvasRect,
+      selectBox: undefined,
       boxList: [
         this.getPath(oneBox),
         // this.getPath(oneBox2),
@@ -197,6 +204,7 @@ class Canvas extends React.Component<any, IState> {
   }
 
   draw2() {
+    // console.log('draw2')
     this.clearAll()
     this.state.ctx.save()
     // ctx.translate(0.5, 0.5);
@@ -210,7 +218,8 @@ class Canvas extends React.Component<any, IState> {
   }
 
   renderCanvas(box: Box, parent?: Box) {
-    let {ctx} = this.state
+    let {ctx, enterLT, selectBox} = this.state
+    // console.log('renderCanvas', enterLT)
     ctx.save()
     let {x, y, w, h, color, rotate, lineWidth, type, flipVertical, flipHorizontal}
       = parent ? parent : box
@@ -224,6 +233,22 @@ class Canvas extends React.Component<any, IState> {
       h = h + 2 * outside
     }
 
+    let oldCenter: { x: number; y: number; }
+    let newCenter: { x: number; y: number; }
+    if (enterLT && selectBox) {
+      let s = selectBox
+      oldCenter = {
+        x: s.x + (s.w / 2),
+        y: s.y + (s.h / 2)
+      }
+      newCenter = {
+        x: x + (w / 2),
+        y: y + (h / 2)
+      }
+      // console.log('oldCenter', oldCenter)
+      // console.log('newCenter', newCenter)
+    }
+
     ctx.lineWidth = lineWidth
     let tranX = 0
     let tranY = 0
@@ -235,10 +260,15 @@ class Canvas extends React.Component<any, IState> {
       x = -w / 2
       y = -h / 2
     }
-
     if (flipHorizontal) {
       scaleX = -1
       tranX = -tranX
+      if (enterLT && selectBox) {
+        // console.log('tranX1', tranX)
+        let d = oldCenter!.x - newCenter!.x
+        tranX -= d * 2
+        // console.log('tranX2', tranX)
+      }
     }
     if (flipVertical) {
       // console.log('flipVertical', flipVertical)
@@ -539,11 +569,42 @@ class Canvas extends React.Component<any, IState> {
   }
 
   onMouseUp = (e: any) => {
-    let {hoverLeft, selectBox, boxList} = this.state
+    let {hoverLeft, selectBox, boxList, canvasRect, enterLT, startX, startY} = this.state
     if (selectBox) {
+      let old = clone(boxList)
       let rIndex = boxList.findIndex(v => v.id === selectBox?.id)
       if (rIndex !== -1) {
-        this.setState({selectBox: clone(boxList[rIndex])})
+        let current = old[rIndex]
+        let x = e.clientX - canvasRect.left
+        let y = e.clientY - canvasRect.top
+        let currentPosition = {x: x, y: y}
+        let center = {
+          x: current.x + (current.w / 2),
+          y: current.y + (current.h / 2)
+        }
+        //算出视觉上，当前鼠标点水平翻转之后的坐标
+        currentPosition.x -= current.w
+        // currentPosition.y -= current.h
+        if (current.flipHorizontal && enterLT) {
+          let s = selectBox
+          let oldCenter = {
+            x: s.x + (s.w / 2),
+            y: s.y + (s.h / 2)
+          }
+          let oldPoint = {x: selectBox.x, y: selectBox.y}
+          let flipHorizontalOldPoint = getRotatedPoint(oldPoint, oldCenter, current.rotate)
+          flipHorizontalOldPoint.x = oldCenter.x + Math.abs(flipHorizontalOldPoint.x - oldCenter.x) * (flipHorizontalOldPoint.x < oldCenter.x ? 1 : -1)
+
+          // console.log('startX', startX)
+          // console.log('flipHorizontalOldPoint.x', flipHorizontalOldPoint.x)
+          //这里把rect的x坐标，加上偏移量，因为draw的时候临时平移了中心点，不重新设定x坐标，会回弹
+          //不能直接用x-startX，因为startX是鼠标点击位置，会有一丁点偏移，导致rect重绘时小抖动
+          //取rect的x,y，然后旋转，再翻转，得到startX。
+          old[rIndex].x = old[rIndex].x + (x - flipHorizontalOldPoint.x)
+          old[rIndex] = this.getPath(old[rIndex])
+          // old[rIndex].y = old[rIndex].y + (y - startY)
+        }
+        this.setState({selectBox: clone(boxList[rIndex]), boxList: old})
       }
     }
     this.setState({
@@ -647,6 +708,7 @@ class Canvas extends React.Component<any, IState> {
   }
 
   onMouseMove = (e: MouseEvent) => {
+    // console.log('onMouseMove')
     let {
       canvasRect,
       enter,
@@ -680,32 +742,19 @@ class Canvas extends React.Component<any, IState> {
 
         let currentPosition = {x: x, y: y}
         const center = {
-          x: rect.x + (rect.w / 2),
-          y: rect.y + (rect.h / 2)
+          x: s.x + (s.w / 2),
+          y: s.y + (s.h / 2)
         }
-        if (rect.flipHorizontal){
+        //水平翻转，那么要把当前的x坐标一下翻转
+        //同时，draw的时候，需要把新rect的中心点和平移（选中时rect的中心点）的2倍
+        if (rect.flipHorizontal) {
           currentPosition.x = center.x + Math.abs(currentPosition.x - center.x) * (currentPosition.x < center.x ? 1 : -1)
-          console.log('currentPosition', currentPosition)
+          // console.log('currentPosition', currentPosition)
         }
 
-        // return;
         let newCenterPoint = getCenterPoint(currentPosition, sPoint)
         let newTopLeftPoint = getRotatedPoint(currentPosition, newCenterPoint, -s.rotate)
         let newBottomRightPoint = getRotatedPoint(sPoint, newCenterPoint, -s.rotate)
-
-        // const center = newCenterPoint
-        // if (rect.flipHorizontal) {
-        //   console.log('center',center)
-        //   currentPosition.x = center.x + Math.abs(currentPosition.x - center.x) * (currentPosition.x < center.x ? 1 : -1)
-        //
-        //   console.log('currentPosition', currentPosition)
-        //   console.log(' x', x)
-        //
-        //   return;
-        //   newCenterPoint = getCenterPoint(currentPosition, sPoint)
-        //   newTopLeftPoint = getRotatedPoint(currentPosition, newCenterPoint, -s.rotate)
-        //   newBottomRightPoint = getRotatedPoint(sPoint, newCenterPoint, -s.rotate)
-        // }
 
         let newWidth = newBottomRightPoint.x - newTopLeftPoint.x
         let newHeight = newBottomRightPoint.y - newTopLeftPoint.y
@@ -714,7 +763,7 @@ class Canvas extends React.Component<any, IState> {
         rect.y = newTopLeftPoint.y
         rect.w = newWidth
         rect.h = newHeight
-        console.log(rect)
+        // console.log(rect)
 
         rect = this.getPath(rect)
       }
@@ -850,7 +899,8 @@ class Canvas extends React.Component<any, IState> {
       <div className="content">
         <div className="left">
           <div className='components'>
-            <div className="component" onClick={() => location.reload()}>
+            {/*<div className="component" onClick={() => location.reload()}>*/}
+            <div className="component" onClick={() => this.init()}>
               刷新
             </div>
             <div className="component" onClick={() => this.props.navigate('/test')}>

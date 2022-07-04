@@ -36,6 +36,28 @@
         height: 42rem;
         background: $dark-bg;
         //background: white;
+        display: flex;
+
+        .tool {
+          width: 45rem;
+          height: 100%;
+          //padding: 0 6rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          .arrow {
+            margin-left: 2rem;
+          }
+
+          &:hover {
+            background: black;
+          }
+
+          &.active {
+            background: rgb(13, 153, 255);
+          }
+        }
       }
 
       #canvasArea {

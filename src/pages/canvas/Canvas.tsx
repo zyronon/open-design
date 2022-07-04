@@ -3,7 +3,7 @@ import './index.scss'
 import {clone, debounce, throttle} from 'lodash'
 import getCenterPoint, {getAngle, getHypotenuse2, getRotatedPoint} from "../../utils";
 import BaseInput from "../../components/BaseInput";
-import {FullScreen, Unlock} from "@icon-park/react";
+import {Down, FiveFive, FullScreen, Unlock} from "@icon-park/react";
 import BaseIcon from "../../components/BaseIcon";
 import {Col, Row} from "antd";
 import BaseButton from "../../components/BaseButton";
@@ -12,6 +12,7 @@ import RotateIcon from "../../assets/icon/RotateIcon";
 import AngleIcon from "../../assets/icon/AngleIcon";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {withRouter} from "../../components/WithRouter";
+import cx from "classnames";
 
 enum BoxType {
   LINE = 0,
@@ -58,7 +59,16 @@ type IState = {
   startY: number,
   offsetX: number,
   offsetY: number,
+  hand: {
+    x: number,
+    y: number,
+  },
+  oldHand: {
+    x: number,
+    y: number,
+  },
   sPoint: { x: number, y: number },
+  activeHand: boolean
 }
 
 class Canvas extends React.Component<any, IState> {
@@ -66,18 +76,25 @@ class Canvas extends React.Component<any, IState> {
   // @ts-ignore
   body: HTMLElement = document.querySelector("body")
 
-  readonly state = {} as IState
+  readonly state = {
+    hand: {
+      x: 0,
+      y: 0,
+    },
+    oldHand: {
+      x: 0,
+      y: 0,
+    },
+    activeHand: false,
+  } as IState
 
   constructor(props: any) {
     super(props);
-    console.log(this.props)
+    // console.log(this.props)
   }
-
-  c: any = null
 
   componentDidMount() {
     let canvas: HTMLCanvasElement = this.canvasRef.current!
-    this.c = canvas
     let canvasRect = canvas.getBoundingClientRect()
     let ctx: CanvasRenderingContext2D = canvas.getContext('2d')!
     let {width, height} = canvasRect
@@ -88,7 +105,6 @@ class Canvas extends React.Component<any, IState> {
       canvas.width = width * window.devicePixelRatio;
       ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
     }
-
 
     this.setState({
       canvas,
@@ -110,6 +126,7 @@ class Canvas extends React.Component<any, IState> {
     //   children: []
     // }
     let oneBox = {
+      name: 'oneBox',
       x: 50,
       y: 50,
       w: 350,
@@ -122,6 +139,8 @@ class Canvas extends React.Component<any, IState> {
       children: []
     }
     let oneBox3 = {
+      id: 'Date.now()',
+      name: 'oneBox3',
       x: 226,
       y: 226,
       w: 150,
@@ -194,10 +213,18 @@ class Canvas extends React.Component<any, IState> {
 
     this.setState({
       selectBox: undefined,
+      hand: {
+        x: 0,
+        y: 0,
+      },
+      oldHand: {
+        x: 0,
+        y: 0,
+      },
       boxList: [
         this.getPath(oneBox),
         // this.getPath(oneBox2),
-        // this.getPath(oneBox3),
+        this.getPath(oneBox3),
         // this.getPath(threeBox),
       ]
     }, this.draw2)
@@ -218,7 +245,10 @@ class Canvas extends React.Component<any, IState> {
   }
 
   renderCanvas(box: Box, parent?: Box) {
-    let {ctx, enterLT, selectBox} = this.state
+    let {
+      ctx, enterLT, selectBox, activeHand, enter, offsetX, offsetY,
+      hand
+    } = this.state
     // console.log('renderCanvas', enterLT)
     ctx.save()
     let {x, y, w, h, color, rotate, lineWidth, type, flipVertical, flipHorizontal}
@@ -250,6 +280,8 @@ class Canvas extends React.Component<any, IState> {
     }
 
     ctx.lineWidth = lineWidth
+    // let tranX = 0
+    // let tranY = 0
     let tranX = 0
     let tranY = 0
     let scaleX = 1
@@ -269,12 +301,23 @@ class Canvas extends React.Component<any, IState> {
         tranX -= d * 2
         // console.log('tranX2', tranX)
       }
+      tranX -= hand.x!
+    } else {
+      tranX += hand.x!
     }
     if (flipVertical) {
       // console.log('flipVertical', flipVertical)
       scaleY = -1
       tranY = -tranY
+      tranY -= hand.y!
+    } else {
+      tranY += hand.y!
+
     }
+    // if (activeHand && enter) {
+
+    //   console.log('offsetX', offsetX)
+    // }
 
 
     ctx.scale(scaleX, scaleY)
@@ -430,17 +473,31 @@ class Canvas extends React.Component<any, IState> {
 
   onMouseDown = (e: any) => {
     if (e.button !== 0) return;
-    let {selectBox, boxList, canvasRect, hoverLeft, hoverLT, hoverRT, hoverLTR} = this.state
+    let {
+      selectBox, boxList, canvasRect,
+      hoverLeft, hoverLT, hoverRT, hoverLTR, activeHand,
+      hand,
+    } = this.state
     // console.log('selectBox', selectBox)
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
+
+    if (activeHand) {
+      this.setState({
+        startX: x,
+        startY: y,
+        enter: true,
+        oldHand: clone(hand)
+      })
+      return;
+    }
 
     let old = clone(boxList)
     let select
     if (selectBox) {
       // console.log('hoverLeft', hoverLeft)
       // console.log('hoverLT', hoverLT)
-      console.log('hoverRT', hoverRT)
+      // console.log('hoverRT', hoverRT)
       // console.log('hoverLTR', hoverLTR)
       let rect = selectBox
 
@@ -518,8 +575,10 @@ class Canvas extends React.Component<any, IState> {
         return
       }
       let r = this.isPointInPath(x, y, selectBox)
+      // console.log('selectBox-in', r)
       if (!r) {
         let rIndex = old.findIndex(o => o.id === selectBox!.id)
+        // console.log('rIndex', rIndex)
         if (rIndex !== -1) {
           let selectIndex = old[rIndex].children.findIndex(w => w.type === BoxType.SELECT)
           if (selectIndex !== -1) {
@@ -533,7 +592,7 @@ class Canvas extends React.Component<any, IState> {
       for (let i = 0; i < boxList.length; i++) {
         let b = boxList[i]
         let r = this.isPointInPath(x, y, b)
-        console.log('in', r)
+        // console.log('in', r)
         if (r) {
           let now = old[i]
           let t = clone(now)
@@ -549,6 +608,7 @@ class Canvas extends React.Component<any, IState> {
             now.children.push(t)
           }
           select = now
+          // console.log('select', select)
           break
         } else {
           let selectIndex = old[i].children.findIndex(w => w.type === BoxType.SELECT)
@@ -722,10 +782,25 @@ class Canvas extends React.Component<any, IState> {
       startX,
       startY,
       boxList,
-      sPoint
+      sPoint,
+      activeHand,
+      hand,
+      oldHand
     } = this.state
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
+
+    if (activeHand && enter) {
+      this.setState({
+        offsetX: x - startX,
+        offsetY: y - startY,
+        hand: {
+          x: oldHand.x + x - startX,
+          y: oldHand.y + y - startY
+        }
+      }, this.draw2)
+      return;
+    }
 
     //旋转状态下，参考
     //https://github.com/shenhudong/snapping-demo/wiki/corner-handle
@@ -892,6 +967,7 @@ class Canvas extends React.Component<any, IState> {
   }
 
   render() {
+    const {activeHand} = this.state
     return <div className={'design'}>
       <div className="header">
 
@@ -910,7 +986,14 @@ class Canvas extends React.Component<any, IState> {
         </div>
         <div className="canvas-wrapper">
           <div className="tool-bar">
-
+            <div className={cx('tool', activeHand && 'active')}
+                 onClick={() => this.setState({activeHand: !activeHand})}>
+              <FiveFive theme="outline" size="20" fill="#ffffff"/>
+            </div>
+            <div className="tool">
+              <FiveFive theme="outline" size="20" fill="#ffffff"/>
+              <Down theme="outline" size="14" fill="#ffffff" className='arrow'/>
+            </div>
           </div>
           <div id="canvasArea">
             <canvas

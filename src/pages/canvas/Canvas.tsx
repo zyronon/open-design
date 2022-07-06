@@ -68,7 +68,9 @@ type IState = {
     y: number,
   },
   sPoint: { x: number, y: number },
-  activeHand: boolean
+  activeHand: boolean,
+  fpsTimer: any,
+  fps: number
 }
 
 class Canvas extends React.Component<any, IState> {
@@ -94,6 +96,7 @@ class Canvas extends React.Component<any, IState> {
   }
 
   componentDidMount() {
+    console.log('componentDidMount', this.state.fpsTimer)
     let canvas: HTMLCanvasElement = this.canvasRef.current!
     let canvasRect = canvas.getBoundingClientRect()
     let ctx: CanvasRenderingContext2D = canvas.getContext('2d')!
@@ -111,6 +114,36 @@ class Canvas extends React.Component<any, IState> {
       ctx,
       canvasRect
     }, this.init)
+
+    this.getFps()
+  }
+
+  getFps() {
+    let lastTime = performance.now()
+    let frame = 0
+    let lastFameTime = performance.now()
+    const loop = () => {
+      let now = performance.now()
+      let fs = (now - lastFameTime)
+      lastFameTime = now
+      let fps = Math.round(1000 / fs)
+      frame++
+      if (now > 1000 + lastTime) {
+        fps = Math.round((frame * 1000) / (now - lastTime))
+        this.setState({fps})
+        frame = 0
+        lastTime = now
+      }
+      let time = window.requestAnimationFrame(loop)
+      this.setState({fpsTimer: time})
+    }
+    loop()
+  }
+
+  componentWillUnmount() {
+    console.log('componentWillUnmount')
+    cancelAnimationFrame(this.state.fpsTimer)
+
   }
 
   init() {
@@ -683,6 +716,12 @@ class Canvas extends React.Component<any, IState> {
   }
 
   isPointInPath(x: number, y: number, rect: Box) {
+    const {hand} = this.state
+    const {x: handX, y: handY} = hand
+    //减去画布平移的距离
+    x -= handX
+    y -= handY
+
     // console.log('rect.x', rect.x, 'rect.y', rect.y)
     if (rect.rotate !== 0) {
       let {w, h, rotate, flipHorizontal, flipVertical} = rect
@@ -970,7 +1009,9 @@ class Canvas extends React.Component<any, IState> {
     const {activeHand} = this.state
     return <div className={'design'}>
       <div className="header">
-
+        <div className={'fps'}>
+          FPS:{this.state.fps}
+        </div>
       </div>
       <div className="content">
         <div className="left">

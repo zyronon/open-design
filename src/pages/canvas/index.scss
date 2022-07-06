@@ -22,6 +22,11 @@
 
   .header {
     height: $header-height;
+
+    .fps {
+      font-size: 28rem;
+      font-weight: bold;
+    }
   }
 
   .content {

@@ -1005,6 +1005,14 @@ class Canvas extends React.Component<any, IState> {
     this.onMouseMoveThrottle(e)
   }
 
+  onWheel = (e: any) => {
+    if (e.deltaY > 0) {
+      console.log('向下')
+    } else {
+      console.log('向上')
+    }
+  }
+
   render() {
     const {activeHand} = this.state
     return <div className={'design'}>
@@ -1041,6 +1049,7 @@ class Canvas extends React.Component<any, IState> {
               onMouseMove={this.onMouseMoveWrapper}
               onMouseDown={this.onMouseDown}
               onMouseUp={this.onMouseUp}
+              onWheel={this.onWheel}
               id="canvas" ref={this.canvasRef}/>
           </div>
         </div>

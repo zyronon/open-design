@@ -42,8 +42,8 @@ export default function Test(props: any) {
       // ctx.restore()
 
       ctx.save()
+      ctx.translate((x + w / 2), h / 2)
       ctx.scale(-1, -1)
-      ctx.translate(-(x + w / 2), -h / 2)
       ctx.rotate(rotate * Math.PI / 180)
       ctx.drawImage(this, -w / 2, -h / 2, w, h);
       ctx.restore()

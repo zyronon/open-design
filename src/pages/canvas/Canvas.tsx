@@ -59,14 +59,20 @@ type IState = {
   startY: number,
   offsetX: number,
   offsetY: number,
-  hand: {
+  handMove: {
     x: number,
     y: number,
   },
-  oldHand: {
+  oldHandMove: {
     x: number,
     y: number,
   },
+  currentPoint: {
+    x: number,
+    y: number,
+  },
+  handScale: number,
+  oldHandScale: number,
   sPoint: { x: number, y: number },
   activeHand: boolean,
   fpsTimer: any,
@@ -78,15 +84,11 @@ class Canvas extends React.Component<any, IState> {
   // @ts-ignore
   body: HTMLElement = document.querySelector("body")
 
-  readonly state = {
-    hand: {
-      x: 0,
-      y: 0,
-    },
-    oldHand: {
-      x: 0,
-      y: 0,
-    },
+  state = {
+    currentPoint: {x: 0, y: 0,},
+    handMove: {x: 0, y: 0,},
+    oldHandMove: {x: 0, y: 0,},
+    handScale: 0,
     activeHand: false,
   } as IState
 
@@ -96,7 +98,7 @@ class Canvas extends React.Component<any, IState> {
   }
 
   componentDidMount() {
-    console.log('componentDidMount', this.state.fpsTimer)
+    // console.log('componentDidMount', this.state.fpsTimer)
     let canvas: HTMLCanvasElement = this.canvasRef.current!
     let canvasRect = canvas.getBoundingClientRect()
     let ctx: CanvasRenderingContext2D = canvas.getContext('2d')!
@@ -108,13 +110,11 @@ class Canvas extends React.Component<any, IState> {
       canvas.width = width * window.devicePixelRatio;
       ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
     }
-
     this.setState({
       canvas,
       ctx,
       canvasRect
     }, this.init)
-
     this.getFps()
   }
 
@@ -141,9 +141,8 @@ class Canvas extends React.Component<any, IState> {
   }
 
   componentWillUnmount() {
-    console.log('componentWillUnmount')
+    // console.log('componentWillUnmount')
     cancelAnimationFrame(this.state.fpsTimer)
-
   }
 
   init() {
@@ -246,14 +245,11 @@ class Canvas extends React.Component<any, IState> {
 
     this.setState({
       selectBox: undefined,
-      hand: {
-        x: 0,
-        y: 0,
-      },
-      oldHand: {
-        x: 0,
-        y: 0,
-      },
+      currentPoint: {x: 0, y: 0,},
+      handMove: {x: 0, y: 0,},
+      oldHandMove: {x: 0, y: 0,},
+      handScale: 0,
+      activeHand: true,
       boxList: [
         this.getPath(oneBox),
         // this.getPath(oneBox2),
@@ -264,7 +260,6 @@ class Canvas extends React.Component<any, IState> {
   }
 
   draw2() {
-    // console.log('draw2')
     this.clearAll()
     this.state.ctx.save()
     // ctx.translate(0.5, 0.5);
@@ -280,7 +275,8 @@ class Canvas extends React.Component<any, IState> {
   renderCanvas(box: Box, parent?: Box) {
     let {
       ctx, enterLT, selectBox, activeHand, enter, offsetX, offsetY,
-      hand
+      handMove, handScale,
+      currentPoint
     } = this.state
     // console.log('renderCanvas', enterLT)
     ctx.save()
@@ -327,34 +323,44 @@ class Canvas extends React.Component<any, IState> {
     }
     if (flipHorizontal) {
       scaleX = -1
-      tranX = -tranX
+
+      //如果在翻转情况下，自由拉伸要将tranX减去两个中心点偏移量
       if (enterLT && selectBox) {
         // console.log('tranX1', tranX)
         let d = oldCenter!.x - newCenter!.x
         tranX -= d * 2
         // console.log('tranX2', tranX)
       }
-      tranX -= hand.x!
+      tranX += handMove.x!
     } else {
-      tranX += hand.x!
+      tranX = currentPoint.x
+      x = -(currentPoint.x - x)
+      scaleX += handScale
+
+      x += handMove.x / scaleX
+      // tranX += handMove.x!
     }
     if (flipVertical) {
       // console.log('flipVertical', flipVertical)
       scaleY = -1
-      tranY = -tranY
-      tranY -= hand.y!
+      tranY -= handMove.y!
     } else {
-      tranY += hand.y!
+      tranY = currentPoint.y
+      y = -(currentPoint.y - y)
+      scaleY += handScale
 
+      y += handMove.y / scaleY
+      // tranY += handMove.y!
     }
+
     // if (activeHand && enter) {
 
     //   console.log('offsetX', offsetX)
     // }
 
 
-    ctx.scale(scaleX, scaleY)
     ctx.translate(tranX, tranY)
+    ctx.scale(scaleX, scaleY)
     ctx.rotate(rotate * Math.PI / 180)
 
     // ctx.strokeRect(x, y, w, h)
@@ -509,7 +515,7 @@ class Canvas extends React.Component<any, IState> {
     let {
       selectBox, boxList, canvasRect,
       hoverLeft, hoverLT, hoverRT, hoverLTR, activeHand,
-      hand,
+      handMove,
     } = this.state
     // console.log('selectBox', selectBox)
     let x = e.clientX - canvasRect.left
@@ -520,7 +526,7 @@ class Canvas extends React.Component<any, IState> {
         startX: x,
         startY: y,
         enter: true,
-        oldHand: clone(hand)
+        oldHandMove: clone(handMove)
       })
       return;
     }
@@ -716,8 +722,8 @@ class Canvas extends React.Component<any, IState> {
   }
 
   isPointInPath(x: number, y: number, rect: Box) {
-    const {hand} = this.state
-    const {x: handX, y: handY} = hand
+    const {handMove} = this.state
+    const {x: handX, y: handY} = handMove
     //减去画布平移的距离
     x -= handX
     y -= handY
@@ -823,8 +829,8 @@ class Canvas extends React.Component<any, IState> {
       boxList,
       sPoint,
       activeHand,
-      hand,
-      oldHand
+      handMove,
+      oldHandMove
     } = this.state
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
@@ -833,9 +839,9 @@ class Canvas extends React.Component<any, IState> {
       this.setState({
         offsetX: x - startX,
         offsetY: y - startY,
-        hand: {
-          x: oldHand.x + x - startX,
-          y: oldHand.y + y - startY
+        handMove: {
+          x: oldHandMove.x + x - startX,
+          y: oldHandMove.y + y - startY
         }
       }, this.draw2)
       return;
@@ -1006,11 +1012,20 @@ class Canvas extends React.Component<any, IState> {
   }
 
   onWheel = (e: any) => {
+    // console.log('e', e)
+    let {handScale, canvasRect} = this.state
+    let x = e.clientX - canvasRect.left
+    let y = e.clientY - canvasRect.top
+    console.log(handScale)
+    handScale = Number(handScale)
     if (e.deltaY > 0) {
-      console.log('向下')
+      // console.log('向下')
+      handScale -= 0.1
     } else {
-      console.log('向上')
+      // console.log('向上')
+      handScale += 0.1
     }
+    this.setState({handScale, currentPoint: {x, y}}, this.draw2)
   }
 
   render() {

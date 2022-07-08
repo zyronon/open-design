@@ -22,6 +22,7 @@
 
   .header {
     height: $header-height;
+    opacity: 0;
 
     .fps {
       font-size: 28rem;
@@ -40,7 +41,7 @@
       .tool-bar {
         height: 42rem;
         background: $dark-bg;
-        //background: white;
+        background: white;
         display: flex;
 
         .tool {
@@ -80,14 +81,14 @@
     & > .left {
       width: 240rem;
       background: $dark-bg;
-      //background: white;
+      opacity: 0;
     }
 
     & > .right {
-      //opacity: 0;
       width: 240rem;
       background: $dark-bg;
       padding: 10rem;
+      opacity: 0;
 
       .gray {
         color: gray;

@@ -7,7 +7,15 @@ export function getHypotenuse(one: number[], two: number[]) {
   let dy = twoY - oneY
   return Math.sqrt(dx * dx + dy * dy)
 }
-
+/**
+ * 计算向量夹角，单位是弧度
+ * @param {Array.<2>} av
+ * @param {Array.<2>} bv
+ * @returns {number}
+ */
+export function computedIncludedAngle(av, bv) {
+  return Math.atan2(av[1], av[0]) - Math.atan2(bv[1], bv[0]);
+}
 export function getHypotenuse2(p1: any, p2: any) {
   let {x: p1X, y: p1Y} = p1
   let {x: p2X, y: p2Y} = p2

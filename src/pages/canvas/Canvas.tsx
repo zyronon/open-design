@@ -1,17 +1,17 @@
-import React, {MouseEvent, RefObject} from "react";
+import React, { MouseEvent, RefObject } from "react";
 import './index.scss'
-import {clone, debounce, throttle} from 'lodash'
-import getCenterPoint, {getAngle, getHypotenuse2, getRotatedPoint} from "../../utils";
+import { clone, debounce, throttle } from 'lodash'
+import getCenterPoint, { getAngle, getHypotenuse2, getRotatedPoint } from "../../utils";
 import BaseInput from "../../components/BaseInput";
-import {Down, FiveFive, FullScreen, Unlock} from "@icon-park/react";
+import { Down, FiveFive, FullScreen, Unlock } from "@icon-park/react";
 import BaseIcon from "../../components/BaseIcon";
-import {Col, Row} from "antd";
+import { Col, Row } from "antd";
 import BaseButton from "../../components/BaseButton";
 import FlipIcon from "../../assets/icon/FlipIcon";
 import RotateIcon from "../../assets/icon/RotateIcon";
 import AngleIcon from "../../assets/icon/AngleIcon";
-import {useLocation, useNavigate, useParams} from "react-router-dom";
-import {withRouter} from "../../components/WithRouter";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { withRouter } from "../../components/WithRouter";
 import cx from "classnames";
 
 enum BoxType {
@@ -85,9 +85,9 @@ class Canvas extends React.Component<any, IState> {
   body: HTMLElement = document.querySelector("body")
 
   state = {
-    currentPoint: {x: 0, y: 0,},
-    handMove: {x: 0, y: 0,},
-    oldHandMove: {x: 0, y: 0,},
+    currentPoint: { x: 0, y: 0, },
+    handMove: { x: 0, y: 0, },
+    oldHandMove: { x: 0, y: 0, },
     handScale: 0,
     activeHand: false,
   } as IState
@@ -102,7 +102,7 @@ class Canvas extends React.Component<any, IState> {
     let canvas: HTMLCanvasElement = this.canvasRef.current!
     let canvasRect = canvas.getBoundingClientRect()
     let ctx: CanvasRenderingContext2D = canvas.getContext('2d')!
-    let {width, height} = canvasRect
+    let { width, height } = canvasRect
     if (window.devicePixelRatio) {
       canvas.style.width = width + "px";
       canvas.style.height = height + "px";
@@ -130,12 +130,12 @@ class Canvas extends React.Component<any, IState> {
       frame++
       if (now > 1000 + lastTime) {
         fps = Math.round((frame * 1000) / (now - lastTime))
-        this.setState({fps})
+        this.setState({ fps })
         frame = 0
         lastTime = now
       }
       let time = window.requestAnimationFrame(loop)
-      this.setState({fpsTimer: time})
+      this.setState({ fpsTimer: time })
     }
     loop()
   }
@@ -245,9 +245,9 @@ class Canvas extends React.Component<any, IState> {
 
     this.setState({
       selectBox: undefined,
-      currentPoint: {x: 0, y: 0,},
-      handMove: {x: 0, y: 0,},
-      oldHandMove: {x: 0, y: 0,},
+      currentPoint: { x: 0, y: 0, },
+      handMove: { x: 0, y: 0, },
+      oldHandMove: { x: 0, y: 0, },
       handScale: 0,
       activeHand: true,
       boxList: [
@@ -280,7 +280,7 @@ class Canvas extends React.Component<any, IState> {
     } = this.state
     // console.log('renderCanvas', enterLT)
     ctx.save()
-    let {x, y, w, h, color, rotate, lineWidth, type, flipVertical, flipHorizontal}
+    let { x, y, w, h, color, rotate, lineWidth, type, flipVertical, flipHorizontal }
       = parent ? parent : box
     if (parent) {
       type = box.type
@@ -338,7 +338,6 @@ class Canvas extends React.Component<any, IState> {
       scaleX += handScale
 
       x += handMove.x / scaleX
-      // tranX += handMove.x!
     }
     if (flipVertical) {
       // console.log('flipVertical', flipVertical)
@@ -350,13 +349,7 @@ class Canvas extends React.Component<any, IState> {
       scaleY += handScale
 
       y += handMove.y / scaleY
-      // tranY += handMove.y!
     }
-
-    // if (activeHand && enter) {
-
-    //   console.log('offsetX', offsetX)
-    // }
 
 
     ctx.translate(tranX, tranY)
@@ -459,9 +452,9 @@ class Canvas extends React.Component<any, IState> {
   }
 
   renderRoundRect(rect: any, r: number) {
-    let {ctx} = this.state
+    let { ctx } = this.state
     ctx.lineWidth = rect.lineWidth
-    let {x, y, w, h} = rect
+    let { x, y, w, h } = rect
     ctx.beginPath()
     ctx.moveTo(x + w / 2, y)
     ctx.arcTo(x + w, y, x + w, y + h, r)
@@ -496,7 +489,7 @@ class Canvas extends React.Component<any, IState> {
   }
 
   flip(type: number) {
-    const {selectBox, boxList} = this.state
+    const { selectBox, boxList } = this.state
     if (selectBox?.id) {
       let rIndex = boxList.findIndex(v => v.id === selectBox.id)
       if (rIndex !== -1) {
@@ -505,7 +498,7 @@ class Canvas extends React.Component<any, IState> {
         } else {
           boxList[rIndex].flipVertical = !boxList[rIndex].flipVertical
         }
-        this.setState({boxList: clone(boxList), selectBox: clone(boxList[rIndex])}, this.draw2)
+        this.setState({ boxList: clone(boxList), selectBox: clone(boxList[rIndex]) }, this.draw2)
       }
     }
   }
@@ -547,7 +540,7 @@ class Canvas extends React.Component<any, IState> {
           y: rect.y + (rect.h / 2)
         }
         //不是当前点击位置，当前点击位置算对角会有偏差
-        let rectLT = getRotatedPoint({x: rect.x, y: rect.y}, center, rect.rotate)
+        let rectLT = getRotatedPoint({ x: rect.x, y: rect.y }, center, rect.rotate)
         console.log('rect', clone(rect))
         console.log('rectLT', clone(rectLT))
         if (rect.flipHorizontal) {
@@ -563,7 +556,7 @@ class Canvas extends React.Component<any, IState> {
           y: center.y + Math.abs(rectLT.y - center.y) * (rectLT.y < center.y ? 1 : -1)
         }
         console.log('sPoint', sPoint)
-        this.setState({sPoint})
+        this.setState({ sPoint })
       }
 
       if (hoverRT) {
@@ -572,7 +565,7 @@ class Canvas extends React.Component<any, IState> {
           y: rect.y + (rect.h / 2)
         }
         //不是当前点击位置，当前点击位置算对角会有偏差
-        let rectRT = getRotatedPoint({x: rect.rightX, y: rect.topY}, center, rect.rotate)
+        let rectRT = getRotatedPoint({ x: rect.rightX, y: rect.topY }, center, rect.rotate)
         console.log('rect', clone(rect))
         console.log('rectRT', clone(rectRT))
         if (rect.flipHorizontal) {
@@ -588,7 +581,7 @@ class Canvas extends React.Component<any, IState> {
           y: center.y + Math.abs(rectRT.y - center.y) * (rectRT.y < center.y ? 1 : -1)
         }
         console.log('sPoint', sPoint)
-        this.setState({sPoint})
+        this.setState({ sPoint })
       }
 
       if (hoverLeft || hoverLT || hoverRT) {
@@ -668,7 +661,7 @@ class Canvas extends React.Component<any, IState> {
   }
 
   onMouseUp = (e: any) => {
-    let {hoverLeft, selectBox, boxList, canvasRect, enterLT, startX, startY} = this.state
+    let { hoverLeft, selectBox, boxList, canvasRect, enterLT, startX, startY } = this.state
     if (selectBox) {
       let old = clone(boxList)
       let rIndex = boxList.findIndex(v => v.id === selectBox?.id)
@@ -676,7 +669,7 @@ class Canvas extends React.Component<any, IState> {
         let current = old[rIndex]
         let x = e.clientX - canvasRect.left
         let y = e.clientY - canvasRect.top
-        let currentPosition = {x: x, y: y}
+        let currentPosition = { x: x, y: y }
         let center = {
           x: current.x + (current.w / 2),
           y: current.y + (current.h / 2)
@@ -690,7 +683,7 @@ class Canvas extends React.Component<any, IState> {
             x: s.x + (s.w / 2),
             y: s.y + (s.h / 2)
           }
-          let oldPoint = {x: selectBox.x, y: selectBox.y}
+          let oldPoint = { x: selectBox.x, y: selectBox.y }
           let flipHorizontalOldPoint = getRotatedPoint(oldPoint, oldCenter, current.rotate)
           flipHorizontalOldPoint.x = oldCenter.x + Math.abs(flipHorizontalOldPoint.x - oldCenter.x) * (flipHorizontalOldPoint.x < oldCenter.x ? 1 : -1)
 
@@ -703,7 +696,7 @@ class Canvas extends React.Component<any, IState> {
           old[rIndex] = this.getPath(old[rIndex])
           // old[rIndex].y = old[rIndex].y + (y - startY)
         }
-        this.setState({selectBox: clone(boxList[rIndex]), boxList: old})
+        this.setState({ selectBox: clone(boxList[rIndex]), boxList: old })
       }
     }
     this.setState({
@@ -722,15 +715,15 @@ class Canvas extends React.Component<any, IState> {
   }
 
   isPointInPath(x: number, y: number, rect: Box) {
-    const {handMove} = this.state
-    const {x: handX, y: handY} = handMove
+    const { handMove } = this.state
+    const { x: handX, y: handY } = handMove
     //减去画布平移的距离
     x -= handX
     y -= handY
 
     // console.log('rect.x', rect.x, 'rect.y', rect.y)
     if (rect.rotate !== 0) {
-      let {w, h, rotate, flipHorizontal, flipVertical} = rect
+      let { w, h, rotate, flipHorizontal, flipVertical } = rect
       const center = {
         x: rect.x + (rect.w / 2),
         y: rect.y + (rect.h / 2)
@@ -741,8 +734,8 @@ class Canvas extends React.Component<any, IState> {
       if (flipVertical) {
         y = center.y + Math.abs(y - center.y) * (y < center.y ? 1 : -1)
       }
-      let p1 = {x, y}
-      let c2 = {x: rect.x + w / 2, y: rect.y + h / 2}
+      let p1 = { x, y }
+      let c2 = { x: rect.x + w / 2, y: rect.y + h / 2 }
       let s2 = getRotatedPoint(p1, c2, -rotate)
       x = s2.x
       y = s2.y
@@ -786,7 +779,7 @@ class Canvas extends React.Component<any, IState> {
       } else if ((rect.leftX! - angle < x && x < rect.leftX! + angle) &&
         (rect.topY! - angle < y && y < rect.topY! + angle)
       ) {
-        this.setState({hoverLT: true})
+        this.setState({ hoverLT: true })
         this.body.style.cursor = "nwse-resize"
       } else if ((rect.leftX! - rotate < x && x < rect.leftX! - angle) &&
         (rect.topY! - rotate < y && y < rect.topY! - angle)
@@ -796,7 +789,7 @@ class Canvas extends React.Component<any, IState> {
       } else if ((rect.rightX! - angle < x && x < rect.rightX! + angle) &&
         (rect.topY! - angle < y && y < rect.topY! + angle)
       ) {
-        this.setState({hoverRT: true})
+        this.setState({ hoverRT: true })
         this.body.style.cursor = "nwse-resize"
       } else {
         this.setState({
@@ -860,7 +853,7 @@ class Canvas extends React.Component<any, IState> {
         let rect = old[rIndex]
         let s = selectBox
 
-        let currentPosition = {x: x, y: y}
+        let currentPosition = { x: x, y: y }
         const center = {
           x: s.x + (s.w / 2),
           y: s.y + (s.h / 2)
@@ -887,7 +880,7 @@ class Canvas extends React.Component<any, IState> {
 
         rect = this.getPath(rect)
       }
-      this.setState({boxList: old}, this.draw2)
+      this.setState({ boxList: old }, this.draw2)
       return;
     }
 
@@ -901,7 +894,7 @@ class Canvas extends React.Component<any, IState> {
         let rect = old[rIndex]
         let s = selectBox
 
-        let currentPosition = {x: x, y: y}
+        let currentPosition = { x: x, y: y }
         let newCenterPoint = getCenterPoint(currentPosition, sPoint)
         let newTopRightPoint = getRotatedPoint(currentPosition, newCenterPoint, -s.rotate)
         let newBottomLeftPoint = getRotatedPoint(sPoint, newCenterPoint, -s.rotate)
@@ -917,7 +910,7 @@ class Canvas extends React.Component<any, IState> {
 
         rect = this.getPath(rect)
       }
-      this.setState({boxList: old}, this.draw2)
+      this.setState({ boxList: old }, this.draw2)
       return;
     }
     //不旋转情况下能伸缩的
@@ -959,7 +952,7 @@ class Canvas extends React.Component<any, IState> {
         now.rotate = a
       }
 
-      this.setState({boxList: old}, this.draw2)
+      this.setState({ boxList: old }, this.draw2)
       return;
     }
     if (enterLeft) {
@@ -977,7 +970,7 @@ class Canvas extends React.Component<any, IState> {
         now.w = selectBox.w - (x - startX)
         now = this.getPath(now)
       }
-      this.setState({boxList: old}, this.draw2)
+      this.setState({ boxList: old }, this.draw2)
       return;
     }
     if (enter) {
@@ -994,7 +987,7 @@ class Canvas extends React.Component<any, IState> {
         now.y = selectBox.y + dy
         now = this.getPath(now)
       }
-      this.setState({boxList: old}, this.draw2)
+      this.setState({ boxList: old }, this.draw2)
       return
     }
     // return console.log(x, y)
@@ -1013,10 +1006,10 @@ class Canvas extends React.Component<any, IState> {
 
   onWheel = (e: any) => {
     // console.log('e', e)
-    let {handScale, canvasRect} = this.state
+    let { handScale, canvasRect } = this.state
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
-    console.log(handScale)
+    console.log(x, y)
     handScale = Number(handScale)
     if (e.deltaY > 0) {
       // console.log('向下')
@@ -1025,11 +1018,11 @@ class Canvas extends React.Component<any, IState> {
       // console.log('向上')
       handScale += 0.1
     }
-    this.setState({handScale, currentPoint: {x, y}}, this.draw2)
+    this.setState({ handScale, currentPoint: { x, y } }, this.draw2)
   }
 
   render() {
-    const {activeHand} = this.state
+    const { activeHand } = this.state
     return <div className={'design'}>
       <div className="header">
         <div className={'fps'}>
@@ -1051,7 +1044,7 @@ class Canvas extends React.Component<any, IState> {
         <div className="canvas-wrapper">
           <div className="tool-bar">
             <div className={cx('tool', activeHand && 'active')}
-                 onClick={() => this.setState({activeHand: !activeHand})}>
+                 onClick={() => this.setState({ activeHand: !activeHand })}>
               <FiveFive theme="outline" size="20" fill="#ffffff"/>
             </div>
             <div className="tool">
@@ -1094,20 +1087,20 @@ class Canvas extends React.Component<any, IState> {
               </div>
               <div className="row">
                 <div className="col">
-                  <BaseInput prefix={<RotateIcon style={{fontSize: "16rem"}}/>}/>
+                  <BaseInput prefix={<RotateIcon style={{ fontSize: "16rem" }}/>}/>
                 </div>
                 <div className="col">
                   <BaseButton onClick={() => this.flip(0)}>
-                    <FlipIcon style={{fontSize: "16rem", 'transform': 'rotate(-90deg)'}}/>
+                    <FlipIcon style={{ fontSize: "16rem", 'transform': 'rotate(-90deg)' }}/>
                   </BaseButton>
                   <BaseButton onClick={() => this.flip(1)}>
-                    <FlipIcon style={{fontSize: "16rem", 'transform': 'rotate(0deg)'}}/>
+                    <FlipIcon style={{ fontSize: "16rem", 'transform': 'rotate(0deg)' }}/>
                   </BaseButton>
                 </div>
               </div>
               <div className="row">
                 <div className="col">
-                  <BaseInput prefix={<AngleIcon style={{fontSize: "16rem"}}/>}/>
+                  <BaseInput prefix={<AngleIcon style={{ fontSize: "16rem" }}/>}/>
                 </div>
                 <div className="col">
                 </div>

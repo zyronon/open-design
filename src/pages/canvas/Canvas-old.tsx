@@ -13,7 +13,6 @@ import AngleIcon from "../../assets/icon/AngleIcon";
 import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {withRouter} from "../../components/WithRouter";
 import cx from "classnames";
-import {mat4} from 'gl-matrix'
 
 enum BoxType {
   LINE = 0,
@@ -77,16 +76,8 @@ type IState = {
   sPoint: { x: number, y: number },
   activeHand: boolean,
   fpsTimer: any,
-  fps: number,
-  currentMat: any
+  fps: number
 }
-
-const out = new Float32Array([
-  0, 0, 0, 0,
-  0, 0, 0, 0,
-  0, 0, 0, 0,
-  0, 0, 0, 0,
-]);
 
 class Canvas extends React.Component<any, IState> {
   canvasRef: RefObject<HTMLCanvasElement> = React.createRef()
@@ -99,12 +90,6 @@ class Canvas extends React.Component<any, IState> {
     oldHandMove: {x: 0, y: 0,},
     handScale: 0,
     activeHand: false,
-    currentMat: new Float32Array([
-      1, 0, 0, 0,
-      0, 1, 0, 0,
-      0, 0, 1, 0,
-      0, 0, 0, 1,
-    ])
   } as IState
 
   constructor(props: any) {
@@ -266,7 +251,7 @@ class Canvas extends React.Component<any, IState> {
       handScale: 0,
       activeHand: true,
       boxList: [
-        this.getPath(oneBox),
+        // this.getPath(oneBox),
         // this.getPath(oneBox2),
         this.getPath(oneBox3),
         // this.getPath(threeBox),
@@ -274,17 +259,9 @@ class Canvas extends React.Component<any, IState> {
     }, this.draw2)
   }
 
-  draw2(nv?: any) {
+  draw2() {
     this.clearAll()
-    const {ctx, currentMat} = this.state
-
-    ctx.save()
-
-    if (currentMat) {
-      nv = currentMat
-      // console.log('nv', nv[0], nv[4], nv[1], nv[5], nv[12], nv[13])
-      ctx.transform(nv[0], nv[4], nv[1], nv[5], nv[12], nv[13]);
-    }
+    this.state.ctx.save()
     // ctx.translate(0.5, 0.5);
     this.state.ctx.lineCap = 'square'
     // console.log('this.state.boxList', this.state.boxList)
@@ -344,6 +321,43 @@ class Canvas extends React.Component<any, IState> {
       x = -w / 2
       y = -h / 2
     }
+    if (flipHorizontal) {
+      scaleX = -1
+
+      //如果在翻转情况下，自由拉伸要将tranX减去两个中心点偏移量
+      if (enterLT && selectBox) {
+        // console.log('tranX1', tranX)
+        let d = oldCenter!.x - newCenter!.x
+        tranX -= d * 2
+        // console.log('tranX2', tranX)
+      }
+      tranX += handMove.x!
+    } else {
+      tranX = currentPoint.x
+      x = -(currentPoint.x - x)
+      scaleX += handScale
+
+      x += handMove.x / scaleX
+      // tranX += handMove.x!
+    }
+    if (flipVertical) {
+      // console.log('flipVertical', flipVertical)
+      scaleY = -1
+      tranY -= handMove.y!
+    } else {
+      tranY = currentPoint.y
+      y = -(currentPoint.y - y)
+      scaleY += handScale
+
+      y += handMove.y / scaleY
+      // tranY += handMove.y!
+    }
+
+    // if (activeHand && enter) {
+
+    //   console.log('offsetX', offsetX)
+    // }
+
 
     ctx.translate(tranX, tranY)
     ctx.scale(scaleX, scaleY)
@@ -998,31 +1012,11 @@ class Canvas extends React.Component<any, IState> {
   }
 
   onWheel = (e: any) => {
-    let {clientX, clientY, deltaY} = e;
-    let {handScale, canvasRect, currentMat} = this.state
-
-    let x = clientX - canvasRect.left
-    let y = clientY - canvasRect.top
-    const currScale = 1 + (deltaY < 0 ? 0.1 : -0.1);
-    const zoom = Math.max(currScale > 0 ? currScale : 1, 0.1);
-    x = x * (1 - zoom);
-    y = y * (1 - zoom);
-
-    // console.log(x, y)
-
-    const t = new Float32Array([
-      zoom, 0, 0, 0,
-      0, zoom, 0, 0,
-      0, 0, 1, 0,
-      x, y, 0, 1,
-    ]);
-    const nv = mat4.multiply(out, t, currentMat);
-    this.draw2(nv)
-    this.setState({currentMat: nv})
-
-    return
     // console.log('e', e)
-    // console.log(handScale)
+    let {handScale, canvasRect} = this.state
+    let x = e.clientX - canvasRect.left
+    let y = e.clientY - canvasRect.top
+    console.log(handScale)
     handScale = Number(handScale)
     if (e.deltaY > 0) {
       // console.log('向下')

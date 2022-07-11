@@ -292,7 +292,7 @@ class Canvas extends React.Component<any, IState> {
       // console.log(v)
       this.renderCanvas(v)
     })
-    this.state.ctx.restore()
+    ctx.restore()
   }
 
   renderCanvas(box: Box, parent?: Box) {

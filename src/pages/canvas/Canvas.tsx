@@ -282,8 +282,10 @@ class Canvas extends React.Component<any, IState> {
 
     if (currentMat) {
       nv = currentMat
-      // console.log('nv', nv[0], nv[4], nv[1], nv[5], nv[12], nv[13])
-      ctx.transform(nv[0], nv[4], nv[1], nv[5], nv[12], nv[13]);
+      console.log('nv', nv[0], nv[4], nv[1], nv[5], nv[12], nv[13])
+      // ctx.transform(nv[0], nv[4], nv[1], nv[5], nv[12], nv[13]);
+      ctx.translate(nv[12], nv[13])
+      ctx.scale(nv[0], nv[5])
     }
     // ctx.translate(0.5, 0.5);
     this.state.ctx.lineCap = 'square'
@@ -1005,10 +1007,13 @@ class Canvas extends React.Component<any, IState> {
     let y = clientY - canvasRect.top
     const currScale = 1 + (deltaY < 0 ? 0.1 : -0.1);
     const zoom = Math.max(currScale > 0 ? currScale : 1, 0.1);
+    console.log('old', x, y)
+    //因为translate是连续变换，每次都是放大0.1倍，所以相当于让x和y变成0.1倍。这样缩放和平移是对等的
     x = x * (1 - zoom);
     y = y * (1 - zoom);
+    //其实要平移的值，也可以直接用x，y剩以当前的总倍数，比如放在1.7倍，那么x*0.7，就是要平移的x坐标
 
-    // console.log(x, y)
+    console.log('x, y', x, y)
 
     const t = new Float32Array([
       zoom, 0, 0, 0,
@@ -1017,8 +1022,7 @@ class Canvas extends React.Component<any, IState> {
       x, y, 0, 1,
     ]);
     const nv = mat4.multiply(out, t, currentMat);
-    this.draw2(nv)
-    this.setState({currentMat: nv})
+    this.setState({currentMat: nv}, () => this.draw2(nv))
 
     return
     // console.log('e', e)

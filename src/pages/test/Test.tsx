@@ -20,8 +20,11 @@ class T extends Component<any, any> {
     let r = 90 * Math.PI / 180
     // ctx.translate(100, 100)
     // ctx.transform(0, r, -r, 0, 100, 100)
-    // ctx.transform(1, 0, 0, 0, 0, 0)
-    ctx.transform(1,1,-1,1,0,0);
+    ctx.setTransform(
+      0, 1, 1,
+      0, 0, 0
+    )
+    // ctx.transform(1,1,-1,1,0,0);
 
     // ctx.rotate(r)
     ctx.moveTo(0, 0)

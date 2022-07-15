@@ -262,18 +262,18 @@ class Canvas extends React.Component<any, IState> {
     this.setState({
       selectBox: undefined,
       currentPoint: { x: 0, y: 0, },
-      handMove: { x: -174.03750610351562, y: -174.03750610351562, },
+      // handMove: { x: -174.03750610351562, y: -174.03750610351562, },
       oldHandMove: { x: 0, y: 0, },
-      handScale: 1.4641001224517822,
+      // handScale: 1.4641001224517822,
       activeHand: false,
-      currentMat: new Float32Array([
-        1.4641001224517822, 0, 0, 0,
-        0, 1.4641001224517822, 0, 0,
-        0, 0, 1, 0,
-        -174.03750610351562, -174.03750610351562, 0, 1
-      ]),
+      // currentMat: new Float32Array([
+      //   1.4641001224517822, 0, 0, 0,
+      //   0, 1.4641001224517822, 0, 0,
+      //   0, 0, 1, 0,
+      //   -174.03750610351562, -174.03750610351562, 0, 1
+      // ]),
       boxList: [
-        // this.getPath(oneBox),
+        this.getPath(oneBox),
         // this.getPath(oneBox2),
         // this.getPath(allLine),
         this.getPath(oneBox3),
@@ -354,6 +354,40 @@ class Canvas extends React.Component<any, IState> {
       tranY = y + h / 2
       x = -w / 2
       y = -h / 2
+    }
+
+    // if (flipHorizontal) {
+    //   scaleX = -1
+    //   tranX = -tranX
+    //   //如果在翻转情况下，自由拉伸要将tranX减去两个中心点偏移量
+    //   if (enterLT && selectBox) {
+    //     // console.log('tranX1', tranX)
+    //     let d = oldCenter!.x - newCenter!.x
+    //     tranX -= d * 2
+    //     // console.log('tranX2', tranX)
+    //   }
+    // }
+    // if (flipVertical) {
+    //   // console.log('flipVertical', flipVertical)
+    //   scaleY = -1
+    //   tranY = -tranY
+    // }
+
+    if (flipHorizontal) {
+      scaleX = -1
+      // tranX = -tranX
+      //如果在翻转情况下，自由拉伸要将tranX减去两个中心点偏移量
+      if (enterLT && selectBox) {
+        // console.log('tranX1', tranX)
+        let d = oldCenter!.x - newCenter!.x
+        tranX += d * 2
+        // console.log('tranX2', tranX)
+      }
+    }
+    if (flipVertical) {
+      // console.log('flipVertical', flipVertical)
+      scaleY = -1
+      // tranY = -tranY
     }
 
     ctx.translate(tranX, tranY)
@@ -719,15 +753,12 @@ class Canvas extends React.Component<any, IState> {
   }
 
   isPointInPath(x: number, y: number, rect: Box) {
-    const { handMove } = this.state
+    const { handMove, handScale, ctx, currentMat } = this.state
     const { x: handX, y: handY } = handMove
-    console.log('old', x, y)
     //减去画布平移的距离
-    x -= handX
-    y -= handY
-    console.log('new ', x, y)
-    console.log('rect.leftX',rect.leftX)
-    // console.log('rect.x', rect.x, 'rect.y', rect.y)
+    // y = y / handScale - handY / handScale
+    x = (x - handX) / handScale//上面的简写
+    y = (y - handY) / handScale
     if (rect.rotate !== 0) {
       let { w, h, rotate, flipHorizontal, flipVertical } = rect
       const center = {
@@ -755,6 +786,10 @@ class Canvas extends React.Component<any, IState> {
         // console.log('在里面')
         //这里要加一个判断，如果有一个在里面了，后面就不需要再去判断了，
         // 否则后面判断时会走到else逻辑里面，给清除掉
+        ctx.save()
+        let nv = currentMat
+        ctx.transform(nv[0], nv[4], nv[1], nv[5], nv[12], nv[13]);
+
         let d = .5
         let t = clone(rect)
         t.id = Date.now()
@@ -766,6 +801,7 @@ class Canvas extends React.Component<any, IState> {
         // console.log(t)
         t.type = BoxType.WRAPPER
         this.renderCanvas(t)
+        ctx.restore()
       }
       isIn = true
     } else {
@@ -830,7 +866,8 @@ class Canvas extends React.Component<any, IState> {
       activeHand,
       handMove,
       oldHandMove,
-      currentMat
+      currentMat,
+      handScale
     } = this.state
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
@@ -869,7 +906,11 @@ class Canvas extends React.Component<any, IState> {
         let rect = old[rIndex]
         let s = selectBox
 
-        let currentPosition = { x: x, y: y }
+        // let currentPosition = { x: x , y: y }
+        let currentPosition = {
+          x: (x - handMove.x) / handScale,
+          y: (y - handMove.y) / handScale
+        }
         const center = {
           x: s.x + (s.w / 2),
           y: s.y + (s.h / 2)
@@ -910,7 +951,10 @@ class Canvas extends React.Component<any, IState> {
         let rect = old[rIndex]
         let s = selectBox
 
-        let currentPosition = { x: x, y: y }
+        let currentPosition = {
+          x: (x - handMove.x) / handScale,
+          y: (y - handMove.y) / handScale
+        }
         let newCenterPoint = getCenterPoint(currentPosition, sPoint)
         let newTopRightPoint = getRotatedPoint(currentPosition, newCenterPoint, -s.rotate)
         let newBottomLeftPoint = getRotatedPoint(sPoint, newCenterPoint, -s.rotate)
@@ -993,8 +1037,8 @@ class Canvas extends React.Component<any, IState> {
       if (!selectBox?.id) return
       // console.log('startX')
       // console.log('按下了')
-      let dx = x - startX
-      let dy = y - startY
+      let dx = (x - startX) / handScale
+      let dy = (y - startY) / handScale
       let old = clone(boxList)
       let rIndex = old.findIndex(v => v.id === selectBox?.id)
       if (rIndex !== -1) {

@@ -22,7 +22,7 @@ enum BoxType {
 }
 
 interface Box {
-  id?: number,
+  id: number,
   x: number,
   y: number,
   w: number,
@@ -291,7 +291,7 @@ class Canvas extends React.Component<any, IState> {
     ctx.restore()
   }
 
-  renderCanvas(box: Box, parent?: Box) {
+  renderCanvas(rect: Box, parent?: Box) {
     let {
       ctx, enterLT, enterRT, selectBox, activeHand, enter, offsetX, offsetY,
       handMove, handScale,
@@ -300,9 +300,9 @@ class Canvas extends React.Component<any, IState> {
     // console.log('renderCanvas', enterLT)
     ctx.save()
     let {x, y, w, h, color, rotate, lineWidth, type, flipVertical, flipHorizontal}
-      = parent ? parent : box
+      = parent ? parent : rect
     if (parent) {
-      type = box.type
+      type = rect.type
 
       let outside = .5
       x = x - outside
@@ -313,8 +313,9 @@ class Canvas extends React.Component<any, IState> {
 
     let oldCenter: { x: number; y: number; }
     let newCenter: { x: number; y: number; }
-    if ((enterLT || enterRT) && selectBox) {
-      let s = selectBox
+    let isMe = selectBox?.id === (parent ? parent.id : rect.id)
+    if ((enterLT || enterRT) && isMe) {
+      let s = selectBox!
       oldCenter = {
         x: s.x + (s.w / 2),
         y: s.y + (s.h / 2)
@@ -345,7 +346,7 @@ class Canvas extends React.Component<any, IState> {
       scaleX = -1
       // tranX = -tranX
       //如果在翻转情况下，自由拉伸要将tranX减去两个中心点偏移量
-      if ((enterRT || enterLT) && selectBox) {
+      if ((enterRT || enterLT) && isMe) {
         // console.log('tranX1', tranX)
         let d = oldCenter!.x - newCenter!.x
         tranX += d * 2
@@ -452,8 +453,8 @@ class Canvas extends React.Component<any, IState> {
     }
 
     ctx.restore()
-    if (box.children) {
-      box.children.map(v => this.renderCanvas(v, box))
+    if (rect.children) {
+      rect.children.map(v => this.renderCanvas(v, rect))
     }
   }
 
@@ -1031,7 +1032,7 @@ class Canvas extends React.Component<any, IState> {
     }
   }
 
-  onMouseMoveThrottle = throttle(this.onMouseMove, 0)
+  onMouseMoveThrottle = throttle(this.onMouseMove, 20)
   onMouseMoveWrapper = (e: MouseEvent) => {
     this.onMouseMoveThrottle(e)
   }

@@ -3,7 +3,7 @@ import './index.scss'
 import {clone, throttle} from 'lodash'
 import getCenterPoint, {getAngle, getRotatedPoint} from "../../utils";
 import BaseInput from "../../components/BaseInput";
-import {Down, FiveFive, FullScreen, Unlock} from "@icon-park/react";
+import {Down, FiveFive, FullScreen, Unlock, Text} from "@icon-park/react";
 import BaseIcon from "../../components/BaseIcon";
 import BaseButton from "../../components/BaseButton";
 import FlipIcon from "../../assets/icon/FlipIcon";
@@ -18,7 +18,8 @@ enum BoxType {
   LINE = 0,
   FILL = 1,
   WRAPPER = 2,
-  SELECT = 3
+  SELECT = 3,
+  TEXT = 4,
 }
 
 interface Box {
@@ -27,6 +28,7 @@ interface Box {
   y: number,
   w: number,
   h: number,
+  content?: string,
   rotate: number,
   lineWidth: number,
   type: BoxType,
@@ -137,19 +139,8 @@ class Canvas extends React.Component<any, IState> {
   }
 
   init() {
-    let allLine = {
-      id: 'allLine',
-      x: 0,
-      y: 0,
-      w: this.state.canvas.width,
-      h: this.state.canvas.height,
-      rotate: 0,
-      lineWidth: 1,
-      type: BoxType.LINE,
-      color: 'black',
-      children: []
-    }
     let oneBox = {
+      id: 'oneBox',
       name: 'oneBox',
       x: 550,
       y: 250,
@@ -175,66 +166,20 @@ class Canvas extends React.Component<any, IState> {
       color: 'gray',
       children: []
     }
-    let oneBox2 = {
-      x: 0,
-      y: 250,
-      w: 450,
-      h: 1,
-      rotate: 0,
-      lineWidth: 2,
-      type: BoxType.LINE,
-      color: 'gray',
-      children: []
-    }
-    let oneBoxLineRotate = {
-      // id: Date.now(),
-      id: 'oneBoxLine',
-      x: 80,
-      y: 20,
-      w: 50,
-      h: 150,
-      rotate: 70,
-      lineWidth: 2,
-      type: BoxType.LINE,
-      color: 'gray',
-      children: []
-    }
-    let towBox = {
-      x: 50,
-      y: 50,
+    let text = {
+      id: 'text',
+      name: 'text',
+      content: '输入文本',
+      x: 433,
+      y: 133,
       w: 150,
       h: 150,
       rotate: 0,
-      lineWidth: 1,
-      type: BoxType.FILL,
-      color: 'gray',
-      children: []
-    }
-    let a = 0
-    let threeBox = {
-      id: 'threeBox',
-      x: 350 + a,
-      y: 50 + a,
-      w: 50,
-      h: 200,
-      rotate: 0,
-      lineWidth: 1,
-      type: BoxType.FILL,
-      color: 'gray',
-      children: []
-    }
-    let selectBox = {
-      x: 50,
-      y: 50,
-      w: 50,
-      h: 100,
-      rotate: 0,
       lineWidth: 2,
-      type: BoxType.SELECT,
+      type: BoxType.TEXT,
       color: 'gray',
       children: []
     }
-
     this.setState({
       selectBox: undefined,
       currentPoint: {x: 0, y: 0,},
@@ -262,6 +207,7 @@ class Canvas extends React.Component<any, IState> {
         // this.getPath(allLine),
         //@ts-ignore
         this.getPath(oneBox3),
+        this.getPath(text),
         // this.getPath(threeBox),
       ]
     }, this.draw2)
@@ -373,6 +319,10 @@ class Canvas extends React.Component<any, IState> {
     ctx.closePath()
 
     switch (type) {
+      case BoxType.TEXT:
+        ctx.font = "20rem serif";
+        ctx.fillText(rect.content!, x, y);
+        break
       case BoxType.FILL:
         ctx.fillStyle = color
         ctx.fill()
@@ -1098,6 +1048,9 @@ class Canvas extends React.Component<any, IState> {
               <div className="tool">
                 <FiveFive theme="outline" size="20" fill="#ffffff"/>
                 <Down theme="outline" size="14" fill="#ffffff" className='arrow'/>
+              </div>
+              <div className="tool">
+                <Text theme="outline" size="20" fill="#ffffff"/>
               </div>
             </div>
             <div className="right">

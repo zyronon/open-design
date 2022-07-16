@@ -8,6 +8,10 @@
   justify-content: center;
 
   &:hover {
-    background: rgb(80, 80, 80);;
+    background: rgb(80, 80, 80);
+  }
+
+  &.active {
+    background: $primary;
   }
 }

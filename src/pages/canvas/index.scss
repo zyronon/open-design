@@ -18,11 +18,31 @@
   width: 100%;
   font-size: 14rem;
 
+  &.white {
+    .tool-bar {
+      background: white !important;
+    }
+
+    .header {
+      opacity: 0;
+    }
+
+    .content {
+      & > .left {
+        opacity: 0;
+      }
+
+      & > .right {
+        opacity: 0;
+      }
+    }
+
+  }
+
   $header-height: 42rem;
 
   .header {
     height: $header-height;
-    opacity: 0;
 
     .fps {
       font-size: 28rem;
@@ -41,27 +61,43 @@
       .tool-bar {
         height: 42rem;
         background: $dark-bg;
-        background: white;
         display: flex;
+        justify-content: space-between;
 
-        .tool {
-          width: 45rem;
-          height: 100%;
-          //padding: 0 6rem;
+        > .left {
           display: flex;
-          align-items: center;
-          justify-content: center;
 
-          .arrow {
-            margin-left: 2rem;
+          .tool {
+            width: 45rem;
+            height: 100%;
+            //padding: 0 6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+
+            .arrow {
+              margin-left: 2rem;
+            }
+
+            &:hover {
+              background: black;
+            }
+
+            &.active {
+              background: rgb(13, 153, 255);
+            }
           }
+        }
 
-          &:hover {
-            background: black;
-          }
+        > .right {
+          display: flex;
 
-          &.active {
-            background: rgb(13, 153, 255);
+          .resize {
+            width: 45rem;
+            display: flex;
+            align-items: center;
+            color: white;
           }
         }
       }
@@ -81,14 +117,12 @@
     & > .left {
       width: 240rem;
       background: $dark-bg;
-      opacity: 0;
     }
 
     & > .right {
       width: 240rem;
       background: $dark-bg;
       padding: 10rem;
-      opacity: 0;
 
       .gray {
         color: gray;

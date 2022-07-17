@@ -79,13 +79,15 @@ const BaseSelect = memo((props: IProps) => {
   }
 
   function onSelect(e: any) {
+    if (onChange) {
+      return onChange(e);
+    }
     props.children.map((item: any) => {
       if (item.props.value === e) {
         setSelectItem(item.props);
       }
     });
     toggle();
-    onChange(e);
   }
 
   return (

@@ -1,8 +1,14 @@
 import React, {memo, useEffect, useState} from "react";
 import './index.scss'
 import cx from "classnames";
+import {Tooltip} from "antd";
 
-export const BaseRadioGroup = memo((props: any) => {
+interface IProps {
+  value: any,
+  onChange: Function
+}
+
+export const BaseRadioGroup = memo((props: IProps & any) => {
   const {value = null, active, children, onChange, ...reset} = props
   const [selectItem, setSelectItem] = useState<any>({});
 
@@ -12,7 +18,7 @@ export const BaseRadioGroup = memo((props: any) => {
       props.children.map((item: any) => {
         // console.log('item.props.value', item.props.value)
         if (item.props.value == value) {
-          console.log(item.props)
+          // console.log(item.props)
           setSelectItem(item.props);
         }
       });
@@ -20,12 +26,14 @@ export const BaseRadioGroup = memo((props: any) => {
   }, [value, props.children]);
 
   function onSelect(e: any) {
+    if (onChange) {
+      return onChange(e);
+    }
     props.children.map((item: any) => {
       if (item.props.value === e) {
         setSelectItem(item.props);
       }
     });
-    onChange(e);
   }
 
   return (
@@ -47,13 +55,16 @@ export const BaseRadioGroup = memo((props: any) => {
   )
 })
 export const BaseRadio = memo((props: any) => {
-  const {value, children, selected, onSelect} = props;
+  const {value, label, children, selected, onSelect} = props;
   return (
-    <div
-      className={cx('base-radio', {'base-radio-active': selected})}
-      onClick={onSelect}
-    >
-      {children}
-    </div>
+    <Tooltip title={label} placement={'bottom'}>
+      <div
+        className={cx('base-radio', {'base-radio-active': selected})}
+        onClick={onSelect}
+      >
+        {children}
+      </div>
+    </Tooltip>
+
   );
 })

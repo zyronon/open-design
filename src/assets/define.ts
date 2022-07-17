@@ -28,18 +28,24 @@ export interface Rect extends RectText {
   flipHorizontal?: boolean,
 }
 
-export enum RectTextMode {
+export enum TextMode {
   AUTO_W = 1,
   AUTO_H = 2,
   FIXED = 3,
 }
 
+export enum TextBaseline {
+  LEFT = 1,
+  RIGHT = 2,
+  CENTER = 3,
+}
+
 export interface RectText {
   texts: string[],
-  lineHeight: number,
+  textLineHeight: number,
   letterSpacing: number,
-  fixedWH: boolean,
-  rectTextMode: RectTextMode,
+  textMode: TextMode,
+  textBaseline: TextBaseline,
   fontFamily: number,
   fontWeight: number,
   fontSize: number,

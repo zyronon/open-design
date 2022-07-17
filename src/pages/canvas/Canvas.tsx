@@ -1,6 +1,6 @@
 import React, {MouseEvent, RefObject} from "react";
 import './index.scss'
-import {clone, cloneDeep, merge, throttle} from 'lodash'
+import {assign, clone, cloneDeep, merge, throttle} from 'lodash'
 import getCenterPoint, {getAngle, getRotatedPoint} from "../../utils";
 import BaseInput from "../../components/BaseInput";
 import {
@@ -30,7 +30,7 @@ import {mat4} from 'gl-matrix'
 import Fps from "../../components/Fps";
 import {BaseSelect, BaseOption} from "../../components/BaseSelect";
 import {fontFamilies, fontSize, fontWeight} from "../../assets/constant";
-import {Rect, RectTextMode, RectType} from "../../assets/define";
+import {Rect, TextMode, RectType, TextBaseline} from "../../assets/define";
 import {BaseRadio, BaseRadioGroup} from "../../components/BaseRadio";
 
 
@@ -159,6 +159,7 @@ class Canvas extends React.Component<any, IState> {
       children: []
     }
     let text: Rect = {
+      textBaseline: TextBaseline.LEFT,
       id: 'text',
       name: 'text',
       texts: ['输入文本'],
@@ -169,8 +170,8 @@ class Canvas extends React.Component<any, IState> {
       fontFamily: 0,
       fontWeight: 1,
       letterSpacing: 0,
-      lineHeight: 0,
-      rectTextMode: RectTextMode.AUTO_W,
+      textLineHeight: 20,
+      textMode: TextMode.AUTO_H,
       rotate: 0,
       lineWidth: 2,
       fontSize: 20,
@@ -322,10 +323,9 @@ class Canvas extends React.Component<any, IState> {
       case RectType.TEXT:
         ctx.font = `${rect.fontSize}rem serif`;
         ctx.textBaseline = 'top'
-        // let rrr = ctx.measureText('123456789')
-        // console.log(rrr)
+        // console.log('render', rect.texts)
         rect.texts?.map((text, index) => {
-          text && ctx.fillText(text, x, y + (index * rect.fontSize));
+          text && ctx.fillText(text, x, y + (index * rect.textLineHeight));
         })
         break
       case RectType.FILL:
@@ -470,7 +470,7 @@ class Canvas extends React.Component<any, IState> {
     let old = cloneDeep(rectList)
     let rIndex = old.findIndex(item => item.id === selectRect?.id)
     if (rIndex > -1) {
-      old[rIndex] = merge(old[rIndex], val)
+      assign(old[rIndex], val)
       old[rIndex] = this.getPath(old[rIndex])
       this.setState({rectList: old}, this.draw)
     }
@@ -478,8 +478,9 @@ class Canvas extends React.Component<any, IState> {
 
   getSelect = () => {
     const {rectList, selectRect} = this.state
-    let rIndex = rectList.findIndex(item => item.id === selectRect?.id)
-    return rectList[rIndex]
+    let rIndex = rectList?.findIndex(item => item.id === selectRect?.id)
+    if (rIndex > -1) return rectList[rIndex]
+    return {}
   }
 
   onDoubleClick = (e: any) => {
@@ -505,28 +506,9 @@ class Canvas extends React.Component<any, IState> {
       input.focus()
       input.oninput = (val: any) => {
         let newValue = val.target.value
-        if (newValue) {
-          let texts = newValue.split('\n')
-          let w = current.w
-          let h = current.h
-          if (current.rectTextMode === RectTextMode.AUTO_W) {
-            ctx.font = `${current.fontSize}rem serif`;
-            let widths = texts.map((text: string) => {
-              let measureText = ctx.measureText(text)
-              return measureText.width
-            })
-            // console.log('w', widths)
-            w = Math.max(...widths)
-            h = texts.length * current.fontSize
-          }
-          // console.log('newValue', newValue)
-          // console.log('texts', texts)
-          this.changeSelect({
-            w,
-            h,
-            texts
-          })
-        }
+        console.log('newValue', newValue)
+        let texts = newValue.split('\n')
+        this.calcText(texts)
       }
       ctx.restore()
     }
@@ -1108,14 +1090,91 @@ class Canvas extends React.Component<any, IState> {
     }, this.draw)
   }
 
-  onChange(e: any) {
+  getTextModeAutoHTexts(texts: string[], ctx: any, w: number) {
+    let newTexts: string[] = []
+    for (let i = 0; i < texts.length; i++) {
+      let text = texts[i]
+      if (!text) continue
+      let measureText = ctx.measureText(text)
+      if (measureText.width <= w) {
+        newTexts.push(text)
+      } else {
+        for (let i = text.length - 1; i >= 0; i--) {
+          measureText = ctx.measureText(text.substring(0, i))
+          if (measureText.width <= w) {
+            newTexts.push(text.substring(0, i))
+            let res = this.getTextModeAutoHTexts([text.substring(i, text.length)], ctx, w)
+            newTexts = newTexts.concat(res)
+            break
+          }
+        }
+      }
+    }
+    return newTexts
+  }
+
+  calcText = (
+    texts?: any,
+    fontSize?: any,
+    textLineHeight?: any,
+    letterSpacing?: any,
+    textMode?: any,
+  ) => {
+    let {
+      ctx
+    } = this.state
+    let current: Rect = this.getSelect()
+
+    if (!texts) texts = current.texts
+    if (!fontSize) fontSize = current.fontSize
+    if (!textLineHeight) textLineHeight = current.textLineHeight
+    if (!letterSpacing) letterSpacing = current.letterSpacing
+    if (!textMode) textMode = current.textMode
+
+    let w = current.w
+    let h = current.h
+    ctx.font = `${fontSize}rem serif`;
+    if (textMode === TextMode.AUTO_W) {
+      let widths = texts.map((text: string) => {
+        let measureText = ctx.measureText(text)
+        return measureText.width
+      })
+      w = Math.max(...widths)
+      h = texts.length * current.textLineHeight
+    }
+    if (textMode === TextMode.AUTO_H) {
+      texts = this.getTextModeAutoHTexts(texts, ctx, w)
+      h = texts.length * textLineHeight
+    }
+    this.changeSelect({
+      w,
+      h,
+      texts,
+      textLineHeight,
+      letterSpacing,
+      textMode
+    })
+  }
+
+  onChange = (e: any) => {
     console.log('onChange', e)
+  }
+
+  onTextBaselineChange = (e: any) => {
+    console.log('onTextBaselineChange', e)
+  }
+
+  onTextModeChange = (e: any) => {
+    this.calcText(null, null, null, null, e)
+    console.log('onTextModeChange', e)
   }
 
   render() {
     // console.log('render')
-    const {activeHand, handScale, selectRect} = this.state
-    console.log('selectRect', selectRect?.fontFamily)
+    const {activeHand, handScale,selectRect} = this.state
+    // console.log('selectRect', selectRect?.fontFamily)
+    // const selectRect = this.getSelect()
+    // console.log('se',selectRect)
     const type = selectRect?.type
     return <div className={'design '}>
       <div className="header">
@@ -1209,19 +1268,6 @@ class Canvas extends React.Component<any, IState> {
                   <BaseInput prefix={<AngleIcon style={{fontSize: "16rem"}}/>}/>
                 </div>
                 <div className="col">
-                  <BaseRadioGroup value={'2'}>
-                    <BaseRadio key={0} value={'1'} label={''}>
-                      <AlignTextLeft fill="#929596"/>
-                    </BaseRadio>
-                    <BaseRadio key={1} value={'2'} label={''}>
-                      <AlignTextLeft fill="#929596"/>
-                    </BaseRadio>
-                    <BaseRadio key={2} value={'3'} label={''}>
-                      <AlignTextLeft fill="#929596"/>
-                    </BaseRadio>
-                  </BaseRadioGroup>
-                </div>
-                <div className="col">
                   <BaseIcon active={false}>
                     <FullScreen theme="outline" size="16" fill="#929596"/>
                   </BaseIcon>
@@ -1265,36 +1311,40 @@ class Canvas extends React.Component<any, IState> {
                     </div>
                     <div className="row">
                         <div className="col">
-                            <BaseInput value={selectRect?.w.toFixed(0)}
+                            <BaseInput value={selectRect?.textLineHeight}
                                        prefix={<RowHeight size="14" fill="#929596"/>}/>
                         </div>
                         <div className="col">
-                            <BaseInput value={selectRect?.h.toFixed(0)}
+                            <BaseInput value={selectRect?.letterSpacing}
                                        prefix={<AutoLineWidth fill="#929596"/>}/>
                         </div>
                     </div>
                     <div className="row">
                         <div className="col">
-                            <BaseButton active={selectRect?.flipHorizontal} onClick={() => this.flip(0)}>
-                                <AlignTextLeft fill="#929596"/>
-                            </BaseButton>
-                            <BaseButton active={selectRect?.flipVertical} onClick={() => this.flip(1)}>
-                                <AlignTextCenter fill="#929596"/>
-                            </BaseButton>
-                            <BaseButton active={selectRect?.flipVertical} onClick={() => this.flip(1)}>
-                                <AlignTextRight fill="#929596"/>
-                            </BaseButton>
+                            <BaseRadioGroup value={selectRect?.textBaseline} onChange={this.onTextBaselineChange}>
+                                <BaseRadio key={0} value={TextBaseline.LEFT} label={'左对齐'}>
+                                    <AlignTextLeft fill="#929596"/>
+                                </BaseRadio>
+                                <BaseRadio key={1} value={TextBaseline.CENTER} label={'居中对齐'}>
+                                    <AlignTextLeft fill="#929596"/>
+                                </BaseRadio>
+                                <BaseRadio key={2} value={TextBaseline.RIGHT} label={'右对齐'}>
+                                    <AlignTextLeft fill="#929596"/>
+                                </BaseRadio>
+                            </BaseRadioGroup>
                         </div>
                         <div className="col">
-                            <BaseButton active={selectRect?.flipHorizontal} onClick={() => this.flip(0)}>
-                                <AutoWidthOne fill="#929596"/>
-                            </BaseButton>
-                            <BaseButton active={selectRect?.flipVertical} onClick={() => this.flip(1)}>
-                                <AutoHeightOne fill="#929596"/>
-                            </BaseButton>
-                            <BaseButton active={selectRect?.flipVertical} onClick={() => this.flip(1)}>
-                                <Square fill="#929596"/>
-                            </BaseButton>
+                            <BaseRadioGroup value={selectRect?.textMode} onChange={this.onTextModeChange}>
+                                <BaseRadio key={0} value={TextMode.AUTO_W} label={'自动宽度'}>
+                                    <AutoWidthOne fill="#929596"/>
+                                </BaseRadio>
+                                <BaseRadio key={1} value={TextMode.AUTO_H} label={'自动高度'}>
+                                    <AutoHeightOne fill="#929596"/>
+                                </BaseRadio>
+                                <BaseRadio key={2} value={TextMode.FIXED} label={'固定宽高'}>
+                                    <Square fill="#929596"/>
+                                </BaseRadio>
+                            </BaseRadioGroup>
                         </div>
                         <div className="col">
                             <BaseIcon active={false}>

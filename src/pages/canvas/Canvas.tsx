@@ -3,7 +3,22 @@ import './index.scss'
 import {clone, cloneDeep, merge, throttle} from 'lodash'
 import getCenterPoint, {getAngle, getRotatedPoint} from "../../utils";
 import BaseInput from "../../components/BaseInput";
-import {Down, FiveFive, FullScreen, Unlock, Text} from "@icon-park/react";
+import {
+  AlignTextCenter,
+  AlignTextLeft,
+  AlignTextRight,
+  AutoHeightOne,
+  AutoLineWidth,
+  AutoWidthOne,
+  Down,
+  FiveFive,
+  FullScreen,
+  More,
+  RowHeight,
+  Square,
+  Text,
+  Unlock
+} from "@icon-park/react";
 import BaseIcon from "../../components/BaseIcon";
 import BaseButton from "../../components/BaseButton";
 import FlipIcon from "../../assets/icon/FlipIcon";
@@ -13,37 +28,11 @@ import {withRouter} from "../../components/WithRouter";
 import cx from "classnames";
 import {mat4} from 'gl-matrix'
 import Fps from "../../components/Fps";
+import {BaseSelect, BaseOption} from "../../components/BaseSelect";
+import {fontFamilies, fontSize, fontWeight} from "../../assets/constant";
+import {Rect, RectTextMode, RectType} from "../../assets/define";
+import {BaseRadio, BaseRadioGroup} from "../../components/BaseRadio";
 
-enum RectType {
-  LINE = 0,
-  FILL = 1,
-  WRAPPER = 2,
-  SELECT = 3,
-  TEXT = 4,
-}
-
-interface Rect {
-  id: number | string,
-  name?: number | string,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  fixedWH: boolean,
-  texts?: string[],
-  rotate: number,
-  lineWidth: number,
-  fontSize: number,
-  type: RectType,
-  color: string,
-  leftX?: number,
-  topY?: number,
-  rightX?: number,
-  bottomY?: number,
-  children: Rect[],
-  flipVertical?: boolean,
-  flipHorizontal?: boolean,
-}
 
 type IState = {
   rectList: Rect[],
@@ -177,7 +166,11 @@ class Canvas extends React.Component<any, IState> {
       y: 120,
       w: 80,
       h: 25,
-      fixedWH: false,
+      fontFamily: 0,
+      fontWeight: 1,
+      letterSpacing: 0,
+      lineHeight: 0,
+      rectTextMode: RectTextMode.AUTO_W,
       rotate: 0,
       lineWidth: 2,
       fontSize: 20,
@@ -516,7 +509,7 @@ class Canvas extends React.Component<any, IState> {
           let texts = newValue.split('\n')
           let w = current.w
           let h = current.h
-          if (!current.fixedWH) {
+          if (current.rectTextMode === RectTextMode.AUTO_W) {
             ctx.font = `${current.fontSize}rem serif`;
             let widths = texts.map((text: string) => {
               let measureText = ctx.measureText(text)
@@ -1115,9 +1108,15 @@ class Canvas extends React.Component<any, IState> {
     }, this.draw)
   }
 
+  onChange(e: any) {
+    console.log('onChange', e)
+  }
+
   render() {
     // console.log('render')
     const {activeHand, handScale, selectRect} = this.state
+    console.log('selectRect', selectRect?.fontFamily)
+    const type = selectRect?.type
     return <div className={'design '}>
       <div className="header">
         <div className={'fps'}>
@@ -1210,6 +1209,17 @@ class Canvas extends React.Component<any, IState> {
                   <BaseInput prefix={<AngleIcon style={{fontSize: "16rem"}}/>}/>
                 </div>
                 <div className="col">
+                  <BaseRadioGroup value={'2'}>
+                    <BaseRadio key={0} value={'1'} label={''}>
+                      <AlignTextLeft fill="#929596"/>
+                    </BaseRadio>
+                    <BaseRadio key={1} value={'2'} label={''}>
+                      <AlignTextLeft fill="#929596"/>
+                    </BaseRadio>
+                    <BaseRadio key={2} value={'3'} label={''}>
+                      <AlignTextLeft fill="#929596"/>
+                    </BaseRadio>
+                  </BaseRadioGroup>
                 </div>
                 <div className="col">
                   <BaseIcon active={false}>
@@ -1218,56 +1228,82 @@ class Canvas extends React.Component<any, IState> {
                 </div>
               </div>
             </div>
-            <div className="base-info">
-              <div className="header">文字</div>
-              <div className="row">
-                <div className="col">
-                  <BaseInput value={selectRect?.x.toFixed(0)}
-                             suffix={<Down theme="outline" size="14" fill="#ffffff" className='arrow'/>}/>
+            {
+              type === RectType.TEXT &&
+                <div className="base-info">
+                    <div className="header">文字</div>
+                    <div className="row-single">
+                        <div className="col">
+                            <BaseSelect value={selectRect?.fontFamily} onChange={this.onChange}>
+                              {
+                                fontFamilies.map((v, i) => {
+                                  return <BaseOption key={i} value={v.value} label={v.label}>{v.label}</BaseOption>
+                                })
+                              }
+                            </BaseSelect>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col">
+                            <BaseSelect value={selectRect?.fontWeight} onChange={this.onChange}>
+                              {
+                                fontWeight.map((v, i) => {
+                                  return <BaseOption key={i} value={v.value} label={v.label}>{v.label}</BaseOption>
+                                })
+                              }
+                            </BaseSelect>
+                        </div>
+                        <div className="col">
+                            <BaseSelect value={selectRect?.fontSize} onChange={this.onChange}>
+                              {
+                                fontSize.map((v, i) => {
+                                  return <BaseOption key={i} value={v.value} label={v.label}>{v.label}</BaseOption>
+                                })
+                              }
+                            </BaseSelect>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col">
+                            <BaseInput value={selectRect?.w.toFixed(0)}
+                                       prefix={<RowHeight size="14" fill="#929596"/>}/>
+                        </div>
+                        <div className="col">
+                            <BaseInput value={selectRect?.h.toFixed(0)}
+                                       prefix={<AutoLineWidth fill="#929596"/>}/>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col">
+                            <BaseButton active={selectRect?.flipHorizontal} onClick={() => this.flip(0)}>
+                                <AlignTextLeft fill="#929596"/>
+                            </BaseButton>
+                            <BaseButton active={selectRect?.flipVertical} onClick={() => this.flip(1)}>
+                                <AlignTextCenter fill="#929596"/>
+                            </BaseButton>
+                            <BaseButton active={selectRect?.flipVertical} onClick={() => this.flip(1)}>
+                                <AlignTextRight fill="#929596"/>
+                            </BaseButton>
+                        </div>
+                        <div className="col">
+                            <BaseButton active={selectRect?.flipHorizontal} onClick={() => this.flip(0)}>
+                                <AutoWidthOne fill="#929596"/>
+                            </BaseButton>
+                            <BaseButton active={selectRect?.flipVertical} onClick={() => this.flip(1)}>
+                                <AutoHeightOne fill="#929596"/>
+                            </BaseButton>
+                            <BaseButton active={selectRect?.flipVertical} onClick={() => this.flip(1)}>
+                                <Square fill="#929596"/>
+                            </BaseButton>
+                        </div>
+                        <div className="col">
+                            <BaseIcon active={false}>
+                                <More fill="#929596"/>
+                            </BaseIcon>
+                        </div>
+                    </div>
                 </div>
-                <div className="col">
-                  <BaseInput value={selectRect?.y.toFixed(0)} prefix={<span className={'gray'}>Y</span>}/>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col">
-                  <BaseInput value={selectRect?.w.toFixed(0)} prefix={<span className={'gray'}>W</span>}/>
-                </div>
-                <div className="col">
-                  <BaseInput value={selectRect?.h.toFixed(0)} prefix={<span className={'gray'}>H</span>}/>
-                </div>
-                <div className="col">
-                  <BaseIcon active={false}>
-                    <Unlock theme="outline" size="16" fill="#929596"/>
-                  </BaseIcon>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col">
-                  <BaseInput value={selectRect?.rotate} prefix={<RotateIcon style={{fontSize: "16rem"}}/>}/>
-                </div>
-                <div className="col">
-                  <BaseButton active={selectRect?.flipHorizontal} onClick={() => this.flip(0)}>
-                    <FlipIcon style={{fontSize: "16rem", 'transform': 'rotate(-90deg)'}}/>
-                  </BaseButton>
-                  <BaseButton active={selectRect?.flipVertical} onClick={() => this.flip(1)}>
-                    <FlipIcon style={{fontSize: "16rem", 'transform': 'rotate(0deg)'}}/>
-                  </BaseButton>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col">
-                  <BaseInput prefix={<AngleIcon style={{fontSize: "16rem"}}/>}/>
-                </div>
-                <div className="col">
-                </div>
-                <div className="col">
-                  <BaseIcon active={false}>
-                    <FullScreen theme="outline" size="16" fill="#929596"/>
-                  </BaseIcon>
-                </div>
-              </div>
-            </div>
+            }
           </div>
         </div>
       </div>

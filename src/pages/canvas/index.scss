@@ -155,8 +155,13 @@
             .col {
               grid-gap: 6rem;
               display: flex;
-              grid-template-columns: 1fr 1fr;
             }
+          }
+
+          .row-single {
+            @extend .row;
+            grid-template-columns: 1fr 30rem;
+
           }
         }
       }

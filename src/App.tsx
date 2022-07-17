@@ -1,6 +1,6 @@
 import * as React from "react";
 import {Routes, Route, Link, Navigate} from "react-router-dom";
-import "./App.css";
+import "./App.scss";
 import asyncRoutes from "./router/asyncRoutes";
 import constant from "./router/constant";
 import {BaseSyntheticEvent, SyntheticEvent, useEffect, useRef} from "react";

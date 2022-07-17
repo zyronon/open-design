@@ -1,6 +1,6 @@
 import React, {MouseEvent, RefObject} from "react";
 import './index.scss'
-import {clone, throttle} from 'lodash'
+import {clone, cloneDeep, merge, throttle} from 'lodash'
 import getCenterPoint, {getAngle, getRotatedPoint} from "../../utils";
 import BaseInput from "../../components/BaseInput";
 import {Down, FiveFive, FullScreen, Unlock, Text} from "@icon-park/react";
@@ -14,7 +14,7 @@ import cx from "classnames";
 import {mat4} from 'gl-matrix'
 import Fps from "../../components/Fps";
 
-enum BoxType {
+enum RectType {
   LINE = 0,
   FILL = 1,
   WRAPPER = 2,
@@ -22,7 +22,7 @@ enum BoxType {
   TEXT = 4,
 }
 
-interface Box {
+interface Rect {
   id: number,
   x: number,
   y: number,
@@ -31,19 +31,19 @@ interface Box {
   content?: string,
   rotate: number,
   lineWidth: number,
-  type: BoxType,
+  type: RectType,
   color: string,
   leftX?: number,
   topY?: number,
   rightX?: number,
   bottomY?: number,
-  children: Box[],
+  children: Rect[],
   flipVertical?: boolean,
   flipHorizontal?: boolean,
 }
 
 type IState = {
-  boxList: Box[],
+  rectList: Rect[],
   canvas: HTMLCanvasElement,
   ctx: CanvasRenderingContext2D,
   canvasRect: DOMRect,
@@ -56,7 +56,7 @@ type IState = {
   enterRT: boolean,
   hoverLTR: boolean,//左上角 旋转
   enterLTR: boolean,
-  selectBox?: Box,
+  selectRect?: Rect,
   startX: number,
   startY: number,
   offsetX: number,
@@ -149,7 +149,7 @@ class Canvas extends React.Component<any, IState> {
       rotate: 1,
       lineWidth: 2,
       flipHorizontal: true,
-      type: BoxType.LINE,
+      type: RectType.LINE,
       color: 'gray',
       children: []
     }
@@ -162,7 +162,7 @@ class Canvas extends React.Component<any, IState> {
       h: 150,
       rotate: 0,
       lineWidth: 2,
-      type: BoxType.LINE,
+      type: RectType.LINE,
       color: 'gray',
       children: []
     }
@@ -170,18 +170,18 @@ class Canvas extends React.Component<any, IState> {
       id: 'text',
       name: 'text',
       content: '输入文本',
-      x: 433,
-      y: 133,
-      w: 150,
-      h: 150,
+      x: 540,
+      y: 120,
+      w: 80,
+      h: 25,
       rotate: 0,
       lineWidth: 2,
-      type: BoxType.TEXT,
+      type: RectType.TEXT,
       color: 'gray',
       children: []
     }
     this.setState({
-      selectBox: undefined,
+      selectRect: undefined,
       currentPoint: {x: 0, y: 0,},
       oldHandMove: {x: 0, y: 0,},
       activeHand: false,
@@ -201,7 +201,7 @@ class Canvas extends React.Component<any, IState> {
         0, 0, 1, 0,
         0, 0, 0, 1,
       ]),
-      boxList: [
+      rectList: [
         this.getPath(oneBox),
         // this.getPath(oneBox2),
         // this.getPath(allLine),
@@ -210,10 +210,10 @@ class Canvas extends React.Component<any, IState> {
         this.getPath(text),
         // this.getPath(threeBox),
       ]
-    }, this.draw2)
+    }, this.draw)
   }
 
-  draw2() {
+  draw() {
     this.clearAll()
     const {ctx, currentMat, handMove} = this.state
     ctx.save()
@@ -230,16 +230,16 @@ class Canvas extends React.Component<any, IState> {
 
     this.state.ctx.lineCap = 'square'
     // console.log('this.state.boxList', this.state.boxList)
-    this.state.boxList.map(v => {
+    this.state.rectList.map(v => {
       // console.log(v)
       this.renderCanvas(v)
     })
     ctx.restore()
   }
 
-  renderCanvas(rect: Box, parent?: Box) {
+  renderCanvas(rect: Rect, parent?: Rect) {
     let {
-      ctx, enterLT, enterRT, selectBox, activeHand, enter, offsetX, offsetY,
+      ctx, enterLT, enterRT, selectRect, activeHand, enter, offsetX, offsetY,
       handMove, handScale,
       currentPoint
     } = this.state
@@ -259,9 +259,9 @@ class Canvas extends React.Component<any, IState> {
 
     let oldCenter: { x: number; y: number; }
     let newCenter: { x: number; y: number; }
-    let isMe = selectBox?.id === (parent ? parent.id : rect.id)
+    let isMe = selectRect?.id === (parent ? parent.id : rect.id)
     if ((enterLT || enterRT) && isMe) {
-      let s = selectBox!
+      let s = selectRect!
       oldCenter = {
         x: s.x + (s.w / 2),
         y: s.y + (s.h / 2)
@@ -310,32 +310,37 @@ class Canvas extends React.Component<any, IState> {
     ctx.rotate(rotate * Math.PI / 180)
 
     // ctx.strokeRect(x, y, w, h)
-    ctx.beginPath()
-    ctx.moveTo(x, y)
-    ctx.lineTo(x + w, y);
-    ctx.lineTo(x + w, y + h);
-    ctx.lineTo(x, y + h);
-    ctx.lineTo(x, y);
-    ctx.closePath()
+    if (type !== RectType.TEXT) {
+      ctx.beginPath()
+      ctx.moveTo(x, y)
+      ctx.lineTo(x + w, y);
+      ctx.lineTo(x + w, y + h);
+      ctx.lineTo(x, y + h);
+      ctx.lineTo(x, y);
+      ctx.closePath()
+    }
 
     switch (type) {
-      case BoxType.TEXT:
+      case RectType.TEXT:
         ctx.font = "20rem serif";
+        ctx.textBaseline = 'top'
+        // let rrr = ctx.measureText('123456789')
+        // console.log(rrr)
         ctx.fillText(rect.content!, x, y);
         break
-      case BoxType.FILL:
+      case RectType.FILL:
         ctx.fillStyle = color
         ctx.fill()
         break
-      case BoxType.LINE:
+      case RectType.LINE:
         ctx.strokeStyle = color
         ctx.stroke()
         break
-      case BoxType.WRAPPER:
+      case RectType.WRAPPER:
         ctx.strokeStyle = 'rgb(139,80,255)'
         ctx.stroke()
         break
-      case BoxType.SELECT:
+      case RectType.SELECT:
         // console.log('select')
 
         // rotate = parent!.rotate
@@ -434,7 +439,7 @@ class Canvas extends React.Component<any, IState> {
     }
   }
 
-  getPath(box: Box) {
+  getPath(box: Rect) {
     box.leftX = box.x
     box.rightX = box.leftX + box.w
     box.topY = box.y
@@ -446,24 +451,79 @@ class Canvas extends React.Component<any, IState> {
   }
 
   flip(type: number) {
-    const {selectBox, boxList} = this.state
-    if (selectBox?.id) {
-      let rIndex = boxList.findIndex(v => v.id === selectBox.id)
+    const {selectRect, rectList} = this.state
+    if (selectRect?.id) {
+      let rIndex = rectList.findIndex(v => v.id === selectRect.id)
       if (rIndex !== -1) {
         if (type === 0) {
-          boxList[rIndex].flipHorizontal = !boxList[rIndex].flipHorizontal
+          rectList[rIndex].flipHorizontal = !rectList[rIndex].flipHorizontal
         } else {
-          boxList[rIndex].flipVertical = !boxList[rIndex].flipVertical
+          rectList[rIndex].flipVertical = !rectList[rIndex].flipVertical
         }
-        this.setState({boxList: clone(boxList), selectBox: clone(boxList[rIndex])}, this.draw2)
+        this.setState({rectList: clone(rectList), selectRect: clone(rectList[rIndex])}, this.draw)
       }
     }
   }
 
+  changeSelect = (val: any) => {
+    const {rectList, selectRect} = this.state
+    let old = cloneDeep(rectList)
+    let rIndex = old.findIndex(item => item.id === selectRect?.id)
+    if (rIndex > -1) {
+      old[rIndex] = merge(old[rIndex], val)
+      this.setState({rectList: old}, this.draw)
+    }
+  }
+
+  onDoubleClick = (e: any) => {
+    let {
+      selectRect, rectList, canvasRect, ctx
+    } = this.state
+    let x = e.clientX
+    let y = e.clientY
+    console.log('e', x, y)
+    console.log('onDoubleClick', selectRect)
+
+    if (selectRect?.type === RectType.TEXT) {
+      let input = document.createElement('textarea')
+      input.id = 'text-input'
+      input.classList.add('canvas-text-input')
+      input.style.top = selectRect.y + canvasRect.top + 50 + 'px'
+      input.style.left = selectRect.x + canvasRect.left + 'px'
+      input.style.fontSize = '20rem'
+      input.value = selectRect.content!
+      document.body.append(input)
+      input.focus()
+      input.oninput = (val: any) => {
+        let newValue = val.target.value
+        if (newValue) {
+          console.log('newValue', newValue)
+          ctx.font = "20rem serif";
+          let measureText = ctx.measureText(newValue)
+          console.log('measureText', measureText)
+          this.changeSelect({
+            w: measureText.width,
+            content: newValue
+          })
+
+        }
+      }
+
+    }
+
+    this.setState({
+      enter: false,
+    })
+  }
+
   onMouseDown = (e: any) => {
+    let textInput = document.querySelector('#text-input')
+    if (textInput) {
+      textInput.remove()
+    }
     if (e.button !== 0) return;
     let {
-      selectBox, boxList, canvasRect,
+      selectRect, rectList, canvasRect,
       hoverLeft, hoverLT, hoverRT, hoverLTR, activeHand,
       handMove,
     } = this.state
@@ -481,14 +541,14 @@ class Canvas extends React.Component<any, IState> {
       return;
     }
 
-    let old = clone(boxList)
+    let old = clone(rectList)
     let select
-    if (selectBox) {
+    if (selectRect) {
       // console.log('hoverLeft', hoverLeft)
       // console.log('hoverLT', hoverLT)
       // console.log('hoverRT', hoverRT)
       // console.log('hoverLTR', hoverLTR)
-      let rect = selectBox
+      let rect = selectRect
 
       if (hoverLT) {
 
@@ -548,38 +608,38 @@ class Canvas extends React.Component<any, IState> {
           enterLeft: hoverLeft,
           enterLT: hoverLT,
           enterRT: hoverRT,
-          offsetX: x - selectBox.x,
-          offsetY: y - selectBox.y
+          offsetX: x - selectRect.x,
+          offsetY: y - selectRect.y
         })
         return
       }
       if (hoverLTR) {
         this.setState({
-          startX: selectBox.x,
-          startY: selectBox.y,
+          startX: selectRect.x,
+          startY: selectRect.y,
           enterLTR: true,
-          offsetX: x - selectBox.x,
-          offsetY: y - selectBox.y
+          offsetX: x - selectRect.x,
+          offsetY: y - selectRect.y
         })
         return
       }
-      let r = this.isPointInPath(x, y, selectBox)
+      let r = this.isPointInPath(x, y, selectRect)
       // console.log('selectBox-in', r)
       if (!r) {
-        let rIndex = old.findIndex(o => o.id === selectBox!.id)
+        let rIndex = old.findIndex(o => o.id === selectRect!.id)
         // console.log('rIndex', rIndex)
         if (rIndex !== -1) {
-          let selectIndex = old[rIndex].children.findIndex(w => w.type === BoxType.SELECT)
+          let selectIndex = old[rIndex].children.findIndex(w => w.type === RectType.SELECT)
           if (selectIndex !== -1) {
             old[rIndex].children.splice(selectIndex, 1)
           }
         }
       } else {
-        select = selectBox
+        select = selectRect
       }
     } else {
-      for (let i = 0; i < boxList.length; i++) {
-        let b = boxList[i]
+      for (let i = 0; i < rectList.length; i++) {
+        let b = rectList[i]
         let r = this.isPointInPath(x, y, b)
         // console.log('in', r)
         if (r) {
@@ -587,9 +647,9 @@ class Canvas extends React.Component<any, IState> {
           let t = clone(now)
           t.id = Date.now()
           t.lineWidth = 2
-          t.type = BoxType.SELECT
+          t.type = RectType.SELECT
           t.children = []
-          let cIndex = now.children.findIndex(v => v.type === BoxType.SELECT)
+          let cIndex = now.children.findIndex(v => v.type === RectType.SELECT)
           // console.log(cIndex)
           if (cIndex !== -1) {
             now.children[cIndex] = t
@@ -600,7 +660,7 @@ class Canvas extends React.Component<any, IState> {
           // console.log('select', select)
           break
         } else {
-          let selectIndex = old[i].children.findIndex(w => w.type === BoxType.SELECT)
+          let selectIndex = old[i].children.findIndex(w => w.type === RectType.SELECT)
           if (selectIndex !== -1) {
             old[i].children.splice(selectIndex, 1)
           }
@@ -608,20 +668,31 @@ class Canvas extends React.Component<any, IState> {
       }
     }
     this.setState({
-      boxList: old,
-      selectBox: clone(select),
+      rectList: old,
+      selectRect: clone(select),
       startX: x,
       enter: true,
       startY: y,
-    }, this.draw2)
-    // console.log('onMouseDown')
+    }, this.draw)
+    console.log('onMouseDown')
   }
 
   onMouseUp = (e: any) => {
-    let {hoverLeft, selectBox, boxList, canvasRect, enterLT, enterRT, startX, startY, handMove, handScale} = this.state
-    if (selectBox) {
-      let old = clone(boxList)
-      let rIndex = boxList.findIndex(v => v.id === selectBox?.id)
+    let {
+      hoverLeft,
+      selectRect,
+      rectList,
+      canvasRect,
+      enterLT,
+      enterRT,
+      startX,
+      startY,
+      handMove,
+      handScale
+    } = this.state
+    if (selectRect) {
+      let old = clone(rectList)
+      let rIndex = rectList.findIndex(v => v.id === selectRect?.id)
       if (rIndex !== -1) {
         let current = old[rIndex]
         let x = e.clientX - canvasRect.left
@@ -631,7 +702,7 @@ class Canvas extends React.Component<any, IState> {
           y: current.y + (current.h / 2)
         }
         if (current.flipHorizontal && (enterLT || enterRT)) {
-          let s = selectBox
+          let s = selectRect
           let oldCenter = {
             x: s.x + (s.w / 2),
             y: s.y + (s.h / 2)
@@ -643,7 +714,7 @@ class Canvas extends React.Component<any, IState> {
         }
         old[rIndex] = this.getPath(old[rIndex])
 
-        this.setState({selectBox: clone(boxList[rIndex]), boxList: old})
+        this.setState({selectRect: clone(rectList[rIndex]), rectList: old})
       }
     }
     this.setState({
@@ -658,10 +729,10 @@ class Canvas extends React.Component<any, IState> {
       hoverLTR: false
     })
     this.body.style.cursor = "default"
-    // console.log('onMouseUp')
+    console.log('onMouseUp')
   }
 
-  isPointInPath(x: number, y: number, rect: Box) {
+  isPointInPath(x: number, y: number, rect: Rect) {
     const {handMove, handScale, ctx, currentMat} = this.state
     const {x: handX, y: handY} = handMove
     //减去画布平移的距离
@@ -688,7 +759,7 @@ class Canvas extends React.Component<any, IState> {
     }
 
     let isIn = false
-    let selectBox = rect.children.find(v => v.type === BoxType.SELECT)
+    let selectBox = rect.children.find(v => v.type === RectType.SELECT)
     //判断是否在矩形里面
     if (rect.leftX! < x && x < rect.rightX! && rect.topY! < y && y < rect.bottomY!) {
       if (!selectBox) {
@@ -708,13 +779,13 @@ class Canvas extends React.Component<any, IState> {
         t.w = t.w + 2 * d
         t.h = t.h + 2 * d
         // console.log(t)
-        t.type = BoxType.WRAPPER
+        t.type = RectType.WRAPPER
         this.renderCanvas(t)
         ctx.restore()
       }
       isIn = true
     } else {
-      this.draw2()
+      this.draw()
       isIn = false
     }
 
@@ -771,10 +842,10 @@ class Canvas extends React.Component<any, IState> {
       enterLT,
       enterRT,
       enterLTR,
-      selectBox,
+      selectRect,
       startX,
       startY,
-      boxList,
+      rectList,
       sPoint,
       activeHand,
       handMove,
@@ -802,7 +873,7 @@ class Canvas extends React.Component<any, IState> {
           x: newCurrentMat[12],
           y: newCurrentMat[13],
         }
-      }, this.draw2)
+      }, this.draw)
       return;
     }
 
@@ -811,13 +882,13 @@ class Canvas extends React.Component<any, IState> {
     //https://segmentfault.com/a/1190000016152833
     if (enterLT) {
       console.log('enterLT')
-      if (!selectBox) return;
+      if (!selectRect) return;
 
-      let old = clone(boxList)
-      let rIndex = old.findIndex(v => v.id === selectBox?.id)
+      let old = clone(rectList)
+      let rIndex = old.findIndex(v => v.id === selectRect?.id)
       if (rIndex !== -1) {
         let rect = old[rIndex]
-        let s = selectBox
+        let s = selectRect
 
         // let currentPosition = { x: x , y: y }
         let currentPosition = {
@@ -850,19 +921,19 @@ class Canvas extends React.Component<any, IState> {
 
         rect = this.getPath(rect)
       }
-      this.setState({boxList: old}, this.draw2)
+      this.setState({rectList: old}, this.draw)
       return;
     }
 
     if (enterRT) {
       console.log('enterRT')
-      if (!selectBox) return;
+      if (!selectRect) return;
 
-      let old = clone(boxList)
-      let rIndex = old.findIndex(v => v.id === selectBox?.id)
+      let old = clone(rectList)
+      let rIndex = old.findIndex(v => v.id === selectRect?.id)
       if (rIndex !== -1) {
         let rect = old[rIndex]
-        let s = selectBox
+        let s = selectRect
 
         let currentPosition = {
           x: (x - handMove.x) / handScale,
@@ -893,7 +964,7 @@ class Canvas extends React.Component<any, IState> {
 
         rect = this.getPath(rect)
       }
-      this.setState({boxList: old}, this.draw2)
+      this.setState({rectList: old}, this.draw)
       return;
     }
     //不旋转情况下能伸缩的
@@ -918,65 +989,65 @@ class Canvas extends React.Component<any, IState> {
     // }
     if (enterLTR) {
       console.log('enterLTR')
-      if (!selectBox) return;
+      if (!selectRect) return;
 
       // console.log('x-------', x, '          y--------', y)
-      let a = getAngle([selectBox.x + selectBox.w / 2, selectBox.y + selectBox.h / 2],
+      let a = getAngle([selectRect.x + selectRect.w / 2, selectRect.y + selectRect.h / 2],
         [startX, startY],
         [x, y]
       )
       console.log('getAngle', a)
       // return;
 
-      let old = clone(boxList)
-      let rIndex = old.findIndex(v => v.id === selectBox?.id)
+      let old = clone(rectList)
+      let rIndex = old.findIndex(v => v.id === selectRect?.id)
       if (rIndex !== -1) {
         let now = old[rIndex]
         now.rotate = a
       }
 
-      this.setState({boxList: old}, this.draw2)
+      this.setState({rectList: old}, this.draw)
       return;
     }
     if (enterLeft) {
       console.log('enterLeft')
-      if (!selectBox) return;
+      if (!selectRect) return;
 
       let dx = x - startX
       let dy = y - startY
-      let old = clone(boxList)
-      let rIndex = old.findIndex(v => v.id === selectBox?.id)
+      let old = clone(rectList)
+      let rIndex = old.findIndex(v => v.id === selectRect?.id)
       if (rIndex !== -1) {
         let now = old[rIndex]
         now.x = x - offsetX
         // one.y = one.y
-        now.w = selectBox.w - (x - startX)
+        now.w = selectRect.w - (x - startX)
         now = this.getPath(now)
       }
-      this.setState({boxList: old}, this.draw2)
+      this.setState({rectList: old}, this.draw)
       return;
     }
     if (enter) {
-      if (!selectBox?.id) return
+      if (!selectRect?.id) return
       // console.log('startX')
       // console.log('按下了')
       let dx = (x - startX) / handScale
       let dy = (y - startY) / handScale
-      let old = clone(boxList)
-      let rIndex = old.findIndex(v => v.id === selectBox?.id)
+      let old = clone(rectList)
+      let rIndex = old.findIndex(v => v.id === selectRect?.id)
       if (rIndex !== -1) {
         let now = old[rIndex]
-        now.x = selectBox.x + dx
-        now.y = selectBox.y + dy
+        now.x = selectRect.x + dx
+        now.y = selectRect.y + dy
         now = this.getPath(now)
       }
-      this.setState({boxList: old}, this.draw2)
+      this.setState({rectList: old}, this.draw)
       return
     }
     // return console.log(x, y)
     // isPointInPath(x, y, blocks[0])
-    for (let i = 0; i < boxList.length; i++) {
-      let b = boxList[i]
+    for (let i = 0; i < rectList.length; i++) {
+      let b = rectList[i]
       let r = this.isPointInPath(x, y, b)
       if (r) break
     }
@@ -1014,12 +1085,12 @@ class Canvas extends React.Component<any, IState> {
         x: newCurrentMat[12],
         y: newCurrentMat[13],
       }
-    }, this.draw2)
+    }, this.draw)
   }
 
   render() {
     // console.log('render')
-    const {activeHand, handScale, selectBox} = this.state
+    const {activeHand, handScale, selectRect} = this.state
     return <div className={'design '}>
       <div className="header">
         <div className={'fps'}>
@@ -1062,6 +1133,7 @@ class Canvas extends React.Component<any, IState> {
           </div>
           <div id="canvasArea">
             <canvas
+              onDoubleClick={this.onDoubleClick}
               onMouseMove={this.onMouseMoveWrapper}
               onMouseDown={this.onMouseDown}
               onMouseUp={this.onMouseUp}
@@ -1074,18 +1146,18 @@ class Canvas extends React.Component<any, IState> {
             <div className="base-info">
               <div className="row">
                 <div className="col">
-                  <BaseInput value={selectBox?.x.toFixed(0)} prefix={<span className={'gray'}>X</span>}/>
+                  <BaseInput value={selectRect?.x.toFixed(0)} prefix={<span className={'gray'}>X</span>}/>
                 </div>
                 <div className="col">
-                  <BaseInput value={selectBox?.y.toFixed(0)} prefix={<span className={'gray'}>Y</span>}/>
+                  <BaseInput value={selectRect?.y.toFixed(0)} prefix={<span className={'gray'}>Y</span>}/>
                 </div>
               </div>
               <div className="row">
                 <div className="col">
-                  <BaseInput value={selectBox?.w.toFixed(0)} prefix={<span className={'gray'}>W</span>}/>
+                  <BaseInput value={selectRect?.w.toFixed(0)} prefix={<span className={'gray'}>W</span>}/>
                 </div>
                 <div className="col">
-                  <BaseInput value={selectBox?.h.toFixed(0)} prefix={<span className={'gray'}>H</span>}/>
+                  <BaseInput value={selectRect?.h.toFixed(0)} prefix={<span className={'gray'}>H</span>}/>
                 </div>
                 <div className="col">
                   <BaseIcon active={false}>
@@ -1095,13 +1167,13 @@ class Canvas extends React.Component<any, IState> {
               </div>
               <div className="row">
                 <div className="col">
-                  <BaseInput value={selectBox?.rotate} prefix={<RotateIcon style={{fontSize: "16rem"}}/>}/>
+                  <BaseInput value={selectRect?.rotate} prefix={<RotateIcon style={{fontSize: "16rem"}}/>}/>
                 </div>
                 <div className="col">
-                  <BaseButton active={selectBox?.flipHorizontal} onClick={() => this.flip(0)}>
+                  <BaseButton active={selectRect?.flipHorizontal} onClick={() => this.flip(0)}>
                     <FlipIcon style={{fontSize: "16rem", 'transform': 'rotate(-90deg)'}}/>
                   </BaseButton>
-                  <BaseButton active={selectBox?.flipVertical} onClick={() => this.flip(1)}>
+                  <BaseButton active={selectRect?.flipVertical} onClick={() => this.flip(1)}>
                     <FlipIcon style={{fontSize: "16rem", 'transform': 'rotate(0deg)'}}/>
                   </BaseButton>
                 </div>

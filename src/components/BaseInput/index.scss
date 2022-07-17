@@ -20,6 +20,14 @@
     margin: 0 10rem;
   }
 
+  .suffix {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 10rem;
+  }
+
   &:focus-within {
     border: 2rem solid rgb(75, 117, 246);
   }

@@ -23,14 +23,17 @@ enum RectType {
 }
 
 interface Rect {
-  id: number,
+  id: number | string,
+  name?: number | string,
   x: number,
   y: number,
   w: number,
   h: number,
-  content?: string,
+  fixedWH: boolean,
+  texts?: string[],
   rotate: number,
   lineWidth: number,
+  fontSize: number,
   type: RectType,
   color: string,
   leftX?: number,
@@ -166,16 +169,18 @@ class Canvas extends React.Component<any, IState> {
       color: 'gray',
       children: []
     }
-    let text = {
+    let text: Rect = {
       id: 'text',
       name: 'text',
-      content: '输入文本',
+      texts: ['输入文本'],
       x: 540,
       y: 120,
       w: 80,
       h: 25,
+      fixedWH: false,
       rotate: 0,
       lineWidth: 2,
+      fontSize: 20,
       type: RectType.TEXT,
       color: 'gray',
       children: []
@@ -322,11 +327,13 @@ class Canvas extends React.Component<any, IState> {
 
     switch (type) {
       case RectType.TEXT:
-        ctx.font = "20rem serif";
+        ctx.font = `${rect.fontSize}rem serif`;
         ctx.textBaseline = 'top'
         // let rrr = ctx.measureText('123456789')
         // console.log(rrr)
-        ctx.fillText(rect.content!, x, y);
+        rect.texts?.map((text, index) => {
+          text && ctx.fillText(text, x, y + (index * rect.fontSize));
+        })
         break
       case RectType.FILL:
         ctx.fillStyle = color
@@ -471,8 +478,15 @@ class Canvas extends React.Component<any, IState> {
     let rIndex = old.findIndex(item => item.id === selectRect?.id)
     if (rIndex > -1) {
       old[rIndex] = merge(old[rIndex], val)
+      old[rIndex] = this.getPath(old[rIndex])
       this.setState({rectList: old}, this.draw)
     }
+  }
+
+  getSelect = () => {
+    const {rectList, selectRect} = this.state
+    let rIndex = rectList.findIndex(item => item.id === selectRect?.id)
+    return rectList[rIndex]
   }
 
   onDoubleClick = (e: any) => {
@@ -485,30 +499,43 @@ class Canvas extends React.Component<any, IState> {
     console.log('onDoubleClick', selectRect)
 
     if (selectRect?.type === RectType.TEXT) {
+      ctx.save()
+      let current = this.getSelect()
       let input = document.createElement('textarea')
       input.id = 'text-input'
       input.classList.add('canvas-text-input')
-      input.style.top = selectRect.y + canvasRect.top + 50 + 'px'
+      input.style.top = selectRect.y + canvasRect.top + 150 + 'px'
       input.style.left = selectRect.x + canvasRect.left + 'px'
       input.style.fontSize = '20rem'
-      input.value = selectRect.content!
+      input.value = current.texts!.join('\n')
       document.body.append(input)
       input.focus()
       input.oninput = (val: any) => {
         let newValue = val.target.value
         if (newValue) {
-          console.log('newValue', newValue)
-          ctx.font = "20rem serif";
-          let measureText = ctx.measureText(newValue)
-          console.log('measureText', measureText)
+          let texts = newValue.split('\n')
+          let w = current.w
+          let h = current.h
+          if (!current.fixedWH) {
+            ctx.font = `${current.fontSize}rem serif`;
+            let widths = texts.map((text: string) => {
+              let measureText = ctx.measureText(text)
+              return measureText.width
+            })
+            // console.log('w', widths)
+            w = Math.max(...widths)
+            h = texts.length * current.fontSize
+          }
+          // console.log('newValue', newValue)
+          // console.log('texts', texts)
           this.changeSelect({
-            w: measureText.width,
-            content: newValue
+            w,
+            h,
+            texts
           })
-
         }
       }
-
+      ctx.restore()
     }
 
     this.setState({
@@ -1147,6 +1174,56 @@ class Canvas extends React.Component<any, IState> {
               <div className="row">
                 <div className="col">
                   <BaseInput value={selectRect?.x.toFixed(0)} prefix={<span className={'gray'}>X</span>}/>
+                </div>
+                <div className="col">
+                  <BaseInput value={selectRect?.y.toFixed(0)} prefix={<span className={'gray'}>Y</span>}/>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col">
+                  <BaseInput value={selectRect?.w.toFixed(0)} prefix={<span className={'gray'}>W</span>}/>
+                </div>
+                <div className="col">
+                  <BaseInput value={selectRect?.h.toFixed(0)} prefix={<span className={'gray'}>H</span>}/>
+                </div>
+                <div className="col">
+                  <BaseIcon active={false}>
+                    <Unlock theme="outline" size="16" fill="#929596"/>
+                  </BaseIcon>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col">
+                  <BaseInput value={selectRect?.rotate} prefix={<RotateIcon style={{fontSize: "16rem"}}/>}/>
+                </div>
+                <div className="col">
+                  <BaseButton active={selectRect?.flipHorizontal} onClick={() => this.flip(0)}>
+                    <FlipIcon style={{fontSize: "16rem", 'transform': 'rotate(-90deg)'}}/>
+                  </BaseButton>
+                  <BaseButton active={selectRect?.flipVertical} onClick={() => this.flip(1)}>
+                    <FlipIcon style={{fontSize: "16rem", 'transform': 'rotate(0deg)'}}/>
+                  </BaseButton>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col">
+                  <BaseInput prefix={<AngleIcon style={{fontSize: "16rem"}}/>}/>
+                </div>
+                <div className="col">
+                </div>
+                <div className="col">
+                  <BaseIcon active={false}>
+                    <FullScreen theme="outline" size="16" fill="#929596"/>
+                  </BaseIcon>
+                </div>
+              </div>
+            </div>
+            <div className="base-info">
+              <div className="header">文字</div>
+              <div className="row">
+                <div className="col">
+                  <BaseInput value={selectRect?.x.toFixed(0)}
+                             suffix={<Down theme="outline" size="14" fill="#ffffff" className='arrow'/>}/>
                 </div>
                 <div className="col">
                   <BaseInput value={selectRect?.y.toFixed(0)} prefix={<span className={'gray'}>Y</span>}/>

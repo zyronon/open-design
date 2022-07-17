@@ -18,7 +18,7 @@ export default memo((props: IProps) => {
     <div className={cx('d-input', !prefix && 'padding')}>
       {prefix && <div className="prefix">{prefix}</div>}
       <input type="text" value={value} onChange={e => onChange(e)}/>
-      <div className="suffix"></div>
+      {suffix && <div className="suffix">{suffix}</div>}
     </div>
   )
 })

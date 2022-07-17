@@ -41,7 +41,7 @@
 
   $header-height: 42rem;
 
-  .header {
+  > .header {
     height: $header-height;
 
     .fps {
@@ -129,7 +129,22 @@
       }
 
       .config-wrapper {
+        color: white;
+
         .base-info {
+          > .header {
+            margin-bottom: 8rem;
+            height: 30rem;
+            display: flex;
+            align-items: center;
+
+            .title {
+            }
+          }
+
+          padding: 10rem 0;
+          border-bottom: 1px solid #464646;
+
           .row {
             margin-bottom: 6rem;
             width: 100%;

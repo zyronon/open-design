@@ -40,6 +40,12 @@ export enum TextBaseline {
   CENTER = 3,
 }
 
+export enum TextAlign {
+  LEFT = 'left',
+  RIGHT = 'right',
+  CENTER = 'center',
+}
+
 export interface RectText {
   brokenTexts: string[],
   texts: string[],
@@ -47,6 +53,7 @@ export interface RectText {
   letterSpacing: number,
   textMode: TextMode,
   textBaseline: TextBaseline,
+  textAlign: TextAlign,
   fontFamily: number,
   fontWeight: number,
   fontSize: number,

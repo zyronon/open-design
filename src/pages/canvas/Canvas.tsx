@@ -28,7 +28,7 @@ import {mat4} from 'gl-matrix'
 import Fps from "../../components/Fps";
 import {BaseOption, BaseSelect} from "../../components/BaseSelect";
 import {fontFamilies, fontSize, fontWeight} from "../../assets/constant";
-import {Rect, RectType, TextBaseline, TextMode} from "../../assets/define";
+import {Rect, RectType, TextAlign, TextBaseline, TextMode} from "../../assets/define";
 import {BaseRadio, BaseRadioGroup} from "../../components/BaseRadio";
 
 
@@ -157,6 +157,7 @@ class Canvas extends React.Component<any, IState> {
       children: []
     }
     let text: Rect = {
+      textAlign: TextAlign.CENTER,
       textBaseline: TextBaseline.LEFT,
       id: 'text',
       name: 'text',
@@ -164,7 +165,7 @@ class Canvas extends React.Component<any, IState> {
       brokenTexts: ['输入文本'],
       x: 540,
       y: 120,
-      w: 80,
+      w: 180,
       h: 25,
       fontFamily: 0,
       fontWeight: 1,
@@ -323,9 +324,17 @@ class Canvas extends React.Component<any, IState> {
         // ctx.fillStyle = 'white'
         ctx.font = `${rect.fontSize}rem serif`;
         ctx.textBaseline = 'top'
+        // ctx.textAlign = rect.textAlign
+
         // console.log('render', rect.texts)
         rect.brokenTexts?.map((text, index) => {
-          text && ctx.fillText(text, x, y + (index * rect.textLineHeight));
+          let lX = x
+          if (rect.textAlign === TextAlign.CENTER) {
+            let m = ctx.measureText(text)
+            // x = x + m.width
+            lX = x + rect.w / 2 - m.width / 2
+          }
+          text && ctx.fillText(text, lX, y + (index * rect.textLineHeight));
         })
         break
       case RectType.FILL:
@@ -1146,6 +1155,7 @@ class Canvas extends React.Component<any, IState> {
     y?: any,
     w?: any,
     h?: any,
+    textAlign?: TextAlign,
   ) => {
     let {
       ctx
@@ -1163,6 +1173,7 @@ class Canvas extends React.Component<any, IState> {
     if (!textLineHeight) textLineHeight = current.textLineHeight
     if (!letterSpacing) letterSpacing = current.letterSpacing
     if (!textMode) textMode = current.textMode
+    if (!textAlign) textAlign = current.textAlign
     if (!x) x = current.x
     if (!y) y = current.y
     if (!w) w = current.w
@@ -1195,7 +1206,8 @@ class Canvas extends React.Component<any, IState> {
       texts,
       textLineHeight,
       letterSpacing,
-      textMode
+      textMode,
+      textAlign
     })
   }
 
@@ -1203,12 +1215,29 @@ class Canvas extends React.Component<any, IState> {
     console.log('onChange', e)
   }
 
-  onTextBaselineChange = (e: any) => {
-    console.log('onTextBaselineChange', e)
+  onTextAlignChange = (e: any) => {
+    this.calcText(
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      e
+    )
+    console.log('onTextAlignChange', e)
   }
 
   onTextModeChange = (e: any) => {
-    this.calcText(null, null, null, null, e)
+    this.calcText(
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      e)
     console.log('onTextModeChange', e)
   }
 
@@ -1365,14 +1394,14 @@ class Canvas extends React.Component<any, IState> {
                     </div>
                     <div className="row">
                         <div className="col">
-                            <BaseRadioGroup value={selectRect?.textBaseline} onChange={this.onTextBaselineChange}>
-                                <BaseRadio key={0} value={TextBaseline.LEFT} label={'左对齐'}>
+                            <BaseRadioGroup value={selectRect?.textAlign} onChange={this.onTextAlignChange}>
+                                <BaseRadio key={0} value={TextAlign.LEFT} label={'左对齐'}>
                                     <AlignTextLeft fill="#929596"/>
                                 </BaseRadio>
-                                <BaseRadio key={1} value={TextBaseline.CENTER} label={'居中对齐'}>
+                                <BaseRadio key={1} value={TextAlign.CENTER} label={'居中对齐'}>
                                     <AlignTextLeft fill="#929596"/>
                                 </BaseRadio>
-                                <BaseRadio key={2} value={TextBaseline.RIGHT} label={'右对齐'}>
+                                <BaseRadio key={2} value={TextAlign.RIGHT} label={'右对齐'}>
                                     <AlignTextLeft fill="#929596"/>
                                 </BaseRadio>
                             </BaseRadioGroup>

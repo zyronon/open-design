@@ -1030,7 +1030,7 @@ class Canvas extends React.Component<any, IState> {
 
   render() {
     const {activeHand} = this.state
-    return <div className={'design'}>
+    return <div className={'design '}>
       <div className="header">
         <div className={'fps'}>
           FPS:{this.state.fps}

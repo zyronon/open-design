@@ -36,6 +36,28 @@
         opacity: 0;
       }
     }
+  }
+
+  &.dark {
+    background: black !important;
+
+    .tool-bar {
+      opacity: 0;
+    }
+
+    .header {
+      opacity: 0;
+    }
+
+    .content {
+      & > .left {
+        opacity: 0;
+      }
+
+      & > .right {
+        opacity: 0;
+      }
+    }
 
   }
 

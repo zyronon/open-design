@@ -41,6 +41,7 @@ export enum TextBaseline {
 }
 
 export interface RectText {
+  brokenTexts: string[],
   texts: string[],
   textLineHeight: number,
   letterSpacing: number,

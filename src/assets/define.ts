@@ -46,6 +46,14 @@ export enum TextAlign {
   CENTER = 'center',
 }
 
+export enum FontWeight {
+  LIGHT = 'lighter',
+  REGULAR = 'normal',
+  MEDIUM = 500,
+  BOLD = 'bold',
+  HEAVY = '900',
+}
+
 export interface RectText {
   brokenTexts: string[],
   texts: string[],
@@ -55,6 +63,6 @@ export interface RectText {
   textBaseline: TextBaseline,
   textAlign: TextAlign,
   fontFamily: number,
-  fontWeight: number,
+  fontWeight: FontWeight,
   fontSize: number,
 }

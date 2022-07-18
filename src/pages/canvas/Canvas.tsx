@@ -28,7 +28,7 @@ import {mat4} from 'gl-matrix'
 import Fps from "../../components/Fps";
 import {BaseOption, BaseSelect} from "../../components/BaseSelect";
 import {fontFamilies, fontSize, fontWeight} from "../../assets/constant";
-import {Rect, RectType, TextAlign, TextBaseline, TextMode} from "../../assets/define";
+import {FontWeight, Rect, RectType, TextAlign, TextBaseline, TextMode} from "../../assets/define";
 import {BaseRadio, BaseRadioGroup} from "../../components/BaseRadio";
 
 
@@ -157,7 +157,7 @@ class Canvas extends React.Component<any, IState> {
       children: []
     }
     let text: Rect = {
-      textAlign: TextAlign.CENTER,
+      textAlign: TextAlign.RIGHT,
       textBaseline: TextBaseline.LEFT,
       id: 'text',
       name: 'text',
@@ -168,7 +168,7 @@ class Canvas extends React.Component<any, IState> {
       w: 180,
       h: 25,
       fontFamily: 0,
-      fontWeight: 1,
+      fontWeight: FontWeight.LIGHT,
       letterSpacing: 0,
       textLineHeight: 20,
       textMode: TextMode.AUTO_H,
@@ -322,7 +322,8 @@ class Canvas extends React.Component<any, IState> {
     switch (type) {
       case RectType.TEXT:
         // ctx.fillStyle = 'white'
-        ctx.font = `${rect.fontSize}rem serif`;
+        ctx.font = `${rect.fontWeight} ${rect.fontSize}rem "system-ui", serif`;
+        console.log('font',`${rect.fontWeight} ${rect.fontSize}rem serif`)
         ctx.textBaseline = 'top'
         // ctx.textAlign = rect.textAlign
 
@@ -331,8 +332,11 @@ class Canvas extends React.Component<any, IState> {
           let lX = x
           if (rect.textAlign === TextAlign.CENTER) {
             let m = ctx.measureText(text)
-            // x = x + m.width
             lX = x + rect.w / 2 - m.width / 2
+          }
+          if (rect.textAlign === TextAlign.RIGHT) {
+            let m = ctx.measureText(text)
+            lX = x + rect.w - m.width
           }
           text && ctx.fillText(text, lX, y + (index * rect.textLineHeight));
         })
@@ -1156,6 +1160,7 @@ class Canvas extends React.Component<any, IState> {
     w?: any,
     h?: any,
     textAlign?: TextAlign,
+    fontWeight?: FontWeight,
   ) => {
     let {
       ctx
@@ -1174,6 +1179,7 @@ class Canvas extends React.Component<any, IState> {
     if (!letterSpacing) letterSpacing = current.letterSpacing
     if (!textMode) textMode = current.textMode
     if (!textAlign) textAlign = current.textAlign
+    if (!fontWeight) fontWeight = current.fontWeight
     if (!x) x = current.x
     if (!y) y = current.y
     if (!w) w = current.w
@@ -1207,7 +1213,8 @@ class Canvas extends React.Component<any, IState> {
       textLineHeight,
       letterSpacing,
       textMode,
-      textAlign
+      textAlign,
+      fontWeight
     })
   }
 
@@ -1239,6 +1246,22 @@ class Canvas extends React.Component<any, IState> {
       undefined,
       e)
     console.log('onTextModeChange', e)
+  }
+
+  onFontWeightChange = (e: any) => {
+    this.calcText(
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      e)
+    console.log('onFontWeightChange', e)
   }
 
   render() {
@@ -1364,7 +1387,7 @@ class Canvas extends React.Component<any, IState> {
                     </div>
                     <div className="row">
                         <div className="col">
-                            <BaseSelect value={selectRect?.fontWeight} onChange={this.onChange}>
+                            <BaseSelect value={selectRect?.fontWeight} onChange={this.onFontWeightChange}>
                               {
                                 fontWeight.map((v, i) => {
                                   return <BaseOption key={i} value={v.value} label={v.label}>{v.label}</BaseOption>

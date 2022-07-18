@@ -1,3 +1,5 @@
+import {FontWeight} from "./define";
+
 export const fontFamilies = [
   {
     label: '思源黑体',
@@ -9,11 +11,11 @@ export const fontFamilies = [
   }
 ]
 export const fontWeight = [
-  {label: 'Light', value: 0,},
-  {label: 'Regular', value: 1,},
-  {label: 'Medium', value: 2,},
-  {label: 'Bold', value: 3,},
-  {label: 'Heavy', value: 4,},
+  {label: 'Light', value: FontWeight.LIGHT,},
+  {label: 'Regular', value: FontWeight.REGULAR,},
+  {label: 'Medium', value: FontWeight.MEDIUM},
+  {label: 'Bold', value: FontWeight.BOLD,},
+  {label: 'Heavy', value: FontWeight.HEAVY,},
 ]
 
 export const fontSize = [

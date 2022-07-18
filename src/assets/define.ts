@@ -47,11 +47,17 @@ export enum TextAlign {
 }
 
 export enum FontWeight {
-  LIGHT = 'lighter',
-  REGULAR = 'normal',
-  MEDIUM = 500,
-  BOLD = 'bold',
-  HEAVY = '900',
+  LIGHT = 300,
+  REGULAR = 400,
+  Normal = 500,
+  MEDIUM = 600,
+  BOLD = 700,
+  HEAVY = 900,
+}
+
+export enum FontFamily {
+  SourceHanSerifCN = 'SourceHanSerifCN',
+  SourceHanSansCN = 'SourceHanSansCN',
 }
 
 export interface RectText {
@@ -62,7 +68,7 @@ export interface RectText {
   textMode: TextMode,
   textBaseline: TextBaseline,
   textAlign: TextAlign,
-  fontFamily: number,
+  fontFamily: FontFamily,
   fontWeight: FontWeight,
   fontSize: number,
 }

@@ -28,7 +28,7 @@ import {mat4} from 'gl-matrix'
 import Fps from "../../components/Fps";
 import {BaseOption, BaseSelect} from "../../components/BaseSelect";
 import {fontFamilies, fontSize, fontWeight} from "../../assets/constant";
-import {FontWeight, Rect, RectType, TextAlign, TextBaseline, TextMode} from "../../assets/define";
+import {FontFamily, FontWeight, Rect, RectType, TextAlign, TextBaseline, TextMode} from "../../assets/define";
 import {BaseRadio, BaseRadioGroup} from "../../components/BaseRadio";
 
 
@@ -167,8 +167,8 @@ class Canvas extends React.Component<any, IState> {
       y: 120,
       w: 180,
       h: 25,
-      fontFamily: 0,
-      fontWeight: FontWeight.LIGHT,
+      fontFamily: FontFamily.SourceHanSansCN,
+      fontWeight: FontWeight.Normal,
       letterSpacing: 0,
       textLineHeight: 20,
       textMode: TextMode.AUTO_H,
@@ -322,9 +322,7 @@ class Canvas extends React.Component<any, IState> {
     switch (type) {
       case RectType.TEXT:
         // ctx.fillStyle = 'white'
-        // ctx.font = `${rect.fontWeight} ${rect.fontSize}rem "SourceHanSerifCN-Bold", serif`;
-        ctx.font = `${rect.fontWeight} ${rect.fontSize}rem 'SourceHanSerifCN', sans-serif`;
-        // console.log('font',`${rect.fontWeight} ${rect.fontSize}rem serif`)
+        ctx.font = `${rect.fontWeight} ${rect.fontSize}rem "${rect.fontFamily}", sans-serif`;
         ctx.textBaseline = 'top'
         // ctx.textAlign = rect.textAlign
 
@@ -1162,6 +1160,7 @@ class Canvas extends React.Component<any, IState> {
     h?: any,
     textAlign?: TextAlign,
     fontWeight?: FontWeight,
+    fontFamily?: FontFamily,
   ) => {
     let {
       ctx
@@ -1181,24 +1180,25 @@ class Canvas extends React.Component<any, IState> {
     if (!textMode) textMode = current.textMode
     if (!textAlign) textAlign = current.textAlign
     if (!fontWeight) fontWeight = current.fontWeight
+    if (!fontFamily) fontFamily = current.fontFamily
     if (!x) x = current.x
     if (!y) y = current.y
     if (!w) w = current.w
     if (!h) h = current.h
 
-    ctx.font = `${fontSize}rem serif`;
+    ctx.font = `${fontWeight} ${fontSize}rem "${fontFamily}", sans-serif`;
     if (textMode === TextMode.AUTO_W) {
       let widths = texts.map((text: string) => {
         let measureText = ctx.measureText(text)
         return measureText.width
       })
       w = Math.max(...widths)
-      h = texts.length * current.textLineHeight
+      h = texts.length * fontSize
       brokenTexts = texts
     }
     if (textMode === TextMode.AUTO_H) {
       brokenTexts = this.getTextModeAutoHTexts(texts, ctx, w)
-      h = brokenTexts.length * textLineHeight
+      h = brokenTexts.length * fontSize
     }
     if (textMode === TextMode.FIXED) {
       // brokenTexts = texts
@@ -1213,9 +1213,11 @@ class Canvas extends React.Component<any, IState> {
       texts,
       textLineHeight,
       letterSpacing,
+      fontSize,
       textMode,
       textAlign,
-      fontWeight
+      fontWeight,
+      fontFamily
     })
   }
 
@@ -1263,6 +1265,29 @@ class Canvas extends React.Component<any, IState> {
       undefined,
       e)
     console.log('onFontWeightChange', e)
+  }
+
+  onFontFamilyChange = (e: any) => {
+    this.calcText(
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      e)
+    console.log('onFontFamilyChange', e)
+  }
+  onFontSizeChange = (e: any) => {
+    this.calcText(
+      undefined,
+      e)
+    console.log('onFontSizeChange', e)
   }
 
   render() {
@@ -1377,7 +1402,7 @@ class Canvas extends React.Component<any, IState> {
                     <div className="header">文字</div>
                     <div className="row-single">
                         <div className="col">
-                            <BaseSelect value={selectRect?.fontFamily} onChange={this.onChange}>
+                            <BaseSelect value={selectRect?.fontFamily} onChange={this.onFontFamilyChange}>
                               {
                                 fontFamilies.map((v, i) => {
                                   return <BaseOption key={i} value={v.value} label={v.label}>{v.label}</BaseOption>
@@ -1397,7 +1422,7 @@ class Canvas extends React.Component<any, IState> {
                             </BaseSelect>
                         </div>
                         <div className="col">
-                            <BaseSelect value={selectRect?.fontSize} onChange={this.onChange}>
+                            <BaseSelect value={selectRect?.fontSize} onChange={this.onFontSizeChange}>
                               {
                                 fontSize.map((v, i) => {
                                   return <BaseOption key={i} value={v.value} label={v.label}>{v.label}</BaseOption>

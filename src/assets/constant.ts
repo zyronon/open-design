@@ -1,18 +1,19 @@
-import {FontWeight} from "./define";
+import {FontFamily, FontWeight} from "./define";
 
 export const fontFamilies = [
   {
     label: '思源黑体',
-    value: 0,
+    value: FontFamily.SourceHanSansCN,
   },
   {
     label: '思源宋体',
-    value: 1,
+    value: FontFamily.SourceHanSerifCN,
   }
 ]
 export const fontWeight = [
   {label: 'Light', value: FontWeight.LIGHT,},
   {label: 'Regular', value: FontWeight.REGULAR,},
+  {label: 'Normal', value: FontWeight.Normal},
   {label: 'Medium', value: FontWeight.MEDIUM},
   {label: 'Bold', value: FontWeight.BOLD,},
   {label: 'Heavy', value: FontWeight.HEAVY,},

@@ -1,5 +1,10 @@
 @import "variable";
+@import "font";
 
+body {
+  font-family: 'SourceHanSerifCN', serif;
+  font-weight: normal;
+}
 
 .canvas-text-input {
   position: fixed;

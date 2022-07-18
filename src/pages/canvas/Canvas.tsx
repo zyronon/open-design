@@ -322,8 +322,9 @@ class Canvas extends React.Component<any, IState> {
     switch (type) {
       case RectType.TEXT:
         // ctx.fillStyle = 'white'
-        ctx.font = `${rect.fontWeight} ${rect.fontSize}rem "system-ui", serif`;
-        console.log('font',`${rect.fontWeight} ${rect.fontSize}rem serif`)
+        // ctx.font = `${rect.fontWeight} ${rect.fontSize}rem "SourceHanSerifCN-Bold", serif`;
+        ctx.font = `${rect.fontWeight} ${rect.fontSize}rem 'SourceHanSerifCN', sans-serif`;
+        // console.log('font',`${rect.fontWeight} ${rect.fontSize}rem serif`)
         ctx.textBaseline = 'top'
         // ctx.textAlign = rect.textAlign
 

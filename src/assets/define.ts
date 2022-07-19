@@ -57,6 +57,11 @@ export enum FontWeight {
   HEAVY = 900,
 }
 
+export enum RectColorType {
+  FillColor = 'fillColor',
+  BorderColor = 'borderColor',
+}
+
 export enum FontFamily {
   SourceHanSerifCN = 'SourceHanSerifCN',
   SourceHanSansCN = 'SourceHanSansCN',

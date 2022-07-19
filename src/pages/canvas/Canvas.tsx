@@ -28,7 +28,16 @@ import {mat4} from 'gl-matrix'
 import Fps from "../../components/Fps";
 import {BaseOption, BaseSelect} from "../../components/BaseSelect";
 import {fontFamilies, fontSize, fontWeight} from "../../assets/constant";
-import {FontFamily, FontWeight, Rect, RectType, TextAlign, TextBaseline, TextMode} from "../../assets/define";
+import {
+  FontFamily,
+  FontWeight,
+  Rect,
+  RectColorType,
+  RectType,
+  TextAlign,
+  TextBaseline,
+  TextMode
+} from "../../assets/define";
 import {BaseRadio, BaseRadioGroup} from "../../components/BaseRadio";
 import BaseSlotButton from "../../components/BaseSlotButton";
 import {SketchPicker} from 'react-color'
@@ -72,6 +81,8 @@ type IState = {
   fpsTimer: any,
   fps: number,
   currentMat: any
+  rectColor: any
+  rectColorType: any
   showPicker: boolean
 }
 
@@ -99,7 +110,9 @@ class Canvas extends React.Component<any, IState> {
       0, 0, 1, 0,
       0, 0, 0, 1,
     ]),
-    showPicker: false
+    showPicker: false,
+    rectColor: null,
+    rectColorType: null,
   } as IState
 
   constructor(props: any) {
@@ -213,6 +226,8 @@ class Canvas extends React.Component<any, IState> {
         0, 0, 0, 1,
       ]),
       showPicker: false,
+      rectColor: null,
+      rectColorType: null,
       rectList: [
         // this.getPath(oneBox2),
         // this.getPath(allLine),
@@ -258,7 +273,7 @@ class Canvas extends React.Component<any, IState> {
     } = this.state
     // console.log('renderCanvas', enterLT)
     ctx.save()
-    let {x, y, w, h, fillColor,borderColor, rotate, lineWidth, type, flipVertical, flipHorizontal}
+    let {x, y, w, h, fillColor, borderColor, rotate, lineWidth, type, flipVertical, flipHorizontal}
       = parent ? parent : rect
     if (parent) {
       type = rect.type
@@ -1314,13 +1329,16 @@ class Canvas extends React.Component<any, IState> {
   }
 
   changeRectColor = (e: any) => {
+    const {rectColorType} = this.state
+
     console.log('e', e.hex)
-    this.changeSelect({fillColor: e.hex})
+    this.changeSelect({[rectColorType]: e.hex})
+    this.setState({rectColor: e.hex})
   }
 
   render() {
     // console.log('render')
-    const {activeHand, handScale, showPicker} = this.state
+    const {activeHand, handScale, showPicker, rectColor} = this.state
     // console.log('selectRect', selectRect?.fontFamily)
     // @ts-ignore
     const selectRect: Rect = this.getSelect()
@@ -1513,14 +1531,18 @@ class Canvas extends React.Component<any, IState> {
                     <BaseSlotButton value={selectRect?.x?.toFixed(0)}
                                     prefix={
                                       <div className={'color-block'}
-                                           style={{background:selectRect.fillColor}}
-                                           onClick={() => this.setState({showPicker: !showPicker})}/>
+                                           style={{background: selectRect.fillColor}}
+                                           onClick={() => this.setState({
+                                             showPicker: !showPicker,
+                                             rectColor: selectRect.fillColor,
+                                             rectColorType: RectColorType.FillColor
+                                           })}/>
                                     }
                       // suffix={<PreviewOpen fill="#929596"/>}
                                     suffix={<PreviewClose fill="#929596"/>}
                     >
                       <div className={'test'}>
-                        <input type="text" value={selectRect.fillColor}/>
+                        <input type="text" value={selectRect?.fillColor}/>
                         <input type="text"/>
                       </div>
                     </BaseSlotButton>
@@ -1540,14 +1562,18 @@ class Canvas extends React.Component<any, IState> {
                     <BaseSlotButton value={selectRect?.x?.toFixed(0)}
                                     prefix={
                                       <div className={'color-block'}
-                                           style={{background:selectRect.borderColor}}
-                                           onClick={() => this.setState({showPicker: !showPicker})}/>
+                                           style={{background: selectRect.borderColor}}
+                                           onClick={() => this.setState({
+                                             showPicker: !showPicker,
+                                             rectColor: selectRect.borderColor,
+                                             rectColorType: RectColorType.BorderColor
+                                           })}/>
                                     }
                       // suffix={<PreviewOpen fill="#929596"/>}
                                     suffix={<PreviewClose fill="#929596"/>}
                     >
                       <div className={'test'}>
-                        <input type="text" value={selectRect.borderColor}/>
+                        <input type="text" value={selectRect?.borderColor}/>
                         <input type="text"/>
                       </div>
                     </BaseSlotButton>
@@ -1568,7 +1594,7 @@ class Canvas extends React.Component<any, IState> {
         showPicker &&
           <div className={'picker-wrapper'}>
               <SketchPicker
-                  color={selectRect.fillColor}
+                  color={rectColor || 'white'}
                   onChange={this.changeRectColor}
               />
           </div>

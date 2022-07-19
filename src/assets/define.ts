@@ -19,6 +19,8 @@ export interface Rect extends RectText {
   lineWidth: number,
   type: RectType,
   color: string,
+  fillColor: string,
+  borderColor: string,
   leftX?: number,
   topY?: number,
   rightX?: number,

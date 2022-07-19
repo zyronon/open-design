@@ -13,6 +13,7 @@
   }
 }
 
+
 .design {
   height: 100%;
   width: 100%;
@@ -183,12 +184,40 @@
           .row-single {
             @extend .row;
             grid-template-columns: 1fr 30rem;
-
           }
         }
       }
-
     }
   }
+}
 
+.picker-wrapper {
+  display: flex;
+  width: 260rem;
+  position: fixed;
+  top: 100rem;
+  right: 260rem;
+
+  .sketch-picker {
+    width: 100% !important;
+  }
+}
+
+.color-block {
+  $w: 18rem;
+  width: $w;
+  height: $w;
+  background: #000;
+  border-radius: 4rem;
+}
+
+.test {
+  display: flex;
+
+  input {
+    background: transparent;
+    border: none;
+    outline: none;
+    width: 50%;
+  }
 }

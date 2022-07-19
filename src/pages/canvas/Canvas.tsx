@@ -11,7 +11,7 @@ import {
   Down,
   FiveFive,
   FullScreen,
-  More,
+  More, PreviewClose, PreviewCloseOne, PreviewOpen,
   RowHeight,
   Square,
   Text,
@@ -30,6 +30,8 @@ import {BaseOption, BaseSelect} from "../../components/BaseSelect";
 import {fontFamilies, fontSize, fontWeight} from "../../assets/constant";
 import {FontFamily, FontWeight, Rect, RectType, TextAlign, TextBaseline, TextMode} from "../../assets/define";
 import {BaseRadio, BaseRadioGroup} from "../../components/BaseRadio";
+import BaseSlotButton from "../../components/BaseSlotButton";
+import {SketchPicker} from 'react-color'
 
 
 type IState = {
@@ -70,6 +72,7 @@ type IState = {
   fpsTimer: any,
   fps: number,
   currentMat: any
+  showPicker: boolean
 }
 
 const out = new Float32Array([
@@ -95,7 +98,8 @@ class Canvas extends React.Component<any, IState> {
       0, 1, 0, 0,
       0, 0, 1, 0,
       0, 0, 0, 1,
-    ])
+    ]),
+    showPicker: false
   } as IState
 
   constructor(props: any) {
@@ -132,6 +136,8 @@ class Canvas extends React.Component<any, IState> {
     let oneBox = {
       id: 'oneBox',
       name: 'oneBox',
+      borderColor: "black",
+      fillColor: "#333",
       x: 550,
       y: 250,
       w: 350,
@@ -144,6 +150,11 @@ class Canvas extends React.Component<any, IState> {
       children: []
     }
     let oneBox3 = {
+      brokenTexts: [],
+      borderColor: "black",
+      fillColor: "white",
+      fontSize: 0,
+      texts: [],
       id: 'Date.now()',
       name: 'oneBox3',
       x: 226,
@@ -157,6 +168,7 @@ class Canvas extends React.Component<any, IState> {
       children: []
     }
     let text: Rect = {
+      borderColor: "", fillColor: "",
       textAlign: TextAlign.RIGHT,
       textBaseline: TextBaseline.LEFT,
       id: 'text',
@@ -165,7 +177,7 @@ class Canvas extends React.Component<any, IState> {
       brokenTexts: ['输入文本'],
       x: 540,
       y: 120,
-      w: 180,
+      w: 80,
       h: 25,
       fontFamily: FontFamily.SourceHanSansCN,
       fontWeight: FontWeight.Normal,
@@ -200,13 +212,15 @@ class Canvas extends React.Component<any, IState> {
         0, 0, 1, 0,
         0, 0, 0, 1,
       ]),
+      showPicker: false,
       rectList: [
-        this.getPath(oneBox),
         // this.getPath(oneBox2),
         // this.getPath(allLine),
         //@ts-ignore
-        this.getPath(oneBox3),
         this.getPath(text),
+        this.getPath(oneBox),
+        this.getPath(oneBox3),
+
         // this.getPath(threeBox),
       ]
     }, this.draw)
@@ -244,7 +258,7 @@ class Canvas extends React.Component<any, IState> {
     } = this.state
     // console.log('renderCanvas', enterLT)
     ctx.save()
-    let {x, y, w, h, color, rotate, lineWidth, type, flipVertical, flipHorizontal}
+    let {x, y, w, h, fillColor,borderColor, rotate, lineWidth, type, flipVertical, flipHorizontal}
       = parent ? parent : rect
     if (parent) {
       type = rect.type
@@ -341,11 +355,13 @@ class Canvas extends React.Component<any, IState> {
         })
         break
       case RectType.FILL:
-        ctx.fillStyle = color
+        ctx.fillStyle = fillColor
         ctx.fill()
         break
       case RectType.LINE:
-        ctx.strokeStyle = color
+        ctx.fillStyle = fillColor
+        ctx.fill()
+        ctx.strokeStyle = borderColor
         ctx.stroke()
         break
       case RectType.WRAPPER:
@@ -1090,7 +1106,7 @@ class Canvas extends React.Component<any, IState> {
     }
   }
 
-  onMouseMoveThrottle = throttle(this.onMouseMove, 20)
+  onMouseMoveThrottle = throttle(this.onMouseMove, 0)
   onMouseMoveWrapper = (e: MouseEvent) => {
     this.onMouseMoveThrottle(e)
   }
@@ -1193,12 +1209,12 @@ class Canvas extends React.Component<any, IState> {
         return measureText.width
       })
       w = Math.max(...widths)
-      h = texts.length * fontSize
+      h = texts.length * textLineHeight
       brokenTexts = texts
     }
     if (textMode === TextMode.AUTO_H) {
       brokenTexts = this.getTextModeAutoHTexts(texts, ctx, w)
-      h = brokenTexts.length * fontSize
+      h = brokenTexts.length * textLineHeight
     }
     if (textMode === TextMode.FIXED) {
       // brokenTexts = texts
@@ -1289,197 +1305,275 @@ class Canvas extends React.Component<any, IState> {
       e)
     console.log('onFontSizeChange', e)
   }
+  onTextLineHeightChange = (e: any) => {
+    this.calcText(
+      undefined,
+      undefined,
+      e.target.value)
+    console.log('onTextLineHeightChange', e)
+  }
+
+  changeRectColor = (e: any) => {
+    console.log('e', e.hex)
+    this.changeSelect({fillColor: e.hex})
+  }
 
   render() {
     // console.log('render')
-    const {activeHand, handScale,} = this.state
+    const {activeHand, handScale, showPicker} = this.state
     // console.log('selectRect', selectRect?.fontFamily)
     // @ts-ignore
     const selectRect: Rect = this.getSelect()
     // console.log('se', selectRect)
     const type = selectRect?.type
-    return <div className={'design'}>
-      <div className="header">
-        <div className={'fps'}>
-          FPS:<Fps/>
+    return <>
+      <div className={'design'}>
+        <div className="header">
+          <div className={'fps'}>
+            FPS:<Fps/>
+          </div>
+        </div>
+        <div className="content">
+          <div className="left">
+            <div className='components'>
+              {/*<div className="component" onClick={() => location.reload()}>*/}
+              <div className="component" onClick={() => this.init()}>
+                刷新
+              </div>
+              <div className="component" onClick={() => this.props.navigate('/test')}>
+                去test
+              </div>
+            </div>
+          </div>
+          <div className="canvas-wrapper">
+            <div className="tool-bar">
+              <div className="left">
+                <div className={cx('tool', activeHand && 'active')}
+                     onClick={() => this.setState({activeHand: !activeHand})}>
+                  <FiveFive theme="outline" size="20" fill="#ffffff"/>
+                </div>
+                <div className="tool">
+                  <FiveFive theme="outline" size="20" fill="#ffffff"/>
+                  <Down theme="outline" size="14" fill="#ffffff" className='arrow'/>
+                </div>
+                <div className="tool">
+                  <Text theme="outline" size="20" fill="#ffffff"/>
+                </div>
+              </div>
+              <div className="right">
+                <div className="resize">
+                  <span>{((handScale - 1) * 100).toFixed(0)}%</span>
+                  <Down theme="outline" size="14" fill="#ffffff" className='arrow'/>
+                </div>
+              </div>
+            </div>
+            <div id="canvasArea">
+              <canvas
+                onDoubleClick={this.onDbClick}
+                onMouseMove={this.onMouseMoveWrapper}
+                onMouseDown={this.onMouseDown}
+                onMouseUp={this.onMouseUp}
+                onWheel={this.onWheel}
+                id="canvas" ref={this.canvasRef}/>
+            </div>
+          </div>
+          <div className="right">
+            <div className="config-wrapper">
+              <div className="base-info">
+                <div className="row">
+                  <div className="col">
+                    <BaseInput value={selectRect?.x?.toFixed(0)} prefix={<span className={'gray'}>X</span>}/>
+                  </div>
+                  <div className="col">
+                    <BaseInput value={selectRect?.y?.toFixed(0)} prefix={<span className={'gray'}>Y</span>}/>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col">
+                    <BaseInput value={selectRect?.w?.toFixed(0)} prefix={<span className={'gray'}>W</span>}/>
+                  </div>
+                  <div className="col">
+                    <BaseInput value={selectRect?.h?.toFixed(0)} prefix={<span className={'gray'}>H</span>}/>
+                  </div>
+                  <div className="col">
+                    <BaseIcon active={false}>
+                      <Unlock theme="outline" size="16" fill="#929596"/>
+                    </BaseIcon>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col">
+                    <BaseInput value={selectRect?.rotate} prefix={<RotateIcon style={{fontSize: "16rem"}}/>}/>
+                  </div>
+                  <div className="col">
+                    <BaseButton active={selectRect?.flipHorizontal} onClick={() => this.flip(0)}>
+                      <FlipIcon style={{fontSize: "16rem", 'transform': 'rotate(-90deg)'}}/>
+                    </BaseButton>
+                    <BaseButton active={selectRect?.flipVertical} onClick={() => this.flip(1)}>
+                      <FlipIcon style={{fontSize: "16rem", 'transform': 'rotate(0deg)'}}/>
+                    </BaseButton>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col">
+                    <BaseInput prefix={<AngleIcon style={{fontSize: "16rem"}}/>}/>
+                  </div>
+                  <div className="col">
+                    <BaseIcon active={false}>
+                      <FullScreen theme="outline" size="16" fill="#929596"/>
+                    </BaseIcon>
+                  </div>
+                </div>
+              </div>
+              {
+                type === RectType.TEXT &&
+                  <div className="base-info">
+                      <div className="header">文字</div>
+                      <div className="row-single">
+                          <div className="col">
+                              <BaseSelect value={selectRect?.fontFamily} onChange={this.onFontFamilyChange}>
+                                {
+                                  fontFamilies.map((v, i) => {
+                                    return <BaseOption key={i} value={v.value} label={v.label}>{v.label}</BaseOption>
+                                  })
+                                }
+                              </BaseSelect>
+                          </div>
+                      </div>
+                      <div className="row">
+                          <div className="col">
+                              <BaseSelect value={selectRect?.fontWeight} onChange={this.onFontWeightChange}>
+                                {
+                                  fontWeight.map((v, i) => {
+                                    return <BaseOption key={i} value={v.value} label={v.label}>{v.label}</BaseOption>
+                                  })
+                                }
+                              </BaseSelect>
+                          </div>
+                          <div className="col">
+                              <BaseSelect value={selectRect?.fontSize} onChange={this.onFontSizeChange}>
+                                {
+                                  fontSize.map((v, i) => {
+                                    return <BaseOption key={i} value={v.value} label={v.label}>{v.label}</BaseOption>
+                                  })
+                                }
+                              </BaseSelect>
+                          </div>
+                      </div>
+                      <div className="row">
+                          <div className="col">
+                              <BaseInput value={selectRect?.textLineHeight}
+                                         onChange={this.onTextLineHeightChange}
+                                         prefix={<RowHeight size="14" fill="#929596"/>}/>
+                          </div>
+                          <div className="col">
+                              <BaseInput value={selectRect?.letterSpacing}
+                                         prefix={<AutoLineWidth fill="#929596"/>}/>
+                          </div>
+                      </div>
+                      <div className="row">
+                          <div className="col">
+                              <BaseRadioGroup value={selectRect?.textAlign} onChange={this.onTextAlignChange}>
+                                  <BaseRadio key={0} value={TextAlign.LEFT} label={'左对齐'}>
+                                      <AlignTextLeft fill="#929596"/>
+                                  </BaseRadio>
+                                  <BaseRadio key={1} value={TextAlign.CENTER} label={'居中对齐'}>
+                                      <AlignTextLeft fill="#929596"/>
+                                  </BaseRadio>
+                                  <BaseRadio key={2} value={TextAlign.RIGHT} label={'右对齐'}>
+                                      <AlignTextLeft fill="#929596"/>
+                                  </BaseRadio>
+                              </BaseRadioGroup>
+                          </div>
+                          <div className="col">
+                              <BaseRadioGroup value={selectRect?.textMode} onChange={this.onTextModeChange}>
+                                  <BaseRadio key={0} value={TextMode.AUTO_W} label={'自动宽度'}>
+                                      <AutoWidthOne fill="#929596"/>
+                                  </BaseRadio>
+                                  <BaseRadio key={1} value={TextMode.AUTO_H} label={'自动高度'}>
+                                      <AutoHeightOne fill="#929596"/>
+                                  </BaseRadio>
+                                  <BaseRadio key={2} value={TextMode.FIXED} label={'固定宽高'}>
+                                      <Square fill="#929596"/>
+                                  </BaseRadio>
+                              </BaseRadioGroup>
+                          </div>
+                          <div className="col">
+                              <BaseIcon active={false}>
+                                  <More fill="#929596"/>
+                              </BaseIcon>
+                          </div>
+                      </div>
+                  </div>
+              }
+              <div className="base-info">
+                <div className="header">填充</div>
+                <div className="row-single">
+                  <div className="col">
+                    <BaseSlotButton value={selectRect?.x?.toFixed(0)}
+                                    prefix={
+                                      <div className={'color-block'}
+                                           style={{background:selectRect.fillColor}}
+                                           onClick={() => this.setState({showPicker: !showPicker})}/>
+                                    }
+                      // suffix={<PreviewOpen fill="#929596"/>}
+                                    suffix={<PreviewClose fill="#929596"/>}
+                    >
+                      <div className={'test'}>
+                        <input type="text" value={selectRect.fillColor}/>
+                        <input type="text"/>
+                      </div>
+                    </BaseSlotButton>
+                  </div>
+
+                  <div className="col">
+                    <BaseIcon active={false}>
+                      <Unlock theme="outline" size="16" fill="#929596"/>
+                    </BaseIcon>
+                  </div>
+                </div>
+              </div>
+              <div className="base-info">
+                <div className="header">描边</div>
+                <div className="row-single">
+                  <div className="col">
+                    <BaseSlotButton value={selectRect?.x?.toFixed(0)}
+                                    prefix={
+                                      <div className={'color-block'}
+                                           style={{background:selectRect.borderColor}}
+                                           onClick={() => this.setState({showPicker: !showPicker})}/>
+                                    }
+                      // suffix={<PreviewOpen fill="#929596"/>}
+                                    suffix={<PreviewClose fill="#929596"/>}
+                    >
+                      <div className={'test'}>
+                        <input type="text" value={selectRect.borderColor}/>
+                        <input type="text"/>
+                      </div>
+                    </BaseSlotButton>
+                  </div>
+
+                  <div className="col">
+                    <BaseIcon active={false}>
+                      <Unlock theme="outline" size="16" fill="#929596"/>
+                    </BaseIcon>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div className="content">
-        <div className="left">
-          <div className='components'>
-            {/*<div className="component" onClick={() => location.reload()}>*/}
-            <div className="component" onClick={() => this.init()}>
-              刷新
-            </div>
-            <div className="component" onClick={() => this.props.navigate('/test')}>
-              去test
-            </div>
+      {
+        showPicker &&
+          <div className={'picker-wrapper'}>
+              <SketchPicker
+                  color={selectRect.fillColor}
+                  onChange={this.changeRectColor}
+              />
           </div>
-        </div>
-        <div className="canvas-wrapper">
-          <div className="tool-bar">
-            <div className="left">
-              <div className={cx('tool', activeHand && 'active')}
-                   onClick={() => this.setState({activeHand: !activeHand})}>
-                <FiveFive theme="outline" size="20" fill="#ffffff"/>
-              </div>
-              <div className="tool">
-                <FiveFive theme="outline" size="20" fill="#ffffff"/>
-                <Down theme="outline" size="14" fill="#ffffff" className='arrow'/>
-              </div>
-              <div className="tool">
-                <Text theme="outline" size="20" fill="#ffffff"/>
-              </div>
-            </div>
-            <div className="right">
-              <div className="resize">
-                <span>{((handScale - 1) * 100).toFixed(0)}%</span>
-                <Down theme="outline" size="14" fill="#ffffff" className='arrow'/>
-              </div>
-            </div>
-          </div>
-          <div id="canvasArea">
-            <canvas
-              onDoubleClick={this.onDbClick}
-              onMouseMove={this.onMouseMoveWrapper}
-              onMouseDown={this.onMouseDown}
-              onMouseUp={this.onMouseUp}
-              onWheel={this.onWheel}
-              id="canvas" ref={this.canvasRef}/>
-          </div>
-        </div>
-        <div className="right">
-          <div className="config-wrapper">
-            <div className="base-info">
-              <div className="row">
-                <div className="col">
-                  <BaseInput value={selectRect?.x?.toFixed(0)} prefix={<span className={'gray'}>X</span>}/>
-                </div>
-                <div className="col">
-                  <BaseInput value={selectRect?.y?.toFixed(0)} prefix={<span className={'gray'}>Y</span>}/>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col">
-                  <BaseInput value={selectRect?.w?.toFixed(0)} prefix={<span className={'gray'}>W</span>}/>
-                </div>
-                <div className="col">
-                  <BaseInput value={selectRect?.h?.toFixed(0)} prefix={<span className={'gray'}>H</span>}/>
-                </div>
-                <div className="col">
-                  <BaseIcon active={false}>
-                    <Unlock theme="outline" size="16" fill="#929596"/>
-                  </BaseIcon>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col">
-                  <BaseInput value={selectRect?.rotate} prefix={<RotateIcon style={{fontSize: "16rem"}}/>}/>
-                </div>
-                <div className="col">
-                  <BaseButton active={selectRect?.flipHorizontal} onClick={() => this.flip(0)}>
-                    <FlipIcon style={{fontSize: "16rem", 'transform': 'rotate(-90deg)'}}/>
-                  </BaseButton>
-                  <BaseButton active={selectRect?.flipVertical} onClick={() => this.flip(1)}>
-                    <FlipIcon style={{fontSize: "16rem", 'transform': 'rotate(0deg)'}}/>
-                  </BaseButton>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col">
-                  <BaseInput prefix={<AngleIcon style={{fontSize: "16rem"}}/>}/>
-                </div>
-                <div className="col">
-                  <BaseIcon active={false}>
-                    <FullScreen theme="outline" size="16" fill="#929596"/>
-                  </BaseIcon>
-                </div>
-              </div>
-            </div>
-            {
-              type === RectType.TEXT &&
-                <div className="base-info">
-                    <div className="header">文字</div>
-                    <div className="row-single">
-                        <div className="col">
-                            <BaseSelect value={selectRect?.fontFamily} onChange={this.onFontFamilyChange}>
-                              {
-                                fontFamilies.map((v, i) => {
-                                  return <BaseOption key={i} value={v.value} label={v.label}>{v.label}</BaseOption>
-                                })
-                              }
-                            </BaseSelect>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col">
-                            <BaseSelect value={selectRect?.fontWeight} onChange={this.onFontWeightChange}>
-                              {
-                                fontWeight.map((v, i) => {
-                                  return <BaseOption key={i} value={v.value} label={v.label}>{v.label}</BaseOption>
-                                })
-                              }
-                            </BaseSelect>
-                        </div>
-                        <div className="col">
-                            <BaseSelect value={selectRect?.fontSize} onChange={this.onFontSizeChange}>
-                              {
-                                fontSize.map((v, i) => {
-                                  return <BaseOption key={i} value={v.value} label={v.label}>{v.label}</BaseOption>
-                                })
-                              }
-                            </BaseSelect>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col">
-                            <BaseInput value={selectRect?.textLineHeight}
-                                       prefix={<RowHeight size="14" fill="#929596"/>}/>
-                        </div>
-                        <div className="col">
-                            <BaseInput value={selectRect?.letterSpacing}
-                                       prefix={<AutoLineWidth fill="#929596"/>}/>
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col">
-                            <BaseRadioGroup value={selectRect?.textAlign} onChange={this.onTextAlignChange}>
-                                <BaseRadio key={0} value={TextAlign.LEFT} label={'左对齐'}>
-                                    <AlignTextLeft fill="#929596"/>
-                                </BaseRadio>
-                                <BaseRadio key={1} value={TextAlign.CENTER} label={'居中对齐'}>
-                                    <AlignTextLeft fill="#929596"/>
-                                </BaseRadio>
-                                <BaseRadio key={2} value={TextAlign.RIGHT} label={'右对齐'}>
-                                    <AlignTextLeft fill="#929596"/>
-                                </BaseRadio>
-                            </BaseRadioGroup>
-                        </div>
-                        <div className="col">
-                            <BaseRadioGroup value={selectRect?.textMode} onChange={this.onTextModeChange}>
-                                <BaseRadio key={0} value={TextMode.AUTO_W} label={'自动宽度'}>
-                                    <AutoWidthOne fill="#929596"/>
-                                </BaseRadio>
-                                <BaseRadio key={1} value={TextMode.AUTO_H} label={'自动高度'}>
-                                    <AutoHeightOne fill="#929596"/>
-                                </BaseRadio>
-                                <BaseRadio key={2} value={TextMode.FIXED} label={'固定宽高'}>
-                                    <Square fill="#929596"/>
-                                </BaseRadio>
-                            </BaseRadioGroup>
-                        </div>
-                        <div className="col">
-                            <BaseIcon active={false}>
-                                <More fill="#929596"/>
-                            </BaseIcon>
-                        </div>
-                    </div>
-                </div>
-            }
-          </div>
-        </div>
-      </div>
-    </div>
+      }
+    </>
   }
 }
 

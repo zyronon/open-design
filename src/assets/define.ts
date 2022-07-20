@@ -6,9 +6,14 @@ export enum RectType {
   WRAPPER = 2,
   SELECT = 3,
   TEXT = 4,
+  IMG = 5,
 }
 
-export interface Rect extends RectText {
+export interface RectImg {
+  img: any,
+}
+
+export interface Rect extends RectText, RectImg {
   id: number | string,
   name?: number | string,
   x: number,

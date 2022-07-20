@@ -11,11 +11,13 @@ import {
   Down,
   FiveFive,
   FullScreen,
-  More, PreviewClose, PreviewCloseOne, PreviewOpen,
+  More,
+  PreviewClose,
   RowHeight,
   Square,
   Text,
-  Unlock
+  Unlock,
+  Pic
 } from "@icon-park/react";
 import BaseIcon from "../../components/BaseIcon";
 import BaseButton from "../../components/BaseButton";
@@ -92,6 +94,7 @@ const out = new Float32Array([
   0, 0, 0, 0,
   0, 0, 0, 0,
 ]);
+import bg from '../../assets/image/a.jpg'
 
 class Canvas extends React.Component<any, IState> {
   canvasRef: RefObject<HTMLCanvasElement> = React.createRef()
@@ -179,10 +182,10 @@ class Canvas extends React.Component<any, IState> {
       lineWidth: 2,
       type: RectType.LINE,
       color: 'gray',
-      radius: 10,
+      radius: 30,
       children: []
     }
-    let text: Rect = {
+    let text = {
       borderColor: "", fillColor: "",
       textAlign: TextAlign.RIGHT,
       textBaseline: TextBaseline.LEFT,
@@ -206,6 +209,26 @@ class Canvas extends React.Component<any, IState> {
       color: 'gray',
       radius: 0,
       children: []
+    }
+    let img = {
+      img: bg,
+      brokenTexts: [],
+      borderColor: "black",
+      fillColor: "black",
+      fontSize: 0,
+      texts: [],
+      x: 326,
+      y: 326,
+      w: 150,
+      h: 150,
+      rotate: 0,
+      lineWidth: 2,
+      type: RectType.IMG,
+      color: 'gray',
+      radius: 0,
+      children: [],
+      id: 'img',
+      name: 'img',
     }
     this.setState({
       selectRect: undefined,
@@ -233,9 +256,10 @@ class Canvas extends React.Component<any, IState> {
       rectColorType: null,
       rectList: [
         //@ts-ignore
-        this.getPath(text),
-        this.getPath(oneBox),
         this.getPath(oneBox3),
+        this.getPath(oneBox),
+        this.getPath(text),
+        this.getPath(img),
 
         // this.getPath(threeBox),
       ]
@@ -343,7 +367,7 @@ class Canvas extends React.Component<any, IState> {
 
     // ctx.strokeRect(x, y, w, h)
     if (type !== RectType.TEXT) {
-      if (radius) {
+      if (radius && type !== RectType.SELECT) {
         this.renderRoundRect({x, y, w, h}, radius)
       } else {
         ctx.beginPath()
@@ -386,6 +410,17 @@ class Canvas extends React.Component<any, IState> {
         ctx.fill()
         ctx.strokeStyle = borderColor
         ctx.stroke()
+        break
+      case RectType.IMG:
+        let img = new Image();
+        img.onload = () => {
+          ctx.drawImage(img, x, y, w, h);
+        }
+        img.src = rect.img
+        // ctx.fillStyle = fillColor
+        // ctx.fill()
+        // ctx.strokeStyle = borderColor
+        // ctx.stroke()
         break
       case RectType.WRAPPER:
         ctx.strokeStyle = 'rgb(139,80,255)'
@@ -1122,7 +1157,8 @@ class Canvas extends React.Component<any, IState> {
     }
     // return console.log(x, y)
     // isPointInPath(x, y, blocks[0])
-    for (let i = 0; i < rectList.length; i++) {
+    // for (let i = 0; i < rectList.length; i++) {
+    for (let i = rectList.length - 1; i >= 0; i--) {
       let b = rectList[i]
       let r = this.isPointInPath(x, y, b)
       if (r) break
@@ -1384,6 +1420,9 @@ class Canvas extends React.Component<any, IState> {
                 </div>
                 <div className="tool">
                   <Text theme="outline" size="20" fill="#ffffff"/>
+                </div>
+                <div className="tool">
+                  <Pic theme="outline" size="20" fill="#ffffff"/>
                 </div>
               </div>
               <div className="right">

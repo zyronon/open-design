@@ -152,7 +152,13 @@
       }
 
       .config-wrapper {
+        height: 100%;
+        width: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
         color: white;
+
+
 
         .base-info {
           > .header {
@@ -188,18 +194,6 @@
         }
       }
     }
-  }
-}
-
-.picker-wrapper {
-  display: flex;
-  width: 260rem;
-  position: fixed;
-  top: 100rem;
-  right: 260rem;
-
-  .sketch-picker {
-    width: 100% !important;
   }
 }
 

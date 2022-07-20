@@ -1442,7 +1442,7 @@ class Canvas extends React.Component<any, IState> {
                 </div>
                 <div className="row">
                   <div className="col">
-                    <BaseInput prefix={<AngleIcon style={{fontSize: "16rem"}}/>}/>
+                    <BaseInput value={selectRect?.radius} prefix={<AngleIcon style={{fontSize: "16rem"}}/>}/>
                   </div>
                   <div className="col">
                     <BaseIcon active={false}>

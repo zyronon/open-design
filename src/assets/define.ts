@@ -25,6 +25,7 @@ export interface Rect extends RectText {
   topY?: number,
   rightX?: number,
   bottomY?: number,
+  radius: number,
   children: Rect[],
   flipVertical?: boolean,
   flipHorizontal?: boolean,

@@ -149,8 +149,8 @@ class Canvas extends React.Component<any, IState> {
     let oneBox = {
       id: 'oneBox',
       name: 'oneBox',
-      borderColor: "black",
-      fillColor: "#333",
+      borderColor: "white",
+      fillColor: "white",
       x: 550,
       y: 250,
       w: 350,
@@ -165,7 +165,7 @@ class Canvas extends React.Component<any, IState> {
     }
     let oneBox3 = {
       brokenTexts: [],
-      borderColor: "black",
+      borderColor: "white",
       fillColor: "white",
       fontSize: 0,
       texts: [],
@@ -235,9 +235,9 @@ class Canvas extends React.Component<any, IState> {
         // this.getPath(oneBox2),
         // this.getPath(allLine),
         //@ts-ignore
-        this.getPath(text),
-        this.getPath(oneBox),
-        this.getPath(oneBox3),
+        // this.getPath(text),
+        // this.getPath(oneBox),
+        // this.getPath(oneBox3),
 
         // this.getPath(threeBox),
       ]
@@ -345,14 +345,17 @@ class Canvas extends React.Component<any, IState> {
 
     // ctx.strokeRect(x, y, w, h)
     if (type !== RectType.TEXT) {
-      // ctx.beginPath()
-      // ctx.moveTo(x, y)
-      // ctx.lineTo(x + w, y);
-      // ctx.lineTo(x + w, y + h);
-      // ctx.lineTo(x, y + h);
-      // ctx.lineTo(x, y);
-      // ctx.closePath()
-      this.renderRoundRect({ x, y, w, h }, radius)
+      if (radius){
+        this.renderRoundRect({ x, y, w, h }, radius)
+      }else {
+        ctx.beginPath()
+        ctx.moveTo(x, y)
+        ctx.lineTo(x + w, y);
+        ctx.lineTo(x + w, y + h);
+        ctx.lineTo(x, y + h);
+        ctx.lineTo(x, y);
+        ctx.closePath()
+      }
     }
 
     switch (type) {

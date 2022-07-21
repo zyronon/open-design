@@ -7,6 +7,7 @@ export enum RectType {
   SELECT = 3,
   TEXT = 4,
   IMG = 5,
+  PENCIL = 6,
 }
 
 export interface RectImg {

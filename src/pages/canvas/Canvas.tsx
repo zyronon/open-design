@@ -211,7 +211,6 @@ class Canvas extends React.Component<any, IState> {
       children: []
     }
     let img = {
-      // img: bg,
       img: '../../assets/image/a.jpg',
       brokenTexts: [],
       borderColor: "black",
@@ -227,6 +226,24 @@ class Canvas extends React.Component<any, IState> {
       type: RectType.IMG,
       color: 'gray',
       radius: 0,
+      children: [],
+      id: 'img',
+      name: 'img',
+    }
+    let pencil = {
+      borderColor: "black",
+      fillColor: "black",
+      fontSize: 0,
+      texts: [],
+      x: 326,
+      y: 326,
+      w: 150,
+      h: 150,
+      rotate: 0,
+      lineWidth: 2,
+      type: RectType.PENCIL,
+      radius: 0,
+      points: [],
       children: [],
       id: 'img',
       name: 'img',
@@ -260,7 +277,7 @@ class Canvas extends React.Component<any, IState> {
         // this.getPath(oneBox3),
         // this.getPath(oneBox),
         // this.getPath(text),
-        this.getPath(img),
+        // this.getPath(img),
         // this.getPath(threeBox),
       ]
     }, this.draw)
@@ -948,10 +965,18 @@ class Canvas extends React.Component<any, IState> {
       handMove,
       oldHandMove,
       currentMat,
-      handScale
+      handScale,
+      ctx,
     } = this.state
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
+
+
+    ctx.lineWidth = 4
+    ctx.strokeStyle = 'gray'
+    ctx.lineTo(x, y)
+    ctx.stroke()
+    return
 
     if (activeHand && enter) {
       const transform = new Float32Array([

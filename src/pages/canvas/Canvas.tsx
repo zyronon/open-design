@@ -456,7 +456,7 @@ class Canvas extends React.Component<any, IState> {
         // ctx.strokeStyle = borderColor
         // ctx.stroke()
         break
-      case RectType.WRAPPER:
+      case RectType.HOVER:
         ctx.strokeStyle = 'rgb(139,80,255)'
         ctx.stroke()
         break
@@ -928,7 +928,7 @@ class Canvas extends React.Component<any, IState> {
         t.w = t.w + 2 * d
         t.h = t.h + 2 * d
         // console.log(t)
-        t.type = RectType.WRAPPER
+        t.type = RectType.HOVER
         this.renderCanvas(t)
         ctx.restore()
       }

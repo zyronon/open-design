@@ -3,11 +3,14 @@ import {fontSize, fontWeight} from "./constant";
 export enum RectType {
   LINE = 0,
   FILL = 1,
-  WRAPPER = 2,
   SELECT = 3,
   TEXT = 4,
   IMG = 5,
   PENCIL = 6,
+
+  FRAME = 100,
+  COMPONENT = 101,
+  HOVER = 2,
 }
 
 export interface RectImg {

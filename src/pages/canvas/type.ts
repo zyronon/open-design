@@ -1,4 +1,49 @@
-import {fontSize, fontWeight} from "./constant";
+export type IState = {
+  rectList: Rect[],
+  canvas: HTMLCanvasElement,
+  ctx: CanvasRenderingContext2D,
+  canvasRect: DOMRect,
+  enter: boolean,
+  hoverLeft: boolean,
+  enterLeft: boolean,
+  hoverLT: boolean,
+  enterLT: boolean,
+  hoverRT: boolean,
+  enterRT: boolean,
+  hoverLTR: boolean,//左上角 旋转
+  enterLTR: boolean,
+  selectRect?: Rect,
+  startX: number,
+  startY: number,
+  offsetX: number,
+  offsetY: number,
+  handMove: {
+    x: number,
+    y: number,
+  },
+  oldHandMove: {
+    x: number,
+    y: number,
+  },
+  currentPoint: {
+    x: number,
+    y: number,
+  },
+  handScale: number,
+  oldHandScale: number,
+  sPoint: { x: number, y: number },
+  activeHand: boolean,
+  fps: number,
+  currentMat: any
+  rectColor: any
+  rectColorType: any
+  showPicker: boolean,
+  usePencil: boolean,
+  enterPencil: boolean,
+  usePen: boolean,
+  enterPen: boolean,
+}
+
 
 export enum RectType {
   LINE = 0,

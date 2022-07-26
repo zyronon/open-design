@@ -9,12 +9,15 @@ import {
   AutoLineWidth,
   AutoWidthOne,
   Down,
+  FiveFive,
   FullScreen,
   More,
   PreviewClose,
   RowHeight,
   Square,
+  Text,
   Unlock,
+  Pic,
 } from "@icon-park/react";
 import BaseIcon from "../../components/BaseIcon";
 import BaseButton from "../../components/BaseButton";
@@ -26,7 +29,7 @@ import cx from "classnames";
 import {mat4} from 'gl-matrix'
 import Fps from "../../components/Fps";
 import {BaseOption, BaseSelect} from "../../components/BaseSelect";
-import {fontFamilies, fontSize, fontWeight, rects} from "./constant";
+import {fontFamilies, fontSize, fontWeight} from "../canvas/constant";
 import {
   FontFamily,
   FontWeight,
@@ -36,16 +39,60 @@ import {
   TextAlign,
   TextBaseline,
   TextMode
-} from "./type";
+} from "../../assets/define";
 import {BaseRadio, BaseRadioGroup} from "../../components/BaseRadio";
 import BaseSlotButton from "../../components/BaseSlotButton";
 import BasePicker from "../../components/BasePicker"
-import Icon from '@icon-park/react/es/all';
-import {IState} from "./type";
-import {store, pushRect} from "./store";
-import {renderCanvas, clear, getPath, clearAll} from "./utils";
+import Icon, {IconType} from '@icon-park/react/es/all';
 
 const images = new Map()
+
+type IState = {
+  rectList: Rect[],
+  canvas: HTMLCanvasElement,
+  ctx: CanvasRenderingContext2D,
+  canvasRect: DOMRect,
+  enter: boolean,
+  hoverLeft: boolean,
+  enterLeft: boolean,
+  hoverLT: boolean,
+  enterLT: boolean,
+  hoverRT: boolean,
+  enterRT: boolean,
+  hoverLTR: boolean,//左上角 旋转
+  enterLTR: boolean,
+  selectRect?: Rect,
+  startX: number,
+  startY: number,
+  offsetX: number,
+  offsetY: number,
+  handMove: {
+    x: number,
+    y: number,
+  },
+  oldHandMove: {
+    x: number,
+    y: number,
+  },
+  currentPoint: {
+    x: number,
+    y: number,
+  },
+  handScale: number,
+  oldHandScale: number,
+  sPoint: { x: number, y: number },
+  activeHand: boolean,
+  fpsTimer: any,
+  fps: number,
+  currentMat: any
+  rectColor: any
+  rectColorType: any
+  showPicker: boolean,
+  usePencil: boolean,
+  enterPencil: boolean,
+  usePen: boolean,
+  enterPen: boolean,
+}
 
 const out = new Float32Array([
   0, 0, 0, 0,
@@ -53,7 +100,6 @@ const out = new Float32Array([
   0, 0, 0, 0,
   0, 0, 0, 0,
 ]);
-
 
 class Canvas extends React.Component<any, IState> {
   canvasRef: RefObject<HTMLCanvasElement> = React.createRef()
@@ -77,6 +123,10 @@ class Canvas extends React.Component<any, IState> {
     rectColorType: null,
   } as IState
 
+  constructor(props: any) {
+    super(props);
+    // console.log(this.props)
+  }
 
   componentDidMount() {
     // console.log('componentDidMount', this.state.fpsTimer)
@@ -100,12 +150,109 @@ class Canvas extends React.Component<any, IState> {
 
   componentWillUnmount() {
     // console.log('componentWillUnmount')
+    cancelAnimationFrame(this.state.fpsTimer)
   }
 
   init() {
-    rects.map((rect: any) => {
-      pushRect(getPath(rect))
-    })
+    let oneBox = {
+      id: 'oneBox',
+      name: 'oneBox',
+      borderColor: "white",
+      fillColor: "white",
+      x: 550,
+      y: 250,
+      w: 350,
+      h: 100,
+      rotate: 1,
+      lineWidth: 2,
+      flipHorizontal: true,
+      type: RectType.LINE,
+      color: 'gray',
+      radius: 0,
+      children: []
+    }
+    let oneBox3 = {
+      brokenTexts: [],
+      borderColor: "white",
+      fillColor: "white",
+      fontSize: 0,
+      texts: [],
+      id: 'Date.now()',
+      name: 'oneBox3',
+      x: 226,
+      y: 226,
+      w: 150,
+      h: 150,
+      rotate: 0,
+      lineWidth: 2,
+      type: RectType.LINE,
+      color: 'gray',
+      radius: 30,
+      children: []
+    }
+    let text = {
+      borderColor: "", fillColor: "",
+      textAlign: TextAlign.RIGHT,
+      textBaseline: TextBaseline.LEFT,
+      id: 'text',
+      name: 'text',
+      texts: ['输入文本'],
+      brokenTexts: ['输入文本'],
+      x: 540,
+      y: 120,
+      w: 80,
+      h: 25,
+      fontFamily: FontFamily.SourceHanSansCN,
+      fontWeight: FontWeight.Normal,
+      letterSpacing: 0,
+      textLineHeight: 20,
+      textMode: TextMode.AUTO_H,
+      rotate: 0,
+      lineWidth: 2,
+      fontSize: 20,
+      type: RectType.TEXT,
+      color: 'gray',
+      radius: 0,
+      children: []
+    }
+    let img = {
+      img: '../../assets/image/a.jpg',
+      brokenTexts: [],
+      borderColor: "black",
+      fillColor: "black",
+      fontSize: 0,
+      texts: [],
+      x: 326,
+      y: 326,
+      w: 150,
+      h: 150,
+      rotate: 0,
+      lineWidth: 2,
+      type: RectType.IMG,
+      color: 'gray',
+      radius: 0,
+      children: [],
+      id: 'img',
+      name: 'img',
+    }
+    let pencil = {
+      borderColor: "black",
+      fillColor: "black",
+      fontSize: 0,
+      texts: [],
+      x: 326,
+      y: 326,
+      w: 150,
+      h: 150,
+      rotate: 0,
+      lineWidth: 2,
+      type: RectType.PENCIL,
+      radius: 0,
+      points: [],
+      children: [],
+      id: 'img',
+      name: 'img',
+    }
     this.setState({
       selectRect: undefined,
       currentPoint: {x: 0, y: 0,},
@@ -134,12 +281,20 @@ class Canvas extends React.Component<any, IState> {
       enterPen: false,
       rectColor: null,
       rectColorType: null,
-      rectList: []
+      rectList: [
+        //@ts-ignore
+        this.getPath(oneBox3),
+        this.getPath(oneBox),
+        this.getPath(text),
+        this.getPath(img),
+        this.getPath(pencil),
+        // this.getPath(threeBox),
+      ]
     }, this.draw)
   }
 
   draw() {
-    clearAll(this.state)
+    this.clearAll()
     const {ctx, currentMat, handMove} = this.state
     ctx.save()
     if (currentMat) {
@@ -155,11 +310,275 @@ class Canvas extends React.Component<any, IState> {
 
     this.state.ctx.lineCap = 'square'
     // console.log('this.state.boxList', this.state.boxList)
-    store.rectList.map((v: Rect) => {
+    this.state.rectList.map(v => {
       // console.log(v)
-      renderCanvas(v, this.state)
+      this.renderCanvas(v)
     })
     ctx.restore()
+  }
+
+  renderCanvas(rect: Rect, parent?: Rect) {
+    let {
+      ctx, enterLT, enterRT, selectRect, activeHand, enter, offsetX, offsetY,
+      handMove, handScale,
+      currentPoint
+    } = this.state
+    // console.log('renderCanvas', enterLT)
+    ctx.save()
+    let {
+      x, y, w, h, radius,
+      fillColor, borderColor, rotate, lineWidth, type, flipVertical, flipHorizontal
+    }
+      = parent ? parent : rect
+    if (parent) {
+      type = rect.type
+
+      let outside = .5
+      x = x - outside
+      y = y - outside
+      w = w + 2 * outside
+      h = h + 2 * outside
+    }
+
+    let oldCenter: { x: number; y: number; }
+    let newCenter: { x: number; y: number; }
+    let isMe = selectRect?.id === (parent ? parent.id : rect.id)
+    if ((enterLT || enterRT) && isMe) {
+      let s = selectRect!
+      oldCenter = {
+        x: s.x + (s.w / 2),
+        y: s.y + (s.h / 2)
+      }
+      newCenter = {
+        x: x + (w / 2),
+        y: y + (h / 2)
+      }
+      // console.log('oldCenter', oldCenter)
+      // console.log('newCenter', newCenter)
+    }
+
+    ctx.lineWidth = lineWidth
+    // let tranX = 0
+    // let tranY = 0
+    let tranX = 0
+    let tranY = 0
+    let scaleX = 1
+    let scaleY = 1
+    if (rotate || flipHorizontal) {
+      tranX = x + w / 2
+      tranY = y + h / 2
+      x = -w / 2
+      y = -h / 2
+    }
+
+    if (flipHorizontal) {
+      scaleX = -1
+      // tranX = -tranX
+      //如果在翻转情况下，自由拉伸要将tranX减去两个中心点偏移量
+      if ((enterRT || enterLT) && isMe) {
+        // console.log('tranX1', tranX)
+        let d = oldCenter!.x - newCenter!.x
+        tranX += d * 2
+        // console.log('tranX2', tranX)
+      }
+    }
+    if (flipVertical) {
+      // console.log('flipVertical', flipVertical)
+      scaleY = -1
+      // tranY = -tranY
+    }
+
+    ctx.translate(tranX, tranY)
+    ctx.scale(scaleX, scaleY)
+    ctx.rotate(rotate * Math.PI / 180)
+
+    // ctx.strokeRect(x, y, w, h)
+    if (type !== RectType.TEXT) {
+      if (radius && type !== RectType.SELECT) {
+        this.renderRoundRect({x, y, w, h}, radius)
+      } else {
+        ctx.beginPath()
+        ctx.moveTo(x, y)
+        ctx.lineTo(x + w, y);
+        ctx.lineTo(x + w, y + h);
+        ctx.lineTo(x, y + h);
+        ctx.lineTo(x, y);
+        ctx.closePath()
+      }
+    }
+
+    switch (type) {
+      case RectType.TEXT:
+        // ctx.fillStyle = 'white'
+        ctx.font = `${rect.fontWeight} ${rect.fontSize}rem "${rect.fontFamily}", sans-serif`;
+        ctx.textBaseline = 'top'
+        // ctx.textAlign = rect.textAlign
+
+        // console.log('render', rect.texts)
+        rect.brokenTexts?.map((text, index) => {
+          let lX = x
+          if (rect.textAlign === TextAlign.CENTER) {
+            let m = ctx.measureText(text)
+            lX = x + rect.w / 2 - m.width / 2
+          }
+          if (rect.textAlign === TextAlign.RIGHT) {
+            let m = ctx.measureText(text)
+            lX = x + rect.w - m.width
+          }
+          text && ctx.fillText(text, lX, y + (index * rect.textLineHeight));
+        })
+        break
+      case RectType.FILL:
+        ctx.fillStyle = fillColor
+        ctx.fill()
+        break
+      case RectType.LINE:
+        ctx.fillStyle = fillColor
+        ctx.fill()
+        ctx.strokeStyle = borderColor
+        ctx.stroke()
+        break
+      case RectType.IMG:
+        let currentImg = images.get(rect.id)
+        if (currentImg) {
+          ctx.drawImage(currentImg, x, y, w, h);
+        } else {
+          let img = new Image();
+          img.onload = () => {
+            images.set(rect.id, img)
+            ctx.drawImage(img, x, y, w, h);
+          }
+          img.src = new URL(rect.img, import.meta.url).href
+        }
+
+        // ctx.fillStyle = fillColor
+        // ctx.fill()
+        // ctx.strokeStyle = borderColor
+        // ctx.stroke()
+        break
+      case RectType.HOVER:
+        ctx.strokeStyle = 'rgb(139,80,255)'
+        ctx.stroke()
+        break
+      case RectType.PENCIL:
+        ctx.lineWidth = 4
+        ctx.strokeStyle = 'gray'
+        ctx.moveTo(x, y)
+        rect.points.map(item => {
+          ctx.lineTo(item.x, item.y)
+        })
+        ctx.stroke()
+        break
+      case RectType.SELECT:
+        // console.log('select')
+
+        // rotate = parent!.rotate
+        // // lineWidth = parent!.lineWidth
+
+        ctx.strokeStyle = 'rgb(139,80,255)'
+        ctx.stroke()
+        let d = 4
+        this.clear({
+          x: x - d,
+          y: y - d,
+          w: 2 * d,
+          h: 2 * d
+        })
+        this.clear({
+          x: x + w - d,
+          y: y - d,
+          w: 2 * d,
+          h: 2 * d
+        })
+        this.clear({
+          x: x + w - d,
+          y: y + h - d,
+          w: 2 * d,
+          h: 2 * d
+        })
+        this.clear({
+          x: x - d,
+          y: y + h - d,
+          w: 2 * d,
+          h: 2 * d
+        })
+
+        let r = 3
+        let lineWidth = 1.5
+        this.renderRoundRect({
+          x: x - d,
+          y: y - d,
+          w: 2 * d,
+          h: 2 * d,
+          lineWidth
+        }, r)
+        this.renderRoundRect({
+          x: x + w - d,
+          y: y - d,
+          w: 2 * d,
+          h: 2 * d,
+          lineWidth
+        }, r)
+        this.renderRoundRect({
+          x: x + w - d,
+          y: y + h - d,
+          w: 2 * d,
+          h: 2 * d,
+          lineWidth
+        }, r)
+        this.renderRoundRect({
+          x: x - d,
+          y: y + h - d,
+          w: 2 * d,
+          h: 2 * d,
+          lineWidth
+        }, r)
+        break
+    }
+
+    ctx.restore()
+    if (rect.children) {
+      rect.children.map(v => this.renderCanvas(v, rect))
+    }
+  }
+
+  renderRoundRect(rect: any, r: number) {
+    let {ctx} = this.state
+    ctx.lineWidth = rect.lineWidth
+    let {x, y, w, h} = rect
+    ctx.beginPath()
+    ctx.moveTo(x + w / 2, y)
+    ctx.arcTo(x + w, y, x + w, y + h, r)
+    ctx.arcTo(x + w, y + h, x, y + h, r)
+    ctx.arcTo(x, y + h, x, y, r)
+    ctx.arcTo(x, y, x + w / 2, y, r)
+    ctx.closePath()
+    ctx.stroke()
+  }
+
+  clearAll() {
+    this.clear(0, 0, this.state.canvas.width, this.state.canvas.height)
+    // this.state.ctx.fillStyle = 'black'
+    // this.state.ctx.fillRect(0, 0, this.state.canvas.width, this.state.canvas.height)
+  }
+
+  clear(x: number | any, y?: number, w?: number, h?: number) {
+    if (typeof x === 'object') {
+      this.state.ctx.clearRect(x.x, x.y, x.w, x.h)
+    } else {
+      this.state.ctx.clearRect(x, y!, w!, h!)
+    }
+  }
+
+  getPath(box: Rect) {
+    box.leftX = box.x
+    box.rightX = box.leftX + box.w
+    box.topY = box.y
+    box.bottomY = box.topY + box.h
+    if (!box.id) {
+      box.id = Date.now()
+    }
+    return box
   }
 
   flip(type: number) {
@@ -183,7 +602,7 @@ class Canvas extends React.Component<any, IState> {
     let rIndex = old.findIndex(item => item.id === selectRect?.id)
     if (rIndex > -1) {
       assign(old[rIndex], val)
-      old[rIndex] = getPath(old[rIndex])
+      old[rIndex] = this.getPath(old[rIndex])
       this.setState({rectList: old}, this.draw)
     }
   }
@@ -213,7 +632,6 @@ class Canvas extends React.Component<any, IState> {
       input.style.top = selectRect.y + canvasRect.top + 150 + 'px'
       input.style.left = selectRect.x + canvasRect.left + 'px'
       input.style.fontSize = '20rem'
-      // @ts-ignore
       input.value = current.texts!.join('\n')
       document.body.append(input)
       input.focus()
@@ -440,7 +858,7 @@ class Canvas extends React.Component<any, IState> {
           let d = oldCenter!.x - center!.x
           old[rIndex].x += d * 2
         }
-        old[rIndex] = getPath(old[rIndex])
+        old[rIndex] = this.getPath(old[rIndex])
 
         this.setState({selectRect: clone(rectList[rIndex]), rectList: old})
       }
@@ -511,7 +929,7 @@ class Canvas extends React.Component<any, IState> {
         t.h = t.h + 2 * d
         // console.log(t)
         t.type = RectType.HOVER
-        renderCanvas(t, this.state)
+        this.renderCanvas(t)
         ctx.restore()
       }
       isIn = true
@@ -576,6 +994,7 @@ class Canvas extends React.Component<any, IState> {
       selectRect,
       startX,
       startY,
+      rectList,
       sPoint,
       activeHand,
       handMove,
@@ -588,8 +1007,6 @@ class Canvas extends React.Component<any, IState> {
     } = this.state
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
-
-    let rectList = store.rectList
 
     if (enterPencil) {
       ctx.lineWidth = 4
@@ -674,7 +1091,7 @@ class Canvas extends React.Component<any, IState> {
           rect.h = newHeight
           // console.log(rect)
 
-          rect = getPath(rect)
+          rect = this.getPath(rect)
           this.setState({rectList: old}, this.draw)
         }
       }
@@ -727,7 +1144,7 @@ class Canvas extends React.Component<any, IState> {
           rect.w = newWidth
           rect.h = newHeight
 
-          rect = getPath(rect)
+          rect = this.getPath(rect)
           this.setState({rectList: old}, this.draw)
         }
       }
@@ -748,7 +1165,7 @@ class Canvas extends React.Component<any, IState> {
     //     now.y = y
     //     now.w = selectBox.w - (x - startX)
     //     now.h = selectBox.h - (y - startY)
-    //     now = getPath(now)
+    //     now = this.getPath(now)
     //   }
     //   this.setState({boxList: old}, this.draw2)
     //   return;
@@ -788,7 +1205,7 @@ class Canvas extends React.Component<any, IState> {
         now.x = x - offsetX
         // one.y = one.y
         now.w = selectRect.w - (x - startX)
-        now = getPath(now)
+        now = this.getPath(now)
       }
       this.setState({rectList: old}, this.draw)
       return;
@@ -805,7 +1222,7 @@ class Canvas extends React.Component<any, IState> {
         let now = old[rIndex]
         now.x = selectRect.x + dx
         now.y = selectRect.y + dy
-        now = getPath(now)
+        now = this.getPath(now)
       }
       this.setState({rectList: old}, this.draw)
       return

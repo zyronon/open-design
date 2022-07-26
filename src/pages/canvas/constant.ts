@@ -38,7 +38,6 @@ export const fontSize = [
 ]
 export const rects = [
   {
-    id: 'oneBox',
     name: 'oneBox',
     borderColor: "white",
     fillColor: "white",
@@ -60,7 +59,6 @@ export const rects = [
     fillColor: "white",
     fontSize: 0,
     texts: [],
-    id: 'Date.now()',
     name: 'oneBox3',
     x: 226,
     y: 226,
@@ -77,7 +75,6 @@ export const rects = [
     borderColor: "", fillColor: "",
     textAlign: TextAlign.RIGHT,
     textBaseline: TextBaseline.LEFT,
-    id: 'text',
     name: 'text',
     texts: ['输入文本'],
     brokenTexts: ['输入文本'],
@@ -115,7 +112,6 @@ export const rects = [
     color: 'gray',
     radius: 0,
     children: [],
-    id: 'img',
     name: 'img',
   },
   {
@@ -133,7 +129,6 @@ export const rects = [
     radius: 0,
     points: [],
     children: [],
-    id: 'img',
-    name: 'img',
+    name: 'PENCIL',
   }
 ]

@@ -1,5 +1,7 @@
 import {IState, Rect, RectType, TextAlign} from "./type";
 import {store} from "./store";
+// @ts-ignore
+import {v4 as uuid} from 'uuid';
 
 export function renderCanvas(
   rect: Rect,
@@ -264,7 +266,7 @@ export function getPath(rect: Rect) {
   rect.topY = rect.y
   rect.bottomY = rect.topY + rect.h
   if (!rect.id) {
-    rect.id = Date.now()
+    rect.id = uuid()
   }
   return rect
 }

@@ -27,23 +27,13 @@ import {mat4} from 'gl-matrix'
 import Fps from "../../components/Fps";
 import {BaseOption, BaseSelect} from "../../components/BaseSelect";
 import {fontFamilies, fontSize, fontWeight, rects} from "./constant";
-import {
-  FontFamily,
-  FontWeight,
-  Rect,
-  RectColorType,
-  RectType,
-  TextAlign,
-  TextBaseline,
-  TextMode
-} from "./type";
+import {FontFamily, FontWeight, IState, Rect, RectColorType, RectType, TextAlign, TextMode} from "./type";
 import {BaseRadio, BaseRadioGroup} from "../../components/BaseRadio";
 import BaseSlotButton from "../../components/BaseSlotButton";
 import BasePicker from "../../components/BasePicker"
 import Icon from '@icon-park/react/es/all';
-import {IState} from "./type";
-import {store, pushRect, clearRect} from "./store";
-import {renderCanvas, clear, getPath, clearAll} from "./utils";
+import {clearRect, pushRect, removeRect, store} from "./store";
+import {clearAll, getPath, renderCanvas} from "./utils";
 
 const images = new Map()
 
@@ -81,6 +71,7 @@ class Canvas extends React.Component<any, IState> {
   componentDidMount() {
     // console.log('componentDidMount', this.state.fpsTimer)
     let canvas: HTMLCanvasElement = this.canvasRef.current!
+
     let canvasRect = canvas.getBoundingClientRect()
     let ctx: CanvasRenderingContext2D = canvas.getContext('2d')!
     let {width, height} = canvasRect
@@ -513,6 +504,13 @@ class Canvas extends React.Component<any, IState> {
     })
 
     if (e.button === 2) {
+      let select: Rect = this.getSelect()
+      if ((select.type === RectType.PEN || select.type === RectType.PENCIL)
+        && select.points.length <= 1
+      ) {
+        removeRect(select)
+        this.draw()
+      }
       this.setState({isEdit: false, enterPen: false})
     }
     ctx.restore()
@@ -1110,7 +1108,6 @@ class Canvas extends React.Component<any, IState> {
   onContextMenu = (e: any) => {
     e.preventDefault()
     return false
-
   }
 
   render() {

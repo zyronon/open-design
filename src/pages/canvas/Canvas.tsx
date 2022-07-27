@@ -243,7 +243,7 @@ class Canvas extends React.Component<any, IState> {
     let {
       selectRect, rectList, canvasRect,
       hoverLeft, hoverLT, hoverRT, hoverLTR, activeHand,
-      handMove, usePencil, usePen,isEdit,
+      handMove, usePencil, usePen, isEdit,
       ctx
     } = this.state
     // console.log('selectBox', selectBox)
@@ -287,32 +287,36 @@ class Canvas extends React.Component<any, IState> {
       if (usePen) {
         ctx.save()
         ctx.moveTo(x, y)
-        if (isEdit){
-
+        if (isEdit) {
+          let select = this.getSelect()
+          select.points.push({x, y})
+          this.draw()
+        } else {
+          let newPen: Rect = {
+            borderColor: "black",
+            fillColor: "black",
+            fontSize: 0,
+            texts: [],
+            x: 326,
+            y: 326,
+            w: 150,
+            h: 150,
+            rotate: 0,
+            lineWidth: 2,
+            type: RectType.PEN,
+            radius: 0,
+            points: [{x, y}],
+            children: [],
+            name: 'PEN',
+          }
+          newPen = getPath(newPen)
+          pushRect(newPen)
+          this.setState({
+            enterPen: true,
+            isEdit: true,
+            selectRect: newPen
+          }, this.draw)
         }
-        let newPen: Rect = {
-          borderColor: "black",
-          fillColor: "black",
-          fontSize: 0,
-          texts: [],
-          x: 326,
-          y: 326,
-          w: 150,
-          h: 150,
-          rotate: 0,
-          lineWidth: 2,
-          type: RectType.PEN,
-          radius: 0,
-          points: [{x, y}],
-          children: [],
-          name: 'PEN',
-        }
-        newPen = getPath(newPen)
-        pushRect(newPen)
-        this.setState({
-          enterPen: true,
-          selectRect: newPen
-        })
       }
       return;
     }
@@ -506,8 +510,11 @@ class Canvas extends React.Component<any, IState> {
       hoverRT: false,
       hoverLTR: false,
       enterPencil: false,
-      enterPen: false
     })
+
+    if (e.button === 2) {
+      this.setState({isEdit: false, enterPen: false})
+    }
     ctx.restore()
     this.body.style.cursor = "default"
     console.log('onMouseUp')
@@ -634,12 +641,25 @@ class Canvas extends React.Component<any, IState> {
       handScale,
       ctx,
       usePencil,
-      enterPencil
+      enterPencil,
+      enterPen,
+      isEdit
     } = this.state
     let x = e.clientX - canvasRect.left
     let y = e.clientY - canvasRect.top
 
     let rectList = store.rectList
+
+    if (isEdit) {
+      if (enterPen) {
+        this.draw()
+        ctx.lineWidth = 4
+        ctx.strokeStyle = 'gray'
+        ctx.lineTo(x, y)
+        ctx.stroke()
+      }
+      return;
+    }
 
 
     if (enterPencil) {
@@ -1087,6 +1107,12 @@ class Canvas extends React.Component<any, IState> {
     this.setState({rectColor: e.hex})
   }
 
+  onContextMenu = (e: any) => {
+    e.preventDefault()
+    return false
+
+  }
+
   render() {
     // console.log('render')
     const {
@@ -1151,6 +1177,7 @@ class Canvas extends React.Component<any, IState> {
             </div>
             <div id="canvasArea">
               <canvas
+                onContextMenu={this.onContextMenu}
                 onDoubleClick={this.onDbClick}
                 onMouseMove={this.onMouseMoveWrapper}
                 onMouseDown={this.onMouseDown}

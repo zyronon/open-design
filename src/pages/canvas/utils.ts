@@ -153,7 +153,7 @@ export function renderCanvas(
     case RectType.PENCIL:
       ctx.lineWidth = 4
       ctx.strokeStyle = 'gray'
-      ctx.moveTo(x, y)
+      ctx.moveTo(rect.points[0]?.x, rect.points[0]?.y)
       rect.points.map((item: any) => {
         ctx.lineTo(item.x, item.y)
       })

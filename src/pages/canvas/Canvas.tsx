@@ -42,7 +42,7 @@ import BaseSlotButton from "../../components/BaseSlotButton";
 import BasePicker from "../../components/BasePicker"
 import Icon from '@icon-park/react/es/all';
 import {IState} from "./type";
-import {store, pushRect} from "./store";
+import {store, pushRect, clearRect} from "./store";
 import {renderCanvas, clear, getPath, clearAll} from "./utils";
 
 const images = new Map()
@@ -103,6 +103,7 @@ class Canvas extends React.Component<any, IState> {
   }
 
   init() {
+    clearRect()
     rects.map((rect: any) => {
       pushRect(getPath(rect))
     })
@@ -128,10 +129,11 @@ class Canvas extends React.Component<any, IState> {
         0, 0, 0, 1,
       ]),
       showPicker: false,
-      usePencil: true,
+      usePencil: false,
       enterPencil: false,
-      usePen: false,
+      usePen: true,
       enterPen: false,
+      isEdit: false,
       rectColor: null,
       rectColorType: null,
       rectList: []
@@ -139,6 +141,7 @@ class Canvas extends React.Component<any, IState> {
   }
 
   draw() {
+    // console.log('draw')
     clearAll(this.state)
     const {ctx, currentMat, handMove} = this.state
     ctx.save()
@@ -189,9 +192,9 @@ class Canvas extends React.Component<any, IState> {
   }
 
   getSelect = () => {
-    const {rectList, selectRect} = this.state
-    let rIndex = rectList?.findIndex(item => item.id === selectRect?.id)
-    if (rIndex > -1) return rectList[rIndex]
+    const {selectRect} = this.state
+    let rIndex = store.rectList?.findIndex(item => item.id === selectRect?.id)
+    if (rIndex > -1) return store.rectList[rIndex]
     return {}
   }
 
@@ -240,7 +243,7 @@ class Canvas extends React.Component<any, IState> {
     let {
       selectRect, rectList, canvasRect,
       hoverLeft, hoverLT, hoverRT, hoverLTR, activeHand,
-      handMove, usePencil, usePen,
+      handMove, usePencil, usePen,isEdit,
       ctx
     } = this.state
     // console.log('selectBox', selectBox)
@@ -257,12 +260,59 @@ class Canvas extends React.Component<any, IState> {
       if (usePencil) {
         ctx.save()
         ctx.moveTo(x, y)
-        this.setState({enterPencil: true})
+        let newPencil: Rect = {
+          borderColor: "black",
+          fillColor: "black",
+          fontSize: 0,
+          texts: [],
+          x: 326,
+          y: 326,
+          w: 150,
+          h: 150,
+          rotate: 0,
+          lineWidth: 2,
+          type: RectType.PENCIL,
+          radius: 0,
+          points: [{x, y}],
+          children: [],
+          name: 'PENCIL',
+        }
+        newPencil = getPath(newPencil)
+        pushRect(newPencil)
+        this.setState({
+          enterPencil: true,
+          selectRect: newPencil
+        })
       }
       if (usePen) {
         ctx.save()
         ctx.moveTo(x, y)
-        this.setState({enterPen: true})
+        if (isEdit){
+
+        }
+        let newPen: Rect = {
+          borderColor: "black",
+          fillColor: "black",
+          fontSize: 0,
+          texts: [],
+          x: 326,
+          y: 326,
+          w: 150,
+          h: 150,
+          rotate: 0,
+          lineWidth: 2,
+          type: RectType.PEN,
+          radius: 0,
+          points: [{x, y}],
+          children: [],
+          name: 'PEN',
+        }
+        newPen = getPath(newPen)
+        pushRect(newPen)
+        this.setState({
+          enterPen: true,
+          selectRect: newPen
+        })
       }
       return;
     }
@@ -565,6 +615,7 @@ class Canvas extends React.Component<any, IState> {
   onMouseMove = (e: MouseEvent) => {
     // console.log('onMouseMove')
     let {
+      selectRect,
       canvasRect,
       enter,
       offsetX,
@@ -573,7 +624,6 @@ class Canvas extends React.Component<any, IState> {
       enterLT,
       enterRT,
       enterLTR,
-      selectRect,
       startX,
       startY,
       sPoint,
@@ -591,13 +641,15 @@ class Canvas extends React.Component<any, IState> {
 
     let rectList = store.rectList
 
+
     if (enterPencil) {
+      let select = this.getSelect()
       ctx.lineWidth = 4
       ctx.strokeStyle = 'gray'
       ctx.lineTo(x, y)
       ctx.stroke()
-      rectList[4].points.push({x, y})
-      // console.log(rectList[4])
+      select.points.push({x, y})
+      // console.log('enterPencil')
       return
     }
 

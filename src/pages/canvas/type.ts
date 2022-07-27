@@ -42,6 +42,7 @@ export type IState = {
   enterPencil: boolean,
   usePen: boolean,
   enterPen: boolean,
+  isEdit: boolean
 }
 
 
@@ -52,6 +53,7 @@ export enum RectType {
   TEXT = 4,
   IMG = 5,
   PENCIL = 6,
+  PEN = 7,
 
   FRAME = 100,
   COMPONENT = 101,

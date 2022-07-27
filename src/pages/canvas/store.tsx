@@ -14,6 +14,10 @@ export function pushRect(val: Rect) {
   store.rectList.push(val)
 }
 
+export function clearRect() {
+  store.rectList = []
+}
+
 export function pushImg(id: any, val: Rect) {
   store.images.set(id, val)
 }

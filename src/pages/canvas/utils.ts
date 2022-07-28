@@ -2,6 +2,7 @@ import {IState, Rect, RectType, TextAlign} from "./type";
 import {store} from "./store";
 // @ts-ignore
 import {v4 as uuid} from 'uuid';
+import {Colors} from "./constant";
 
 export function renderCanvas(
   rect: Rect,
@@ -160,13 +161,26 @@ export function renderCanvas(
       ctx.stroke()
       break
     case RectType.PEN:
-      ctx.lineWidth = 4
-      ctx.strokeStyle = 'gray'
-      ctx.moveTo(rect.points[0]?.x, rect.points[0]?.y)
-      rect.points.map((item: any) => {
-        ctx.lineTo(item.x, item.y)
-      })
-      ctx.stroke()
+      if (rect.points?.length) {
+        ctx.strokeStyle = rect.borderColor
+        ctx.lineCap = "round";
+
+        ctx.moveTo(rect.points[0]?.x, rect.points[0]?.y)
+        rect.points.map((item: any, index: number, arr: any[]) => {
+          renderRound({
+            x: item.x,
+            y: item.y,
+            w: rect.w,
+            h: rect.h,
+          }, 4, ctx)
+          ctx.beginPath()
+          ctx.moveTo(item.x, item.y)
+          if (index !== arr.length - 1) {
+            ctx.lineTo(arr[index + 1].x, arr[index + 1].y)
+          }
+          ctx.stroke()
+        })
+      }
       break
     case RectType.SELECT:
       // console.log('select')
@@ -252,6 +266,17 @@ export function renderRoundRect(rect: any, r: number, ctx: any) {
   ctx.arcTo(x, y, x + w / 2, y, r)
   ctx.closePath()
   ctx.stroke()
+}
+
+export function renderRound(rect: any, r: number, ctx: any) {
+  let {x, y, w, h} = rect
+  ctx.save()
+  ctx.lineWidth = 2
+  ctx.strokeStyle = Colors.primary
+  ctx.beginPath()
+  ctx.arc(x, y, r, 0, 2 * Math.PI)
+  ctx.stroke()
+  ctx.restore()
 }
 
 export function clearAll(state: IState) {

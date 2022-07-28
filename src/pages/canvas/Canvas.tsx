@@ -26,7 +26,7 @@ import cx from "classnames";
 import {mat4} from 'gl-matrix'
 import Fps from "../../components/Fps";
 import {BaseOption, BaseSelect} from "../../components/BaseSelect";
-import {fontFamilies, fontSize, fontWeight, rects} from "./constant";
+import {Colors, fontFamilies, fontSize, fontWeight, rects} from "./constant";
 import {FontFamily, FontWeight, IState, Rect, RectColorType, RectType, TextAlign, TextMode} from "./type";
 import {BaseRadio, BaseRadioGroup} from "../../components/BaseRadio";
 import BaseSlotButton from "../../components/BaseSlotButton";
@@ -284,7 +284,7 @@ class Canvas extends React.Component<any, IState> {
           this.draw()
         } else {
           let newPen: Rect = {
-            borderColor: "black",
+            borderColor: Colors.line,
             fillColor: "black",
             fontSize: 0,
             texts: [],
@@ -650,11 +650,18 @@ class Canvas extends React.Component<any, IState> {
 
     if (isEdit) {
       if (enterPen) {
+        let select = this.getSelect()
+        console.log('select.borderColor', select.borderColor)
+
         this.draw()
-        ctx.lineWidth = 4
-        ctx.strokeStyle = 'gray'
+        ctx.save()
+        // ctx.beginPath()
+        // ctx.moveTo(x, y)
+        ctx.lineWidth = select.lineWidth
+        ctx.strokeStyle = Colors.primary
         ctx.lineTo(x, y)
         ctx.stroke()
+        ctx.restore()
       }
       return;
     }

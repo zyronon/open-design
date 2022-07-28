@@ -85,6 +85,7 @@ export interface Rect extends RectText, RectImg {
   children: Rect[],
   flipVertical?: boolean,
   flipHorizontal?: boolean,
+  points?: any[]
 }
 
 export enum TextMode {

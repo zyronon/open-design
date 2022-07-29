@@ -42,7 +42,7 @@ export const Colors = {
   line: 'rgb(216,216,216)'
 
 }
-export const rects = [
+export const rects2 = [
   {
     name: 'oneBox',
     borderColor: "white",
@@ -154,4 +154,23 @@ export const rects = [
     children: [],
     name: 'PENCIL',
   }
+]
+export const rects = [
+  {
+    borderColor: Colors.line,
+    fillColor: "black",
+    fontSize: 0,
+    texts: [],
+    x: 326,
+    y: 326,
+    w: 150,
+    h: 150,
+    rotate: 0,
+    lineWidth: 2,
+    type: RectType.PEN,
+    radius: 0,
+    points: [{x: 800, y: 100}, {x: 1200, y: 300}, {x: 1100, y: 400}],
+    children: [],
+    name: 'PENCIL',
+  },
 ]

@@ -1,8 +1,8 @@
-import {IState, Rect, RectType, TextAlign} from "./type";
-import {store} from "./store";
+import { IState, Rect, RectType, TextAlign } from "./type";
+import { store } from "./store";
 // @ts-ignore
-import {v4 as uuid} from 'uuid';
-import {Colors} from "./constant";
+import { v4 as uuid } from 'uuid';
+import { Colors } from "./constant";
 
 export function renderCanvas(
   rect: Rect,
@@ -12,13 +12,14 @@ export function renderCanvas(
   let {
     ctx, enterLT, enterRT, selectRect, activeHand, enter, offsetX, offsetY,
     handMove, handScale,
-    currentPoint
+    currentPoint,
+    isEdit
   } = state
   // console.log('renderCanvas', enterLT)
   ctx.save()
   let {
     x, y, w, h, radius,
-    fillColor, borderColor, rotate, lineWidth, type, flipVertical, flipHorizontal
+    fillColor, borderColor, rotate, lineWidth, type, flipVertical, flipHorizontal,
   }
     = parent ? parent : rect
   if (parent) {
@@ -86,7 +87,7 @@ export function renderCanvas(
   // ctx.strokeRect(x, y, w, h)
   if (type !== RectType.TEXT) {
     if (radius && type !== RectType.SELECT) {
-      renderRoundRect({x, y, w, h}, radius, ctx)
+      renderRoundRect({ x, y, w, h }, radius, ctx)
     } else {
       ctx.beginPath()
       ctx.moveTo(x, y)
@@ -167,18 +168,21 @@ export function renderCanvas(
 
         ctx.moveTo(rect.points[0]?.x, rect.points[0]?.y)
         rect.points.map((item: any, index: number, arr: any[]) => {
-          renderRound({
-            x: item.x,
-            y: item.y,
-            w: rect.w,
-            h: rect.h,
-          }, 4, ctx)
+          if (isEdit && isMe) {
+            renderRound({
+                x: item.x,
+                y: item.y,
+                w: rect.w,
+                h: rect.h,
+              }, 4, ctx,
+              index !== arr.length - 1 ? undefined : RectType.FILL)
+          }
           ctx.beginPath()
           ctx.moveTo(item.x, item.y)
           if (index !== arr.length - 1) {
             ctx.lineTo(arr[index + 1].x, arr[index + 1].y)
+            ctx.stroke()
           }
-          ctx.stroke()
         })
       }
       break
@@ -257,7 +261,7 @@ export function renderCanvas(
 
 export function renderRoundRect(rect: any, r: number, ctx: any) {
   ctx.lineWidth = rect.lineWidth
-  let {x, y, w, h} = rect
+  let { x, y, w, h } = rect
   ctx.beginPath()
   ctx.moveTo(x + w / 2, y)
   ctx.arcTo(x + w, y, x + w, y + h, r)
@@ -268,14 +272,22 @@ export function renderRoundRect(rect: any, r: number, ctx: any) {
   ctx.stroke()
 }
 
-export function renderRound(rect: any, r: number, ctx: any) {
-  let {x, y, w, h} = rect
+export function renderRound(rect: any, r: number, ctx: any, type: RectType = RectType.LINE) {
+  let { x, y } = rect
   ctx.save()
   ctx.lineWidth = 2
-  ctx.strokeStyle = Colors.primary
+  if (type === RectType.FILL) {
+    ctx.fillStyle = Colors.primary
+  } else {
+    ctx.strokeStyle = Colors.primary
+  }
   ctx.beginPath()
   ctx.arc(x, y, r, 0, 2 * Math.PI)
-  ctx.stroke()
+  if (type === RectType.FILL) {
+    ctx.fill()
+  } else {
+    ctx.stroke()
+  }
   ctx.restore()
 }
 

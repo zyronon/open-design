@@ -120,9 +120,9 @@ class Canvas extends React.Component<any, IState> {
         0, 0, 0, 1,
       ]),
       showPicker: false,
-      usePencil: false,
+      usePencil: true,
       enterPencil: false,
-      usePen: true,
+      usePen: false,
       enterPen: false,
       isEdit: false,
       rectColor: null,
@@ -249,10 +249,9 @@ class Canvas extends React.Component<any, IState> {
         oldHandMove: clone(handMove)
       })
       if (usePencil) {
-        ctx.save()
         ctx.moveTo(x, y)
         let newPencil: Rect = {
-          borderColor: "black",
+          borderColor: Colors.line,
           fillColor: "black",
           fontSize: 0,
           texts: [],
@@ -276,7 +275,6 @@ class Canvas extends React.Component<any, IState> {
         })
       }
       if (usePen) {
-        ctx.save()
         ctx.moveTo(x, y)
         if (isEdit) {
           let select = this.getSelect()
@@ -652,7 +650,6 @@ class Canvas extends React.Component<any, IState> {
         this.draw()
         let select = this.getSelect()
         ctx.save()
-
         // ctx.beginPath()
         // ctx.moveTo(x, y)
         ctx.lineWidth = select.lineWidth
@@ -668,11 +665,10 @@ class Canvas extends React.Component<any, IState> {
       return;
     }
 
-
     if (enterPencil) {
       let select = this.getSelect()
-      ctx.lineWidth = 4
-      ctx.strokeStyle = 'gray'
+      ctx.lineWidth = select.lineWidth
+      ctx.strokeStyle = select.borderColor
       ctx.lineTo(x, y)
       ctx.stroke()
       select.points.push({ x, y })

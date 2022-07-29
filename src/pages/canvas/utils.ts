@@ -153,13 +153,14 @@ export function renderCanvas(
       ctx.stroke()
       break
     case RectType.PENCIL:
-      ctx.lineWidth = 4
-      ctx.strokeStyle = 'gray'
-      ctx.moveTo(rect.points[0]?.x, rect.points[0]?.y)
-      rect.points.map((item: any) => {
-        ctx.lineTo(item.x, item.y)
-      })
-      ctx.stroke()
+      if (rect.points?.length) {
+        ctx.strokeStyle = rect.borderColor
+        ctx.moveTo(rect.points[0]?.x, rect.points[0]?.y)
+        rect.points.map((item: any) => {
+          ctx.lineTo(item.x, item.y)
+        })
+        ctx.stroke()
+      }
       break
     case RectType.PEN:
       if (rect.points?.length) {

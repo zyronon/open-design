@@ -150,7 +150,6 @@ class Canvas extends React.Component<any, IState> {
     this.state.ctx.lineCap = 'square'
     // console.log('this.state.boxList', this.state.boxList)
     store.rectList.map((v: Rect) => {
-      // console.log(v)
       renderCanvas(v, this.state)
     })
     ctx.restore()
@@ -667,10 +666,14 @@ class Canvas extends React.Component<any, IState> {
 
     if (enterPencil) {
       let select = this.getSelect()
+      // ctx.save()
+      this.state.ctx.lineCap = 'square'
+
       ctx.lineWidth = select.lineWidth
       ctx.strokeStyle = select.borderColor
       ctx.lineTo(x, y)
       ctx.stroke()
+      // ctx.restore()
       select.points.push({ x, y })
       // console.log('enterPencil')
       return
@@ -1128,7 +1131,7 @@ class Canvas extends React.Component<any, IState> {
     // console.log('se', selectRect)
     const type = selectRect?.type
     return <>
-      <div className={'design dark'}>
+      <div className={'design '}>
         <div className="header">
           <div className={'fps'}>
             FPS:<Fps/>

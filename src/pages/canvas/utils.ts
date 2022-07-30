@@ -155,6 +155,8 @@ export function renderCanvas(
     case RectType.PENCIL:
       if (rect.points?.length) {
         ctx.strokeStyle = rect.borderColor
+        // ctx.lineCap = "round";
+
         ctx.moveTo(rect.points[0]?.x, rect.points[0]?.y)
         rect.points.map((item: any) => {
           ctx.lineTo(item.x, item.y)

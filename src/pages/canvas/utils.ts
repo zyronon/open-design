@@ -1,8 +1,9 @@
-import { IState, Rect, RectType, TextAlign } from "./type";
-import { store } from "./store";
+import {IState, Rect, RectType, TextAlign} from "./type";
+import {store} from "./store";
 // @ts-ignore
-import { v4 as uuid } from 'uuid';
-import { Colors } from "./constant";
+import {v4 as uuid} from 'uuid';
+import {Colors} from "./constant";
+import {getRotatedPoint} from "../../utils";
 
 export function renderCanvas(
   rect: Rect,
@@ -19,7 +20,8 @@ export function renderCanvas(
   ctx.save()
   let {
     x, y, w, h, radius,
-    fillColor, borderColor, rotate, lineWidth, type, flipVertical, flipHorizontal,
+    fillColor, borderColor, rotate, lineWidth,
+    type, flipVertical, flipHorizontal,
   }
     = parent ? parent : rect
   if (parent) {
@@ -33,7 +35,10 @@ export function renderCanvas(
   }
 
   let oldCenter: { x: number; y: number; }
-  let newCenter: { x: number; y: number; }
+  let currentCenter: { x: number; y: number; } = {
+    x: x + (w / 2),
+    y: y + (h / 2)
+  }
   let isMe = selectRect?.id === (parent ? parent.id : rect.id)
   if ((enterLT || enterRT) && isMe) {
     let s = selectRect!
@@ -41,15 +46,13 @@ export function renderCanvas(
       x: s.x + (s.w / 2),
       y: s.y + (s.h / 2)
     }
-    newCenter = {
-      x: x + (w / 2),
-      y: y + (h / 2)
-    }
     // console.log('oldCenter', oldCenter)
     // console.log('newCenter', newCenter)
   }
 
   ctx.lineWidth = lineWidth
+  ctx.fillStyle = fillColor
+  ctx.strokeStyle = borderColor
   // let tranX = 0
   // let tranY = 0
   let tranX = 0
@@ -69,7 +72,7 @@ export function renderCanvas(
     //如果在翻转情况下，自由拉伸要将tranX减去两个中心点偏移量
     if ((enterRT || enterLT) && isMe) {
       // console.log('tranX1', tranX)
-      let d = oldCenter!.x - newCenter!.x
+      let d = oldCenter!.x - currentCenter!.x
       tranX += d * 2
       // console.log('tranX2', tranX)
     }
@@ -85,9 +88,13 @@ export function renderCanvas(
   ctx.rotate(rotate * Math.PI / 180)
 
   // ctx.strokeRect(x, y, w, h)
-  if (type !== RectType.TEXT) {
+  if (
+    type === RectType.RECT
+    || type === RectType.HOVER
+    || type === RectType.SELECT
+  ) {
     if (radius && type !== RectType.SELECT) {
-      renderRoundRect({ x, y, w, h }, radius, ctx)
+      renderRoundRect({x, y, w, h}, radius, ctx)
     } else {
       ctx.beginPath()
       ctx.moveTo(x, y)
@@ -100,6 +107,33 @@ export function renderCanvas(
   }
 
   switch (type) {
+    case RectType.ROUND:
+      renderRound({
+          x: x + w / 2,
+          y: y + h / 2,
+          w,
+          h,
+        }, w / 2, ctx,
+        RectType.RECT)
+      break
+    case RectType.STAR:
+      let one = {x: x + w / 2, y}
+      let rotate = 360 / 5
+      let two = getRotatedPoint(one, currentCenter, rotate)
+      let three = getRotatedPoint(two, currentCenter, rotate)
+      let four = getRotatedPoint(three, currentCenter, rotate)
+      let five = getRotatedPoint(four, currentCenter, rotate)
+      ctx.beginPath()
+      ctx.moveTo(one.x, one.y)
+      ctx.lineTo(three.x, three.y);
+      ctx.lineTo(five.x, five.y);
+      ctx.lineTo(two.x, two.y);
+      ctx.lineTo(four.x, four.y);
+      ctx.closePath()
+      ctx.stroke()
+      // ctx.fill()
+
+      break
     case RectType.TEXT:
       // ctx.fillStyle = 'white'
       ctx.font = `${rect.fontWeight} ${rect.fontSize}rem "${rect.fontFamily}", sans-serif`;
@@ -120,11 +154,7 @@ export function renderCanvas(
         text && ctx.fillText(text, lX, y + (index * rect.textLineHeight));
       })
       break
-    case RectType.FILL:
-      ctx.fillStyle = fillColor
-      ctx.fill()
-      break
-    case RectType.LINE:
+    case RectType.RECT:
       ctx.fillStyle = fillColor
       ctx.fill()
       ctx.strokeStyle = borderColor
@@ -156,7 +186,6 @@ export function renderCanvas(
       if (rect.points?.length) {
         ctx.strokeStyle = rect.borderColor
         // ctx.lineCap = "round";
-
         ctx.moveTo(rect.points[0]?.x, rect.points[0]?.y)
         rect.points.map((item: any) => {
           ctx.lineTo(item.x, item.y)
@@ -168,7 +197,6 @@ export function renderCanvas(
       if (rect.points?.length) {
         ctx.strokeStyle = rect.borderColor
         ctx.lineCap = "round";
-
         ctx.moveTo(rect.points[0]?.x, rect.points[0]?.y)
         rect.points.map((item: any, index: number, arr: any[]) => {
           if (isEdit && isMe) {
@@ -178,7 +206,7 @@ export function renderCanvas(
                 w: rect.w,
                 h: rect.h,
               }, 4, ctx,
-              index !== arr.length - 1 ? undefined : RectType.FILL)
+              index !== arr.length - 1 ? undefined : RectType.RECT)
           }
           ctx.beginPath()
           ctx.moveTo(item.x, item.y)
@@ -191,9 +219,6 @@ export function renderCanvas(
       break
     case RectType.SELECT:
       // console.log('select')
-
-      // rotate = parent!.rotate
-      // // lineWidth = parent!.lineWidth
 
       ctx.strokeStyle = 'rgb(139,80,255)'
       ctx.stroke()
@@ -264,7 +289,7 @@ export function renderCanvas(
 
 export function renderRoundRect(rect: any, r: number, ctx: any) {
   ctx.lineWidth = rect.lineWidth
-  let { x, y, w, h } = rect
+  let {x, y, w, h} = rect
   ctx.beginPath()
   ctx.moveTo(x + w / 2, y)
   ctx.arcTo(x + w, y, x + w, y + h, r)
@@ -275,18 +300,18 @@ export function renderRoundRect(rect: any, r: number, ctx: any) {
   ctx.stroke()
 }
 
-export function renderRound(rect: any, r: number, ctx: any, type: RectType = RectType.LINE) {
-  let { x, y } = rect
+export function renderRound(rect: any, r: number, ctx: any, type: RectType = RectType.RECT) {
+  let {x, y} = rect
   ctx.save()
   ctx.lineWidth = 2
-  if (type === RectType.FILL) {
+  if (type === RectType.RECT) {
     ctx.fillStyle = Colors.primary
   } else {
     ctx.strokeStyle = Colors.primary
   }
   ctx.beginPath()
   ctx.arc(x, y, r, 0, 2 * Math.PI)
-  if (type === RectType.FILL) {
+  if (type === RectType.RECT) {
     ctx.fill()
   } else {
     ctx.stroke()

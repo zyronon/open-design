@@ -110,7 +110,7 @@ export function renderCanvas(
     case RectType.ROUND:
       let a = w / 2, b = h / 2
       let ox = 0.5 * a,
-        oy = 0.6 * b;
+        oy = .6 * b;
 
       ctx.save();
       ctx.translate(x + a, y + b);
@@ -143,10 +143,15 @@ export function renderCanvas(
 
       break
     case RectType.POLYGON: {
-      let one = {x: x + w / 2, y}
-      let rotate = 360 / 3
-      let two = getRotatedPoint(one, currentCenter, rotate)
-      let three = getRotatedPoint(two, currentCenter, rotate)
+      ctx.lineCap = 'round'
+
+      let wSpace = w * .1
+      let ySpace = h * .2
+      let polygonW = w - wSpace
+      let polygonY = h - ySpace
+      let one = {x: x + w / 2, y: y + lineWidth}
+      let two = {x: x + polygonW, y: y + polygonY}
+      let three = {x: x + wSpace, y: y + polygonY}
       ctx.beginPath()
       ctx.moveTo(one.x, one.y)
       ctx.lineTo(two.x, two.y);
@@ -240,7 +245,7 @@ export function renderCanvas(
         })
       }
       break
-    case RectType.SELECT:
+    case RectType.SELECT: {
       // console.log('select')
 
       ctx.strokeStyle = 'rgb(139,80,255)'
@@ -301,6 +306,7 @@ export function renderCanvas(
         h: 2 * d,
         lineWidth
       }, r, ctx)
+    }
       break
   }
 

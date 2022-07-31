@@ -148,7 +148,8 @@ class Canvas extends React.Component<any, IState> {
     }
     // ctx.translate(handMove.x, handMove.y)
 
-    this.state.ctx.lineCap = 'square'
+    // this.state.ctx.lineCap = 'square'
+    this.state.ctx.lineCap = 'round'
     // console.log('this.state.boxList', this.state.boxList)
     store.rectList.map((v: Rect) => {
       renderCanvas(v, this.state)
@@ -879,9 +880,7 @@ class Canvas extends React.Component<any, IState> {
       this.setState({rectList: old}, this.draw)
       return
     }
-    // return console.log(x, y)
-    // isPointInPath(x, y, blocks[0])
-    // for (let i = 0; i < rectList.length; i++) {
+
     for (let i = rectList.length - 1; i >= 0; i--) {
       let b = rectList[i]
       let r = this.isPointInPath(x, y, b)
@@ -901,7 +900,7 @@ class Canvas extends React.Component<any, IState> {
     let x = clientX - canvasRect.left
     let y = clientY - canvasRect.top
 
-    const zoom = 1 + (deltaY < 0 ? 0.1 : -0.1);
+    const zoom = 1 + (deltaY < 0 ? 0.25 : -0.25);
     //因为transform是连续变换，每次都是放大0.1倍，所以要让x和y变成0.1倍。这样缩放和平移是对等的
     //QA：其实要平移的值，也可以直接用x，y剩以当前的总倍数，比如放在1.7倍，那么x*0.7，就是要平移的x坐标
     //但是下次再缩放时，要加或减去上次平移的xy坐标
@@ -1141,7 +1140,6 @@ class Canvas extends React.Component<any, IState> {
         <div className="content">
           <div className="left">
             <div className='components'>
-              {/*<div className="component" onClick={() => location.reload()}>*/}
               <div className="component" onClick={() => this.init()}>
                 刷新
               </div>

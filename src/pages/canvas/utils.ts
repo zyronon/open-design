@@ -126,29 +126,63 @@ export function renderCanvas(
       break
     case RectType.STAR:
 
+      // const radian = 54 * Math.PI / 180;
+
       ctx.save();
       var r1 = w / 2;
       var r2 = r1 / 2.5;
       var x1, x2, y1, y2;
-      ctx.translate(x + w / 2, y + h / 2);
+      // ctx.translate(x + w / 2, y + h / 2);
+      ctx.translate(x , y);
 
       ctx.beginPath();
       // ctx.moveTo(x, y)
       for (var i = 0; i < 5; i++) {
-        x1 = r1 * Math.cos((54 + i * 72) / 180 * Math.PI);
-        y1 = r1 * Math.sin((54 + i * 72) / 180 * Math.PI);
-        x2 = r2 * Math.cos((18 + i * 72) / 180 * Math.PI);
-        y2 = r2 * Math.sin((18 + i * 72) / 180 * Math.PI);
+        let x1 = w + Math.sin((i * 72) / 180 * Math.PI) * w;
+        let y1 = h - Math.cos((i * 72) / 180 * Math.PI) * h;
+        // x1 = r1 * Math.cos((54 + i * 72) / 180 * Math.PI);
+        // y1 = r1 * Math.sin((54 + i * 72) / 180 * Math.PI);
+        // x2 = r2 * Math.cos((18 + i * 72) / 180 * Math.PI);
+        // y2 = r2 * Math.sin((18 + i * 72) / 180 * Math.PI);
 
-        //外圆
-        ctx.lineTo(x2, y2);
         //内圆
+        // ctx.lineTo(x2, y2);
+        //外圆
         ctx.lineTo(x1, y1);
       }
       ctx.closePath();
 
       ctx.stroke();
       ctx.restore();
+
+      // ctx.save();
+      // var r1 = w / 2;
+      // var r2 = r1 / 2.5;
+      // var x1, x2, y1, y2;
+      // ctx.translate(x + w / 2, y + h / 2);
+      //
+      // ctx.beginPath();
+      // // ctx.moveTo(x, y)
+      // for (var i = 0; i < 5; i++) {
+      //   x1 = r1 * Math.cos((54 + i * 72) / 180 * Math.PI);
+      //   y1 = r1 * Math.sin((54 + i * 72) / 180 * Math.PI);
+      //   x2 = r2 * Math.cos((18 + i * 72) / 180 * Math.PI);
+      //   y2 = r2 * Math.sin((18 + i * 72) / 180 * Math.PI);
+      //
+      //   //内圆
+      //   ctx.lineTo(x2, y2);
+      //   //外圆
+      //   // ctx.lineTo(x1, y1);
+      // }
+      // ctx.closePath();
+      //
+      // ctx.stroke();
+      // ctx.restore();
+
+
+      ///////////////////////////////////////
+      ///////////////////////////////////////
+      ///////////////////////////////////////
       // let one = {x: x + w / 2, y}
       // let rotate = 360 / 5
       // let two = getRotatedPoint(one, currentCenter, rotate)

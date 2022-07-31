@@ -125,21 +125,47 @@ export function renderCanvas(
       ctx.restore();
       break
     case RectType.STAR:
-      let one = {x: x + w / 2, y}
-      let rotate = 360 / 5
-      let two = getRotatedPoint(one, currentCenter, rotate)
-      let three = getRotatedPoint(two, currentCenter, rotate)
-      let four = getRotatedPoint(three, currentCenter, rotate)
-      let five = getRotatedPoint(four, currentCenter, rotate)
-      ctx.beginPath()
-      ctx.moveTo(one.x, one.y)
-      ctx.lineTo(three.x, three.y);
-      ctx.lineTo(five.x, five.y);
-      ctx.lineTo(two.x, two.y);
-      ctx.lineTo(four.x, four.y);
-      ctx.closePath()
-      ctx.stroke()
-      // ctx.fill()
+      ctx.save();
+      ctx.translate(x, y);
+      // ctx.rotate(rot/180*Math.PI);
+      // ctx.scale(r, r);
+      ctx.beginPath();
+      for (var i = 0; i < 5; i++) {
+        var x1 = Math.cos((54 + i*72)/180*Math.PI);
+        var y1 = Math.sin((54 + i*72)/180*Math.PI);
+        var x2 = Math.cos((18 + i*72)/180*Math.PI) * 0.5;
+        var y2 = Math.sin((18 + i*72)/180*Math.PI) * 0.5;
+
+        ctx.lineTo(x2, y2);
+        ctx.lineTo(x1, y1);
+      }
+      ctx.closePath();
+
+      ctx.stroke();
+      ctx.restore();
+      // let one = {x: x + w / 2, y}
+      // let rotate = 360 / 5
+      // let two = getRotatedPoint(one, currentCenter, rotate)
+      // let three = getRotatedPoint(two, currentCenter, rotate)
+      // let four = getRotatedPoint(three, currentCenter, rotate)
+      // let five = getRotatedPoint(four, currentCenter, rotate)
+      // two.x = x + w
+      // five.x = x
+      // if (two.x > x + w) {
+      //
+      // }
+      // if (five.x < x ) {
+      //
+      // }
+      // ctx.beginPath()
+      // ctx.moveTo(one.x, one.y)
+      // ctx.lineTo(three.x, three.y);
+      // ctx.lineTo(five.x, five.y);
+      // ctx.lineTo(two.x, two.y);
+      // ctx.lineTo(four.x, four.y);
+      // ctx.closePath()
+      // ctx.stroke()
+      // // ctx.fill()
 
       break
     case RectType.POLYGON: {

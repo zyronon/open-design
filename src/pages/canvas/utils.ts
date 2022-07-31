@@ -125,18 +125,24 @@ export function renderCanvas(
       ctx.restore();
       break
     case RectType.STAR:
-      ctx.save();
-      ctx.translate(x, y);
-      // ctx.rotate(rot/180*Math.PI);
-      // ctx.scale(r, r);
-      ctx.beginPath();
-      for (var i = 0; i < 5; i++) {
-        var x1 = Math.cos((54 + i*72)/180*Math.PI);
-        var y1 = Math.sin((54 + i*72)/180*Math.PI);
-        var x2 = Math.cos((18 + i*72)/180*Math.PI) * 0.5;
-        var y2 = Math.sin((18 + i*72)/180*Math.PI) * 0.5;
 
+      ctx.save();
+      var r1 = w / 2;
+      var r2 = r1 / 2.5;
+      var x1, x2, y1, y2;
+      ctx.translate(x + w / 2, y + h / 2);
+
+      ctx.beginPath();
+      // ctx.moveTo(x, y)
+      for (var i = 0; i < 5; i++) {
+        x1 = r1 * Math.cos((54 + i * 72) / 180 * Math.PI);
+        y1 = r1 * Math.sin((54 + i * 72) / 180 * Math.PI);
+        x2 = r2 * Math.cos((18 + i * 72) / 180 * Math.PI);
+        y2 = r2 * Math.sin((18 + i * 72) / 180 * Math.PI);
+
+        //外圆
         ctx.lineTo(x2, y2);
+        //内圆
         ctx.lineTo(x1, y1);
       }
       ctx.closePath();

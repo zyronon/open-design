@@ -108,13 +108,21 @@ export function renderCanvas(
 
   switch (type) {
     case RectType.ROUND:
-      renderRound({
-          x: x + w / 2,
-          y: y + h / 2,
-          w,
-          h,
-        }, w / 2, ctx,
-        RectType.RECT)
+      let a = w / 2, b = h / 2
+      let ox = 0.5 * a,
+        oy = 0.6 * b;
+
+      ctx.save();
+      ctx.translate(x + a, y + b);
+      ctx.beginPath();
+      ctx.moveTo(0, b);
+      ctx.bezierCurveTo(ox, b, a, oy, a, 0);
+      ctx.bezierCurveTo(a, -oy, ox, -b, 0, -b);
+      ctx.bezierCurveTo(-ox, -b, -a, -oy, -a, 0);
+      ctx.bezierCurveTo(-a, oy, -ox, b, 0, b);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
       break
     case RectType.STAR:
       let one = {x: x + w / 2, y}

@@ -134,6 +134,21 @@ export function renderCanvas(
       // ctx.fill()
 
       break
+    case RectType.POLYGON: {
+      let one = {x: x + w / 2, y}
+      let rotate = 360 / 3
+      let two = getRotatedPoint(one, currentCenter, rotate)
+      let three = getRotatedPoint(two, currentCenter, rotate)
+      ctx.beginPath()
+      ctx.moveTo(one.x, one.y)
+      ctx.lineTo(two.x, two.y);
+      ctx.lineTo(three.x, three.y);
+      ctx.closePath()
+      ctx.stroke()
+      ctx.stroke()
+      // ctx.fill()
+    }
+      break
     case RectType.TEXT:
       // ctx.fillStyle = 'white'
       ctx.font = `${rect.fontWeight} ${rect.fontSize}rem "${rect.fontFamily}", sans-serif`;

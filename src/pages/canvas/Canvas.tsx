@@ -128,7 +128,7 @@ class Canvas extends React.Component<any, IState> {
       rectColorType: null,
       rectList: [],
 
-      drawType: RectType.ROUND
+      drawType: RectType.POLYGON
     }, this.draw)
   }
 
@@ -1181,6 +1181,9 @@ class Canvas extends React.Component<any, IState> {
                 </div>
                 <div className={cx('tool', drawType === RectType.ROUND && 'active')}>
                   <Icon type={'Round'} size="20"/>
+                </div>
+                <div className={cx('tool', drawType === RectType.POLYGON && 'active')}>
+                  <Icon type={'Triangle'} size="20"/>
                 </div>
               </div>
               <div className="right">

@@ -57,6 +57,7 @@ export enum RectType {
   PEN = 7,
   ROUND = 8,
   STAR = 9,
+  POLYGON = 10,
 
   FRAME = 100,
   COMPONENT = 101,

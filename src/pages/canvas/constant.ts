@@ -43,7 +43,7 @@ export const Colors = {
   line: 'rgb(216,216,216)'
 
 }
-export const rects = [
+export const rects2 = [
   {
     "x": 12,
     "y": 4,
@@ -301,4 +301,28 @@ export const rects = [
     "bottomY": 180,
     "id": "39af9010-f373-4c6d-99be-40dc528914f0"
   }
+]
+export const rects = [   {
+  "borderColor": "gray",
+  "fillColor": "white",
+  "fontSize": 0,
+  "texts": [],
+  "x": 551,
+  "y": 244,
+  "w": 387,
+  "h": 235,
+  "rotate": 0,
+  "lineWidth": 2,
+  "type": 9,
+  "radius": 0,
+  "points": [],
+  "children": [],
+  "name": "STAR",
+  "leftX": 551,
+  "rightX": 938,
+  "topY": 244,
+  "bottomY": 479,
+  "id": "46ad1664-0d92-4ee0-8613-89622dccd45a"
+},
+
 ]

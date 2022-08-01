@@ -152,21 +152,31 @@ export function renderCanvas(
       break
     case RectType.POLYGON: {
       ctx.lineCap = 'round'
-
-      let wSpace = w * .1
-      let ySpace = h * .2
-      let polygonW = w - wSpace
-      let polygonY = h - ySpace
-      let one = { x: x + w / 2, y: y + lineWidth }
-      let two = { x: x + polygonW, y: y + polygonY }
-      let three = { x: x + wSpace, y: y + polygonY }
+      let one = {x: x + w / 2, y}
+      let rotate = 360 / 3
+      let two = getRotatedPoint(one, currentCenter, rotate)
+      let three = getRotatedPoint(two, currentCenter, rotate)
       ctx.beginPath()
       ctx.moveTo(one.x, one.y)
       ctx.lineTo(two.x, two.y);
       ctx.lineTo(three.x, three.y);
       ctx.closePath()
       ctx.stroke()
-      ctx.stroke()
+      return
+      // let wSpace = w * .1
+      // let ySpace = h * .2
+      // let polygonW = w - wSpace
+      // let polygonY = h - ySpace
+      // let one = { x: x + w / 2, y: y + lineWidth }
+      // let two = { x: x + polygonW, y: y + polygonY }
+      // let three = { x: x + wSpace, y: y + polygonY }
+      // ctx.beginPath()
+      // ctx.moveTo(one.x, one.y)
+      // ctx.lineTo(two.x, two.y);
+      // ctx.lineTo(three.x, three.y);
+      // ctx.closePath()
+      // ctx.stroke()
+      // ctx.stroke()
       // ctx.fill()
     }
       break

@@ -134,12 +134,11 @@ export function renderCanvas(
       ctx.translate(x + w / 2, y + h / 2);
 
       ctx.beginPath();
-      for (var i = 0; i < 5; i++) {
+      for (let i = 0; i < 5; i++) {
         x1 = outA * Math.cos((54 + i * 72) / 180 * Math.PI);
         y1 = outB * Math.sin((54 + i * 72) / 180 * Math.PI);
         x2 = innerA * Math.cos((18 + i * 72) / 180 * Math.PI);
         y2 = innerB * Math.sin((18 + i * 72) / 180 * Math.PI);
-
         //内圆
         ctx.lineTo(x2, y2);
         //外圆

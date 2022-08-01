@@ -128,8 +128,8 @@ export function renderCanvas(
       ctx.save();
       let outA = w / 2;
       let outB = h / 2;
-      let innerA = outA / 2.7;
-      let innerB = outB / 2.7;
+      let innerA = outA / 2.6;
+      let innerB = outB / 2.6;
       let x1, x2, y1, y2;
       ctx.translate(x + w / 2, y + h / 2);
 

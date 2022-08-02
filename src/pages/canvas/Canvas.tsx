@@ -35,6 +35,7 @@ import Icon from '@icon-park/react/es/all';
 import {clearRect, pushRect, removeRect, store} from "./store";
 import {clearAll, getPath, renderCanvas, renderRound} from "./utils";
 import {message} from "antd";
+import Left from "./components/Left/left"
 
 const out = new Float32Array([
   0, 0, 0, 0,
@@ -1138,6 +1139,7 @@ class Canvas extends React.Component<any, IState> {
           </div>
         </div>
         <div className="content">
+          <Left/>
           <div className="left">
             <div className='components'>
               <div className="component" onClick={() => this.init()}>

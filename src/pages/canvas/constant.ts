@@ -302,7 +302,8 @@ export const rects2 = [
     "id": "39af9010-f373-4c6d-99be-40dc528914f0"
   }
 ]
-export const rects = [
+export const rects = []
+export const rects22 = [
   {
     "borderColor": "gray",
     "fillColor": "white",

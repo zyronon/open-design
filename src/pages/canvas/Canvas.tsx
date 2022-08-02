@@ -1132,7 +1132,7 @@ class Canvas extends React.Component<any, IState> {
     // console.log('se', selectRect)
     const type = selectRect?.type
     return <>
-      <div className={'design dark'}>
+      <div className={'design'}>
         <div className="header">
           <div className={'fps'}>
             FPS:<Fps/>

@@ -1,6 +1,6 @@
-import { createSlice, nanoid } from '@reduxjs/toolkit';
-import { Rect } from "../pages/canvas/type"
-import { cloneDeep } from "lodash"
+import {createSlice, nanoid} from '@reduxjs/toolkit';
+import {Rect} from "../pages/canvas/type"
+import {cloneDeep} from "lodash"
 
 export type CanvasState = {
   rectList: Rect[]
@@ -20,7 +20,12 @@ export const canvasSlice = createSlice({
   name: 'canvas',
   initialState,
   reducers: {
-    add(state: CanvasState, { payload }) {
+    setRectList(state: CanvasState, {payload}) {
+      let old = cloneDeep(state)
+      old.rectList = payload
+      return old
+    },
+    add(state: CanvasState, {payload}) {
       let old = cloneDeep(state)
       old.rectList.push(payload)
       return old
@@ -28,6 +33,6 @@ export const canvasSlice = createSlice({
   }
 });
 
-export const { add, } = canvasSlice.actions;
+export const {add,} = canvasSlice.actions;
 
 export default canvasSlice.reducer;

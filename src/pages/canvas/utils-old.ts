@@ -1,9 +1,9 @@
-import {IState, Rect, RectType, TextAlign} from "./type";
-import {store} from "./store";
+import { IState, Rect, RectType, TextAlign } from "./type";
+import { store } from "./store";
 // @ts-ignore
-import {v4 as uuid} from 'uuid';
-import {Colors} from "./constant";
-import {getRotatedPoint} from "../../utils";
+import { v4 as uuid } from 'uuid';
+import { Colors } from "./constant";
+import { getRotatedPoint } from "../../utils";
 
 export function renderCanvas(
   rect: Rect,
@@ -11,7 +11,9 @@ export function renderCanvas(
   parent?: Rect,
 ) {
   let {
-    ctx, enterLT, enterRT, selectRect,
+    ctx, enterLT, enterRT, selectRect, activeHand, enter, offsetX, offsetY,
+    handMove, handScale,
+    currentPoint,
     isEdit
   } = state
   // console.log('renderCanvas', enterLT)
@@ -92,7 +94,7 @@ export function renderCanvas(
     || type === RectType.SELECT
   ) {
     if (radius && type !== RectType.SELECT) {
-      renderRoundRect({x, y, w, h}, radius, ctx)
+      renderRoundRect({ x, y, w, h }, radius, ctx)
     } else {
       ctx.beginPath()
       ctx.moveTo(x, y)
@@ -334,7 +336,7 @@ export function renderCanvas(
 
 export function renderRoundRect(rect: any, r: number, ctx: any) {
   ctx.lineWidth = rect.lineWidth
-  let {x, y, w, h} = rect
+  let { x, y, w, h } = rect
   ctx.beginPath()
   ctx.moveTo(x + w / 2, y)
   ctx.arcTo(x + w, y, x + w, y + h, r)
@@ -346,7 +348,7 @@ export function renderRoundRect(rect: any, r: number, ctx: any) {
 }
 
 export function renderRound(rect: any, r: number, ctx: any, type: RectType = RectType.RECT) {
-  let {x, y} = rect
+  let { x, y } = rect
   ctx.save()
   ctx.lineWidth = 2
   if (type === RectType.RECT) {
@@ -364,14 +366,13 @@ export function renderRound(rect: any, r: number, ctx: any, type: RectType = Rec
   ctx.restore()
 }
 
-export function clearAll(canvas: any, ctx: any) {
-
+export function clearAll(state: IState) {
   clear({
     x: 0,
     y: 0,
-    w: canvas.width,
-    h: canvas.height
-  }, ctx)
+    w: state.canvas.width,
+    h: state.canvas.height
+  }, state.ctx)
   // this.state.ctx.fillStyle = 'black'
   // this.state.ctx.fillRect(0, 0, this.state.canvas.width, this.state.canvas.height)
 }

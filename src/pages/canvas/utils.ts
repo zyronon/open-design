@@ -1,9 +1,9 @@
-import { IState, Rect, RectType, TextAlign } from "./type";
-import { store } from "./store";
+import {IState, Rect, RectType, TextAlign} from "./type";
+import {store} from "./store";
 // @ts-ignore
-import { v4 as uuid } from 'uuid';
-import { Colors } from "./constant";
-import { getRotatedPoint } from "../../utils";
+import {v4 as uuid} from 'uuid';
+import {Colors} from "./constant";
+import {getRotatedPoint, jiaodu2hudu} from "../../utils";
 
 export function renderCanvas(
   rect: Rect,
@@ -94,7 +94,7 @@ export function renderCanvas(
     || type === RectType.SELECT
   ) {
     if (radius && type !== RectType.SELECT) {
-      renderRoundRect({ x, y, w, h }, radius, ctx)
+      renderRoundRect({x, y, w, h}, radius, ctx)
     } else {
       ctx.beginPath()
       ctx.moveTo(x, y)
@@ -151,17 +151,47 @@ export function renderCanvas(
 
       break
     case RectType.POLYGON: {
-      ctx.lineCap = 'round'
-      let one = {x: x + w / 2, y}
-      let rotate = 360 / 3
-      let two = getRotatedPoint(one, currentCenter, rotate)
-      let three = getRotatedPoint(two, currentCenter, rotate)
-      ctx.beginPath()
-      ctx.moveTo(one.x, one.y)
-      ctx.lineTo(two.x, two.y);
-      ctx.lineTo(three.x, three.y);
-      ctx.closePath()
-      ctx.stroke()
+      ctx.save();
+      let outA = w / 2;
+      let outB = h / 2;
+      let innerA = outA / 2.6;
+      let innerB = outB / 2.6;
+      let x1, x2, y1, y2;
+      ctx.translate(x + w / 2, y + h / 2);
+      // let one = {x: x + w / 2, y}
+
+      ctx.beginPath();
+      for (let i = 0; i < 3; i++) {
+        // x1 = (point.x - center.x) * Math.cos(jiaodu2hudu(rotate)) - (point.y - center.y) * Math.sin(jiaodu2hudu(rotate)) + center.x
+
+        x1 = outA * Math.cos((120 + i * 120) / 180 * Math.PI);
+        y1 = outB * Math.sin((120 + i * 120) / 180 * Math.PI);
+        // x2 = innerA * Math.cos((18 + i * 72) / 180 * Math.PI);
+        // y2 = innerB * Math.sin((18 + i * 72) / 180 * Math.PI);
+        //内圆
+        // ctx.lineTo(x2, y2);
+        //外圆
+        ctx.lineTo(x1, y1);
+      }
+      ctx.closePath();
+
+      ctx.stroke();
+      ctx.restore();
+      //第二次
+      // ctx.lineCap = 'round'
+      // let one = {x: x + w / 2, y}
+      // let rotate = 360 / 3
+      // let two = getRotatedPoint(one, currentCenter, rotate)
+      // let three = getRotatedPoint(two, currentCenter, rotate)
+      // ctx.beginPath()
+      // ctx.moveTo(one.x, one.y)
+      // ctx.lineTo(two.x, two.y);
+      // ctx.lineTo(three.x, three.y);
+      // ctx.closePath()
+      // ctx.stroke()
+
+
+      //第一次
       // let wSpace = w * .1
       // let ySpace = h * .2
       // let polygonW = w - wSpace
@@ -335,7 +365,7 @@ export function renderCanvas(
 
 export function renderRoundRect(rect: any, r: number, ctx: any) {
   ctx.lineWidth = rect.lineWidth
-  let { x, y, w, h } = rect
+  let {x, y, w, h} = rect
   ctx.beginPath()
   ctx.moveTo(x + w / 2, y)
   ctx.arcTo(x + w, y, x + w, y + h, r)
@@ -347,7 +377,7 @@ export function renderRoundRect(rect: any, r: number, ctx: any) {
 }
 
 export function renderRound(rect: any, r: number, ctx: any, type: RectType = RectType.RECT) {
-  let { x, y } = rect
+  let {x, y} = rect
   ctx.save()
   ctx.lineWidth = 2
   if (type === RectType.RECT) {

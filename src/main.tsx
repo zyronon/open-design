@@ -4,13 +4,13 @@ import "./index.css";
 import 'moment/locale/zh-cn';
 import 'antd/dist/antd.css';
 import { createRoot } from "react-dom/client";
-import { store } from './store/store.js';
+import { store } from './store/store';
 import { Provider } from "react-redux";
 import Canvas from "./pages/canvas/Canvas";
 import Test from "./pages/test/Test";
 
 
-createRoot(document.getElementById("root")).render(
+createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
     <Provider store={store}>
       <Routes>

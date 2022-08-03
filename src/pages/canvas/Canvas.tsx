@@ -1132,30 +1132,18 @@ class Canvas extends React.Component<any, IState> {
     // console.log('se', selectRect)
     const type = selectRect?.type
     return <>
-      <div className={'design'}>
+      <div className={'design dark'}>
         <div className="header">
           <div className={'fps'}>
             FPS:<Fps/>
           </div>
         </div>
         <div className="content">
-          <Left/>
-          <div className="left">
-            <div className='components'>
-              <div className="component" onClick={() => this.init()}>
-                刷新
-              </div>
-              <div className="component" onClick={() => this.props.navigate('/test')}>
-                去test
-              </div>
-              <div className="component" onClick={this.print}>
-                打印
-              </div>
-              <div className="component" onClick={() => console.log(store.rectList)}>
-                打印2
-              </div>
-            </div>
-          </div>
+          <Left
+            init={() => this.init()}
+            navigate={() => this.props.navigate('/test')}
+            print={this.print}
+          />
           <div className="canvas-wrapper">
             <div className="tool-bar">
               <div className="left">

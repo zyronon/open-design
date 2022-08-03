@@ -35,8 +35,12 @@
     }
 
     .content {
-      & > .left {
-        opacity: 0;
+      & > .left-wrapper {
+        background: transparent;
+
+        .tabs,.layer{
+          opacity: 0;
+        }
       }
 
       & > .right {

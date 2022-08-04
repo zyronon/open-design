@@ -7,6 +7,7 @@ export function getHypotenuse(one: number[], two: number[]) {
   let dy = twoY - oneY
   return Math.sqrt(dx * dx + dy * dy)
 }
+
 /**
  * 计算向量夹角，单位是弧度
  * @param {Array.<2>} av
@@ -16,6 +17,7 @@ export function getHypotenuse(one: number[], two: number[]) {
 export function computedIncludedAngle(av, bv) {
   return Math.atan2(av[1], av[0]) - Math.atan2(bv[1], bv[0]);
 }
+
 export function getHypotenuse2(p1: any, p2: any) {
   let {x: p1X, y: p1Y} = p1
   let {x: p2X, y: p2Y} = p2
@@ -29,37 +31,6 @@ export function hudu2juedu(v: number) {
 export function jiaodu2hudu(v: number) {
   return (v * Math.PI) / 180
 }
-
-//获取圆上的另一个点
-export function getRoundOtherPoint(x: number, y: number) {
-  let hypotenuse = getHypotenuse([0, 0], [x, y])
-  // console.log('hypotenuse', hypotenuse)
-  let s = Math.abs(y) / Math.abs(hypotenuse)
-  // console.log(s)
-  let a = Math.acos(s)
-  // console.log(a)
-  let b = hudu2juedu(a) + 20
-  // console.log(b)
-  let x1 = Math.sin(jiaodu2hudu(b)) * Math.abs(hypotenuse)
-  let y1 = Math.cos(jiaodu2hudu(b)) * Math.abs(hypotenuse)
-  return [x1, y1]
-}
-
-//获取圆上的另一个点
-export function getRoundOtherPoint2(x: number, y: number, x2: any, y2: any) {
-  let hypotenuse = getHypotenuse([x2, y2], [x, y])
-  // console.log('hypotenuse', hypotenuse)
-  let s = Math.abs(y) / Math.abs(hypotenuse)
-  // console.log(s)
-  let a = Math.acos(s)
-  // console.log(a)
-  let b = hudu2juedu(a) + 20
-  // console.log(b)
-  let x1 = Math.sin(jiaodu2hudu(b)) * Math.abs(hypotenuse)
-  let y1 = Math.cos(jiaodu2hudu(b)) * Math.abs(hypotenuse)
-  return [x1, y1]
-}
-
 
 //获取圆上的另一个点
 export function getRoundOtherPoint3(p1: any, c: any, angle: number) {
@@ -96,16 +67,18 @@ export function getAngle(center: number[], one: number[], two: number[]) {
   return angle;
 }
 
+/**
+ * 参考：https://blog.csdn.net/sinat_32560085/article/details/106389000，这个易理解
+ * 参考：https://blog.csdn.net/qq_27278957/article/details/120080648
+ * 旋转公式：
+ *  点a(x, y)
+ *  旋转中心c(x, y)
+ *  旋转后点n(x, y)
+ *  旋转角度θ
+ * nx = cosθ * (ax - cx) - sinθ * (ay - cy) + cx
+ * ny = sinθ * (ax - cx) + cosθ * (ay - cy) + cy
+ */
 export function getRotatedPoint(point: any, center: any, rotate: any) {
-  /**
-   * 旋转公式：
-   *  点a(x, y)
-   *  旋转中心c(x, y)
-   *  旋转后点n(x, y)
-   *  旋转角度θ
-   * nx = cosθ * (ax - cx) - sinθ * (ay - cy) + cx
-   * ny = sinθ * (ax - cx) + cosθ * (ay - cy) + cy
-   */
   return {
     x: (point.x - center.x) * Math.cos(jiaodu2hudu(rotate)) - (point.y - center.y) * Math.sin(jiaodu2hudu(rotate)) + center.x,
     y: (point.x - center.x) * Math.sin(jiaodu2hudu(rotate)) + (point.y - center.y) * Math.cos(jiaodu2hudu(rotate)) + center.y

@@ -263,7 +263,7 @@ export const rects =[
     "texts": [],
     "x": 564,
     "y": 191,
-    "w": 168,
+    "w": 368,
     "h": 174,
     "rotate": 0,
     "lineWidth": 2,

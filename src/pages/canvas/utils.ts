@@ -3,7 +3,7 @@ import {store} from "./store";
 // @ts-ignore
 import {v4 as uuid} from 'uuid';
 import {Colors} from "./constant";
-import {getRotatedPoint, jiaodu2hudu} from "../../utils";
+import {getRotatedPoint} from "../../utils";
 
 export function renderCanvas(
   rect: Rect,
@@ -154,59 +154,66 @@ export function renderCanvas(
       ctx.save();
       let outA = w / 2;
       let outB = h / 2;
-      let innerA = outA / 2.6;
-      let innerB = outB / 2.6;
       let x1, x2, y1, y2;
       ctx.translate(x + w / 2, y + h / 2);
-      // let one = {x: x + w / 2, y}
 
       ctx.beginPath();
       for (let i = 0; i < 3; i++) {
-        // x1 = (point.x - center.x) * Math.cos(jiaodu2hudu(rotate)) - (point.y - center.y) * Math.sin(jiaodu2hudu(rotate)) + center.x
+        x1 = outA * Math.cos((30 + i * 120) / 180 * Math.PI);
+        y1 = outB * Math.sin((30 + i * 120) / 180 * Math.PI);
+        // console.log('x1', x1, '--y1', y1)
 
-        x1 = outA * Math.cos((120 + i * 120) / 180 * Math.PI);
-        y1 = outB * Math.sin((120 + i * 120) / 180 * Math.PI);
-        // x2 = innerA * Math.cos((18 + i * 72) / 180 * Math.PI);
-        // y2 = innerB * Math.sin((18 + i * 72) / 180 * Math.PI);
-        //内圆
-        // ctx.lineTo(x2, y2);
-        //外圆
         ctx.lineTo(x1, y1);
       }
       ctx.closePath();
 
       ctx.stroke();
       ctx.restore();
+
+      let a = w / 2, b = h / 2
+      let ox = 0.5 * a,
+        oy = .6 * b;
+
+      ctx.save();
+      ctx.translate(x + a, y + b);
+      ctx.beginPath();
+      ctx.moveTo(0, b);
+      ctx.bezierCurveTo(ox, b, a, oy, a, 0);
+      ctx.bezierCurveTo(a, -oy, ox, -b, 0, -b);
+      ctx.bezierCurveTo(-ox, -b, -a, -oy, -a, 0);
+      ctx.bezierCurveTo(-a, oy, -ox, b, 0, b);
+      ctx.closePath();
+      ctx.stroke();
+      ctx.restore();
+
       //第二次
-      // ctx.lineCap = 'round'
-      // let one = {x: x + w / 2, y}
-      // let rotate = 360 / 3
-      // let two = getRotatedPoint(one, currentCenter, rotate)
-      // let three = getRotatedPoint(two, currentCenter, rotate)
-      // ctx.beginPath()
-      // ctx.moveTo(one.x, one.y)
-      // ctx.lineTo(two.x, two.y);
-      // ctx.lineTo(three.x, three.y);
-      // ctx.closePath()
-      // ctx.stroke()
+      ctx.save();
+      ctx.lineCap = 'round'
+      let one = {x: x + w / 2, y}
+      let rotate = 360 / 3
+      let two = getRotatedPoint(one, currentCenter, rotate)
+      let three = getRotatedPoint(two, currentCenter, rotate)
+      ctx.beginPath()
+      ctx.moveTo(one.x, one.y)
+      ctx.lineTo(two.x, two.y);
+      ctx.lineTo(three.x, three.y);
+      ctx.closePath()
+      ctx.stroke()
+      ctx.restore();
 
 
-      //第一次
-      // let wSpace = w * .1
-      // let ySpace = h * .2
-      // let polygonW = w - wSpace
-      // let polygonY = h - ySpace
-      // let one = { x: x + w / 2, y: y + lineWidth }
-      // let two = { x: x + polygonW, y: y + polygonY }
-      // let three = { x: x + wSpace, y: y + polygonY }
-      // ctx.beginPath()
-      // ctx.moveTo(one.x, one.y)
-      // ctx.lineTo(two.x, two.y);
-      // ctx.lineTo(three.x, three.y);
-      // ctx.closePath()
-      // ctx.stroke()
-      // ctx.stroke()
-      // ctx.fill()
+      renderRound({
+        x: currentCenter.x,
+        y: currentCenter.y,
+      }, h / 2, ctx,RectType.SELECT)
+      renderRound({
+        x: currentCenter.x,
+        y: currentCenter.y,
+      }, w / 2, ctx,RectType.SELECT)
+
+      ctx.moveTo(currentCenter.x, currentCenter.y);
+      ctx.lineTo(currentCenter.x, currentCenter.y);
+      ctx.stroke()
       break
     }
     case RectType.TEXT:

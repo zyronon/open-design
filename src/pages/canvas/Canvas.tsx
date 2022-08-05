@@ -1168,11 +1168,20 @@ class Canvas extends React.Component<any, IState> {
                 <div className={cx('tool', usePen && 'active')}>
                   <Icon type={'ElectronicPen'} size="20"/>
                 </div>
+                <div className={cx('tool', drawType === RectType.RECT && 'active')}>
+                  <Icon type={'RectangleOne'} size="20"/>
+                </div>
                 <div className={cx('tool', drawType === RectType.ROUND && 'active')}>
                   <Icon type={'Round'} size="20"/>
                 </div>
                 <div className={cx('tool', drawType === RectType.POLYGON && 'active')}>
                   <Icon type={'Triangle'} size="20"/>
+                </div>
+                <div className={cx('tool', drawType === RectType.STAR && 'active')}>
+                  <Icon type={'star'} size="20"/>
+                </div>
+                <div className={cx('tool', drawType === RectType.IMG && 'active')}>
+                  <Icon type={'pic'} size="20"/>
                 </div>
               </div>
               <div className="right">

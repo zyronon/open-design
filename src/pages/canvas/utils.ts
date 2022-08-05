@@ -161,59 +161,11 @@ export function renderCanvas(
       for (let i = 0; i < 3; i++) {
         x1 = outA * Math.cos((30 + i * 120) / 180 * Math.PI);
         y1 = outB * Math.sin((30 + i * 120) / 180 * Math.PI);
-        // console.log('x1', x1, '--y1', y1)
-
         ctx.lineTo(x1, y1);
       }
       ctx.closePath();
-
       ctx.stroke();
       ctx.restore();
-
-      let a = w / 2, b = h / 2
-      let ox = 0.5 * a,
-        oy = .6 * b;
-
-      ctx.save();
-      ctx.translate(x + a, y + b);
-      ctx.beginPath();
-      ctx.moveTo(0, b);
-      ctx.bezierCurveTo(ox, b, a, oy, a, 0);
-      ctx.bezierCurveTo(a, -oy, ox, -b, 0, -b);
-      ctx.bezierCurveTo(-ox, -b, -a, -oy, -a, 0);
-      ctx.bezierCurveTo(-a, oy, -ox, b, 0, b);
-      ctx.closePath();
-      ctx.stroke();
-      ctx.restore();
-
-      //第二次
-      ctx.save();
-      ctx.lineCap = 'round'
-      let one = {x: x + w / 2, y}
-      let rotate = 360 / 3
-      let two = getRotatedPoint(one, currentCenter, rotate)
-      let three = getRotatedPoint(two, currentCenter, rotate)
-      ctx.beginPath()
-      ctx.moveTo(one.x, one.y)
-      ctx.lineTo(two.x, two.y);
-      ctx.lineTo(three.x, three.y);
-      ctx.closePath()
-      ctx.stroke()
-      ctx.restore();
-
-
-      renderRound({
-        x: currentCenter.x,
-        y: currentCenter.y,
-      }, h / 2, ctx,RectType.SELECT)
-      renderRound({
-        x: currentCenter.x,
-        y: currentCenter.y,
-      }, w / 2, ctx,RectType.SELECT)
-
-      ctx.moveTo(currentCenter.x, currentCenter.y);
-      ctx.lineTo(currentCenter.x, currentCenter.y);
-      ctx.stroke()
       break
     }
     case RectType.TEXT:

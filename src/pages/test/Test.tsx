@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Button} from 'antd';
 import './index.scss'
 import {withRouter} from "../../components/WithRouter";
+import {connect} from "react-redux";
 
 class T extends Component<any, any> {
   constructor(props: any) {

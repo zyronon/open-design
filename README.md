@@ -18,3 +18,5 @@ x1 = (w/2) * Math.cos((角度 + i * 角度) / 180 * Math.PI);
 y1 = (h/2) * Math.sin((角度 + i * 角度) / 180 * Math.PI);
  
 
+Bugs:Vite + React,一个组件用到Context或Redux，如果写在同一页面，那么任何改动都会导致page reload
+把Context或Redux单独写一个页面，包含组件，就可以正常hmr

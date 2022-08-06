@@ -1,10 +1,10 @@
-import Login from "../pages/login/Login";
 import Test from "../pages/test/Test-list-call";
+import Home from "../pages/home";
 
 export default [
   {
-    path: '/login',
-    component: Login
+    path: '/home',
+    component: Home
   },
   {
     path: '/test',

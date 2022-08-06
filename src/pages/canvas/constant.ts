@@ -1,5 +1,5 @@
-import { FontFamily, FontWeight, RectType, TextAlign, TextBaseline, TextMode } from "./type";
-import { cloneDeep } from "lodash";
+import {FontFamily, FontWeight, RectType, TextAlign, TextBaseline, TextMode} from "./type";
+import {cloneDeep} from "lodash";
 
 export const fontFamilies = [
   {
@@ -12,38 +12,84 @@ export const fontFamilies = [
   }
 ]
 export const fontWeight = [
-  { label: 'Light', value: FontWeight.LIGHT, },
-  { label: 'Regular', value: FontWeight.REGULAR, },
-  { label: 'Normal', value: FontWeight.Normal },
-  { label: 'Medium', value: FontWeight.MEDIUM },
-  { label: 'Bold', value: FontWeight.BOLD, },
-  { label: 'Heavy', value: FontWeight.HEAVY, },
+  {label: 'Light', value: FontWeight.LIGHT,},
+  {label: 'Regular', value: FontWeight.REGULAR,},
+  {label: 'Normal', value: FontWeight.Normal},
+  {label: 'Medium', value: FontWeight.MEDIUM},
+  {label: 'Bold', value: FontWeight.BOLD,},
+  {label: 'Heavy', value: FontWeight.HEAVY,},
 ]
 
 export const fontSize = [
-  { label: '10', value: 10, },
-  { label: '12', value: 12, },
-  { label: '14', value: 14, },
-  { label: '16', value: 16, },
-  { label: '18', value: 18, },
-  { label: '20', value: 20, },
-  { label: '24', value: 24, },
-  { label: '32', value: 32, },
-  { label: '36', value: 36, },
-  { label: '40', value: 40, },
-  { label: '48', value: 48, },
-  { label: '64', value: 64, },
-  { label: '96', value: 96, },
-  { label: '128', value: 128, },
-  { label: '256', value: 256, },
+  {label: '10', value: 10,},
+  {label: '12', value: 12,},
+  {label: '14', value: 14,},
+  {label: '16', value: 16,},
+  {label: '18', value: 18,},
+  {label: '20', value: 20,},
+  {label: '24', value: 24,},
+  {label: '32', value: 32,},
+  {label: '36', value: 36,},
+  {label: '40', value: 40,},
+  {label: '48', value: 48,},
+  {label: '64', value: 64,},
+  {label: '96', value: 96,},
+  {label: '128', value: 128,},
+  {label: '256', value: 256,},
 ]
 
 export const Colors = {
   primary: '#4B75F6FF',
-  line: 'rgb(216,216,216)'
-
+  line: 'rgb(216,216,216)',
 }
-export const rects =[
+export const rects = [
+  {
+    "x": 433,
+    "y": 182,
+    "w": 300,
+    "h": 300,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": 0,
+    "color": "gray",
+    "radius": 100,
+    "children": [
+      {
+        "x": 433,
+        "y": 182,
+        "w": 300,
+        "h": 300,
+        "rotate": 0,
+        "lineWidth": 2,
+        "type": 3,
+        "color": "gray",
+        "radius": 100,
+        "children": [],
+        "brokenTexts": [],
+        "borderColor": "rgb(216,216,216)",
+        "fillColor": "rgb(216,216,216)",
+        "fontSize": 0,
+        "texts": [],
+        "name": "JUXING",
+        "leftX": 433,
+        "rightX": 733,
+        "topY": 182,
+        "bottomY": 482,
+        "id": 1659774134051
+      }
+    ],
+    "brokenTexts": [],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "rgb(216,216,216)",
+    "fontSize": 0,
+    "texts": [],
+    "name": "JUXING",
+    "leftX": 433,
+    "rightX": 733,
+    "topY": 182,
+    "bottomY": 482,
+    "id": "f345f2c5-6bb0-429d-ad79-42ee0a50094d"
+  },
   {
     "x": 16,
     "y": 21,
@@ -129,8 +175,8 @@ export const rects =[
     "fillColor": "black",
     "fontSize": 0,
     "texts": [],
-    "x": 1388,
-    "y": 438,
+    "x": 1188,
+    "y": 338,
     "w": 150,
     "h": 150,
     "rotate": 0,
@@ -140,10 +186,10 @@ export const rects =[
     "radius": 0,
     "children": [],
     "name": "img",
-    "leftX": 1388,
-    "rightX": 1538,
-    "topY": 438,
-    "bottomY": 588,
+    "leftX": 1188,
+    "rightX": 1338,
+    "topY": 338,
+    "bottomY": 488,
     "id": "6a848f44-e696-4b2e-85b9-44365ab92638"
   },
   {
@@ -270,30 +316,7 @@ export const rects =[
     "type": 10,
     "radius": 0,
     "points": [],
-    "children": [
-      {
-        "borderColor": "gray",
-        "fillColor": "white",
-        "fontSize": 0,
-        "texts": [],
-        "x": 9,
-        "y": 313,
-        "w": 87,
-        "h": 100,
-        "rotate": 0,
-        "lineWidth": 2,
-        "type": 3,
-        "radius": 0,
-        "points": [],
-        "children": [],
-        "name": "POLYGON",
-        "leftX": 9,
-        "rightX": 96,
-        "topY": 313,
-        "bottomY": 413,
-        "id": 1659715692423
-      }
-    ],
+    "children": [],
     "name": "POLYGON",
     "leftX": 9,
     "rightX": 96,

@@ -1,6 +1,6 @@
 import {configureStore} from '@reduxjs/toolkit';
-import todoReducer from './todo/index';
-import postSlice from "./post/index";
+import todoReducer from './todo';
+import postSlice from "./post";
 import canvas from "./canvas";
 
 export const store = configureStore({

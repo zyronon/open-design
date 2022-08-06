@@ -31,7 +31,7 @@ class About extends React.Component<any, any> {
       }
       <div style={{display: this.state.error ? "block" : 'none'}}>error</div>
       {
-        this.state.accounts.map(v => {
+        this.state.accounts.map((v: any) => {
           return <div key={v}>account:{v}</div>
         })
       }

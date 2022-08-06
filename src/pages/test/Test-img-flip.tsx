@@ -8,7 +8,7 @@ import {useNavigate} from "react-router-dom";
 export default function Test(props: any) {
 
   useEffect(() => {
-    let canvas = document.querySelector('canvas');
+    let canvas: any = document.querySelector('canvas');
     let ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, 500, 500)
     ctx.strokeStyle = 'gray'
@@ -29,7 +29,7 @@ export default function Test(props: any) {
     // return
 
     var strImgUrl = 'https://images.pexels.com/photos/325185/pexels-photo-325185.jpeg?auto=compress&cs=tinysrgb&w=1600';
-    var eleImg = document.createElement('img');
+    var eleImg: any = document.createElement('img');
     eleImg.origin = '';
     eleImg.onload = function () {
       let rect = {x: 0, y: 300, w: 250, h: 100, rotate: 20}

@@ -26,7 +26,7 @@ import cx from "classnames";
 import {mat4} from 'gl-matrix'
 import Fps from "../../components/Fps";
 import {BaseOption, BaseSelect} from "../../components/BaseSelect";
-import {Colors, fontFamilies, fontSize, fontWeight, originRects, rects} from "./constant";
+import {Colors, fontFamilies, fontSize, fontWeight, rects} from "./constant";
 import {FontFamily, FontWeight, IState, Rect, RectColorType, RectType, TextAlign, TextMode} from "./type";
 import {BaseRadio, BaseRadioGroup} from "../../components/BaseRadio";
 import BaseSlotButton from "../../components/BaseSlotButton";
@@ -36,7 +36,6 @@ import {clearRect, pushRect, removeRect, store} from "./store";
 import {clearAll, getPath, renderCanvas, renderRound} from "./utils";
 import {message} from "antd";
 import Left from "./components/Left/left"
-import {connect} from "react-redux"
 
 const out = new Float32Array([
   0, 0, 0, 0,
@@ -189,7 +188,7 @@ class Canvas extends React.Component<any, IState> {
     const {selectRect} = this.state
     let rIndex = store.rectList?.findIndex(item => item.id === selectRect?.id)
     if (rIndex > -1) return store.rectList[rIndex]
-    return {}
+    return {} as any
   }
 
   onDbClick = (e: any) => {
@@ -257,7 +256,7 @@ class Canvas extends React.Component<any, IState> {
       })
       if (usePencil) {
         ctx.moveTo(x, y)
-        let newPencil: Rect = {
+        let newPencil: any = {
           borderColor: Colors.line,
           fillColor: "black",
           fontSize: 0,
@@ -288,7 +287,7 @@ class Canvas extends React.Component<any, IState> {
           select.points.push({x, y})
           this.draw()
         } else {
-          let newPen: Rect = {
+          let newPen: any = {
             borderColor: Colors.line,
             fillColor: "black",
             fontSize: 0,
@@ -496,7 +495,7 @@ class Canvas extends React.Component<any, IState> {
     if (e.button === 2) {
       let select: Rect = this.getSelect()
       if ((select.type === RectType.PEN || select.type === RectType.PENCIL)
-        && select.points.length <= 1
+        && select.points!.length <= 1
       ) {
         removeRect(select)
       }
@@ -558,6 +557,20 @@ class Canvas extends React.Component<any, IState> {
         t.type = RectType.HOVER
         renderCanvas(t, this.state)
         ctx.restore()
+      } else {
+        //当选中时，并且hover在图形上面
+        if (rect.type === RectType.RECT) {
+          let end = {
+            x: rect.x + Math.max(rect.w, rect.h) / 2,
+            y: rect.y + Math.max(rect.w, rect.h) / 2,
+          }
+          ctx.save()
+          let nv = currentMat
+          ctx.transform(nv[0], nv[4], nv[1], nv[5], nv[12], nv[13]);
+          renderRound(end, 5, ctx, RectType.SELECT)
+
+          ctx.restore()
+        }
       }
       isIn = true
     } else {
@@ -1253,82 +1266,82 @@ class Canvas extends React.Component<any, IState> {
               {
                 type === RectType.TEXT &&
                   <div className="base-info">
-                      <div className="header">文字</div>
-                      <div className="row-single">
-                          <div className="col">
-                              <BaseSelect value={selectRect?.fontFamily} onChange={this.onFontFamilyChange}>
-                                {
-                                  fontFamilies.map((v, i) => {
-                                    return <BaseOption key={i} value={v.value} label={v.label}>{v.label}</BaseOption>
-                                  })
-                                }
-                              </BaseSelect>
-                          </div>
+                    <div className="header">文字</div>
+                    <div className="row-single">
+                      <div className="col">
+                        <BaseSelect value={selectRect?.fontFamily} onChange={this.onFontFamilyChange}>
+                          {
+                            fontFamilies.map((v, i) => {
+                              return <BaseOption key={i} value={v.value} label={v.label}>{v.label}</BaseOption>
+                            })
+                          }
+                        </BaseSelect>
                       </div>
-                      <div className="row">
-                          <div className="col">
-                              <BaseSelect value={selectRect?.fontWeight} onChange={this.onFontWeightChange}>
-                                {
-                                  fontWeight.map((v, i) => {
-                                    return <BaseOption key={i} value={v.value} label={v.label}>{v.label}</BaseOption>
-                                  })
-                                }
-                              </BaseSelect>
-                          </div>
-                          <div className="col">
-                              <BaseSelect value={selectRect?.fontSize} onChange={this.onFontSizeChange}>
-                                {
-                                  fontSize.map((v, i) => {
-                                    return <BaseOption key={i} value={v.value} label={v.label}>{v.label}</BaseOption>
-                                  })
-                                }
-                              </BaseSelect>
-                          </div>
+                    </div>
+                    <div className="row">
+                      <div className="col">
+                        <BaseSelect value={selectRect?.fontWeight} onChange={this.onFontWeightChange}>
+                          {
+                            fontWeight.map((v, i) => {
+                              return <BaseOption key={i} value={v.value} label={v.label}>{v.label}</BaseOption>
+                            })
+                          }
+                        </BaseSelect>
                       </div>
-                      <div className="row">
-                          <div className="col">
-                              <BaseInput value={selectRect?.textLineHeight}
-                                         onChange={this.onTextLineHeightChange}
-                                         prefix={<RowHeight size="14" fill="#929596"/>}/>
-                          </div>
-                          <div className="col">
-                              <BaseInput value={selectRect?.letterSpacing}
-                                         prefix={<AutoLineWidth fill="#929596"/>}/>
-                          </div>
+                      <div className="col">
+                        <BaseSelect value={selectRect?.fontSize} onChange={this.onFontSizeChange}>
+                          {
+                            fontSize.map((v, i) => {
+                              return <BaseOption key={i} value={v.value} label={v.label}>{v.label}</BaseOption>
+                            })
+                          }
+                        </BaseSelect>
                       </div>
-                      <div className="row">
-                          <div className="col">
-                              <BaseRadioGroup value={selectRect?.textAlign} onChange={this.onTextAlignChange}>
-                                  <BaseRadio key={0} value={TextAlign.LEFT} label={'左对齐'}>
-                                      <AlignTextLeft fill="#929596"/>
-                                  </BaseRadio>
-                                  <BaseRadio key={1} value={TextAlign.CENTER} label={'居中对齐'}>
-                                      <AlignTextLeft fill="#929596"/>
-                                  </BaseRadio>
-                                  <BaseRadio key={2} value={TextAlign.RIGHT} label={'右对齐'}>
-                                      <AlignTextLeft fill="#929596"/>
-                                  </BaseRadio>
-                              </BaseRadioGroup>
-                          </div>
-                          <div className="col">
-                              <BaseRadioGroup value={selectRect?.textMode} onChange={this.onTextModeChange}>
-                                  <BaseRadio key={0} value={TextMode.AUTO_W} label={'自动宽度'}>
-                                      <AutoWidthOne fill="#929596"/>
-                                  </BaseRadio>
-                                  <BaseRadio key={1} value={TextMode.AUTO_H} label={'自动高度'}>
-                                      <AutoHeightOne fill="#929596"/>
-                                  </BaseRadio>
-                                  <BaseRadio key={2} value={TextMode.FIXED} label={'固定宽高'}>
-                                      <Square fill="#929596"/>
-                                  </BaseRadio>
-                              </BaseRadioGroup>
-                          </div>
-                          <div className="col">
-                              <BaseIcon active={false}>
-                                  <More fill="#929596"/>
-                              </BaseIcon>
-                          </div>
+                    </div>
+                    <div className="row">
+                      <div className="col">
+                        <BaseInput value={selectRect?.textLineHeight}
+                                   onChange={this.onTextLineHeightChange}
+                                   prefix={<RowHeight size="14" fill="#929596"/>}/>
                       </div>
+                      <div className="col">
+                        <BaseInput value={selectRect?.letterSpacing}
+                                   prefix={<AutoLineWidth fill="#929596"/>}/>
+                      </div>
+                    </div>
+                    <div className="row">
+                      <div className="col">
+                        <BaseRadioGroup value={selectRect?.textAlign} onChange={this.onTextAlignChange}>
+                          <BaseRadio key={0} value={TextAlign.LEFT} label={'左对齐'}>
+                            <AlignTextLeft fill="#929596"/>
+                          </BaseRadio>
+                          <BaseRadio key={1} value={TextAlign.CENTER} label={'居中对齐'}>
+                            <AlignTextLeft fill="#929596"/>
+                          </BaseRadio>
+                          <BaseRadio key={2} value={TextAlign.RIGHT} label={'右对齐'}>
+                            <AlignTextLeft fill="#929596"/>
+                          </BaseRadio>
+                        </BaseRadioGroup>
+                      </div>
+                      <div className="col">
+                        <BaseRadioGroup value={selectRect?.textMode} onChange={this.onTextModeChange}>
+                          <BaseRadio key={0} value={TextMode.AUTO_W} label={'自动宽度'}>
+                            <AutoWidthOne fill="#929596"/>
+                          </BaseRadio>
+                          <BaseRadio key={1} value={TextMode.AUTO_H} label={'自动高度'}>
+                            <AutoHeightOne fill="#929596"/>
+                          </BaseRadio>
+                          <BaseRadio key={2} value={TextMode.FIXED} label={'固定宽高'}>
+                            <Square fill="#929596"/>
+                          </BaseRadio>
+                        </BaseRadioGroup>
+                      </div>
+                      <div className="col">
+                        <BaseIcon active={false}>
+                          <More fill="#929596"/>
+                        </BaseIcon>
+                      </div>
+                    </div>
                   </div>
               }
               <div className="base-info">

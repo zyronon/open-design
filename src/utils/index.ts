@@ -14,7 +14,7 @@ export function getHypotenuse(one: number[], two: number[]) {
  * @param {Array.<2>} bv
  * @returns {number}
  */
-export function computedIncludedAngle(av, bv) {
+export function computedIncludedAngle(av: any, bv: any) {
   return Math.atan2(av[1], av[0]) - Math.atan2(bv[1], bv[0]);
 }
 

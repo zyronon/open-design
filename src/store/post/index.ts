@@ -1,6 +1,6 @@
 import {createSlice, nanoid} from '@reduxjs/toolkit';
 
-const initialState = []
+const initialState: any = []
 
 export const postSlice = createSlice({
   name: 'post',
@@ -11,6 +11,7 @@ export const postSlice = createSlice({
         state.push(action.payload)
         // console.log(action)
       },
+      // @ts-ignore
       prepare(title, content, userId) {
         return {
           payload: {

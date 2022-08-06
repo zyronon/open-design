@@ -45,14 +45,14 @@ export const Colors = {
 export const rects = [
   {
     "x": 433,
-    "y": 182,
-    "w": 300,
-    "h": 300,
+    "y": 82,
+    "w": 200,
+    "h": 400,
     "rotate": 0,
     "lineWidth": 2,
     "type": 0,
     "color": "gray",
-    "radius": 100,
+    "radius": 40,
     "children": [
       {
         "x": 433,

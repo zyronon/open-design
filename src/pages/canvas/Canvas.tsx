@@ -560,15 +560,44 @@ class Canvas extends React.Component<any, IState> {
       } else {
         //当选中时，并且hover在图形上面
         if (rect.type === RectType.RECT) {
-          let end = {
-            x: rect.x + Math.max(rect.w, rect.h) / 2,
-            y: rect.y + Math.max(rect.w, rect.h) / 2,
+          let d = 20
+          d = 40
+          let r = 4
+          let t = rect
+          let endTop = {
+            x: t.x + Math.min(t.w, t.h) / 2,
+            y: t.y + Math.min(t.w, t.h) / 2,
+          }
+          let endBottom = {
+            x: t.x + Math.min(t.w, t.h) / 2,
+            y: t.y + t.h - Math.min(t.w, t.h) / 2,
+          }
+          let topLeft = {
+            x: t.x + d,
+            y: t.y + d,
+          }
+          let topRight = {
+            x: t.x + t.w - d,
+            y: t.y + d,
+          }
+          let bottomLeft = {
+            x: t.x + d,
+            y: t.y + t.h - d,
+          }
+          let bottomRight = {
+            x: t.x + t.w - d,
+            y: t.y + t.h - d,
           }
           ctx.save()
           let nv = currentMat
           ctx.transform(nv[0], nv[4], nv[1], nv[5], nv[12], nv[13]);
-          renderRound(end, 5, ctx, RectType.SELECT)
+          renderRound(endTop, r, ctx, RectType.SELECT)
+          renderRound(endBottom, r, ctx, RectType.SELECT)
 
+          renderRound(topLeft, r, ctx, RectType.SELECT)
+          renderRound(topRight, r, ctx, RectType.SELECT)
+          renderRound(bottomLeft, r, ctx, RectType.SELECT)
+          renderRound(bottomRight, r, ctx, RectType.SELECT)
           ctx.restore()
         }
       }

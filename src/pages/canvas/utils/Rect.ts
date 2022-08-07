@@ -23,7 +23,7 @@ export class Rect2 extends Shape {
     }
       = t || this.config
 
-    console.log('type,', type)
+    // console.log('type,', type)
     let oldCenter: { x: number; y: number; }
     let currentCenter: { x: number; y: number; } = {
       x: x + (w / 2),
@@ -70,7 +70,7 @@ export class Rect2 extends Shape {
     }
     ctx.restore()
     if (children) {
-      // children.map((v: any) => v.draw(ctx))
+      children.map((v: any) => v.draw(ctx))
     }
   }
 
@@ -84,15 +84,25 @@ export class Rect2 extends Shape {
   }
 
   event(location: any, type: any, e: any) {
+    console.log('捕获', this.config.name)
+    // if (e.test) return
     if (this.isIn(location.x, location.y)) {
-      this.emit(type, e)
+      // e.test = true
+      // this.emit(type, e)
+    } else {
+      // let instance = Canvas.getInstance()
+      // instance.hoverOn = null
+      // instance.draw()
+      // let ctx = Canvas.getInstance().ctx
+      // this.draw(ctx)
     }
     let {
-      children
+      children, capture
     } = this.config
     if (children) {
-      children.map((child: any) => child.event(location, type, e))
+      !capture && children.map((child: any) => child.event(location, type, e))
     }
+    console.log('冒泡', this.config.name)
   }
 
   emit(eventName: any, event: any) {
@@ -101,7 +111,9 @@ export class Rect2 extends Shape {
   }
 
   mousemove() {
-    let ctx = Canvas.getInstance().ctx
+    let instance = Canvas.getInstance();
+    instance.hoverOn = this
+    let ctx = instance.ctx
     ctx.save()
     // let nv = currentMat
     // ctx.transform(nv[0], nv[4], nv[1], nv[5], nv[12], nv[13]);
@@ -124,5 +136,9 @@ export class Rect2 extends Shape {
 
   click() {
     console.log('click', this.config.name)
+  }
+
+  dblclick() {
+    this.config.capture = !this.config.capture
   }
 }

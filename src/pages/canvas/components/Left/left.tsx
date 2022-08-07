@@ -1,4 +1,4 @@
-import React, {memo, useState} from "react"
+import React, {memo, useEffect, useState} from "react"
 import {store} from "../../store"
 import './index.scss'
 import Icon from "@icon-park/react/es/all";
@@ -83,6 +83,14 @@ export default memo((props: any) => {
       ]
     }
   ]
+
+  useEffect(() => {
+    console.log('start')
+    return () => {
+      console.log('end')
+    }
+  }, [])
+
   return (
     <div className="left-wrapper">
       <div className="temp">

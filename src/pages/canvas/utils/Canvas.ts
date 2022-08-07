@@ -1,10 +1,13 @@
 import {Shape} from "./Shape";
+import {clear, clearAll} from "../utils";
+import {debounce, throttle} from "lodash";
 
-const eventList = [
-  'click',
-  'mousemove',
-  // ...
-]
+
+enum EventType {
+  onClick = 'click',
+  onDoubleClick = 'dblclick',
+  onMouseMove = 'mousemove',
+}
 
 export class Canvas {
   private canvas: HTMLCanvasElement;
@@ -13,6 +16,7 @@ export class Canvas {
   private dpr: number;
   private children: any[]
   static instance: Canvas
+  hoverOn: any
 
   constructor(canvas: HTMLCanvasElement) {
     this.children = []
@@ -44,25 +48,42 @@ export class Canvas {
     this.children.push(shape)
   }
 
-  draw() {
+  _draw() {
+    clear({
+      x: 0, y: 0, w: this.canvas.width, h: this.canvas.height
+    }, this.ctx)
+    this.ctx.save()
     this.children.forEach(shape => shape.draw(this.ctx))
+    this.ctx.restore()
   }
 
+  // draw = debounce(this._draw, 50)
+  draw = throttle(this._draw, 50)
+
   initEvent() {
-    eventList.forEach(eventName => {
+    Object.values(EventType).forEach(eventName => {
       this.canvas.addEventListener(eventName, this.handleEvent)
     })
   }
 
   handleEvent = (e: any) => {
+    console.log('e.type', e.type)
     let x = e.x - this.canvasRect.left
     let y = e.y - this.canvasRect.top
     // this.children
     //   .filter(shape => shape.isIn(x, y))
     //   .forEach(shape => shape.emit(e.type, e))
+    if (this.hoverOn) {
+      if (e.type === EventType.onClick) {
 
-    this.children
-      .forEach(shape => shape.event({x, y}, e.type, e))
+      } else {
+      }
+      this.hoverOn.event({x, y}, e.type, e)
+
+    } else {
+      this.children
+        .forEach(shape => shape.event({x, y}, e.type, e))
+    }
   }
 
 }

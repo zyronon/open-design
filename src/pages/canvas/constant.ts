@@ -44,6 +44,7 @@ export const Colors = {
 }
 export const rects2 = [
   {
+    capture: true,
     "x": 433,
     "y": 82,
     "w": 200,
@@ -337,6 +338,7 @@ export const rects = [
     "radius": 40,
     "children": [
       {
+        capture: true,
         "x": 453,
         "y": 92,
         "w": 100,
@@ -346,7 +348,31 @@ export const rects = [
         "type": 0,
         "color": "gray",
         "radius": 40,
-        "children": [],
+        "children": [
+          {
+            bubble: false,
+            "x": 463,
+            "y": 112,
+            "w": 50,
+            "h": 100,
+            "rotate": 0,
+            "lineWidth": 2,
+            "type": 0,
+            "color": "gray",
+            "radius": 20,
+            "children": [],
+            "brokenTexts": [],
+            "borderColor": "rgb(216,216,216)",
+            "fillColor": "rgb(216,216,216)",
+            "fontSize": 0,
+            "texts": [],
+            "name": "孙矩形",
+            "leftX": 433,
+            "rightX": 733,
+            "topY": 182,
+            "bottomY": 482,
+          },
+        ],
         "brokenTexts": [],
         "borderColor": "rgb(216,216,216)",
         "fillColor": "rgb(216,216,216)",

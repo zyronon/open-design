@@ -114,7 +114,7 @@ class Design extends React.Component<any, IState> {
   }
 
   componentWillUnmount() {
-    // console.log('componentWillUnmount')
+    console.log('componentWillUnmount')
   }
 
   init() {

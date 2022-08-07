@@ -322,7 +322,7 @@ export function renderCanvas(
   }
 }
 
-export function renderRoundRect(rect: any, r: number, ctx: any) {
+export function renderRoundRect(rect: any, r: number, ctx: any,) {
   ctx.lineWidth = rect.lineWidth
   let {x, y, w, h} = rect
   ctx.beginPath()

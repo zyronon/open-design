@@ -327,6 +327,7 @@ export const rects2 = [
 
 export const rects = [
   {
+    select: false,
     "x": 433,
     "y": 82,
     "w": 200,

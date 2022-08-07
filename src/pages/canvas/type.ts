@@ -141,3 +141,14 @@ export interface RectText {
   fontWeight: FontWeight,
   fontSize: number,
 }
+
+
+export enum EventType {
+  onClick = 'click',
+  onDoubleClick = 'dblclick',
+  onMouseMove = 'mousemove',
+}
+
+export interface BaseEvent extends MouseEvent {
+  capture: boolean
+}

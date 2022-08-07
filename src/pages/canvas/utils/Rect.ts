@@ -1,6 +1,6 @@
 import {Shape} from "./Shape";
-import {RectType} from "../type";
-import {getPath, renderCanvas, renderRoundRect} from "../utils";
+import {BaseEvent, RectType} from "../type";
+import {clear, getPath, renderCanvas, renderRoundRect} from "../utils";
 import {Canvas} from "./Canvas";
 import {clone} from "lodash";
 
@@ -19,7 +19,8 @@ export class Rect2 extends Shape {
     let {
       x, y, w, h, radius,
       fillColor, borderColor, rotate, lineWidth,
-      type, flipVertical, flipHorizontal, children
+      type, flipVertical, flipHorizontal, children,
+      selected
     }
       = t || this.config
 
@@ -65,10 +66,11 @@ export class Rect2 extends Shape {
       ctx.strokeStyle = borderColor
       ctx.stroke()
     }
-    if (type === RectType.HOVER) {
-      this.hover(ctx)
-    }
+    this.hover(ctx, type)
+    this.selected(ctx, this.config)
+
     ctx.restore()
+
     if (children) {
       children.map((v: any) => v.draw(ctx))
     }
@@ -83,26 +85,24 @@ export class Rect2 extends Shape {
     return false
   }
 
-  event(location: any, type: any, e: any) {
-    // if (e.test) return
+  event(location: any, type: any, e: BaseEvent) {
+    if (e.capture) return
     if (this.isIn(location.x, location.y)) {
-      console.log('捕获', this.config.name)
-
-      // this.emit(type, e)
+      // console.log('捕获', this.config.name)
+      this.emit(type, e)
+      e.stopPropagation()
       let {
         children, capture
       } = this.config
       if (children) {
         children.map((child: any) => child.event(location, type, e))
       }
-      console.log('冒泡', this.config.name)
-
+      // console.log('冒泡', this.config.name)
     } else {
-      // let instance = Canvas.getInstance()
-      // instance.hoverOn = null
-      // instance.draw()
-      // let ctx = Canvas.getInstance().ctx
-      // this.draw(ctx)
+      // this.config.selected = false
+      let instance = Canvas.getInstance()
+      instance.hoverShape = null
+      instance.draw()
     }
   }
 
@@ -111,9 +111,10 @@ export class Rect2 extends Shape {
     this[eventName]?.(event)
   }
 
-  mousemove() {
+  mousemove(e: BaseEvent) {
+    if (this.config.selected) return
     let instance = Canvas.getInstance();
-    instance.hoverOn = this
+    instance.hoverShape = this
     let ctx = instance.ctx
     ctx.save()
     // let nv = currentMat
@@ -135,8 +136,13 @@ export class Rect2 extends Shape {
     // console.log('mousemove', this.config.name, ctx)
   }
 
-  click() {
+  click(e: BaseEvent) {
+    e.stopPropagation()
     console.log('click', this.config.name)
+    let instance = Canvas.getInstance();
+    instance.selectedShape = this
+    this.config.selected = true
+    instance.draw()
   }
 
   dblclick() {

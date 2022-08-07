@@ -1,13 +1,9 @@
 import {Shape} from "./Shape";
 import {clear, clearAll} from "../utils";
 import {debounce, throttle} from "lodash";
+import {BaseSyntheticEvent, SyntheticEvent} from "react";
+import {BaseEvent, EventType} from "../type";
 
-
-enum EventType {
-  onClick = 'click',
-  onDoubleClick = 'dblclick',
-  onMouseMove = 'mousemove',
-}
 
 export class Canvas {
   private canvas: HTMLCanvasElement;
@@ -16,7 +12,9 @@ export class Canvas {
   private dpr: number;
   private children: any[]
   static instance: Canvas | null
-  hoverOn: any
+  //当hover时，只向hover那个图形传递事件。不用递归整个树去判断isIn
+  hoverShape: any
+  selectedShape: any
 
   constructor(canvas: HTMLCanvasElement) {
     this.children = []
@@ -61,7 +59,7 @@ export class Canvas {
       x: 0, y: 0, w: this.canvas.width, h: this.canvas.height
     }, this.ctx)
     this.ctx.save()
-    console.log('this.children,', this.children)
+    // console.log('this.children,', this.children)
     this.children.forEach(shape => shape.draw(this.ctx))
     this.ctx.restore()
   }
@@ -76,23 +74,39 @@ export class Canvas {
   }
 
   handleEvent = (e: any) => {
-    console.log('e.type', e.type)
+    //重写禁止事件
+    e.stopPropagation = () => e.capture = true
+    // console.log('e.type', e.type)
     let x = e.x - this.canvasRect.left
     let y = e.y - this.canvasRect.top
     // this.children
     //   .filter(shape => shape.isIn(x, y))
     //   .forEach(shape => shape.emit(e.type, e))
-    if (this.hoverOn) {
+    if (this.hoverShape) {
       if (e.type === EventType.onClick) {
 
       } else {
       }
-      this.hoverOn.event({x, y}, e.type, e)
+      this.hoverShape.event({x, y}, e.type, e)
 
     } else {
       this.children
         .forEach(shape => shape.event({x, y}, e.type, e))
     }
+    if (e.type === EventType.onClick) {
+      this.onClick(e)
+    }
+  }
+
+  onClick(e: BaseEvent) {
+    if (e.capture) return
+    console.log('canvas画布-onClick',)
+    if (this.selectedShape) {
+      this.selectedShape.config.selected = false
+    }
+    this.selectedShape = null
+    this.hoverShape = null
+    this.draw()
   }
 
 }

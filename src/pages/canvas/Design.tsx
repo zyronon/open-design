@@ -102,12 +102,6 @@ class Design extends React.Component<any, IState> {
     cloneDeep(rects).map((rect: any) => {
       // pushRect(getPath(rect))
       let r = new Rect2(rect)
-      // r.on('click', () => {
-      //   console.log('rect-click', rect.name)
-      // })
-      // r.on('mousemove', () => {
-      //   console.log('rect-mousemove', rect.name)
-      // })
       c.addChild(r)
     })
     c.draw()

@@ -39,6 +39,14 @@ export default memo((props: any) => {
   const rectList = useSelector((state: any) => state.canvas.rectList)
   const pageList = useSelector((state: any) => state.canvas.pageList)
 
+
+  useEffect(() => {
+    console.log('start')
+    return () => {
+      console.log('end')
+    }
+  }, [])
+
   const components = [
     {
       name: '1',
@@ -83,14 +91,6 @@ export default memo((props: any) => {
       ]
     }
   ]
-
-  useEffect(() => {
-    console.log('start')
-    return () => {
-      console.log('end')
-    }
-  }, [])
-
   return (
     <div className="left-wrapper">
       <div className="temp">

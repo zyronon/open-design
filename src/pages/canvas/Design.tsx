@@ -114,7 +114,7 @@ class Design extends React.Component<any, IState> {
   }
 
   componentWillUnmount() {
-    // console.log('componentWillUnmount')
+    console.log('componentWillUnmount')
   }
 
   init() {
@@ -1220,6 +1220,7 @@ class Design extends React.Component<any, IState> {
                 </div>
                 <div className="tool">
                   <Icon type={'FiveFive'} size="20"/>
+                  <Icon type={'Down'} size="14" className='arrow'/>
                   <Icon type={'Down'} size="14" className='arrow'/>
                 </div>
                 <div className="tool">

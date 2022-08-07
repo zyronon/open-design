@@ -1,4 +1,4 @@
-import React, {memo, useState} from "react"
+import React, {memo, useEffect, useState} from "react"
 import {store} from "../../store"
 import './index.scss'
 import Icon from "@icon-park/react/es/all";
@@ -34,10 +34,18 @@ const RectComponent = (props: any) => {
   )
 }
 
-export default memo((props: any) => {
+export default (props: any) => {
   const [tabIndex, setTabIndex] = useState<number>(0)
   const rectList = useSelector((state: any) => state.canvas.rectList)
   const pageList = useSelector((state: any) => state.canvas.pageList)
+
+
+  useEffect(() => {
+    console.log('start')
+    return () => {
+      console.log('end')
+    }
+  }, [])
 
   const components = [
     {
@@ -83,6 +91,7 @@ export default memo((props: any) => {
       ]
     }
   ]
+
   return (
     <div className="left-wrapper">
       <div className="temp">
@@ -153,4 +162,4 @@ export default memo((props: any) => {
       }
     </div>
   )
-})
+}

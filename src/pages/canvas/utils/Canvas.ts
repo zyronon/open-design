@@ -15,7 +15,7 @@ export class Canvas {
   private canvasRect: DOMRect;
   private dpr: number;
   private children: any[]
-  static instance: Canvas
+  static instance: Canvas | null
   hoverOn: any
 
   constructor(canvas: HTMLCanvasElement) {
@@ -44,6 +44,14 @@ export class Canvas {
     return this.instance
   }
 
+  clearChild() {
+    this.children = []
+  }
+
+  static destroy() {
+    this.instance = null
+  }
+
   addChild(shape: Shape) {
     this.children.push(shape)
   }
@@ -53,6 +61,7 @@ export class Canvas {
       x: 0, y: 0, w: this.canvas.width, h: this.canvas.height
     }, this.ctx)
     this.ctx.save()
+    console.log('this.children,', this.children)
     this.children.forEach(shape => shape.draw(this.ctx))
     this.ctx.restore()
   }

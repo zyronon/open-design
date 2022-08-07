@@ -84,11 +84,19 @@ export class Rect2 extends Shape {
   }
 
   event(location: any, type: any, e: any) {
-    console.log('捕获', this.config.name)
     // if (e.test) return
     if (this.isIn(location.x, location.y)) {
-      // e.test = true
+      console.log('捕获', this.config.name)
+
       // this.emit(type, e)
+      let {
+        children, capture
+      } = this.config
+      if (children) {
+        children.map((child: any) => child.event(location, type, e))
+      }
+      console.log('冒泡', this.config.name)
+
     } else {
       // let instance = Canvas.getInstance()
       // instance.hoverOn = null
@@ -96,13 +104,6 @@ export class Rect2 extends Shape {
       // let ctx = Canvas.getInstance().ctx
       // this.draw(ctx)
     }
-    let {
-      children, capture
-    } = this.config
-    if (children) {
-      !capture && children.map((child: any) => child.event(location, type, e))
-    }
-    console.log('冒泡', this.config.name)
   }
 
   emit(eventName: any, event: any) {

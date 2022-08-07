@@ -38,15 +38,6 @@ export default memo((props: any) => {
   const [tabIndex, setTabIndex] = useState<number>(0)
   const rectList = useSelector((state: any) => state.canvas.rectList)
   const pageList = useSelector((state: any) => state.canvas.pageList)
-
-
-  useEffect(() => {
-    console.log('start')
-    return () => {
-      console.log('end')
-    }
-  }, [])
-
   const components = [
     {
       name: '1',

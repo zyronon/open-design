@@ -93,8 +93,11 @@ class Design extends React.Component<any, IState> {
   }
 
   componentDidMount() {
+    console.log('componentDidMount')
     let canvas: HTMLCanvasElement = this.canvasRef.current!
+    Canvas.destroy()
     let c = Canvas.getInstance(canvas)
+    c.clearChild()
     // let c = new Canvas(canvas)
     cloneDeep(rects).map((rect: any) => {
       // pushRect(getPath(rect))

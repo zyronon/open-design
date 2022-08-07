@@ -1,5 +1,5 @@
 import {connect} from "react-redux";
-import Canvas from "./Design";
+import Canvas from "./Canvas";
 
 const mapState = (state: any) => {
   return state.canvas

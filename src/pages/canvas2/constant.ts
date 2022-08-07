@@ -42,7 +42,7 @@ export const Colors = {
   primary: '#4B75F6FF',
   line: 'rgb(216,216,216)',
 }
-export const rects2 = [
+export const rects = [
   {
     "x": 433,
     "y": 82,
@@ -55,38 +55,40 @@ export const rects2 = [
     "radius": 40,
     "children": [
       {
-        "x": 453,
-        "y": 92,
-        "w": 100,
-        "h": 200,
+        "x": 433,
+        "y": 182,
+        "w": 300,
+        "h": 300,
         "rotate": 0,
         "lineWidth": 2,
-        "type": 0,
+        "type": 3,
         "color": "gray",
-        "radius": 40,
+        "radius": 100,
         "children": [],
         "brokenTexts": [],
         "borderColor": "rgb(216,216,216)",
         "fillColor": "rgb(216,216,216)",
         "fontSize": 0,
         "texts": [],
-        "name": "子矩形",
+        "name": "JUXING",
         "leftX": 433,
         "rightX": 733,
         "topY": 182,
         "bottomY": 482,
-      },
+        "id": 1659774134051
+      }
     ],
     "brokenTexts": [],
     "borderColor": "rgb(216,216,216)",
     "fillColor": "rgb(216,216,216)",
     "fontSize": 0,
     "texts": [],
-    "name": "父矩形",
+    "name": "JUXING",
     "leftX": 433,
     "rightX": 733,
     "topY": 182,
     "bottomY": 482,
+    "id": "f345f2c5-6bb0-429d-ad79-42ee0a50094d"
   },
   {
     "x": 16,
@@ -322,52 +324,4 @@ export const rects2 = [
     "bottomY": 413,
     "id": "39af9010-f373-4c6d-99be-40dc528914f0"
   }
-]
-
-export const rects = [
-  {
-    "x": 433,
-    "y": 82,
-    "w": 200,
-    "h": 400,
-    "rotate": 0,
-    "lineWidth": 2,
-    "type": 0,
-    "color": "gray",
-    "radius": 40,
-    "children": [
-      {
-        "x": 453,
-        "y": 92,
-        "w": 100,
-        "h": 200,
-        "rotate": 0,
-        "lineWidth": 2,
-        "type": 0,
-        "color": "gray",
-        "radius": 40,
-        "children": [],
-        "brokenTexts": [],
-        "borderColor": "rgb(216,216,216)",
-        "fillColor": "rgb(216,216,216)",
-        "fontSize": 0,
-        "texts": [],
-        "name": "子矩形",
-        "leftX": 433,
-        "rightX": 733,
-        "topY": 182,
-        "bottomY": 482,
-      },
-    ],
-    "brokenTexts": [],
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "rgb(216,216,216)",
-    "fontSize": 0,
-    "texts": [],
-    "name": "父矩形",
-    "leftX": 433,
-    "rightX": 733,
-    "topY": 182,
-    "bottomY": 482,
-  },
 ]

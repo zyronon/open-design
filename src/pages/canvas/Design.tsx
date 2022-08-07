@@ -36,6 +36,8 @@ import {clearRect, pushRect, removeRect, store} from "./store";
 import {clearAll, getPath, renderCanvas, renderRound} from "./utils";
 import {message} from "antd";
 import Left from "./components/Left/left"
+import {Canvas} from "./utils/Canvas";
+import {Rect2} from "./utils/Rect";
 
 const out = new Float32Array([
   0, 0, 0, 0,
@@ -45,7 +47,7 @@ const out = new Float32Array([
 ]);
 
 
-class Canvas extends React.Component<any, IState> {
+class Design extends React.Component<any, IState> {
   canvasRef: RefObject<HTMLCanvasElement> = React.createRef()
   // @ts-ignore
   body: HTMLElement = document.querySelector("body")
@@ -68,25 +70,47 @@ class Canvas extends React.Component<any, IState> {
   } as IState
 
 
-  componentDidMount() {
+  componentDidMount2() {
     // console.log('componentDidMount', this.state.fpsTimer)
     let canvas: HTMLCanvasElement = this.canvasRef.current!
 
     let canvasRect = canvas.getBoundingClientRect()
     let ctx: CanvasRenderingContext2D = canvas.getContext('2d')!
     let {width, height} = canvasRect
-    if (window.devicePixelRatio) {
+    let dpr = window.devicePixelRatio;
+    if (dpr) {
       canvas.style.width = width + "px";
       canvas.style.height = height + "px";
-      canvas.height = height * window.devicePixelRatio;
-      canvas.width = width * window.devicePixelRatio;
-      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+      canvas.height = height * dpr;
+      canvas.width = width * dpr;
+      ctx.scale(dpr, dpr);
     }
     this.setState({
       canvas,
       ctx,
       canvasRect
     }, this.init)
+  }
+
+  componentDidMount() {
+    let canvas: HTMLCanvasElement = this.canvasRef.current!
+    let c = Canvas.getInstance(canvas)
+    // let c = new Canvas(canvas)
+    cloneDeep(rects).map((rect: any) => {
+      // pushRect(getPath(rect))
+      let r = new Rect2(rect)
+      // r.on('click', () => {
+      //   console.log('rect-click', rect.name)
+      // })
+      // r.on('mousemove', () => {
+      //   console.log('rect-mousemove', rect.name)
+      // })
+      c.addChild(r)
+    })
+    c.draw()
+    c.initEvent()
+
+
   }
 
   componentWillUnmount() {
@@ -1234,13 +1258,14 @@ class Canvas extends React.Component<any, IState> {
               </div>
             </div>
             <div id="canvasArea">
+              {/*为 canvas 增加键盘事件的时候，需要给 canvas 增加一个属性 tabinex = 0 , 不然 绑定无效。*/}
               <canvas
-                onContextMenu={this.onContextMenu}
-                onDoubleClick={this.onDbClick}
-                onMouseMove={this.onMouseMoveWrapper}
-                onMouseDown={this.onMouseDown}
-                onMouseUp={this.onMouseUp}
-                onWheel={this.onWheel}
+                // onContextMenu={this.onContextMenu}
+                // onDoubleClick={this.onDbClick}
+                // onMouseMove={this.onMouseMoveWrapper}
+                // onMouseDown={this.onMouseDown}
+                // onMouseUp={this.onMouseUp}
+                // onWheel={this.onWheel}
                 id="canvas" ref={this.canvasRef}/>
             </div>
           </div>
@@ -1451,4 +1476,4 @@ class Canvas extends React.Component<any, IState> {
   }
 }
 
-export default withRouter(Canvas)
+export default withRouter(Design)

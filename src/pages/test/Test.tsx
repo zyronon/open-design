@@ -13,9 +13,6 @@ class T extends Component<any, any> {
     let canvas = document.querySelector('canvas');
     let ctx = canvas!.getContext('2d')!;
     ctx.clearRect(0, 0, 500, 500)
-    ctx.resetTransform()
-    ctx.strokeStyle = 'gray'
-    ctx.strokeRect(0, 0, 500, 500)
     ctx.save()
 
     let r = 90 * Math.PI / 180
@@ -33,7 +30,7 @@ class T extends Component<any, any> {
     ctx.lineTo(400, 100)
     ctx.lineTo(0, 100)
     ctx.lineTo(0, 0)
-    ctx.stroke()
+    // ctx.stroke()
     ctx.restore()
   }
 

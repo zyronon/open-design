@@ -94,6 +94,14 @@ class Design extends React.Component<any, IState> {
 
   componentDidMount() {
     console.log('componentDidMount')
+    this.init()
+  }
+
+  componentWillUnmount() {
+    console.log('componentWillUnmount')
+  }
+
+  init() {
     let canvas: HTMLCanvasElement = this.canvasRef.current!
     Canvas.destroy()
     let c = Canvas.getInstance(canvas)
@@ -106,15 +114,9 @@ class Design extends React.Component<any, IState> {
     })
     c.draw()
     c.initEvent()
-
-
   }
 
-  componentWillUnmount() {
-    console.log('componentWillUnmount')
-  }
-
-  init() {
+  init2() {
     clearRect()
     cloneDeep(rects).map((rect: any) => {
       pushRect(getPath(rect))

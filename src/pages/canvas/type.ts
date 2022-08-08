@@ -147,6 +147,8 @@ export enum EventType {
   onClick = 'click',
   onDoubleClick = 'dblclick',
   onMouseMove = 'mousemove',
+  onMouseDown = 'mousedown',
+  onMouseUp = 'mouseup',
 }
 
 export interface BaseEvent extends MouseEvent {

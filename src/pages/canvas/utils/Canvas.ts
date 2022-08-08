@@ -74,7 +74,7 @@ export class Canvas {
   }
 
   handleEvent = (e: any) => {
-    //重写禁止事件
+    //重写禁止伟播事件
     e.stopPropagation = () => e.capture = true
     // console.log('e.type', e.type)
     let x = e.x - this.canvasRect.left
@@ -87,18 +87,18 @@ export class Canvas {
 
       } else {
       }
-      this.hoverShape.event({x, y}, e.type, e)
+      this.hoverShape.event(e, {x, y}, e.type,)
 
     } else {
       this.children
-        .forEach(shape => shape.event({x, y}, e.type, e))
+        .forEach(shape => shape.event(e, {x, y}, e.type,))
     }
     if (e.type === EventType.onClick) {
-      this.onClick(e)
+      this.onClick(e, {x, y})
     }
   }
 
-  onClick(e: BaseEvent) {
+  onClick(e: BaseEvent, coordinate: any,) {
     if (e.capture) return
     console.log('canvas画布-onClick',)
     if (this.selectedShape) {

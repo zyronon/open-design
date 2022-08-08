@@ -6,6 +6,9 @@ import {clone} from "lodash";
 
 export class Rect2 extends Shape {
   private config: any
+  isEnter: boolean = false
+  startX: number = 0
+  startY: number = 0
 
   constructor(props: any) {
     super(props);
@@ -85,17 +88,17 @@ export class Rect2 extends Shape {
     return false
   }
 
-  event(location: any, type: any, e: BaseEvent) {
+  event(e: BaseEvent, coordinate: any, type: any,) {
     if (e.capture) return
-    if (this.isIn(location.x, location.y)) {
+    if (this.isIn(coordinate.x, coordinate.y)) {
       // console.log('捕获', this.config.name)
-      this.emit(type, e)
+      this.emit(e, coordinate, type,)
       e.stopPropagation()
       let {
         children, capture
       } = this.config
       if (children) {
-        children.map((child: any) => child.event(location, type, e))
+        children.map((child: any) => child.event(e, coordinate, type,))
       }
       // console.log('冒泡', this.config.name)
     } else {
@@ -106,12 +109,47 @@ export class Rect2 extends Shape {
     }
   }
 
-  emit(eventName: any, event: any) {
+  emit(event: any, coordinate: any, eventName: any,) {
     // @ts-ignore
-    this[eventName]?.(event)
+    this[eventName]?.(event, coordinate)
   }
 
-  mousemove(e: BaseEvent) {
+  mousedown(e: BaseEvent, coordinate: any,) {
+    console.log('mousedown', this.isEnter)
+    if (this.isEnter) return;
+    this.startX = coordinate.x
+    this.startY = coordinate.y
+    this.isEnter = true
+    if (this.config.selected) return
+    e.stopPropagation()
+    console.log('click', this.config.name)
+    let instance = Canvas.getInstance();
+    instance.selectedShape = this
+    this.config.selected = true
+    instance.draw()
+  }
+
+  mouseup(e: BaseEvent) {
+    console.log('mouseup')
+    this.isEnter = false
+  }
+
+  mousemove(e: BaseEvent, coordinate: any) {
+    console.log('mousemove', this.isEnter)
+    if (this.isEnter) {
+      let {x, y} = coordinate
+      let handScale = 1
+      console.log('enter')
+      let dx = (x - this.startX) / handScale
+      let dy = (y - this.startY) / handScale
+      this.config.x = this.config.x + dx
+      this.config.y = this.config.y + dy
+      this.config = getPath(this.config)
+      let instance = Canvas.getInstance();
+      // instance.hoverShape = this
+      instance.draw()
+    }
+
     if (this.config.selected) return
     let instance = Canvas.getInstance();
     instance.hoverShape = this
@@ -137,12 +175,7 @@ export class Rect2 extends Shape {
   }
 
   click(e: BaseEvent) {
-    e.stopPropagation()
-    console.log('click', this.config.name)
-    let instance = Canvas.getInstance();
-    instance.selectedShape = this
-    this.config.selected = true
-    instance.draw()
+
   }
 
   dblclick() {

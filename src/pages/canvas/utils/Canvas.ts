@@ -17,6 +17,10 @@ export class Canvas {
   selectedShape: any
 
   constructor(canvas: HTMLCanvasElement) {
+    this.init(canvas)
+  }
+
+  init(canvas: HTMLCanvasElement) {
     this.children = []
     let canvasRect = canvas.getBoundingClientRect()
     let ctx: CanvasRenderingContext2D = canvas.getContext('2d')!
@@ -38,6 +42,10 @@ export class Canvas {
   static getInstance(canvas?: any) {
     if (!this.instance) {
       this.instance = new Canvas(canvas)
+    } else {
+      if (canvas) {
+        this.instance.init(canvas)
+      }
     }
     return this.instance
   }
@@ -46,15 +54,12 @@ export class Canvas {
     this.children = []
   }
 
-  static destroy() {
-    this.instance = null
-  }
-
   addChild(shape: Shape) {
     this.children.push(shape)
   }
 
   _draw() {
+    // console.log('重绘所有图形')
     clear({
       x: 0, y: 0, w: this.canvas.width, h: this.canvas.height
     }, this.ctx)
@@ -65,7 +70,7 @@ export class Canvas {
   }
 
   // draw = debounce(this._draw, 50)
-  draw = throttle(this._draw, 50)
+  draw = throttle(this._draw, 10)
 
   initEvent() {
     Object.values(EventType).forEach(eventName => {
@@ -79,28 +84,20 @@ export class Canvas {
     // console.log('e.type', e.type)
     let x = e.x - this.canvasRect.left
     let y = e.y - this.canvasRect.top
-    // this.children
-    //   .filter(shape => shape.isIn(x, y))
-    //   .forEach(shape => shape.emit(e.type, e))
     if (this.hoverShape) {
-      if (e.type === EventType.onClick) {
-
-      } else {
-      }
       this.hoverShape.event(e, {x, y}, e.type,)
-
     } else {
       this.children
         .forEach(shape => shape.event(e, {x, y}, e.type,))
     }
-    if (e.type === EventType.onClick) {
-      this.onClick(e, {x, y})
+    if (e.type === EventType.onMouseDown) {
+      this.onMouseDown(e, {x, y})
     }
   }
 
-  onClick(e: BaseEvent, coordinate: any,) {
+  onMouseDown(e: BaseEvent, coordinate: any,) {
     if (e.capture) return
-    console.log('canvas画布-onClick',)
+    console.log('canvas画布-onMouseDown', this)
     if (this.selectedShape) {
       this.selectedShape.config.selected = false
     }

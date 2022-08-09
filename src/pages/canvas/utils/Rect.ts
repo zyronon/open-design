@@ -2,13 +2,14 @@ import {Shape} from "./Shape";
 import {BaseEvent, RectType} from "../type";
 import {clear, getPath, renderCanvas, renderRoundRect} from "../utils";
 import {Canvas} from "./Canvas";
-import {clone} from "lodash";
+import {clone, cloneDeep} from "lodash";
 
 export class Rect2 extends Shape {
   private config: any
   isEnter: boolean = false
   startX: number = 0
   startY: number = 0
+  original: any = null
 
   constructor(props: any) {
     super(props);
@@ -82,6 +83,7 @@ export class Rect2 extends Shape {
 
   isIn(x: number, y: number,): boolean {
     let rect = this.config
+    // console.log('isIn-rect.leftX', rect.leftX)
     if (rect.leftX! < x && x < rect.rightX! && rect.topY! < y && y < rect.bottomY!) {
       return true
     }
@@ -90,6 +92,10 @@ export class Rect2 extends Shape {
 
   event(e: BaseEvent, coordinate: any, type: any,) {
     if (e.capture) return
+    if (this.isEnter) {
+      return this.emit(e, coordinate, type,)
+    }
+
     if (this.isIn(coordinate.x, coordinate.y)) {
       // console.log('捕获', this.config.name)
       this.emit(e, coordinate, type,)
@@ -98,7 +104,7 @@ export class Rect2 extends Shape {
         children, capture
       } = this.config
       if (children) {
-        children.map((child: any) => child.event(e, coordinate, type,))
+        // children.map((child: any) => child.event(e, coordinate, type,))
       }
       // console.log('冒泡', this.config.name)
     } else {
@@ -119,6 +125,7 @@ export class Rect2 extends Shape {
     if (this.isEnter) return;
     this.startX = coordinate.x
     this.startY = coordinate.y
+    this.original = cloneDeep(this.config)
     this.isEnter = true
     if (this.config.selected) return
     e.stopPropagation()
@@ -135,19 +142,20 @@ export class Rect2 extends Shape {
   }
 
   mousemove(e: BaseEvent, coordinate: any) {
-    console.log('mousemove', this.isEnter)
+    // console.log('mousemove', [this.isEnter, this.config.selected])
     if (this.isEnter) {
+      // console.log('enter')
       let {x, y} = coordinate
       let handScale = 1
-      console.log('enter')
       let dx = (x - this.startX) / handScale
       let dy = (y - this.startY) / handScale
-      this.config.x = this.config.x + dx
-      this.config.y = this.config.y + dy
+      this.config.x = this.original.x + dx
+      this.config.y = this.original.y + dy
       this.config = getPath(this.config)
       let instance = Canvas.getInstance();
       // instance.hoverShape = this
       instance.draw()
+      return;
     }
 
     if (this.config.selected) return

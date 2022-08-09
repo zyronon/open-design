@@ -330,6 +330,8 @@ export const rects = [
     select: false,
     "x": 433,
     "y": 82,
+    "abX": 433,
+    "abY": 82,
     "w": 200,
     "h": 400,
     "rotate": 0,
@@ -340,8 +342,10 @@ export const rects = [
     "children": [
       {
         capture: true,
-        "x": 453,
-        "y": 92,
+        "x": 20,
+        "y": 10,
+        "abX": 453,
+        "abY": 92,
         "w": 100,
         "h": 200,
         "rotate": 0,
@@ -352,8 +356,10 @@ export const rects = [
         "children": [
           {
             bubble: false,
-            "x": 463,
-            "y": 112,
+            "x": 20,
+            "y": 10,
+            "abX": 463,
+            "abY": 112,
             "w": 50,
             "h": 100,
             "rotate": 0,

@@ -6,10 +6,15 @@ import {BaseEvent, EventType} from "../type";
 
 
 export class Canvas {
+  // @ts-ignore
   private canvas: HTMLCanvasElement;
+  // @ts-ignore
   public ctx: CanvasRenderingContext2D;
+  // @ts-ignore
   private canvasRect: DOMRect;
+  // @ts-ignore
   private dpr: number;
+  // @ts-ignore
   private children: any[]
   static instance: Canvas | null
   //当hover时，只向hover那个图形传递事件。不用递归整个树去判断isIn
@@ -97,7 +102,7 @@ export class Canvas {
 
   onMouseDown(e: BaseEvent, coordinate: any,) {
     if (e.capture) return
-    console.log('canvas画布-onMouseDown', this)
+    console.log('canvas画布-onMouseDown')
     if (this.selectedShape) {
       this.selectedShape.config.selected = false
     }

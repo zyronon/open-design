@@ -6,7 +6,7 @@ import {clone, cloneDeep} from "lodash";
 
 export class Rect2 extends Shape {
   private config: any
-  isEnter: boolean = false
+  handDown: boolean = false
   startX: number = 0
   startY: number = 0
   original: any = null
@@ -14,12 +14,13 @@ export class Rect2 extends Shape {
   constructor(props: any) {
     super(props);
     this.config = getPath(props)
+    console.log(this.config)
     this.config.children = this.config.children.map((child: any) => {
       return new Rect2(child)
     })
   }
 
-  draw(ctx: CanvasRenderingContext2D, t?: any): void {
+  draw(ctx: CanvasRenderingContext2D, t?: any, p?: any): void {
     let {
       x, y, w, h, radius,
       fillColor, borderColor, rotate, lineWidth,
@@ -27,6 +28,10 @@ export class Rect2 extends Shape {
       selected
     }
       = t || this.config
+    if (p) {
+      x += p.x
+      y += p.y
+    }
 
     // console.log('type,', type)
     let oldCenter: { x: number; y: number; }
@@ -76,10 +81,9 @@ export class Rect2 extends Shape {
     ctx.restore()
 
     if (children) {
-      children.map((v: any) => v.draw(ctx))
+      children.map((v: any) => v.draw(ctx, null, this.config))
     }
   }
-
 
   isIn(x: number, y: number,): boolean {
     let rect = this.config
@@ -92,7 +96,7 @@ export class Rect2 extends Shape {
 
   event(e: BaseEvent, coordinate: any, type: any,) {
     if (e.capture) return
-    if (this.isEnter) {
+    if (this.handDown) {
       return this.emit(e, coordinate, type,)
     }
 
@@ -104,11 +108,10 @@ export class Rect2 extends Shape {
         children, capture
       } = this.config
       if (children) {
-        // children.map((child: any) => child.event(e, coordinate, type,))
+        children.map((child: any) => child.event(e, coordinate, type,))
       }
       // console.log('冒泡', this.config.name)
     } else {
-      // this.config.selected = false
       let instance = Canvas.getInstance()
       instance.hoverShape = null
       instance.draw()
@@ -121,14 +124,13 @@ export class Rect2 extends Shape {
   }
 
   mousedown(e: BaseEvent, coordinate: any,) {
-    console.log('mousedown', this.isEnter)
-    if (this.isEnter) return;
+    console.log('mousedown', this.handDown, this.config.selected)
     this.startX = coordinate.x
     this.startY = coordinate.y
     this.original = cloneDeep(this.config)
-    this.isEnter = true
+    this.handDown = true
+
     if (this.config.selected) return
-    e.stopPropagation()
     console.log('click', this.config.name)
     let instance = Canvas.getInstance();
     instance.selectedShape = this
@@ -136,14 +138,19 @@ export class Rect2 extends Shape {
     instance.draw()
   }
 
+  getAllPath() {
+    this.config = getPath(this.config)
+  }
+
   mouseup(e: BaseEvent) {
     console.log('mouseup')
-    this.isEnter = false
+    this.handDown = false
+    this.getAllPath()
   }
 
   mousemove(e: BaseEvent, coordinate: any) {
     // console.log('mousemove', [this.isEnter, this.config.selected])
-    if (this.isEnter) {
+    if (this.handDown) {
       // console.log('enter')
       let {x, y} = coordinate
       let handScale = 1
@@ -167,7 +174,7 @@ export class Rect2 extends Shape {
     // ctx.transform(nv[0], nv[4], nv[1], nv[5], nv[12], nv[13]);
 
     let d = .5
-    let t = clone(this.config)
+    let t = cloneDeep(this.config)
     t.id = Date.now()
     t.lineWidth = 2
     t.x = t.x - d
@@ -176,6 +183,7 @@ export class Rect2 extends Shape {
     t.h = t.h + 2 * d
     // console.log(t)
     t.type = RectType.HOVER
+    t.children = []
     // renderCanvas(t, this.state)
     this.draw(ctx, t)
     ctx.restore()

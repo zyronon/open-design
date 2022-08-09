@@ -369,13 +369,22 @@ export function clear(x: any, ctx: any) {
   ctx.clearRect(x.x, x.y, x.w, x.h)
 }
 
-export function getPath(rect: Rect) {
+export function getPath(rect: Rect, p?: Rect) {
+  // if (p) {
+  //   rect.x += p.x
+  //   rect.y += p.y
+  // }
   rect.leftX = rect.x
   rect.rightX = rect.leftX + rect.w
   rect.topY = rect.y
   rect.bottomY = rect.topY + rect.h
   if (!rect.id) {
     rect.id = uuid()
+  }
+  if (rect.children) {
+    rect.children = rect.children.map((item: any) => {
+      return getPath(item, p)
+    })
   }
   return rect
 }

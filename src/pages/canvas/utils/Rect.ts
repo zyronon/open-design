@@ -14,10 +14,10 @@ export class Rect2 extends Shape {
   constructor(props: any) {
     super(props);
     this.config = getPath(props)
-    console.log(this.config)
     this.config.children = this.config.children.map((child: any) => {
       return new Rect2(child)
     })
+    console.log(this)
   }
 
   draw(ctx: CanvasRenderingContext2D, t?: any, p?: any): void {
@@ -29,9 +29,10 @@ export class Rect2 extends Shape {
     }
       = t || this.config
     if (p) {
-      x += p.x
-      y += p.y
+      x = this.config.abX = x + p.abX
+      y = this.config.abY = y + p.abY
     }
+
 
     // console.log('type,', type)
     let oldCenter: { x: number; y: number; }
@@ -80,6 +81,8 @@ export class Rect2 extends Shape {
 
     ctx.restore()
 
+    this.config.abX = x
+    this.config.abY = y
     if (children) {
       children.map((v: any) => v.draw(ctx, null, this.config))
     }

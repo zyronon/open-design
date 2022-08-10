@@ -144,7 +144,7 @@ export interface RectText {
 
 
 export enum EventType {
-  onClick = 'click',
+  // onClick = 'click',
   onDoubleClick = 'dblclick',
   onMouseMove = 'mousemove',
   onMouseDown = 'mousedown',

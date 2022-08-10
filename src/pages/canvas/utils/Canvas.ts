@@ -20,6 +20,7 @@ export class Canvas {
   //当hover时，只向hover那个图形传递事件。不用递归整个树去判断isIn
   hoverShape: any
   selectedShape: any
+  parentShape: any
 
   constructor(canvas: HTMLCanvasElement) {
     this.init(canvas)
@@ -89,11 +90,17 @@ export class Canvas {
     // console.log('e.type', e.type)
     let x = e.x - this.canvasRect.left
     let y = e.y - this.canvasRect.top
+    let baseEvent = {
+      e,
+      coordinate: {x, y},
+      type: e.type
+    }
+
     if (this.hoverShape) {
-      this.hoverShape.event(e, {x, y}, e.type,)
+      this.hoverShape.event(baseEvent)
     } else {
       this.children
-        .forEach(shape => shape.event(e, {x, y}, e.type,))
+        .forEach(shape => shape.event(baseEvent))
     }
     if (e.type === EventType.onMouseDown) {
       this.onMouseDown(e, {x, y})

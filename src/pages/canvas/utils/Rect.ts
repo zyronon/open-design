@@ -1,5 +1,5 @@
 import {Shape} from "./Shape";
-import {BaseEvent, RectType} from "../type";
+import {BaseEvent, EventType, RectType} from "../type";
 import {clear, getPath, renderCanvas, renderRoundRect} from "../utils";
 import {Canvas} from "./Canvas";
 import {clone, cloneDeep} from "lodash";
@@ -10,6 +10,7 @@ export class Rect2 extends Shape {
   startX: number = 0
   startY: number = 0
   original: any = null
+  lastClickTime: number = 0
 
   constructor(props: any) {
     super(props);
@@ -17,7 +18,6 @@ export class Rect2 extends Shape {
     this.config.children = this.config.children.map((child: any) => {
       return new Rect2(child)
     })
-    console.log(this)
   }
 
   draw(ctx: CanvasRenderingContext2D, t?: any, p?: any): void {
@@ -28,11 +28,13 @@ export class Rect2 extends Shape {
       selected
     }
       = t || this.config
-    if (p) {
-      x = this.config.abX = x + p.abX
-      y = this.config.abY = y + p.abY
+    let pp = p
+    if (pp) {
+      x = this.config.abX = x + pp.abX
+      y = this.config.abY = y + pp.abY
+      console.log('pp', pp.name)
+      console.log(x, y)
     }
-
 
     // console.log('type,', type)
     let oldCenter: { x: number; y: number; }
@@ -77,7 +79,7 @@ export class Rect2 extends Shape {
       ctx.stroke()
     }
     this.hover(ctx, type)
-    this.selected(ctx, this.config)
+    this.selected(ctx, {...this.config, x, y})
 
     ctx.restore()
 
@@ -97,21 +99,22 @@ export class Rect2 extends Shape {
     return false
   }
 
-  event(e: BaseEvent, coordinate: any, type: any,) {
+  event(event, parent?) {
+    let {e, coordinate, type} = event
     if (e.capture) return
     if (this.handDown) {
-      return this.emit(e, coordinate, type,)
+      return this.emit(event, parent)
     }
 
     if (this.isIn(coordinate.x, coordinate.y)) {
       // console.log('捕获', this.config.name)
-      this.emit(e, coordinate, type,)
-      e.stopPropagation()
+      this.emit(event, parent)
+      event.e.stopPropagation()
       let {
         children, capture
       } = this.config
       if (children) {
-        children.map((child: any) => child.event(e, coordinate, type,))
+        children.map((child: any) => child.event(event, this.config))
       }
       // console.log('冒泡', this.config.name)
     } else {
@@ -121,37 +124,53 @@ export class Rect2 extends Shape {
     }
   }
 
-  emit(event: any, coordinate: any, eventName: any,) {
+  emit(event, p) {
+    let {e, coordinate, type} = event
     // @ts-ignore
-    this[eventName]?.(event, coordinate)
+    this[type]?.(event, p)
   }
 
-  mousedown(e: BaseEvent, coordinate: any,) {
-    console.log('mousedown', this.handDown, this.config.selected)
+  mousedown(event: any, p) {
+    let {e, coordinate, type} = event
+
+    let instance = Canvas.getInstance();
+    if (Date.now() - this.lastClickTime < 300) {
+      console.log('dblclick')
+      instance.selectedShape = null
+      this.config.selected = false
+      instance.draw()
+      instance.parentShape = this
+      let {
+        children, capture
+      } = this.config
+      if (children) {
+        children.map((child: any) => child.event(event, this.config))
+      }
+      return;
+    }
+    this.lastClickTime = Date.now()
+
+    console.log('mousedown', this.config.name, this.handDown, this.config.selected)
     this.startX = coordinate.x
     this.startY = coordinate.y
     this.original = cloneDeep(this.config)
     this.handDown = true
 
     if (this.config.selected) return
-    console.log('click', this.config.name)
-    let instance = Canvas.getInstance();
     instance.selectedShape = this
     this.config.selected = true
-    instance.draw()
+    console.log('p', p)
+    this.draw(instance.ctx, null, p)
   }
 
-  getAllPath() {
-    this.config = getPath(this.config)
-  }
-
-  mouseup(e: BaseEvent) {
-    console.log('mouseup')
+  mouseup(event: any, p) {
+    console.log('mouseup', this.config.name,)
     this.handDown = false
-    this.getAllPath()
   }
 
-  mousemove(e: BaseEvent, coordinate: any) {
+  mousemove(event: any, p) {
+    let {e, coordinate, type} = event
+
     // console.log('mousemove', [this.isEnter, this.config.selected])
     if (this.handDown) {
       // console.log('enter')
@@ -193,11 +212,4 @@ export class Rect2 extends Shape {
     // console.log('mousemove', this.config.name, ctx)
   }
 
-  click(e: BaseEvent) {
-
-  }
-
-  dblclick() {
-    this.config.capture = !this.config.capture
-  }
 }

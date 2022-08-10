@@ -2,10 +2,8 @@ import {RectType} from "../type";
 import {clear, renderRoundRect} from "../utils";
 
 export class Shape {
-  private listenerMap: Map<string, any>;
 
   constructor(props: any) {
-    this.listenerMap = new Map()
   }
 
   // on(eventName: string, listener: Function) {

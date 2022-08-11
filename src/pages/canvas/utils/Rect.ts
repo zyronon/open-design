@@ -28,12 +28,9 @@ export class Rect2 extends Shape {
       selected
     }
       = t || this.config
-    let pp = p
-    if (pp) {
-      x = this.config.abX = x + pp.abX
-      y = this.config.abY = y + pp.abY
-      console.log('pp', pp.name)
-      console.log(x, y)
+    if (p) {
+      x = this.config.abX = x + p.abX
+      y = this.config.abY = y + p.abY
     }
 
     // console.log('type,', type)
@@ -99,7 +96,7 @@ export class Rect2 extends Shape {
     return false
   }
 
-  event(event, parent?) {
+  event(event:any, parent?:any) {
     let {e, coordinate, type} = event
     if (e.capture) return
     if (this.handDown) {
@@ -124,13 +121,13 @@ export class Rect2 extends Shape {
     }
   }
 
-  emit(event, p) {
+  emit(event:any, p:any) {
     let {e, coordinate, type} = event
     // @ts-ignore
     this[type]?.(event, p)
   }
 
-  mousedown(event: any, p) {
+  mousedown(event: any, p:any) {
     let {e, coordinate, type} = event
 
     let instance = Canvas.getInstance();
@@ -139,7 +136,6 @@ export class Rect2 extends Shape {
       instance.selectedShape = null
       this.config.selected = false
       instance.draw()
-      instance.parentShape = this
       let {
         children, capture
       } = this.config
@@ -163,12 +159,12 @@ export class Rect2 extends Shape {
     this.draw(instance.ctx, null, p)
   }
 
-  mouseup(event: any, p) {
+  mouseup(event: any, p:any) {
     console.log('mouseup', this.config.name,)
     this.handDown = false
   }
 
-  mousemove(event: any, p) {
+  mousemove(event: any, p:any) {
     let {e, coordinate, type} = event
 
     // console.log('mousemove', [this.isEnter, this.config.selected])

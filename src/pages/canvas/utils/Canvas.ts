@@ -20,7 +20,6 @@ export class Canvas {
   //当hover时，只向hover那个图形传递事件。不用递归整个树去判断isIn
   hoverShape: any
   selectedShape: any
-  parentShape: any
 
   constructor(canvas: HTMLCanvasElement) {
     this.init(canvas)

@@ -106,7 +106,12 @@ export class Rect2 extends Shape {
     if (this.isIn(coordinate.x, coordinate.y)) {
       // console.log('捕获', this.config.name)
       this.emit(event, parent)
+      let instance = Canvas.getInstance()
+
+      // if (instance.selectedShape && instance.selectedShape.config.id !== this.config.id) {
+      // } else {
       event.e.stopPropagation()
+      // }
       let {
         children, capture
       } = this.config
@@ -189,6 +194,10 @@ export class Rect2 extends Shape {
 
     if (this.config.selected) return
     let instance = Canvas.getInstance();
+    // if (instance.hoverShape) {
+    //   instance.hoverShape = false
+    //   instance.draw()
+    // }
     instance.hoverShape = this
     let ctx = instance.ctx
     ctx.save()

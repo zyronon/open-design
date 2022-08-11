@@ -96,7 +96,7 @@ export class Rect2 extends Shape {
     return false
   }
 
-  event(event:any, parent?:any) {
+  event(event: any, parent?: any) {
     let {e, coordinate, type} = event
     if (e.capture) return
     if (this.handDown) {
@@ -121,21 +121,21 @@ export class Rect2 extends Shape {
     }
   }
 
-  emit(event:any, p:any) {
+  emit(event: any, p: any) {
     let {e, coordinate, type} = event
     // @ts-ignore
     this[type]?.(event, p)
   }
 
-  mousedown(event: any, p:any) {
+  mousedown(event: any, p: any) {
     let {e, coordinate, type} = event
 
     let instance = Canvas.getInstance();
     if (Date.now() - this.lastClickTime < 300) {
       console.log('dblclick')
-      instance.selectedShape = null
-      this.config.selected = false
-      instance.draw()
+      // instance.selectedShape = null
+      // this.config.selected = false
+      // instance.draw()
       let {
         children, capture
       } = this.config
@@ -153,18 +153,22 @@ export class Rect2 extends Shape {
     this.handDown = true
 
     if (this.config.selected) return
+    if (instance.selectedShape) {
+      instance.selectedShape.config.selected = false
+      instance.draw()
+    }
     instance.selectedShape = this
     this.config.selected = true
     console.log('p', p)
     this.draw(instance.ctx, null, p)
   }
 
-  mouseup(event: any, p:any) {
+  mouseup(event: any, p: any) {
     console.log('mouseup', this.config.name,)
     this.handDown = false
   }
 
-  mousemove(event: any, p:any) {
+  mousemove(event: any, p: any) {
     let {e, coordinate, type} = event
 
     // console.log('mousemove', [this.isEnter, this.config.selected])

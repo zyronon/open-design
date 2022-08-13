@@ -1,6 +1,4 @@
-import {ShapeType} from "../type";
 import {clear, getPath, renderRoundRect} from "../utils";
-import {Rect2} from "./Rect";
 
 export class Shape {
   protected config: any
@@ -8,26 +6,6 @@ export class Shape {
   constructor(props: any) {
     this.config = getPath(props)
   }
-
-  // on(eventName: string, listener: Function) {
-  //   if (this.listenerMap.has(eventName)) {
-  //     this.listenerMap.get(eventName).push(listener)
-  //   } else {
-  //     this.listenerMap.set(eventName, [listener])
-  //   }
-  // }
-  //
-  // emit(eventName: string, event: any) {
-  //   if (event == null || event.type == null) {
-  //     return;
-  //   }
-  //   const listeners = this.listenerMap.get(eventName)
-  //   if (!listeners) return
-  //   for (let index = 0; index < listeners.length; index++) {
-  //     const handler = listeners[index];
-  //     handler(event)
-  //   }
-  // }
 
   hover(ctx: any, config: any) {
     let {
@@ -141,7 +119,6 @@ export class Shape {
     }
   }
 
-
   calcPosition(ctx: CanvasRenderingContext2D, p?: any) {
     let {
       x, y, w, h, radius,
@@ -161,7 +138,6 @@ export class Shape {
       x: x + (w / 2),
       y: y + (h / 2)
     }
-    ctx.save()
 
     ctx.lineWidth = lineWidth
     ctx.fillStyle = fillColor
@@ -184,7 +160,8 @@ export class Shape {
     return {x, y}
   }
 
-  hoverAndSelect(ctx: CanvasRenderingContext2D, p?: any) {
-
+  hoverAndSelect(ctx: CanvasRenderingContext2D, config: any) {
+    this.hover(ctx, config)
+    this.selected(ctx, config)
   }
 }

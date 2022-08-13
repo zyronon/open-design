@@ -22,6 +22,7 @@ export class Frame extends Shape {
 
   draw(ctx: CanvasRenderingContext2D, p?: any): void {
     // console.log('draw')
+    ctx.save()
     let {x, y} = this.calcPosition(ctx, p)
     let {
       w, h, radius,
@@ -46,16 +47,15 @@ export class Frame extends Shape {
       ctx.stroke()
     }
 
-    this.hover(ctx, {...this.config, x, y})
-    this.selected(ctx, {...this.config, x, y})
-
+    this.hoverAndSelect(ctx, {...this.config, x, y})
     ctx.restore()
+
     ctx.save()
     let rect = this.config
     ctx.fillStyle = 'gray'
     ctx.font = `${rect.fontWeight} ${rect.fontSize}rem "${rect.fontFamily}", sans-serif`;
     ctx.textBaseline = 'top'
-    ctx.fillText(rect.name, x, y - 16);
+    ctx.fillText(rect.name, x, y - 18);
     ctx.restore()
 
     this.config.abX = x
@@ -63,6 +63,16 @@ export class Frame extends Shape {
     if (children) {
       children.map((v: any) => v.draw(ctx, this.config))
     }
+  }
+
+  isInName(x: number, y: number,): boolean {
+    let rect = this.config
+    if (rect.leftX < x && x < (rect.leftX + 30)
+      && (rect.topY - 20) < y && y < rect.topY
+    ) {
+      return true
+    }
+    return false
   }
 
   isIn(x: number, y: number,): boolean {
@@ -73,7 +83,7 @@ export class Frame extends Shape {
     ) {
       return true
     }
-    return false
+    return this.isInName(x, y)
   }
 
   event(event: any, parent?: any) {

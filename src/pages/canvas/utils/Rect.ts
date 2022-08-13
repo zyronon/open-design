@@ -19,15 +19,14 @@ export class Rect2 extends Shape {
     })
   }
 
-  draw(ctx: CanvasRenderingContext2D, t?: any, p?: any): void {
-    let {x, y} = this.calcPosition(ctx, t, p)
+  draw(ctx: CanvasRenderingContext2D, p?: any): void {
+    let {x, y} = this.calcPosition(ctx, p)
     let {
       w, h, radius,
       fillColor, borderColor, rotate, lineWidth,
       type, flipVertical, flipHorizontal, children,
       selected
-    }
-      = t || this.config
+    } = this.config
 
     if (radius) {
       renderRoundRect({x, y, w, h}, radius, ctx)
@@ -44,15 +43,14 @@ export class Rect2 extends Shape {
       ctx.strokeStyle = borderColor
       ctx.stroke()
     }
-    this.hover(ctx, type)
-    this.selected(ctx, {...this.config, x, y})
+    this.hoverAndSelect(ctx, {...this.config, x, y})
 
     ctx.restore()
 
     this.config.abX = x
     this.config.abY = y
     if (children) {
-      children.map((v: any) => v.draw(ctx, null, this.config))
+      children.map((v: any) => v.draw(ctx, this.config))
     }
   }
 
@@ -137,7 +135,7 @@ export class Rect2 extends Shape {
     instance.selectedShape = this
     this.config.selected = true
     console.log('p', p)
-    this.draw(instance.ctx, null, p)
+    this.draw(instance.ctx, p)
   }
 
   mouseup(event: any, p: any) {

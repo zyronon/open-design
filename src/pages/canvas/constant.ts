@@ -331,7 +331,7 @@ export const rects = [
     "x": 433,
     "y": 30,
     "abX": 433,
-    "abY": 82,
+    "abY": 30,
     "w": 280,
     "h": 580,
     "rotate": 0,

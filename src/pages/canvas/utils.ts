@@ -1,4 +1,4 @@
-import {IState, Rect, RectType, TextAlign} from "./type";
+import {IState, Shape, ShapeType, TextAlign} from "./type";
 import {store} from "./store";
 // @ts-ignore
 import {v4 as uuid} from 'uuid';
@@ -6,9 +6,9 @@ import {Colors} from "./constant";
 import {getRotatedPoint} from "../../utils";
 
 export function renderCanvas(
-  rect: Rect,
+  rect: Shape,
   state: IState,
-  parent?: Rect,
+  parent?: Shape,
 ) {
   let {
     ctx, enterLT, enterRT, selectRect, activeHand, enter, offsetX, offsetY,
@@ -89,11 +89,11 @@ export function renderCanvas(
 
   // ctx.strokeRect(x, y, w, h)
   if (
-    type === RectType.RECT
-    || type === RectType.HOVER
-    || type === RectType.SELECT
+    type === ShapeType.RECT
+    || type === ShapeType.HOVER
+    || type === ShapeType.SELECT
   ) {
-    if (radius && type !== RectType.SELECT) {
+    if (radius && type !== ShapeType.SELECT) {
       renderRoundRect({x, y, w, h}, radius, ctx)
     } else {
       ctx.beginPath()
@@ -107,7 +107,7 @@ export function renderCanvas(
   }
 
   switch (type) {
-    case RectType.ROUND:
+    case ShapeType.ROUND:
       let a = w / 2, b = h / 2
       let ox = 0.5 * a,
         oy = .6 * b;
@@ -124,7 +124,7 @@ export function renderCanvas(
       ctx.fill();
       ctx.restore();
       break
-    case RectType.STAR:
+    case ShapeType.STAR:
       ctx.save();
       let outA = w / 2;
       let outB = h / 2;
@@ -150,7 +150,7 @@ export function renderCanvas(
       ctx.restore();
 
       break
-    case RectType.POLYGON: {
+    case ShapeType.POLYGON: {
       ctx.save();
       let outA = w / 2;
       let outB = h / 2;
@@ -168,7 +168,7 @@ export function renderCanvas(
       ctx.restore();
       break
     }
-    case RectType.TEXT:
+    case ShapeType.TEXT:
       // ctx.fillStyle = 'white'
       ctx.font = `${rect.fontWeight} ${rect.fontSize}rem "${rect.fontFamily}", sans-serif`;
       ctx.textBaseline = 'top'
@@ -188,13 +188,13 @@ export function renderCanvas(
         text && ctx.fillText(text, lX, y + (index * rect.textLineHeight));
       })
       break
-    case RectType.RECT:
+    case ShapeType.RECT:
       ctx.fillStyle = fillColor
       ctx.fill()
       ctx.strokeStyle = borderColor
       ctx.stroke()
       break
-    case RectType.IMG:
+    case ShapeType.IMG:
       let currentImg = store.images.get(rect.id)
       if (currentImg) {
         ctx.drawImage(currentImg, x, y, w, h);
@@ -212,11 +212,11 @@ export function renderCanvas(
       // ctx.strokeStyle = borderColor
       // ctx.stroke()
       break
-    case RectType.HOVER:
+    case ShapeType.HOVER:
       ctx.strokeStyle = 'rgb(139,80,255)'
       ctx.stroke()
       break
-    case RectType.PENCIL:
+    case ShapeType.PENCIL:
       if (rect.points?.length) {
         ctx.strokeStyle = rect.borderColor
         // ctx.lineCap = "round";
@@ -227,7 +227,7 @@ export function renderCanvas(
         ctx.stroke()
       }
       break
-    case RectType.PEN:
+    case ShapeType.PEN:
       if (rect.points?.length) {
         ctx.strokeStyle = rect.borderColor
         ctx.lineCap = "round";
@@ -240,7 +240,7 @@ export function renderCanvas(
                 w: rect.w,
                 h: rect.h,
               }, 4, ctx,
-              index !== arr.length - 1 ? undefined : RectType.RECT)
+              index !== arr.length - 1 ? undefined : ShapeType.RECT)
           }
           ctx.beginPath()
           ctx.moveTo(item.x, item.y)
@@ -251,7 +251,7 @@ export function renderCanvas(
         })
       }
       break
-    case RectType.SELECT: {
+    case ShapeType.SELECT: {
       // console.log('select')
 
       ctx.strokeStyle = 'rgb(139,80,255)'
@@ -335,18 +335,18 @@ export function renderRoundRect(rect: any, r: number, ctx: any,) {
   ctx.stroke()
 }
 
-export function renderRound(rect: any, r: number, ctx: any, type: RectType = RectType.RECT) {
+export function renderRound(rect: any, r: number, ctx: any, type: ShapeType = ShapeType.RECT) {
   let {x, y} = rect
   ctx.save()
   ctx.lineWidth = 2
-  if (type === RectType.RECT) {
+  if (type === ShapeType.RECT) {
     ctx.fillStyle = Colors.primary
   } else {
     ctx.strokeStyle = Colors.primary
   }
   ctx.beginPath()
   ctx.arc(x, y, r, 0, 2 * Math.PI)
-  if (type === RectType.RECT) {
+  if (type === ShapeType.RECT) {
     ctx.fill()
   } else {
     ctx.stroke()

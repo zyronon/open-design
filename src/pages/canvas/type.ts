@@ -1,5 +1,5 @@
 export type IState = {
-  rectList: Rect[],
+  rectList: Shape[],
   canvas: HTMLCanvasElement,
   ctx: CanvasRenderingContext2D,
   canvasRect: DOMRect,
@@ -12,7 +12,7 @@ export type IState = {
   enterRT: boolean,
   hoverLTR: boolean,//左上角 旋转
   enterLTR: boolean,
-  selectRect?: Rect,
+  selectRect?: Shape,
   startX: number,
   startY: number,
   offsetX: number,
@@ -44,11 +44,11 @@ export type IState = {
   enterPen: boolean,
   isEdit: boolean,
 
-  drawType: RectType
+  drawType: ShapeType
 }
 
 
-export enum RectType {
+export enum ShapeType {
   RECT = 0,
   SELECT = 3,
   TEXT = 4,
@@ -68,7 +68,7 @@ export interface RectImg {
   img: any,
 }
 
-export interface Rect extends RectText, RectImg {
+export interface Shape extends RectText, RectImg {
   id: number | string,
   name?: number | string,
   x: number,
@@ -77,7 +77,7 @@ export interface Rect extends RectText, RectImg {
   h: number,
   rotate: number,
   lineWidth: number,
-  type: RectType,
+  type: ShapeType,
   color: string,
   fillColor: string,
   borderColor: string,
@@ -86,7 +86,7 @@ export interface Rect extends RectText, RectImg {
   rightX?: number,
   bottomY?: number,
   radius: number,
-  children: Rect[],
+  children: Shape[],
   flipVertical?: boolean,
   flipHorizontal?: boolean,
   points?: any[]

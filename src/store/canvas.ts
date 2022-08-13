@@ -1,9 +1,9 @@
 import {createSlice, nanoid} from '@reduxjs/toolkit';
-import {Rect} from "../pages/canvas/type"
+import {Shape} from "../pages/canvas/type"
 import {cloneDeep} from "lodash"
 
 export type CanvasState = {
-  rectList: Rect[]
+  rectList: Shape[]
   pageList: any[]
 }
 

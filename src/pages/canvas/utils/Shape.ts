@@ -1,9 +1,12 @@
-import {RectType} from "../type";
-import {clear, renderRoundRect} from "../utils";
+import {ShapeType} from "../type";
+import {clear, getPath, renderRoundRect} from "../utils";
+import {Rect2} from "./Rect";
 
 export class Shape {
+  protected config: any
 
   constructor(props: any) {
+    this.config = getPath(props)
   }
 
   // on(eventName: string, listener: Function) {
@@ -26,9 +29,33 @@ export class Shape {
   //   }
   // }
 
-  hover(ctx: any, type: RectType) {
-    if (type === RectType.HOVER) {
-      // console.log('hover')
+  hover(ctx: any, config: any) {
+    let {
+      x, y, w, h, radius,
+      fillColor, borderColor, rotate,
+      type, flipVertical, flipHorizontal, children,
+    } = config
+    if (this.config.hovered) {
+      let d = .5
+      let hover: any = {}
+      hover.lineWidth = 2
+      hover.x = x - d
+      hover.y = y - d
+      hover.w = w + 2 * d
+      hover.h = h + 2 * d
+      if (radius) {
+        renderRoundRect(hover, radius, ctx)
+      } else {
+        ctx.beginPath()
+        ctx.moveTo(hover.x, hover.y)
+        ctx.lineTo(hover.x + hover.w, hover.y);
+        ctx.lineTo(hover.x + hover.w, hover.y + hover.h);
+        ctx.lineTo(hover.x, hover.y + hover.h);
+        ctx.lineTo(hover.x, hover.y);
+        ctx.closePath()
+        ctx.strokeStyle = borderColor
+        ctx.stroke()
+      }
       ctx.strokeStyle = 'rgb(139,80,255)'
       ctx.stroke()
     }
@@ -115,7 +142,49 @@ export class Shape {
   }
 
 
-  preDraw() {
+  calcPosition(ctx: CanvasRenderingContext2D, p?: any) {
+    let {
+      x, y, w, h, radius,
+      fillColor, borderColor, rotate, lineWidth,
+      type, flipVertical, flipHorizontal, children,
+      selected
+    }
+      = this.config
+    if (p) {
+      x = this.config.abX = x + p.abX
+      y = this.config.abY = y + p.abY
+    }
+
+    // console.log('type,', type)
+    let oldCenter: { x: number; y: number; }
+    let currentCenter: { x: number; y: number; } = {
+      x: x + (w / 2),
+      y: y + (h / 2)
+    }
+    ctx.save()
+
+    ctx.lineWidth = lineWidth
+    ctx.fillStyle = fillColor
+    ctx.strokeStyle = borderColor
+
+    let tranX = 0
+    let tranY = 0
+    let scaleX = 1
+    let scaleY = 1
+    if (rotate || flipHorizontal) {
+      tranX = x + w / 2
+      tranY = y + h / 2
+      x = -w / 2
+      y = -h / 2
+    }
+
+    ctx.translate(tranX, tranY)
+    ctx.scale(scaleX, scaleY)
+    ctx.rotate(rotate * Math.PI / 180)
+    return {x, y}
+  }
+
+  hoverAndSelect(ctx: CanvasRenderingContext2D, p?: any) {
 
   }
 }

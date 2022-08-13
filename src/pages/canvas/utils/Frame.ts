@@ -1,10 +1,11 @@
 import {Shape} from "./Shape";
-import {BaseEvent, EventType, ShapeType} from "../type";
+import {BaseEvent, EventType, ShapeType, TextAlign} from "../type";
 import {clear, getPath, renderCanvas, renderRoundRect} from "../utils";
 import {Canvas} from "./Canvas";
 import {clone, cloneDeep} from "lodash";
+import {Rect2} from "./Rect";
 
-export class Rect2 extends Shape {
+export class Frame extends Shape {
   handDown: boolean = false
   capture: boolean = true
   startX: number = 0
@@ -19,15 +20,15 @@ export class Rect2 extends Shape {
     })
   }
 
-  draw(ctx: CanvasRenderingContext2D, t?: any, p?: any): void {
-    let {x, y} = this.calcPosition(ctx, t, p)
+  draw(ctx: CanvasRenderingContext2D, p?: any): void {
+    // console.log('draw')
+    let {x, y} = this.calcPosition(ctx, p)
     let {
       w, h, radius,
       fillColor, borderColor, rotate, lineWidth,
       type, flipVertical, flipHorizontal, children,
       selected
-    }
-      = t || this.config
+    } = this.config
 
     if (radius) {
       renderRoundRect({x, y, w, h}, radius, ctx)
@@ -44,22 +45,32 @@ export class Rect2 extends Shape {
       ctx.strokeStyle = borderColor
       ctx.stroke()
     }
-    this.hover(ctx, type)
+
+    this.hover(ctx, {...this.config, x, y})
     this.selected(ctx, {...this.config, x, y})
 
+    ctx.restore()
+    ctx.save()
+    let rect = this.config
+    ctx.fillStyle = 'gray'
+    ctx.font = `${rect.fontWeight} ${rect.fontSize}rem "${rect.fontFamily}", sans-serif`;
+    ctx.textBaseline = 'top'
+    ctx.fillText(rect.name, x, y - 16);
     ctx.restore()
 
     this.config.abX = x
     this.config.abY = y
     if (children) {
-      children.map((v: any) => v.draw(ctx, null, this.config))
+      children.map((v: any) => v.draw(ctx, this.config))
     }
   }
 
   isIn(x: number, y: number,): boolean {
     let rect = this.config
     // console.log('isIn-rect.leftX', rect.leftX)
-    if (rect.leftX! < x && x < rect.rightX! && rect.topY! < y && y < rect.bottomY!) {
+    if (rect.leftX < x && x < rect.rightX
+      && rect.topY < y && y < rect.bottomY
+    ) {
       return true
     }
     return false
@@ -92,9 +103,11 @@ export class Rect2 extends Shape {
       event.e.stopPropagation()
       // console.log('冒泡', this.config.name)
     } else {
+      console.log('isIn', this.config.hovered)
       let instance = Canvas.getInstance()
       instance.hoverShape = null
       instance.draw()
+      this.config.hovered = false
     }
   }
 
@@ -106,6 +119,7 @@ export class Rect2 extends Shape {
 
   mousedown(event: any, p: any) {
     let {e, coordinate, type} = event
+    this.config.hovered = false
 
     let instance = Canvas.getInstance();
     if (Date.now() - this.lastClickTime < 300) {
@@ -137,7 +151,7 @@ export class Rect2 extends Shape {
     instance.selectedShape = this
     this.config.selected = true
     console.log('p', p)
-    this.draw(instance.ctx, null, p)
+    this.draw(instance.ctx, p)
   }
 
   mouseup(event: any, p: any) {
@@ -164,31 +178,18 @@ export class Rect2 extends Shape {
       return;
     }
 
+    console.log('mousemove', this.config.hovered)
+
     if (this.config.selected) return
+    if (this.config.hovered) return
+    this.config.hovered = true
     let instance = Canvas.getInstance();
-    // if (instance.hoverShape) {
-    //   instance.hoverShape = false
-    //   instance.draw()
-    // }
     instance.hoverShape = this
     let ctx = instance.ctx
     ctx.save()
     // let nv = currentMat
     // ctx.transform(nv[0], nv[4], nv[1], nv[5], nv[12], nv[13]);
-
-    let d = .5
-    let t = cloneDeep(this.config)
-    t.id = Date.now()
-    t.lineWidth = 2
-    t.x = t.x - d
-    t.y = t.y - d
-    t.w = t.w + 2 * d
-    t.h = t.h + 2 * d
-    // console.log(t)
-    t.type = ShapeType.HOVER
-    t.children = []
-    // renderCanvas(t, this.state)
-    this.draw(ctx, t)
+    this.draw(ctx)
     ctx.restore()
     // console.log('mousemove', this.config.name, ctx)
   }

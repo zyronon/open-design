@@ -27,17 +27,18 @@ import {mat4} from 'gl-matrix'
 import Fps from "../../components/Fps";
 import {BaseOption, BaseSelect} from "../../components/BaseSelect";
 import {Colors, fontFamilies, fontSize, fontWeight, rects} from "./constant";
-import {FontFamily, FontWeight, IState, Rect, RectColorType, RectType, TextAlign, TextMode} from "./type";
+import {FontFamily, FontWeight, IState, RectColorType, Shape, ShapeType, TextAlign, TextMode} from "./type";
 import {BaseRadio, BaseRadioGroup} from "../../components/BaseRadio";
 import BaseSlotButton from "../../components/BaseSlotButton";
 import BasePicker from "../../components/BasePicker"
 import Icon from '@icon-park/react/es/all';
-import {clearRect, pushRect, removeRect, store} from "./store";
+import {pushRect, removeRect, store} from "./store";
 import {clearAll, getPath, renderCanvas, renderRound} from "./utils";
 import {message} from "antd";
 import Left from "./components/Left/left"
 import {Canvas} from "./utils/Canvas";
 import {Rect2} from "./utils/Rect";
+import {Frame} from "./utils/Frame";
 
 const out = new Float32Array([
   0, 0, 0, 0,
@@ -69,29 +70,6 @@ class Design extends React.Component<any, IState> {
     rectColorType: null,
   } as IState
 
-
-  componentDidMount2() {
-    // console.log('componentDidMount', this.state.fpsTimer)
-    let canvas: HTMLCanvasElement = this.canvasRef.current!
-
-    let canvasRect = canvas.getBoundingClientRect()
-    let ctx: CanvasRenderingContext2D = canvas.getContext('2d')!
-    let {width, height} = canvasRect
-    let dpr = window.devicePixelRatio;
-    if (dpr) {
-      canvas.style.width = width + "px";
-      canvas.style.height = height + "px";
-      canvas.height = height * dpr;
-      canvas.width = width * dpr;
-      ctx.scale(dpr, dpr);
-    }
-    this.setState({
-      canvas,
-      ctx,
-      canvasRect
-    }, this.init)
-  }
-
   componentDidMount() {
     console.log('componentDidMount')
     this.init()
@@ -107,53 +85,17 @@ class Design extends React.Component<any, IState> {
     c.clearChild()
     // let c = new Canvas(canvas)
     // let c = new Canvas(canvas)
-    cloneDeep(rects).map((rect: any) => {
+    cloneDeep(rects).map((rect: Shape) => {
       // pushRect(getPath(rect))
-      let r = new Rect2(rect)
+      let r
+      if (rect.type === ShapeType.FRAME) {
+        r = new Frame(rect)
+      }
+      // @ts-ignore
       c.addChild(r)
     })
     c.draw()
     c.initEvent()
-  }
-
-  init2() {
-    clearRect()
-    cloneDeep(rects).map((rect: any) => {
-      pushRect(getPath(rect))
-    })
-    this.setState({
-      selectRect: undefined,
-      currentPoint: {x: 0, y: 0,},
-      oldHandMove: {x: 0, y: 0,},
-      activeHand: false,
-      // handMove: { x: -174.03750610351562, y: -174.03750610351562, },
-      // handScale: 1.4641001224517822,
-      // currentMat: new Float32Array([
-      //   1.4641001224517822, 0, 0, 0,
-      //   0, 1.4641001224517822, 0, 0,
-      //   0, 0, 1, 0,
-      //   -174.03750610351562, -174.03750610351562, 0, 1
-      // ]),
-      handMove: {x: 0, y: 0,},
-      handScale: 1,
-      currentMat: new Float32Array([
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        0, 0, 0, 1,
-      ]),
-      showPicker: false,
-      usePencil: false,
-      enterPencil: false,
-      usePen: false,
-      enterPen: false,
-      isEdit: false,
-      rectColor: null,
-      rectColorType: null,
-      rectList: [],
-
-      drawType: RectType.POLYGON
-    }, this.draw)
   }
 
   draw() {
@@ -175,7 +117,7 @@ class Design extends React.Component<any, IState> {
     // this.state.ctx.lineCap = 'square'
     this.state.ctx.lineCap = 'round'
     // console.log('this.state.boxList', this.state.boxList)
-    store.rectList.map((v: Rect) => {
+    store.rectList.map((v: Shape) => {
       renderCanvas(v, this.state)
     })
     ctx.restore()
@@ -223,7 +165,7 @@ class Design extends React.Component<any, IState> {
     console.log('e', x, y)
     console.log('onDoubleClick', selectRect)
 
-    if (selectRect?.type === RectType.TEXT) {
+    if (selectRect?.type === ShapeType.TEXT) {
       ctx.save()
       let current = this.getSelect()
       let input = document.createElement('textarea')
@@ -290,7 +232,7 @@ class Design extends React.Component<any, IState> {
           h: 150,
           rotate: 0,
           lineWidth: 2,
-          type: RectType.PENCIL,
+          type: ShapeType.PENCIL,
           radius: 0,
           points: [{x, y}],
           children: [],
@@ -321,7 +263,7 @@ class Design extends React.Component<any, IState> {
             h: 150,
             rotate: 0,
             lineWidth: 2,
-            type: RectType.PEN,
+            type: ShapeType.PEN,
             radius: 0,
             points: [{x, y}],
             children: [],
@@ -422,7 +364,7 @@ class Design extends React.Component<any, IState> {
     }
 
     for (let i = 0; i < rectList.length; i++) {
-      let selectIndex = old[i].children.findIndex(w => w.type === RectType.SELECT)
+      let selectIndex = old[i].children.findIndex(w => w.type === ShapeType.SELECT)
       if (selectIndex !== -1) {
         old[i].children.splice(selectIndex, 1)
       }
@@ -436,9 +378,9 @@ class Design extends React.Component<any, IState> {
         let t = clone(now)
         t.id = Date.now()
         t.lineWidth = 2
-        t.type = RectType.SELECT
+        t.type = ShapeType.SELECT
         t.children = []
-        let cIndex = now.children.findIndex(v => v.type === RectType.SELECT)
+        let cIndex = now.children.findIndex(v => v.type === ShapeType.SELECT)
         // console.log(cIndex)
         if (cIndex !== -1) {
           now.children[cIndex] = t
@@ -516,8 +458,8 @@ class Design extends React.Component<any, IState> {
     })
 
     if (e.button === 2) {
-      let select: Rect = this.getSelect()
-      if ((select.type === RectType.PEN || select.type === RectType.PENCIL)
+      let select: Shape = this.getSelect()
+      if ((select.type === ShapeType.PEN || select.type === ShapeType.PENCIL)
         && select.points!.length <= 1
       ) {
         removeRect(select)
@@ -529,7 +471,7 @@ class Design extends React.Component<any, IState> {
     console.log('onMouseUp')
   }
 
-  isPointInPath(x: number, y: number, rect: Rect) {
+  isPointInPath(x: number, y: number, rect: Shape) {
     const {handMove, handScale, ctx, currentMat} = this.state
     const {x: handX, y: handY} = handMove
     //减去画布平移的距离
@@ -556,7 +498,7 @@ class Design extends React.Component<any, IState> {
     }
 
     let isIn = false
-    let selectBox = rect.children.find(v => v.type === RectType.SELECT)
+    let selectBox = rect.children.find(v => v.type === ShapeType.SELECT)
     //判断是否在矩形里面
     if (rect.leftX! < x && x < rect.rightX! && rect.topY! < y && y < rect.bottomY!) {
       if (!selectBox) {
@@ -577,12 +519,12 @@ class Design extends React.Component<any, IState> {
         t.w = t.w + 2 * d
         t.h = t.h + 2 * d
         // console.log(t)
-        t.type = RectType.HOVER
+        t.type = ShapeType.HOVER
         renderCanvas(t, this.state)
         ctx.restore()
       } else {
         //当选中时，并且hover在图形上面
-        if (rect.type === RectType.RECT) {
+        if (rect.type === ShapeType.RECT) {
           let d = 20
           d = 40
           let r = 4
@@ -614,13 +556,13 @@ class Design extends React.Component<any, IState> {
           ctx.save()
           let nv = currentMat
           ctx.transform(nv[0], nv[4], nv[1], nv[5], nv[12], nv[13]);
-          renderRound(endTop, r, ctx, RectType.SELECT)
-          renderRound(endBottom, r, ctx, RectType.SELECT)
+          renderRound(endTop, r, ctx, ShapeType.SELECT)
+          renderRound(endBottom, r, ctx, ShapeType.SELECT)
 
-          renderRound(topLeft, r, ctx, RectType.SELECT)
-          renderRound(topRight, r, ctx, RectType.SELECT)
-          renderRound(bottomLeft, r, ctx, RectType.SELECT)
-          renderRound(bottomRight, r, ctx, RectType.SELECT)
+          renderRound(topLeft, r, ctx, ShapeType.SELECT)
+          renderRound(topRight, r, ctx, ShapeType.SELECT)
+          renderRound(bottomLeft, r, ctx, ShapeType.SELECT)
+          renderRound(bottomRight, r, ctx, ShapeType.SELECT)
           ctx.restore()
         }
       }
@@ -796,7 +738,7 @@ class Design extends React.Component<any, IState> {
         let newHeight = newBottomRightPoint.y - newTopLeftPoint.y
 
 
-        if (rect.type === RectType.TEXT) {
+        if (rect.type === ShapeType.TEXT) {
           this.calcText(null, null, null,
             null,
             TextMode.FIXED,
@@ -850,7 +792,7 @@ class Design extends React.Component<any, IState> {
         let newHeight = newBottomLeftPoint.y - newTopRightPoint.y
 
 
-        if (rect.type === RectType.TEXT) {
+        if (rect.type === ShapeType.TEXT) {
           this.calcText(null, null, null,
             null,
             TextMode.FIXED,
@@ -1030,7 +972,7 @@ class Design extends React.Component<any, IState> {
     let {
       ctx
     } = this.state
-    let current: Rect = this.getSelect()
+    let current: Shape = this.getSelect()
 
     let brokenTexts = current.brokenTexts
 
@@ -1194,7 +1136,7 @@ class Design extends React.Component<any, IState> {
     } = this.state
     // console.log('selectRect', selectRect?.fontFamily)
     // @ts-ignore
-    const selectRect: Rect = this.getSelect()
+    const selectRect: Shape = this.getSelect()
     // console.log('se', selectRect)
     const type = selectRect?.type
     return <>
@@ -1234,19 +1176,19 @@ class Design extends React.Component<any, IState> {
                 <div className={cx('tool', usePen && 'active')}>
                   <Icon type={'ElectronicPen'} size="20"/>
                 </div>
-                <div className={cx('tool', drawType === RectType.RECT && 'active')}>
+                <div className={cx('tool', drawType === ShapeType.RECT && 'active')}>
                   <Icon type={'RectangleOne'} size="20"/>
                 </div>
-                <div className={cx('tool', drawType === RectType.ROUND && 'active')}>
+                <div className={cx('tool', drawType === ShapeType.ROUND && 'active')}>
                   <Icon type={'Round'} size="20"/>
                 </div>
-                <div className={cx('tool', drawType === RectType.POLYGON && 'active')}>
+                <div className={cx('tool', drawType === ShapeType.POLYGON && 'active')}>
                   <Icon type={'Triangle'} size="20"/>
                 </div>
-                <div className={cx('tool', drawType === RectType.STAR && 'active')}>
+                <div className={cx('tool', drawType === ShapeType.STAR && 'active')}>
                   <Icon type={'star'} size="20"/>
                 </div>
-                <div className={cx('tool', drawType === RectType.IMG && 'active')}>
+                <div className={cx('tool', drawType === ShapeType.IMG && 'active')}>
                   <Icon type={'pic'} size="20"/>
                 </div>
               </div>
@@ -1318,7 +1260,7 @@ class Design extends React.Component<any, IState> {
                 </div>
               </div>
               {
-                type === RectType.TEXT &&
+                type === ShapeType.TEXT &&
                   <div className="base-info">
                     <div className="header">文字</div>
                     <div className="row-single">

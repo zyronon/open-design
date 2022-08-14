@@ -19,7 +19,9 @@ export class Canvas {
   static instance: Canvas | null
   //当hover时，只向hover那个图形传递事件。不用递归整个树去判断isIn
   hoverShape: any
+  inShape: any
   selectedShape: any
+  childIsIn: boolean = false
 
   constructor(canvas: HTMLCanvasElement) {
     this.init(canvas)
@@ -76,6 +78,7 @@ export class Canvas {
 
   // draw = debounce(this._draw, 50)
   draw = throttle(this._draw, 10)
+  handleEvent = throttle(e => this._handleEvent(e), 10)
 
   initEvent() {
     Object.values(EventType).forEach(eventName => {
@@ -83,7 +86,7 @@ export class Canvas {
     })
   }
 
-  handleEvent = (e: any) => {
+  _handleEvent = (e: any) => {
     //重写禁止伟播事件
     e.stopPropagation = () => e.capture = true
     // console.log('e.type', e.type)
@@ -95,11 +98,18 @@ export class Canvas {
       type: e.type
     }
 
-    if (this.hoverShape) {
-      this.hoverShape.event(baseEvent)
+    if (this.inShape) {
+      this.inShape.event(baseEvent)
     } else {
       this.children
-        .forEach(shape => shape.event(baseEvent))
+        .forEach(shape => shape.event(baseEvent, null, () => {
+          this.childIsIn = true
+        }))
+      if (!this.childIsIn) {
+        // this.hoverShape?.isHover = false
+        // this.draw()
+      }
+      this.childIsIn = false
     }
     if (e.type === EventType.onMouseDown) {
       this.onMouseDown(e, {x, y})

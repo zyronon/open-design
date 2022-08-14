@@ -20,7 +20,7 @@ export class Frame extends Shape {
   }
 
   draw(ctx: CanvasRenderingContext2D, p?: any): void {
-    // console.log('draw')
+    // console.log('draw', this.config.name)
     ctx.save()
     let {x, y} = this.calcPosition(ctx, p)
     let {
@@ -86,12 +86,26 @@ export class Frame extends Shape {
     return this.isInName(x, y)
   }
 
-  event(event: any, parent?: any) {
+  event(event: any, parent?: any, cb?: Function) {
     let {e, coordinate, type} = event
+    console.log('event', this.config.name, `type：${type}`,)
+    if (e.capture) return
+
     if (this.handDown) {
       return this.emit(event, parent)
     }
+    let instance = Canvas.getInstance()
+
     if (this.isIn(coordinate.x, coordinate.y)) {
+      if (instance.inShape) {
+        console.log('instance.inShape', instance.inShape.config.name,instance.inShape !== this)
+        if (instance.inShape !== this) {
+          instance.inShape.isHover = false
+          instance.draw()
+        }
+      }
+      instance.inShape = this
+      cb?.()
       // console.log('捕获', this.config.name)
       if (!this.isCapture) {
         let {children} = this.config
@@ -102,13 +116,15 @@ export class Frame extends Shape {
 
       if (e.capture) return
       this.emit(event, parent)
-      if (this.isSelect) {
+      if (this.isSelect || this.isHover) {
         event.e.stopPropagation()
       }
       // console.log('冒泡', this.config.name)
     } else {
+      if (instance.inShape === this) {
+        instance.inShape = null
+      }
       // console.log('isIn', this.isHover)
-      let instance = Canvas.getInstance()
       instance.hoverShape = null
       instance.draw()
       this.isHover = false
@@ -117,9 +133,8 @@ export class Frame extends Shape {
 
   mousedown(event: any, p: any) {
     let {e, coordinate, type} = event
-    this.isHover = false
+    let instance = Canvas.getInstance()
 
-    let instance = Canvas.getInstance();
     if (Date.now() - this.lastClickTime < 300) {
       console.log('dblclick')
       // instance.selectedShape = null
@@ -131,26 +146,43 @@ export class Frame extends Shape {
         children, capture
       } = this.config
       if (children) {
-        children.map((child: any) => child.event(event, this.config))
+        children.map((child: any) => child.event(event, this.config, () => {
+          instance.childIsIn = true
+        }))
+        if (!instance.childIsIn) {
+          instance.childIsIn = false
+          this.isCapture = true
+        }else {
+          console.log('选中了')
+        }
       }
       return;
     }
-    this.lastClickTime = Date.now()
 
+    this.lastClickTime = Date.now()
     console.log('mousedown', this.config.name, this.handDown, this.isSelect)
+
+    this.handDown = true
     this.startX = coordinate.x
     this.startY = coordinate.y
     this.original = cloneDeep(this.config)
-    this.handDown = true
 
     if (this.isSelect) return
+
     if (instance.selectedShape) {
       instance.selectedShape.isSelect = false
       instance.draw()
     }
     instance.selectedShape = this
     this.isSelect = true
-    console.log('p', p)
+    this.isCapture = true
+    // if (instance.hoverShape) {
+    // instance.hoverShape.isHover = false
+    // instance.hoverShape = null
+    // instance.draw()
+    // }
+
+    this.isHover = false
     this.draw(instance.ctx, p)
   }
 
@@ -179,12 +211,21 @@ export class Frame extends Shape {
       return;
     }
 
-    console.log('mousemove', this.isHover)
-
-    if (this.isSelect) return
-    if (this.isHover) return
-    this.isHover = true
     let instance = Canvas.getInstance();
+    // console.log('mousemove', this.config.name, `isHover：${this.isHover}`, `instance.hoverShape：${instance.hoverShape}`)
+
+    // if (instance.hoverShape) {
+    //   instance.hoverShape.isHover = false
+    //   instance.hoverShape = null
+    //   instance.draw()
+    // }
+    if (this.isSelect) return
+    if (this.isHover) {
+      // console.log('mousemove-this.isHover')
+      // instance.hoverShape = this
+      return
+    }
+    this.isHover = true
     instance.hoverShape = this
     let ctx = instance.ctx
     ctx.save()

@@ -110,7 +110,7 @@ export class Canvas {
     if (e.capture) return
     console.log('canvas画布-onMouseDown')
     if (this.selectedShape) {
-      this.selectedShape.config.selected = false
+      this.selectedShape.isSelect = false
     }
     this.selectedShape = null
     this.hoverShape = null

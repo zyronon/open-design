@@ -2,9 +2,19 @@ import {clear, getPath, renderRoundRect} from "../utils";
 
 export class Shape {
   protected config: any
+  protected isHover: boolean = false
+  protected isSelect: boolean = false
+  protected isCapture: boolean = true
 
   constructor(props: any) {
     this.config = getPath(props)
+  }
+
+
+  emit(event: any, p: any) {
+    let {e, coordinate, type} = event
+    // @ts-ignore
+    this[type]?.(event, p)
   }
 
   hover(ctx: any, config: any) {
@@ -13,7 +23,7 @@ export class Shape {
       fillColor, borderColor, rotate,
       type, flipVertical, flipHorizontal, children,
     } = config
-    if (this.config.hovered) {
+    if (this.isHover) {
       let d = .5
       let hover: any = {}
       hover.lineWidth = 2
@@ -40,7 +50,7 @@ export class Shape {
   }
 
   selected(ctx: any, config: any) {
-    if (config.selected) {
+    if (this.isSelect) {
       // console.log('selected')
       let {
         x, y, w, h, radius,

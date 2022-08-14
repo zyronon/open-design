@@ -6,7 +6,7 @@ import {clone, cloneDeep} from "lodash";
 
 export class Rect2 extends Shape {
   handDown: boolean = false
-  capture: boolean = true
+  isCapture: boolean = true
   startX: number = 0
   startY: number = 0
   original: any = null
@@ -79,7 +79,7 @@ export class Rect2 extends Shape {
       // } else {
       // event.e.stopPropagation()
       // }
-      if (!this.capture) {
+      if (!this.isCapture) {
         let {
           children, capture
         } = this.config
@@ -94,12 +94,6 @@ export class Rect2 extends Shape {
       instance.hoverShape = null
       instance.draw()
     }
-  }
-
-  emit(event: any, p: any) {
-    let {e, coordinate, type} = event
-    // @ts-ignore
-    this[type]?.(event, p)
   }
 
   mousedown(event: any, p: any) {

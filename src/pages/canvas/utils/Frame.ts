@@ -7,7 +7,6 @@ import {Rect2} from "./Rect";
 
 export class Frame extends Shape {
   handDown: boolean = false
-  capture: boolean = true
   startX: number = 0
   startY: number = 0
   original: any = null
@@ -16,7 +15,7 @@ export class Frame extends Shape {
   constructor(props: any) {
     super(props);
     this.config.children = this.config.children.map((child: any) => {
-      return new Rect2(child)
+      return new Frame(child)
     })
   }
 
@@ -50,13 +49,13 @@ export class Frame extends Shape {
     this.hoverAndSelect(ctx, {...this.config, x, y})
     ctx.restore()
 
-    ctx.save()
-    let rect = this.config
-    ctx.fillStyle = 'gray'
-    ctx.font = `${rect.fontWeight} ${rect.fontSize}rem "${rect.fontFamily}", sans-serif`;
-    ctx.textBaseline = 'top'
-    ctx.fillText(rect.name, x, y - 18);
-    ctx.restore()
+    // ctx.save()
+    // let rect = this.config
+    // ctx.fillStyle = 'gray'
+    // ctx.font = `${rect.fontWeight} ${rect.fontSize}rem "${rect.fontFamily}", sans-serif`;
+    // ctx.textBaseline = 'top'
+    // ctx.fillText(rect.name, x, y - 18);
+    // ctx.restore()
 
     this.config.abX = x
     this.config.abY = y
@@ -66,6 +65,7 @@ export class Frame extends Shape {
   }
 
   isInName(x: number, y: number,): boolean {
+    return false
     let rect = this.config
     if (rect.leftX < x && x < (rect.leftX + 30)
       && (rect.topY - 20) < y && y < rect.topY
@@ -88,48 +88,36 @@ export class Frame extends Shape {
 
   event(event: any, parent?: any) {
     let {e, coordinate, type} = event
-    if (e.capture) return
     if (this.handDown) {
       return this.emit(event, parent)
     }
-
     if (this.isIn(coordinate.x, coordinate.y)) {
       // console.log('捕获', this.config.name)
-      this.emit(event, parent)
-      let instance = Canvas.getInstance()
-
-      // if (instance.selectedShape && instance.selectedShape.config.id !== this.config.id) {
-      // } else {
-      // event.e.stopPropagation()
-      // }
-      if (!this.capture) {
-        let {
-          children, capture
-        } = this.config
+      if (!this.isCapture) {
+        let {children} = this.config
         if (children) {
           children.map((child: any) => child.event(event, this.config))
         }
       }
-      event.e.stopPropagation()
+
+      if (e.capture) return
+      this.emit(event, parent)
+      if (this.isSelect) {
+        event.e.stopPropagation()
+      }
       // console.log('冒泡', this.config.name)
     } else {
-      console.log('isIn', this.config.hovered)
+      // console.log('isIn', this.isHover)
       let instance = Canvas.getInstance()
       instance.hoverShape = null
       instance.draw()
-      this.config.hovered = false
+      this.isHover = false
     }
-  }
-
-  emit(event: any, p: any) {
-    let {e, coordinate, type} = event
-    // @ts-ignore
-    this[type]?.(event, p)
   }
 
   mousedown(event: any, p: any) {
     let {e, coordinate, type} = event
-    this.config.hovered = false
+    this.isHover = false
 
     let instance = Canvas.getInstance();
     if (Date.now() - this.lastClickTime < 300) {
@@ -137,6 +125,8 @@ export class Frame extends Shape {
       // instance.selectedShape = null
       // this.config.selected = false
       // instance.draw()
+      // this.isSelect = false
+      this.isCapture = false
       let {
         children, capture
       } = this.config
@@ -147,19 +137,19 @@ export class Frame extends Shape {
     }
     this.lastClickTime = Date.now()
 
-    console.log('mousedown', this.config.name, this.handDown, this.config.selected)
+    console.log('mousedown', this.config.name, this.handDown, this.isSelect)
     this.startX = coordinate.x
     this.startY = coordinate.y
     this.original = cloneDeep(this.config)
     this.handDown = true
 
-    if (this.config.selected) return
+    if (this.isSelect) return
     if (instance.selectedShape) {
-      instance.selectedShape.config.selected = false
+      instance.selectedShape.isSelect = false
       instance.draw()
     }
     instance.selectedShape = this
-    this.config.selected = true
+    this.isSelect = true
     console.log('p', p)
     this.draw(instance.ctx, p)
   }
@@ -167,6 +157,7 @@ export class Frame extends Shape {
   mouseup(event: any, p: any) {
     console.log('mouseup', this.config.name,)
     this.handDown = false
+    // this.isCapture = true
   }
 
   mousemove(event: any, p: any) {
@@ -188,11 +179,11 @@ export class Frame extends Shape {
       return;
     }
 
-    console.log('mousemove', this.config.hovered)
+    console.log('mousemove', this.isHover)
 
-    if (this.config.selected) return
-    if (this.config.hovered) return
-    this.config.hovered = true
+    if (this.isSelect) return
+    if (this.isHover) return
+    this.isHover = true
     let instance = Canvas.getInstance();
     instance.hoverShape = this
     let ctx = instance.ctx

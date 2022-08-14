@@ -84,9 +84,7 @@ class Design extends React.Component<any, IState> {
     const c = Canvas.getInstance(canvas)
     c.clearChild()
     // let c = new Canvas(canvas)
-    // let c = new Canvas(canvas)
     cloneDeep(rects).map((rect: Shape) => {
-      // pushRect(getPath(rect))
       let r
       if (rect.type === ShapeType.FRAME) {
         r = new Frame(rect)

@@ -59,6 +59,7 @@ export class Frame extends Shape {
 
     this.config.abX = x
     this.config.abY = y
+    this.config = getPath(this.config)
     if (children) {
       children.map((v: any) => v.draw(ctx, this.config))
     }
@@ -98,7 +99,7 @@ export class Frame extends Shape {
 
     if (this.isIn(coordinate.x, coordinate.y)) {
       if (instance.inShape) {
-        console.log('instance.inShape', instance.inShape.config.name,instance.inShape !== this)
+        console.log('instance.inShape', instance.inShape.config.name, instance.inShape !== this)
         if (instance.inShape !== this) {
           instance.inShape.isHover = false
           instance.draw()
@@ -152,7 +153,7 @@ export class Frame extends Shape {
         if (!instance.childIsIn) {
           instance.childIsIn = false
           this.isCapture = true
-        }else {
+        } else {
           console.log('选中了')
         }
       }
@@ -171,11 +172,12 @@ export class Frame extends Shape {
 
     if (instance.selectedShape) {
       instance.selectedShape.isSelect = false
+      // instance.selectedShape.isCapture = true
       instance.draw()
     }
     instance.selectedShape = this
     this.isSelect = true
-    this.isCapture = true
+    // this.isCapture = true
     // if (instance.hoverShape) {
     // instance.hoverShape.isHover = false
     // instance.hoverShape = null

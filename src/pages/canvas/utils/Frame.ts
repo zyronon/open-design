@@ -178,12 +178,6 @@ export class Frame extends Shape {
     instance.selectedShape = this
     this.isSelect = true
     // this.isCapture = true
-    // if (instance.hoverShape) {
-    // instance.hoverShape.isHover = false
-    // instance.hoverShape = null
-    // instance.draw()
-    // }
-
     this.isHover = false
     this.draw(instance.ctx, p)
   }
@@ -197,7 +191,7 @@ export class Frame extends Shape {
   mousemove(event: any, p: any) {
     let {e, coordinate, type} = event
 
-    // console.log('mousemove', [this.isEnter, this.config.selected])
+    console.log('mousemove', [this.handDown,])
     if (this.handDown) {
       // console.log('enter')
       let {x, y} = coordinate

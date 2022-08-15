@@ -85,7 +85,7 @@ export class Canvas {
     }, this.ctx)
     this.ctx.save()
     // console.log('this.children,', this.children)
-    this.children.forEach(shape => shape.draw(this.ctx))
+    this.children.forEach(shape => shape.draw(this.ctx, {abX: 0, abY: 0}))
     this.ctx.restore()
   }
 

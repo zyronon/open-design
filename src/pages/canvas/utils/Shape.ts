@@ -140,6 +140,9 @@ export class Shape {
     if (p) {
       x = this.config.abX = x + p.abX
       y = this.config.abY = y + p.abY
+    } else {
+      x = this.config.abX
+      y = this.config.abY
     }
 
     // console.log('type,', type)

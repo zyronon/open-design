@@ -97,6 +97,9 @@ export default memo((props: any) => {
         <div className="component" onClick={() => console.log(store.rectList)}>
           打印2
         </div>
+        <div className="component" onClick={props.printC}>
+          打印3
+        </div>
       </div>
       <div className="tabs">
         <div className={cx('tab', tabIndex === 0 && 'active')} onClick={() => setTabIndex(0)}>

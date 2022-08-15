@@ -37,7 +37,6 @@ import {clearAll, getPath, renderCanvas, renderRound} from "./utils";
 import {message} from "antd";
 import Left from "./components/Left/left"
 import {Canvas} from "./utils/Canvas";
-import {Rect2} from "./utils/Rect";
 import {Frame} from "./utils/Frame";
 
 const out = new Float32Array([
@@ -94,6 +93,7 @@ class Design extends React.Component<any, IState> {
     })
     c.draw()
     c.initEvent()
+    this.setState({c})
   }
 
   draw() {
@@ -1123,6 +1123,16 @@ class Design extends React.Component<any, IState> {
         message.error('复制失败')
       })
   }
+  printC = () => {
+    console.log(this.state.c.print2())
+    navigator.clipboard.writeText(JSON.stringify(this.state.c.print2(), null, 2))
+      .then(() => {
+        message.success('复制成功')
+      })
+      .catch(err => {
+        message.error('复制失败')
+      })
+  }
 
   render() {
     // console.log('render')
@@ -1149,6 +1159,7 @@ class Design extends React.Component<any, IState> {
             init={() => this.init()}
             navigate={() => this.props.navigate('/test')}
             print={this.print}
+            printC={this.printC}
           />
           <div className="canvas-wrapper">
             <div className="tool-bar">

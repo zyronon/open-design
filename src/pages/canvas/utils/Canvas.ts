@@ -1,6 +1,6 @@
 import {Shape} from "./Shape";
 import {clear, clearAll} from "../utils";
-import {debounce, throttle} from "lodash";
+import {cloneDeep, debounce, throttle} from "lodash";
 import {BaseSyntheticEvent, SyntheticEvent} from "react";
 import {BaseEvent, EventType} from "../type";
 
@@ -25,6 +25,19 @@ export class Canvas {
 
   constructor(canvas: HTMLCanvasElement) {
     this.init(canvas)
+  }
+
+  print(list: any) {
+    return list.map((item: any) => {
+      if (item.config.children) {
+        item.config.children = this.print(item.config.children)
+      }
+      return item.config
+    })
+  }
+
+  print2() {
+    return this.print(cloneDeep(this.children))
   }
 
   init(canvas: HTMLCanvasElement) {

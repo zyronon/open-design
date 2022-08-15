@@ -43,6 +43,7 @@ export type IState = {
   usePen: boolean,
   enterPen: boolean,
   isEdit: boolean,
+  c: any,
 
   drawType: ShapeType
 }

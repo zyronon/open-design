@@ -43,27 +43,31 @@ export type IState = {
   usePen: boolean,
   enterPen: boolean,
   isEdit: boolean,
-  c: any,
+  cu: any,
+  drawCount:number
 
   drawType: ShapeType
 }
 
 
 export enum ShapeType {
-  RECT = 0,
-  SELECT = 3,
-  TEXT = 4,
-  IMG = 5,
-  PENCIL = 6,
-  PEN = 7,
-  ROUND = 8,
-  STAR = 9,
-  POLYGON = 10,
+  CREATE = 301,
+
+  RECT = 200,
+  SELECT = 201,
+  TEXT = 202,
+  IMG = 203,
+  PENCIL = 204,
+  PEN = 205,
+  ROUND = 206,
+  STAR = 207,
+  POLYGON = 208,
 
   FRAME = 100,
   COMPONENT = 101,
-  HOVER = 2,
+  HOVER = 102,
 }
+
 
 export interface RectImg {
   img: any,
@@ -150,6 +154,8 @@ export enum EventType {
   onMouseMove = 'mousemove',
   onMouseDown = 'mousedown',
   onMouseUp = 'mouseup',
+  onMouseEnter = 'mouseenter',
+  onMouseLeave = 'mouseleave',
 }
 
 export interface BaseEvent extends MouseEvent {

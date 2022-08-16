@@ -1,7 +1,7 @@
 import {Shape} from "./Shape";
 import {BaseEvent, EventType, ShapeType} from "../type";
 import {clear, getPath, renderCanvas, renderRoundRect} from "../utils";
-import {Canvas} from "./Canvas";
+import {CanvasUtil} from "./CanvasUtil";
 import {clone, cloneDeep} from "lodash";
 
 export class Rect2 extends Shape {
@@ -73,7 +73,7 @@ export class Rect2 extends Shape {
     if (this.isIn(coordinate.x, coordinate.y)) {
       // console.log('捕获', this.config.name)
       this.emit(event, parent)
-      let instance = Canvas.getInstance()
+      let instance = CanvasUtil.getInstance()
 
       // if (instance.selectedShape && instance.selectedShape.config.id !== this.config.id) {
       // } else {
@@ -90,7 +90,7 @@ export class Rect2 extends Shape {
       event.e.stopPropagation()
       // console.log('冒泡', this.config.name)
     } else {
-      let instance = Canvas.getInstance()
+      let instance = CanvasUtil.getInstance()
       instance.hoverShape = null
       instance.draw()
     }
@@ -99,7 +99,7 @@ export class Rect2 extends Shape {
   mousedown(event: any, p: any) {
     let {e, coordinate, type} = event
 
-    let instance = Canvas.getInstance();
+    let instance = CanvasUtil.getInstance();
     if (Date.now() - this.lastClickTime < 300) {
       console.log('dblclick')
       // instance.selectedShape = null
@@ -150,14 +150,14 @@ export class Rect2 extends Shape {
       this.config.x = this.original.x + dx
       this.config.y = this.original.y + dy
       this.config = getPath(this.config)
-      let instance = Canvas.getInstance();
+      let instance = CanvasUtil.getInstance();
       // instance.hoverShape = this
       instance.draw()
       return;
     }
 
     if (this.config.selected) return
-    let instance = Canvas.getInstance();
+    let instance = CanvasUtil.getInstance();
     // if (instance.hoverShape) {
     //   instance.hoverShape = false
     //   instance.draw()

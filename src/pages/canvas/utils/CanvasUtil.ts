@@ -1,11 +1,11 @@
 import {Shape} from "./Shape";
-import {clear, clearAll} from "../utils";
-import {cloneDeep, debounce, throttle} from "lodash";
-import {BaseSyntheticEvent, SyntheticEvent} from "react";
-import {BaseEvent, EventType} from "../type";
+import {clear} from "../utils";
+import {cloneDeep, throttle} from "lodash";
+import {BaseEvent, EventType, ShapeType} from "../type";
+import EventBus from "../../../utils/event-bus";
 
 
-export class Canvas {
+export class CanvasUtil {
   // @ts-ignore
   private canvas: HTMLCanvasElement;
   // @ts-ignore
@@ -16,15 +16,20 @@ export class Canvas {
   private dpr: number;
   // @ts-ignore
   private children: any[]
-  static instance: Canvas | null
+  static instance: CanvasUtil | null
   //当hover时，只向hover那个图形传递事件。不用递归整个树去判断isIn
   hoverShape: any
   inShape: any
   selectedShape: any
   childIsIn: boolean = false
+  mode: ShapeType = ShapeType.CREATE
 
   constructor(canvas: HTMLCanvasElement) {
     this.init(canvas)
+  }
+
+  setMode(mode: ShapeType) {
+    this.mode = mode
   }
 
   print(list: any) {
@@ -61,7 +66,7 @@ export class Canvas {
 
   static getInstance(canvas?: any) {
     if (!this.instance) {
-      this.instance = new Canvas(canvas)
+      this.instance = new CanvasUtil(canvas)
     } else {
       if (canvas) {
         this.instance.init(canvas)
@@ -79,6 +84,7 @@ export class Canvas {
   }
 
   _draw() {
+    EventBus.emit('draw')
     // console.log('重绘所有图形')
     clear({
       x: 0, y: 0, w: this.canvas.width, h: this.canvas.height
@@ -100,6 +106,18 @@ export class Canvas {
   }
 
   _handleEvent = (e: any) => {
+    if (e.type === EventType.onMouseEnter) {
+      if (this.mode !== ShapeType.CREATE) {
+        document.body.style.cursor = "crosshair"
+      }
+      return
+    }
+    if (e.type === EventType.onMouseLeave) {
+      if (this.mode !== ShapeType.CREATE) {
+        document.body.style.cursor = "default"
+      }
+      return
+    }
     //重写禁止伟播事件
     e.stopPropagation = () => e.capture = true
     // console.log('e.type', e.type)

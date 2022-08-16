@@ -36,8 +36,9 @@ import {pushRect, removeRect, store} from "./store";
 import {clearAll, getPath, renderCanvas, renderRound} from "./utils";
 import {message} from "antd";
 import Left from "./components/Left/left"
-import {Canvas} from "./utils/Canvas";
+import {CanvasUtil} from "./utils/CanvasUtil";
 import {Frame} from "./utils/Frame";
+import EventBus from "../../utils/event-bus";
 
 const out = new Float32Array([
   0, 0, 0, 0,
@@ -67,6 +68,7 @@ class Design extends React.Component<any, IState> {
     showPicker: false,
     rectColor: null,
     rectColorType: null,
+    drawCount: 0,
   } as IState
 
   componentDidMount() {
@@ -75,14 +77,15 @@ class Design extends React.Component<any, IState> {
   }
 
   componentWillUnmount() {
+    EventBus.off('draw')
     console.log('componentWillUnmount')
   }
 
   init() {
     let canvas: HTMLCanvasElement = this.canvasRef.current!
-    const c = Canvas.getInstance(canvas)
+    const c = CanvasUtil.getInstance(canvas)
     c.clearChild()
-    // let c = new Canvas(canvas)
+    // let c = new CanvasUtil(canvas)
     cloneDeep(rects).map((rect: Shape) => {
       let r
       if (rect.type === ShapeType.FRAME) {
@@ -93,7 +96,12 @@ class Design extends React.Component<any, IState> {
     })
     c.draw()
     c.initEvent()
-    this.setState({c})
+    this.setState({cu: c})
+    EventBus.on('draw', () => {
+      this.setState(s => {
+        return {drawCount: s.drawCount + 1}
+      })
+    })
   }
 
   draw() {
@@ -1124,14 +1132,21 @@ class Design extends React.Component<any, IState> {
       })
   }
   printC = () => {
-    console.log(this.state.c.print2())
-    navigator.clipboard.writeText(JSON.stringify(this.state.c.print2(), null, 2))
+    console.log(this.state.cu.print2())
+    navigator.clipboard.writeText(JSON.stringify(this.state.cu.print2(), null, 2))
       .then(() => {
         message.success('复制成功')
       })
       .catch(err => {
         message.error('复制失败')
       })
+  }
+
+  setCanvasUtilMode = (mode: ShapeType) => {
+    this.setState({
+      drawType: mode
+    })
+    this.state.cu.setMode(mode)
   }
 
   render() {
@@ -1152,6 +1167,7 @@ class Design extends React.Component<any, IState> {
         <div className="header">
           <div className={'fps'}>
             FPS:<Fps/>
+            总绘制次数：{this.state.drawCount}
           </div>
         </div>
         <div className="content">
@@ -1186,7 +1202,7 @@ class Design extends React.Component<any, IState> {
                   <Icon type={'ElectronicPen'} size="20"/>
                 </div>
                 <div className={cx('tool', drawType === ShapeType.RECT && 'active')}>
-                  <Icon type={'RectangleOne'} size="20"/>
+                  <Icon type={'RectangleOne'} size="20" onClick={() => this.setCanvasUtilMode(ShapeType.RECT)}/>
                 </div>
                 <div className={cx('tool', drawType === ShapeType.ROUND && 'active')}>
                   <Icon type={'Round'} size="20"/>

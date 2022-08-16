@@ -1,9 +1,8 @@
 import {Shape} from "./Shape";
-import {BaseEvent, EventType, ShapeType, TextAlign} from "../type";
-import {clear, getPath, renderCanvas, renderRoundRect} from "../utils";
-import {Canvas} from "./Canvas";
-import {clone, cloneDeep} from "lodash";
-import {Rect2} from "./Rect";
+import {ShapeType} from "../type";
+import {getPath, renderRoundRect} from "../utils";
+import {CanvasUtil} from "./CanvasUtil";
+import {cloneDeep} from "lodash";
 
 export class Frame extends Shape {
   handDown: boolean = false
@@ -89,17 +88,17 @@ export class Frame extends Shape {
 
   event(event: any, parent?: any, cb?: Function) {
     let {e, coordinate, type} = event
-    console.log('event', this.config.name, `type：${type}`,)
+    // console.log('event', this.config.name, `type：${type}`,)
     if (e.capture) return
 
     if (this.handDown) {
       return this.emit(event, parent)
     }
-    let instance = Canvas.getInstance()
+    let instance = CanvasUtil.getInstance()
 
     if (this.isIn(coordinate.x, coordinate.y)) {
       if (instance.inShape) {
-        console.log('instance.inShape', instance.inShape.config.name, instance.inShape !== this)
+        // console.log('instance.inShape', instance.inShape.config.name, instance.inShape !== this)
         if (instance.inShape !== this) {
           instance.inShape.isHover = false
           instance.draw()
@@ -108,7 +107,7 @@ export class Frame extends Shape {
       instance.inShape = this
       cb?.()
       // console.log('捕获', this.config.name)
-      if (!this.isCapture) {
+      if (!this.isCapture || instance.mode !== ShapeType.CREATE) {
         let {children} = this.config
         if (children) {
           children.map((child: any) => child.event(event, this.config))
@@ -134,7 +133,7 @@ export class Frame extends Shape {
 
   mousedown(event: any, p: any) {
     let {e, coordinate, type} = event
-    let instance = Canvas.getInstance()
+    let instance = CanvasUtil.getInstance()
 
     if (Date.now() - this.lastClickTime < 300) {
       console.log('dblclick')
@@ -191,7 +190,7 @@ export class Frame extends Shape {
   mousemove(event: any, p: any) {
     let {e, coordinate, type} = event
 
-    console.log('mousemove', [this.handDown,])
+    // console.log('mousemove', [this.handDown,])
     if (this.handDown) {
       // console.log('enter')
       let {x, y} = coordinate
@@ -201,13 +200,13 @@ export class Frame extends Shape {
       this.config.x = this.original.x + dx
       this.config.y = this.original.y + dy
       this.config = getPath(this.config)
-      let instance = Canvas.getInstance();
+      let instance = CanvasUtil.getInstance();
       // instance.hoverShape = this
       instance.draw()
       return;
     }
 
-    let instance = Canvas.getInstance();
+    let instance = CanvasUtil.getInstance();
     // console.log('mousemove', this.config.name, `isHover：${this.isHover}`, `instance.hoverShape：${instance.hoverShape}`)
 
     // if (instance.hoverShape) {

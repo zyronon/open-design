@@ -38,7 +38,7 @@
       & > .left-wrapper {
         background: transparent;
 
-        .tabs,.layer{
+        .tabs, .layer {
           opacity: 0;
         }
       }
@@ -116,8 +116,12 @@
       #canvasArea {
         width: 100%;
         height: calc(100% - #{$header-height});
+        position: relative;
 
         #canvas {
+          position: absolute;
+          top: 0;
+          left: 0;
           display: block;
           width: 100%;
           height: 100%;
@@ -140,7 +144,6 @@
         overflow-x: hidden;
         overflow-y: auto;
         color: white;
-
 
 
         .base-info {

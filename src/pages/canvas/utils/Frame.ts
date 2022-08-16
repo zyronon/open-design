@@ -5,11 +5,6 @@ import {CanvasUtil} from "./CanvasUtil";
 import {cloneDeep} from "lodash";
 
 export class Frame extends Shape {
-  handDown: boolean = false
-  startX: number = 0
-  startY: number = 0
-  original: any = null
-  lastClickTime: number = 0
 
   constructor(props: any) {
     super(props);
@@ -94,20 +89,20 @@ export class Frame extends Shape {
     if (this.handDown) {
       return this.emit(event, parent)
     }
-    let instance = CanvasUtil.getInstance()
+    let cu = CanvasUtil.getInstance()
 
     if (this.isIn(coordinate.x, coordinate.y)) {
-      if (instance.inShape) {
-        // console.log('instance.inShape', instance.inShape.config.name, instance.inShape !== this)
-        if (instance.inShape !== this) {
-          instance.inShape.isHover = false
-          instance.draw()
+      if (cu.inShape) {
+        // console.log('cu.inShape', cu.inShape.config.name, cu.inShape !== this)
+        if (cu.inShape !== this) {
+          cu.inShape.isHover = false
+          cu.draw()
         }
       }
-      instance.inShape = this
+      cu.inShape = this
       cb?.()
       // console.log('捕获', this.config.name)
-      if (!this.isCapture || instance.mode !== ShapeType.CREATE) {
+      if (!this.isCapture || !cu.isDesign()) {
         let {children} = this.config
         if (children) {
           children.map((child: any) => child.event(event, this.config))
@@ -121,25 +116,30 @@ export class Frame extends Shape {
       }
       // console.log('冒泡', this.config.name)
     } else {
-      if (instance.inShape === this) {
-        instance.inShape = null
+      if (cu.inShape === this) {
+        cu.inShape = null
       }
       // console.log('isIn', this.isHover)
-      instance.hoverShape = null
-      instance.draw()
+      cu.hoverShape = null
+      cu.draw()
       this.isHover = false
     }
   }
 
   mousedown(event: any, p: any) {
     let {e, coordinate, type} = event
-    let instance = CanvasUtil.getInstance()
+    let cu = CanvasUtil.getInstance()
+    if (!cu.isDesign()) {
+      cu.startX = coordinate.x
+      cu.startY = coordinate.y
+      return;
+    }
 
     if (Date.now() - this.lastClickTime < 300) {
       console.log('dblclick')
-      // instance.selectedShape = null
+      // cu.selectedShape = null
       // this.config.selected = false
-      // instance.draw()
+      // cu.draw()
       // this.isSelect = false
       this.isCapture = false
       let {
@@ -147,10 +147,10 @@ export class Frame extends Shape {
       } = this.config
       if (children) {
         children.map((child: any) => child.event(event, this.config, () => {
-          instance.childIsIn = true
+          cu.childIsIn = true
         }))
-        if (!instance.childIsIn) {
-          instance.childIsIn = false
+        if (!cu.childIsIn) {
+          cu.childIsIn = false
           this.isCapture = true
         } else {
           console.log('选中了')
@@ -169,16 +169,16 @@ export class Frame extends Shape {
 
     if (this.isSelect) return
 
-    if (instance.selectedShape) {
-      instance.selectedShape.isSelect = false
-      // instance.selectedShape.isCapture = true
-      instance.draw()
+    if (cu.selectedShape) {
+      cu.selectedShape.isSelect = false
+      // cu.selectedShape.isCapture = true
+      cu.draw()
     }
-    instance.selectedShape = this
+    cu.selectedShape = this
     this.isSelect = true
     // this.isCapture = true
     this.isHover = false
-    this.draw(instance.ctx, p)
+    this.draw(cu.ctx, p)
   }
 
   mouseup(event: any, p: any) {
@@ -191,6 +191,11 @@ export class Frame extends Shape {
     let {e, coordinate, type} = event
 
     // console.log('mousemove', [this.handDown,])
+    let cu = CanvasUtil.getInstance();
+    if (!cu.isDesign()) {
+      return;
+    }
+
     if (this.handDown) {
       // console.log('enter')
       let {x, y} = coordinate
@@ -200,29 +205,27 @@ export class Frame extends Shape {
       this.config.x = this.original.x + dx
       this.config.y = this.original.y + dy
       this.config = getPath(this.config)
-      let instance = CanvasUtil.getInstance();
-      // instance.hoverShape = this
-      instance.draw()
+      // cu.hoverShape = this
+      cu.draw()
       return;
     }
 
-    let instance = CanvasUtil.getInstance();
-    // console.log('mousemove', this.config.name, `isHover：${this.isHover}`, `instance.hoverShape：${instance.hoverShape}`)
+    // console.log('mousemove', this.config.name, `isHover：${this.isHover}`, `cu.hoverShape：${cu.hoverShape}`)
 
-    // if (instance.hoverShape) {
-    //   instance.hoverShape.isHover = false
-    //   instance.hoverShape = null
-    //   instance.draw()
+    // if (cu.hoverShape) {
+    //   cu.hoverShape.isHover = false
+    //   cu.hoverShape = null
+    //   cu.draw()
     // }
     if (this.isSelect) return
     if (this.isHover) {
       // console.log('mousemove-this.isHover')
-      // instance.hoverShape = this
+      // cu.hoverShape = this
       return
     }
     this.isHover = true
-    instance.hoverShape = this
-    let ctx = instance.ctx
+    cu.hoverShape = this
+    let ctx = cu.ctx
     ctx.save()
     // let nv = currentMat
     // ctx.transform(nv[0], nv[4], nv[1], nv[5], nv[12], nv[13]);

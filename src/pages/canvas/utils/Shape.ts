@@ -5,6 +5,11 @@ export class Shape {
   protected isHover: boolean = false
   protected isSelect: boolean = false
   protected isCapture: boolean = true
+  handDown: boolean = false
+  startX: number = 0
+  startY: number = 0
+  original: any = null
+  lastClickTime: number = 0
 
   constructor(props: any) {
     this.config = getPath(props)

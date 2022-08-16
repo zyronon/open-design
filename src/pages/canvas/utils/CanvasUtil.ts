@@ -3,13 +3,16 @@ import {clear} from "../utils";
 import {cloneDeep, throttle} from "lodash";
 import {BaseEvent, EventType, ShapeType} from "../type";
 import EventBus from "../../../utils/event-bus";
+import {Colors} from "../constant";
 
 
 export class CanvasUtil {
   // @ts-ignore
   private canvas: HTMLCanvasElement;
+  private copyCanvas: Node | undefined;
   // @ts-ignore
   public ctx: CanvasRenderingContext2D;
+  public copyCtx: CanvasRenderingContext2D | undefined;
   // @ts-ignore
   private canvasRect: DOMRect;
   // @ts-ignore
@@ -22,7 +25,9 @@ export class CanvasUtil {
   inShape: any
   selectedShape: any
   childIsIn: boolean = false
-  mode: ShapeType = ShapeType.CREATE
+  mode: ShapeType = ShapeType.DESIGN
+  startX: number = -1
+  startY: number = -1
 
   constructor(canvas: HTMLCanvasElement) {
     this.init(canvas)
@@ -95,6 +100,32 @@ export class CanvasUtil {
     this.ctx.restore()
   }
 
+  drawNewShape(coordinate: any) {
+    clear({
+      x: 0, y: 0, w: this.canvas.width, h: this.canvas.height
+    }, this.copyCtx)
+    let x = this.startX
+    console.log('x',x)
+    let y = this.startY
+    let w = coordinate.x - this.startX
+    let h = coordinate.y - this.startY
+    this.copyCtx.beginPath()
+    this.copyCtx.moveTo(x, y)
+    this.copyCtx.lineTo(x + w, y);
+    this.copyCtx.lineTo(x + w, y + h);
+    this.copyCtx.lineTo(x, y + h);
+    this.copyCtx.lineTo(x, y);
+    this.copyCtx.closePath()
+    this.copyCtx.fillStyle = Colors.line
+    this.copyCtx.fill()
+    this.copyCtx.strokeStyle = Colors.line
+    this.copyCtx.stroke()
+  }
+
+  isDesign() {
+    return this.mode === ShapeType.DESIGN
+  }
+
   // draw = debounce(this._draw, 50)
   draw = throttle(this._draw, 10)
   handleEvent = throttle(e => this._handleEvent(e), 10)
@@ -107,13 +138,26 @@ export class CanvasUtil {
 
   _handleEvent = (e: any) => {
     if (e.type === EventType.onMouseEnter) {
-      if (this.mode !== ShapeType.CREATE) {
+      if (this.mode !== ShapeType.DESIGN) {
+        this.copyCanvas = this.canvas.cloneNode()
+        this.copyCtx = this.copyCanvas.getContext('2d')!
+        let dpr = window.devicePixelRatio;
+        this.copyCtx.scale(dpr, dpr);
+        this.copyCanvas.style['pointer-events'] = 'none'
+        let area = document.querySelector('#canvasArea')
+        area!.append(this.copyCanvas)
         document.body.style.cursor = "crosshair"
       }
       return
     }
     if (e.type === EventType.onMouseLeave) {
-      if (this.mode !== ShapeType.CREATE) {
+      if (this.mode !== ShapeType.DESIGN) {
+        if (this.copyCanvas) {
+          console.log('onMouseLeave')
+          this.copyCanvas.remove()
+          this.startX = -1
+          this.startY = -1
+        }
         document.body.style.cursor = "default"
       }
       return
@@ -128,23 +172,36 @@ export class CanvasUtil {
       coordinate: {x, y},
       type: e.type
     }
-
-    if (this.inShape) {
-      this.inShape.event(baseEvent)
-    } else {
-      this.children
-        .forEach(shape => shape.event(baseEvent, null, () => {
-          this.childIsIn = true
-        }))
-      if (!this.childIsIn) {
-        // this.hoverShape?.isHover = false
-        // this.draw()
+    if (this.startX === -1) {
+      if (this.inShape) {
+        this.inShape.event(baseEvent)
+      } else {
+        this.children
+          .forEach(shape => shape.event(baseEvent, null, () => {
+            this.childIsIn = true
+          }))
+        if (!this.childIsIn) {
+          // this.hoverShape?.isHover = false
+          // this.draw()
+        }
+        this.childIsIn = false
       }
-      this.childIsIn = false
+    } else {
+      if (e.type === EventType.onMouseMove) {
+        this.onMouseMove(e, {x, y})
+      }
     }
     if (e.type === EventType.onMouseDown) {
       this.onMouseDown(e, {x, y})
     }
+    if (e.type === EventType.onMouseUp) {
+      this.onMouseUp(e, {x, y})
+    }
+  }
+
+  onMouseMove(e: BaseEvent, coordinate: any,) {
+    // console.log('canvas画布-onMouseMove')
+    this.drawNewShape(coordinate)
   }
 
   onMouseDown(e: BaseEvent, coordinate: any,) {
@@ -158,4 +215,9 @@ export class CanvasUtil {
     this.draw()
   }
 
+  onMouseUp(e: BaseEvent, coordinate: any,) {
+    console.log('canvas画布-onMouseUp')
+    this.startX = -1
+    this.startY = -1
+  }
 }

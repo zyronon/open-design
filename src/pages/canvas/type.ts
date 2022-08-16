@@ -51,7 +51,7 @@ export type IState = {
 
 
 export enum ShapeType {
-  CREATE = 301,
+  DESIGN = 301,
 
   RECT = 200,
   SELECT = 201,

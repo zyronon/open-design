@@ -4,6 +4,7 @@ import {cloneDeep, throttle} from "lodash";
 import {BaseEvent, EventType, ShapeType} from "../type";
 import EventBus from "../../../utils/event-bus";
 import {Colors} from "../constant";
+import {Frame} from "./Frame";
 
 
 export class CanvasUtil {
@@ -25,7 +26,7 @@ export class CanvasUtil {
   inShape: any
   selectedShape: any
   childIsIn: boolean = false
-  mode: ShapeType = ShapeType.DESIGN
+  mode: ShapeType = ShapeType.SELECT
   startX: number = -1
   startY: number = -1
 
@@ -105,7 +106,6 @@ export class CanvasUtil {
       x: 0, y: 0, w: this.canvas.width, h: this.canvas.height
     }, this.copyCtx)
     let x = this.startX
-    console.log('x',x)
     let y = this.startY
     let w = coordinate.x - this.startX
     let h = coordinate.y - this.startY
@@ -123,7 +123,7 @@ export class CanvasUtil {
   }
 
   isDesign() {
-    return this.mode === ShapeType.DESIGN
+    return this.mode === ShapeType.SELECT
   }
 
   // draw = debounce(this._draw, 50)
@@ -138,7 +138,7 @@ export class CanvasUtil {
 
   _handleEvent = (e: any) => {
     if (e.type === EventType.onMouseEnter) {
-      if (this.mode !== ShapeType.DESIGN) {
+      if (this.mode !== ShapeType.SELECT) {
         this.copyCanvas = this.canvas.cloneNode()
         this.copyCtx = this.copyCanvas.getContext('2d')!
         let dpr = window.devicePixelRatio;
@@ -151,7 +151,7 @@ export class CanvasUtil {
       return
     }
     if (e.type === EventType.onMouseLeave) {
-      if (this.mode !== ShapeType.DESIGN) {
+      if (this.mode !== ShapeType.SELECT) {
         if (this.copyCanvas) {
           console.log('onMouseLeave')
           this.copyCanvas.remove()
@@ -217,6 +217,36 @@ export class CanvasUtil {
 
   onMouseUp(e: BaseEvent, coordinate: any,) {
     console.log('canvas画布-onMouseUp')
+
+    let x = this.startX
+    let y = this.startY
+    let w = coordinate.x - this.startX
+    let h = coordinate.y - this.startY
+    return
+    this.addChild(new Frame({
+      "select": false,
+      "x": x,
+      "y": y,
+      "abX": x,
+      "abY": y,
+      w,
+      h,
+      "rotate": 0,
+      "lineWidth": 2,
+      "type": 100,
+      "color": "gray",
+      "radius": 40,
+      "children": [],
+      "brokenTexts": [],
+      "borderColor": "rgb(216,216,216)",
+      "fillColor": "rgb(216,216,216)",
+      "fontSize": 16,
+      "fontWeight": 500,
+      "fontFamily": "SourceHanSansCN",
+      "texts": [],
+      "name": "新增容器",
+    }))
+
     this.startX = -1
     this.startY = -1
   }

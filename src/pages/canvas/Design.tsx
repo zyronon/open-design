@@ -34,7 +34,7 @@ import BasePicker from "../../components/BasePicker"
 import Icon from '@icon-park/react/es/all';
 import {pushRect, removeRect, store} from "./store";
 import {clearAll, getPath, renderCanvas, renderRound} from "./utils";
-import {message} from "antd";
+import {message, Popover} from "antd";
 import Left from "./components/Left/left"
 import {CanvasUtil} from "./utils/CanvasUtil";
 import {Frame} from "./utils/Frame";
@@ -1143,6 +1143,7 @@ class Design extends React.Component<any, IState> {
   }
 
   setCanvasUtilMode = (mode: ShapeType) => {
+    console.log('mode', mode)
     this.setState({
       drawType: mode
     })
@@ -1180,10 +1181,23 @@ class Design extends React.Component<any, IState> {
           <div className="canvas-wrapper">
             <div className="tool-bar">
               <div className="left">
-                <div className={cx('tool', activeHand && 'active')}
-                     onClick={() => this.setState({activeHand: !activeHand})}>
-                  <Icon type={'FiveFive'} size="20"/>
-                </div>
+                <BaseSelect
+                  value={drawType}
+                  onChange={(e) => this.setCanvasUtilMode(e)}>
+                  <BaseOption key={1} value={ShapeType.SELECT} label={ShapeType.SELECT}>
+                    <Icon type={'MoveOne'}/>
+                  </BaseOption>
+                  <BaseOption key={2} value={ShapeType.SCALE} label={ShapeType.SCALE}>
+                    <div className={cx('tool-option', drawType === ShapeType.SELECT && 'active')}>
+                      <div className="left">
+                        <Icon type={'CheckSmall'}/>
+                        <Icon type={'MoveOne'}/>
+                        <span className="name">选择</span>
+                      </div>
+                      <span className="hotkey">V</span>
+                    </div>
+                  </BaseOption>
+                </BaseSelect>
                 <div className="tool">
                   <Icon type={'FiveFive'} size="20"/>
                   <Icon type={'Down'} size="14" className='arrow'/>

@@ -44,27 +44,34 @@ export type IState = {
   enterPen: boolean,
   isEdit: boolean,
   cu: any,
-  drawCount:number
+  drawCount: number
 
   drawType: ShapeType
 }
 
 
 export enum ShapeType {
-  DESIGN = 301,
+  SELECT = 100,
+  SCALE = 101,
 
-  RECT = 200,
-  SELECT = 201,
-  TEXT = 202,
-  IMG = 203,
-  PENCIL = 204,
-  PEN = 205,
-  ROUND = 206,
-  STAR = 207,
-  POLYGON = 208,
+  FRAME = 102,
+  SLICE = 103,
 
-  FRAME = 100,
-  COMPONENT = 101,
+  RECT = 104,
+  ROUND = 105,
+  ARROW = 106,
+  LINE = 107,
+  POLYGON = 108,
+  STAR = 109,
+  IMG = 110,
+
+  PEN = 111,
+  PENCIL = 112,
+
+  TEXT = 113,
+  MOVE = 114,
+
+  COMPONENT = 115,
   HOVER = 102,
 }
 

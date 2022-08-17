@@ -79,6 +79,7 @@ const BaseSelect = memo((props: IProps) => {
   }
 
   function onSelect(e: any) {
+    console.log('e',e)
     if (onChange) {
       onChange(e);
     } else {

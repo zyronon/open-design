@@ -1183,18 +1183,26 @@ class Design extends React.Component<any, IState> {
               <div className="left">
                 <BaseSelect
                   value={drawType}
-                  selectRender={e => {
-                    return e.value
+                  selectRender={(e: any) => {
+                    if (e.value===ShapeType.SELECT)return <Icon type={'MoveOne'}/>
+                    if (e.value===ShapeType.SCALE)return <Icon type={'Scale'}/>
                   }}
-                  onChange={(e) => this.setCanvasUtilMode(e)}>
+                  onChange={(e: any) => this.setCanvasUtilMode(e)}>
                   <BaseOption key={1} value={ShapeType.SELECT} label={ShapeType.SELECT}>
-                    <Icon type={'MoveOne'}/>
-                  </BaseOption>
-                  <BaseOption key={2} value={ShapeType.SCALE} label={ShapeType.SCALE}>
                     <div className={cx('tool-option', drawType === ShapeType.SELECT && 'active')}>
                       <div className="left">
                         <Icon type={'CheckSmall'}/>
                         <Icon type={'MoveOne'}/>
+                        <span className="name">选择</span>
+                      </div>
+                      <span className="hotkey">V</span>
+                    </div>
+                  </BaseOption>
+                  <BaseOption key={2} value={ShapeType.SCALE} label={ShapeType.SCALE}>
+                    <div className={cx('tool-option', drawType === ShapeType.SCALE && 'active')}>
+                      <div className="left">
+                        <Icon type={'CheckSmall'}/>
+                        <Icon type={'Scale'}/>
                         <span className="name">选择</span>
                       </div>
                       <span className="hotkey">V</span>

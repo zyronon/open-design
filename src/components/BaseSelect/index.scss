@@ -3,20 +3,22 @@
   font-size: 14rem;
   //position: fixed;
   position: relative;
-  min-width: 80rem;
-  width: 100%;
-
+  //min-width: 80rem;
+  //width: 100%;
+  display: flex;
+  align-items: center;
 
   .b-select {
     width: 100%;
     white-space: nowrap;
     cursor: pointer;
     height: $input-height;
-    background: $input-bg;
+    //background: $input-bg;
     border-radius: 8rem 8rem 8rem 8rem;
     display: flex;
     align-items: center;
-    padding: 0 12rem;
+    //padding: 0 12rem;
+    padding: 0 6rem;
     justify-content: space-between;
 
 
@@ -52,13 +54,15 @@
   }
 
   .b-select-option-list {
-    width: 100%;
+    //width: 100%;
+    width: 200rem;
     background: $input-bg;
     //bottom: 45rem;
+    top: 50rem;
     position: absolute;
     border-radius: 8rem;
     $height: 34rem;
-    overflow-y: auto;
+    overflow-y: overlay;
     overflow-x: hidden;
     min-width: 96rem;
     white-space: nowrap;
@@ -67,9 +71,9 @@
     max-height: 0;
     opacity: 0;
 
+
     .b-select-option {
       cursor: pointer;
-      padding: 0 15rem;
       display: flex;
       align-items: center;
       height: $height;
@@ -81,9 +85,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         margin: 0 5rem;
-
       }
-
 
       &.b-select-selected {
         background: rgba(255, 255, 255, 0.10000000149011612);

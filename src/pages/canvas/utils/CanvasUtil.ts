@@ -201,6 +201,7 @@ export class CanvasUtil {
 
   onMouseMove(e: BaseEvent, coordinate: any,) {
     // console.log('canvas画布-onMouseMove')
+    return
     this.drawNewShape(coordinate)
   }
 

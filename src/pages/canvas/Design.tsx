@@ -1183,6 +1183,9 @@ class Design extends React.Component<any, IState> {
               <div className="left">
                 <BaseSelect
                   value={drawType}
+                  selectRender={e => {
+                    return e.value
+                  }}
                   onChange={(e) => this.setCanvasUtilMode(e)}>
                   <BaseOption key={1} value={ShapeType.SELECT} label={ShapeType.SELECT}>
                     <Icon type={'MoveOne'}/>

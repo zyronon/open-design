@@ -25,7 +25,7 @@ import {withRouter} from "../../components/WithRouter";
 import cx from "classnames";
 import {mat4} from 'gl-matrix'
 import Fps from "../../components/Fps";
-import {BaseOption, BaseSelect} from "../../components/BaseSelect";
+import {BaseOption, BaseSelect} from "../../components/BaseSelect2";
 import {Colors, fontFamilies, fontSize, fontWeight, rects} from "./constant";
 import {FontFamily, FontWeight, IState, RectColorType, Shape, ShapeType, TextAlign, TextMode} from "./type";
 import {BaseRadio, BaseRadioGroup} from "../../components/BaseRadio";

@@ -1,7 +1,7 @@
-import React, {MouseEvent, RefObject} from "react";
+import React, { MouseEvent, RefObject } from "react";
 import './index.scss'
-import {assign, clone, cloneDeep, throttle} from 'lodash'
-import getCenterPoint, {getAngle, getRotatedPoint} from "../../utils";
+import { assign, clone, cloneDeep, throttle } from 'lodash'
+import getCenterPoint, { getAngle, getRotatedPoint } from "../../utils";
 import BaseInput from "../../components/BaseInput";
 import {
   AlignTextLeft,
@@ -21,23 +21,23 @@ import BaseButton from "../../components/BaseButton";
 import FlipIcon from "../../assets/icon/FlipIcon";
 import RotateIcon from "../../assets/icon/RotateIcon";
 import AngleIcon from "../../assets/icon/AngleIcon";
-import {withRouter} from "../../components/WithRouter";
+import { withRouter } from "../../components/WithRouter";
 import cx from "classnames";
-import {mat4} from 'gl-matrix'
+import { mat4 } from 'gl-matrix'
 import Fps from "../../components/Fps";
-import {BaseOption, BaseSelect} from "../../components/BaseSelect2";
-import {Colors, fontFamilies, fontSize, fontWeight, rects} from "./constant";
-import {FontFamily, FontWeight, IState, RectColorType, Shape, ShapeType, TextAlign, TextMode} from "./type";
-import {BaseRadio, BaseRadioGroup} from "../../components/BaseRadio";
+import { BaseOption, BaseSelect } from "../../components/BaseSelect2";
+import { Colors, fontFamilies, fontSize, fontWeight, rects } from "./constant";
+import { FontFamily, FontWeight, IState, RectColorType, Shape, ShapeType, TextAlign, TextMode } from "./type";
+import { BaseRadio, BaseRadioGroup } from "../../components/BaseRadio";
 import BaseSlotButton from "../../components/BaseSlotButton";
 import BasePicker from "../../components/BasePicker"
 import Icon from '@icon-park/react/es/all';
-import {pushRect, removeRect, store} from "./store";
-import {clearAll, getPath, renderCanvas, renderRound} from "./utils";
-import {message, Popover} from "antd";
+import { pushRect, removeRect, store } from "./store";
+import { clearAll, getPath, renderCanvas, renderRound } from "./utils";
+import { message, Popover } from "antd";
 import Left from "./components/Left/left"
-import {CanvasUtil} from "./utils/CanvasUtil";
-import {Frame} from "./utils/Frame";
+import { CanvasUtil } from "./utils/CanvasUtil";
+import { Frame } from "./utils/Frame";
 import EventBus from "../../utils/event-bus";
 
 const out = new Float32Array([
@@ -54,10 +54,10 @@ class Design extends React.Component<any, IState> {
   body: HTMLElement = document.querySelector("body")
 
   state = {
-    currentPoint: {x: 0, y: 0,},
-    oldHandMove: {x: 0, y: 0,},
+    currentPoint: { x: 0, y: 0, },
+    oldHandMove: { x: 0, y: 0, },
     activeHand: false,
-    handMove: {x: 0, y: 0,},
+    handMove: { x: 0, y: 0, },
     handScale: 1,
     currentMat: new Float32Array([
       1, 0, 0, 0,
@@ -96,10 +96,10 @@ class Design extends React.Component<any, IState> {
     })
     c.draw()
     c.initEvent()
-    this.setState({cu: c})
+    this.setState({ cu: c })
     EventBus.on('draw', () => {
       this.setState(s => {
-        return {drawCount: s.drawCount + 1}
+        return { drawCount: s.drawCount + 1 }
       })
     })
   }
@@ -107,7 +107,7 @@ class Design extends React.Component<any, IState> {
   draw() {
     // console.log('draw')
     clearAll(this.state)
-    const {ctx, currentMat, handMove} = this.state
+    const { ctx, currentMat, handMove } = this.state
     ctx.save()
     if (currentMat) {
       // console.log('平移：', currentMat[12], currentMat[13])
@@ -130,7 +130,7 @@ class Design extends React.Component<any, IState> {
   }
 
   flip(type: number) {
-    const {selectRect, rectList} = this.state
+    const { selectRect, rectList } = this.state
     if (selectRect?.id) {
       let rIndex = rectList.findIndex(v => v.id === selectRect.id)
       if (rIndex !== -1) {
@@ -139,24 +139,24 @@ class Design extends React.Component<any, IState> {
         } else {
           rectList[rIndex].flipVertical = !rectList[rIndex].flipVertical
         }
-        this.setState({rectList: clone(rectList), selectRect: clone(rectList[rIndex])}, this.draw)
+        this.setState({ rectList: clone(rectList), selectRect: clone(rectList[rIndex]) }, this.draw)
       }
     }
   }
 
   changeSelect = (val: any) => {
-    const {rectList, selectRect} = this.state
+    const { rectList, selectRect } = this.state
     let old = cloneDeep(rectList)
     let rIndex = old.findIndex(item => item.id === selectRect?.id)
     if (rIndex > -1) {
       assign(old[rIndex], val)
       old[rIndex] = getPath(old[rIndex])
-      this.setState({rectList: old}, this.draw)
+      this.setState({ rectList: old }, this.draw)
     }
   }
 
   getSelect = () => {
-    const {selectRect} = this.state
+    const { selectRect } = this.state
     let rIndex = store.rectList?.findIndex(item => item.id === selectRect?.id)
     if (rIndex > -1) return store.rectList[rIndex]
     return {} as any
@@ -240,7 +240,7 @@ class Design extends React.Component<any, IState> {
           lineWidth: 2,
           type: ShapeType.PENCIL,
           radius: 0,
-          points: [{x, y}],
+          points: [{ x, y }],
           children: [],
           name: 'PENCIL',
         }
@@ -255,7 +255,7 @@ class Design extends React.Component<any, IState> {
         ctx.moveTo(x, y)
         if (isEdit) {
           let select = this.getSelect()
-          select.points.push({x, y})
+          select.points.push({ x, y })
           this.draw()
         } else {
           let newPen: any = {
@@ -271,7 +271,7 @@ class Design extends React.Component<any, IState> {
             lineWidth: 2,
             type: ShapeType.PEN,
             radius: 0,
-            points: [{x, y}],
+            points: [{ x, y }],
             children: [],
             name: 'PEN',
           }
@@ -301,7 +301,7 @@ class Design extends React.Component<any, IState> {
           y: rect.y + (rect.h / 2)
         }
         //不是当前点击位置，当前点击位置算对角会有偏差
-        let rectLT = getRotatedPoint({x: rect.x, y: rect.y}, center, rect.rotate)
+        let rectLT = getRotatedPoint({ x: rect.x, y: rect.y }, center, rect.rotate)
         console.log('rect', clone(rect))
         console.log('rectLT', clone(rectLT))
         if (rect.flipHorizontal) {
@@ -317,7 +317,7 @@ class Design extends React.Component<any, IState> {
           y: center.y + Math.abs(rectLT.y - center.y) * (rectLT.y < center.y ? 1 : -1)
         }
         console.log('sPoint', sPoint)
-        this.setState({sPoint})
+        this.setState({ sPoint })
       }
 
       if (hoverRT) {
@@ -326,7 +326,7 @@ class Design extends React.Component<any, IState> {
           y: rect.y + (rect.h / 2)
         }
         //不是当前点击位置，当前点击位置算对角会有偏差
-        let rectRT = getRotatedPoint({x: rect.rightX, y: rect.topY}, center, rect.rotate)
+        let rectRT = getRotatedPoint({ x: rect.rightX, y: rect.topY }, center, rect.rotate)
         console.log('rect', clone(rect))
         console.log('rectRT', clone(rectRT))
         if (rect.flipHorizontal) {
@@ -342,7 +342,7 @@ class Design extends React.Component<any, IState> {
           y: center.y + Math.abs(rectRT.y - center.y) * (rectRT.y < center.y ? 1 : -1)
         }
         console.log('sPoint', sPoint)
-        this.setState({sPoint})
+        this.setState({ sPoint })
       }
 
       if (hoverLeft || hoverLT || hoverRT) {
@@ -447,7 +447,7 @@ class Design extends React.Component<any, IState> {
         }
         old[rIndex] = getPath(old[rIndex])
 
-        this.setState({selectRect: clone(rectList[rIndex]), rectList: old})
+        this.setState({ selectRect: clone(rectList[rIndex]), rectList: old })
       }
     }
     this.setState({
@@ -470,7 +470,7 @@ class Design extends React.Component<any, IState> {
       ) {
         removeRect(select)
       }
-      this.setState({isEdit: false, enterPen: false}, this.draw)
+      this.setState({ isEdit: false, enterPen: false }, this.draw)
     }
     ctx.restore()
     this.body.style.cursor = "default"
@@ -478,14 +478,14 @@ class Design extends React.Component<any, IState> {
   }
 
   isPointInPath(x: number, y: number, rect: Shape) {
-    const {handMove, handScale, ctx, currentMat} = this.state
-    const {x: handX, y: handY} = handMove
+    const { handMove, handScale, ctx, currentMat } = this.state
+    const { x: handX, y: handY } = handMove
     //减去画布平移的距离
     // y = y / handScale - handY / handScale
     x = (x - handX) / handScale//上面的简写
     y = (y - handY) / handScale
     if (rect.rotate !== 0 || rect.flipHorizontal) {
-      let {w, h, rotate, flipHorizontal, flipVertical} = rect
+      let { w, h, rotate, flipHorizontal, flipVertical } = rect
       const center = {
         x: rect.x + (rect.w / 2),
         y: rect.y + (rect.h / 2)
@@ -496,8 +496,8 @@ class Design extends React.Component<any, IState> {
       if (flipVertical) {
         y = center.y + Math.abs(y - center.y) * (y < center.y ? 1 : -1)
       }
-      let p1 = {x, y}
-      let c2 = {x: rect.x + w / 2, y: rect.y + h / 2}
+      let p1 = { x, y }
+      let c2 = { x: rect.x + w / 2, y: rect.y + h / 2 }
       let s2 = getRotatedPoint(p1, c2, -rotate)
       x = s2.x
       y = s2.y
@@ -591,19 +591,19 @@ class Design extends React.Component<any, IState> {
         (rect.topY! - angle < y && y < rect.topY! + angle)
       ) {
         console.log('1', rect.flipHorizontal)
-        this.setState({hoverLT: true})
+        this.setState({ hoverLT: true })
 
         this.body.style.cursor = "nwse-resize"
       } else if ((rect.leftX! - rotate < x && x < rect.leftX! - angle) &&
         (rect.topY! - rotate < y && y < rect.topY! - angle)
       ) {
-        this.setState({hoverLTR: true})
+        this.setState({ hoverLTR: true })
         this.body.style.cursor = "pointer"
       } else if ((rect.rightX! - angle < x && x < rect.rightX! + angle) &&
         (rect.topY! - angle < y && y < rect.topY! + angle)
       ) {
         console.log('3', rect.flipHorizontal)
-        this.setState({hoverRT: true})
+        this.setState({ hoverRT: true })
 
         this.body.style.cursor = "nwse-resize"
       } else {
@@ -681,7 +681,7 @@ class Design extends React.Component<any, IState> {
       ctx.lineTo(x, y)
       ctx.stroke()
       // ctx.restore()
-      select.points.push({x, y})
+      select.points.push({ x, y })
       // console.log('enterPencil')
       return
     }
@@ -760,7 +760,7 @@ class Design extends React.Component<any, IState> {
           // console.log(rect)
 
           rect = getPath(rect)
-          this.setState({rectList: old}, this.draw)
+          this.setState({ rectList: old }, this.draw)
         }
       }
       return;
@@ -813,7 +813,7 @@ class Design extends React.Component<any, IState> {
           rect.h = newHeight
 
           rect = getPath(rect)
-          this.setState({rectList: old}, this.draw)
+          this.setState({ rectList: old }, this.draw)
         }
       }
       return;
@@ -857,7 +857,7 @@ class Design extends React.Component<any, IState> {
         now.rotate = a
       }
 
-      this.setState({rectList: old}, this.draw)
+      this.setState({ rectList: old }, this.draw)
       return;
     }
     if (enterLeft) {
@@ -875,7 +875,7 @@ class Design extends React.Component<any, IState> {
         now.w = selectRect.w - (x - startX)
         now = getPath(now)
       }
-      this.setState({rectList: old}, this.draw)
+      this.setState({ rectList: old }, this.draw)
       return;
     }
     if (enter) {
@@ -892,7 +892,7 @@ class Design extends React.Component<any, IState> {
         now.y = selectRect.y + dy
         now = getPath(now)
       }
-      this.setState({rectList: old}, this.draw)
+      this.setState({ rectList: old }, this.draw)
       return
     }
 
@@ -909,8 +909,8 @@ class Design extends React.Component<any, IState> {
   }
 
   onWheel = (e: any) => {
-    let {clientX, clientY, deltaY} = e;
-    let {canvasRect, currentMat} = this.state
+    let { clientX, clientY, deltaY } = e;
+    let { canvasRect, currentMat } = this.state
 
     let x = clientX - canvasRect.left
     let y = clientY - canvasRect.top
@@ -1111,11 +1111,11 @@ class Design extends React.Component<any, IState> {
   }
 
   changeRectColor = (e: any) => {
-    const {rectColorType} = this.state
+    const { rectColorType } = this.state
 
     console.log('e', e.hex)
-    this.changeSelect({[rectColorType]: e.hex})
-    this.setState({rectColor: e.hex})
+    this.changeSelect({ [rectColorType]: e.hex })
+    this.setState({ rectColor: e.hex })
   }
 
   onContextMenu = (e: any) => {
@@ -1184,8 +1184,8 @@ class Design extends React.Component<any, IState> {
                 <BaseSelect
                   value={drawType}
                   selectRender={(e: any) => {
-                    if (e.value===ShapeType.SELECT)return <Icon type={'MoveOne'}/>
-                    if (e.value===ShapeType.SCALE)return <Icon type={'Scale'}/>
+                    if (e.value === ShapeType.SELECT) return <Icon type={'MoveOne'}/>
+                    if (e.value === ShapeType.SCALE) return <Icon type={'Scale'}/>
                   }}
                   onChange={(e: any) => this.setCanvasUtilMode(e)}>
                   <BaseOption key={1} value={ShapeType.SELECT} label={ShapeType.SELECT}>
@@ -1203,9 +1203,75 @@ class Design extends React.Component<any, IState> {
                       <div className="left">
                         <Icon type={'CheckSmall'}/>
                         <Icon type={'Scale'}/>
-                        <span className="name">选择</span>
+                        <span className="name">等比缩放</span>
                       </div>
-                      <span className="hotkey">V</span>
+                      <span className="hotkey">K</span>
+                    </div>
+                  </BaseOption>
+                </BaseSelect>
+                <BaseSelect
+                  value={drawType}
+                  selectRender={(e: any) => {
+                    if (e.value === ShapeType.FRAME) return <Icon type={'Pound'}/>
+                    if (e.value === ShapeType.SLICE) return <Icon type={'StraightRazor'}/>
+                  }}
+                  onChange={(e: any) => this.setCanvasUtilMode(e)}>
+                  <BaseOption key={1} value={ShapeType.FRAME} label={ShapeType.FRAME}>
+                    <div className={cx('tool-option', drawType === ShapeType.FRAME && 'active')}>
+                      <div className="left">
+                        <Icon type={'CheckSmall'}/>
+                        <Icon type={'Pound'}/>
+                        <span className="name">窗器</span>
+                      </div>
+                      <span className="hotkey">F</span>
+                    </div>
+                  </BaseOption>
+                  <BaseOption key={2} value={ShapeType.SLICE} label={ShapeType.SLICE}>
+                    <div className={cx('tool-option', drawType === ShapeType.SLICE && 'active')}>
+                      <div className="left">
+                        <Icon type={'CheckSmall'}/>
+                        <Icon type={'StraightRazor'}/>
+                        <span className="name">切图</span>
+                      </div>
+                      <span className="hotkey">S</span>
+                    </div>
+                  </BaseOption>
+                </BaseSelect>
+                <BaseSelect
+                  value={drawType}
+                  selectRender={(e: any) => {
+                    if (e.value === ShapeType.RECT) return <Icon type={'RectangleOne'}/>
+                    if (e.value === ShapeType.ROUND) return <Icon type={'Round'}/>
+                  }}
+                  onChange={(e: any) => this.setCanvasUtilMode(e)}>
+                  <BaseOption key={1} value={ShapeType.RECT} label={ShapeType.RECT}>
+                    <div className={cx('tool-option', drawType === ShapeType.RECT && 'active')}>
+                      <div className="left">
+                        <Icon type={'CheckSmall'}/>
+                        <Icon type={'RectangleOne'}/>
+                        <span className="name">矩形</span>
+                      </div>
+                      <span className="hotkey">R</span>
+                    </div>
+                  </BaseOption>
+                  <BaseOption key={2} value={ShapeType.ROUND} label={ShapeType.ROUND}>
+                    <div className={cx('tool-option', drawType === ShapeType.ROUND && 'active')}>
+                      <div className="left">
+                        <Icon type={'CheckSmall'}/>
+                        <Icon type={'Round'}/>
+                        <span className="name">圆</span>
+                      </div>
+                      <span className="hotkey">O</span>
+                    </div>
+                  </BaseOption>
+                  <BaseOption key={3} value={ShapeType.ARROW} label={ShapeType.ARROW}>
+                    <div className={cx('tool-option', drawType === ShapeType.ARROW && 'active')}>
+                      <div className="left">
+                        <Icon type={'CheckSmall'}/>
+                        <Icon type={'ArrowRightUp'}/>
+                        <span className="name">圆</span>
+                      </div>
+                      <span className="hotkey">Shift + L</span>
                     </div>
                   </BaseOption>
                 </BaseSelect>
@@ -1214,6 +1280,7 @@ class Design extends React.Component<any, IState> {
                   <Icon type={'Down'} size="14" className='arrow'/>
                   <Icon type={'Down'} size="14" className='arrow'/>
                 </div>
+
                 <div className="tool">
                   <Icon type={'Text'} size="20"/>
                 </div>
@@ -1287,20 +1354,20 @@ class Design extends React.Component<any, IState> {
                 </div>
                 <div className="row">
                   <div className="col">
-                    <BaseInput value={selectRect?.rotate} prefix={<RotateIcon style={{fontSize: "16rem"}}/>}/>
+                    <BaseInput value={selectRect?.rotate} prefix={<RotateIcon style={{ fontSize: "16rem" }}/>}/>
                   </div>
                   <div className="col">
                     <BaseButton active={selectRect?.flipHorizontal} onClick={() => this.flip(0)}>
-                      <FlipIcon style={{fontSize: "16rem", 'transform': 'rotate(-90deg)'}}/>
+                      <FlipIcon style={{ fontSize: "16rem", 'transform': 'rotate(-90deg)' }}/>
                     </BaseButton>
                     <BaseButton active={selectRect?.flipVertical} onClick={() => this.flip(1)}>
-                      <FlipIcon style={{fontSize: "16rem", 'transform': 'rotate(0deg)'}}/>
+                      <FlipIcon style={{ fontSize: "16rem", 'transform': 'rotate(0deg)' }}/>
                     </BaseButton>
                   </div>
                 </div>
                 <div className="row">
                   <div className="col">
-                    <BaseInput value={selectRect?.radius} prefix={<AngleIcon style={{fontSize: "16rem"}}/>}/>
+                    <BaseInput value={selectRect?.radius} prefix={<AngleIcon style={{ fontSize: "16rem" }}/>}/>
                   </div>
                   <div className="col">
                     <BaseIcon active={false}>
@@ -1397,7 +1464,7 @@ class Design extends React.Component<any, IState> {
                     <BaseSlotButton value={selectRect?.x?.toFixed(0)}
                                     prefix={
                                       <div className={'color-block'}
-                                           style={{background: selectRect.fillColor}}
+                                           style={{ background: selectRect.fillColor }}
                                            onClick={() => this.setState({
                                              showPicker: !showPicker,
                                              rectColor: selectRect.fillColor,
@@ -1428,7 +1495,7 @@ class Design extends React.Component<any, IState> {
                     <BaseSlotButton value={selectRect?.x?.toFixed(0)}
                                     prefix={
                                       <div className={'color-block'}
-                                           style={{background: selectRect.borderColor}}
+                                           style={{ background: selectRect.borderColor }}
                                            onClick={() => this.setState({
                                              showPicker: !showPicker,
                                              rectColor: selectRect.borderColor,
@@ -1460,7 +1527,7 @@ class Design extends React.Component<any, IState> {
         showPicker &&
           <BasePicker
               visible={showPicker}
-              setVisible={() => this.setState({showPicker: false})}
+              setVisible={() => this.setState({ showPicker: false })}
               color={rectColor || 'white'}
               onChange={this.changeRectColor}/>
       }

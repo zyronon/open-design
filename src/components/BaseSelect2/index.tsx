@@ -16,37 +16,15 @@ interface IProps {
 
 const List = (props: any) => {
   let { open, cc, onClose } = props;
-  const [active, setActive] = useState(false); // 弹窗的存在周期
-  const [aniClassName, setAniClassName] = useState(''); // 动效的class
-  const onTransitionEnd = () => {
-    setAniClassName(open ? 'enter-done' : 'exit-done');
-    if (!open) {
-      setActive(false);
-    }
-  };
 
   const [style, setStyle] = useState<any>({});
 
   useEffect(() => {
-    if (open) {
-      setActive(true);
-      setAniClassName('enter');
-      setTimeout(() => {
-        setAniClassName('enter-active');
-      });
-    } else {
-      setAniClassName('exit');
-      setTimeout(() => {
-        setAniClassName('exit-active');
-      });
-    }
-  }, [open]);
-
-  useEffect(() => {
     if (props.parentRef.current) {
       let rect = props.parentRef.current.getBoundingClientRect();
+      console.log('rect.height', rect)
       setStyle({
-        bottom: document.body.clientHeight - rect.top + 'px',
+        top: rect.height + rect.top + 10 + 'px',
         left: rect.left + 'px',
       });
     }
@@ -56,7 +34,7 @@ const List = (props: any) => {
     return null;
   }
   return ReactDOM.createPortal(
-    <div className={cx('b-select-option-list')} style={style} onTransitionEnd={onTransitionEnd}>
+    <div className={cx('b-select-option-list')} style={style}>
       {React.Children.map(cc, (child: { props: { value: any } }) => {
         if (!React.isValidElement(child)) {
           return null;
@@ -153,13 +131,10 @@ const BaseSelect = (props: IProps) => {
   }
 
   return (
-    <div className={'b-select-wrapper'} ref={elRef}>
-      <div className={'b-select'} onClick={toggle}>
+    <>
+      <div className={'b-select'} onClick={toggle} ref={elRef}>
         <div className={'b-select-left'}>
-          {prefix}
-          <span className={'b-select-label'}>
-                        {selectRender ? selectRender(selectItem) : selectItem.label}
-                    </span>
+          {selectRender ? selectRender(selectItem) : selectItem.label}
         </div>
         <div className={'b-select-right'}>
           <Down theme="outline" size="14" fill="#ffffff" className={cx({ 'b-select-arrow': show })}/>
@@ -172,7 +147,7 @@ const BaseSelect = (props: IProps) => {
         onSelect={onSelect}
         parentRef={elRef}
       />
-    </div>
+    </>
   );
 };
 

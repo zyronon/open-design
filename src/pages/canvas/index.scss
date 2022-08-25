@@ -275,20 +275,15 @@
 }
 
 .tool-option {
-  padding: 0 16rem;
-
-  //width: 180rem;
-  width: 100%;
-  height: 40rem;
+  padding: 0 10rem;
+  width: 160rem;
+  height: 100%;
   cursor: default;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 14rem;
 
-  &:hover {
-    background: $primary;
-  }
 
   &.active {
     .i-icon {
@@ -304,12 +299,14 @@
     align-items: center;
   }
 
+
   .i-icon {
     font-size: 16rem;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
 
     &:first-child {
-      margin-right: 20rem;
+      margin-right: 10rem;
       opacity: 0;
     }
 

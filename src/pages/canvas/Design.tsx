@@ -90,6 +90,7 @@ class Design extends React.Component<any, IState> {
     const c = CanvasUtil.getInstance(canvas)
     c.clearChild()
     // let c = new CanvasUtil(canvas)
+    // @ts-ignore
     cloneDeep(rects).map((rect: Shape) => {
       let r
       if (rect.type === ShapeType.FRAME) {
@@ -1147,7 +1148,6 @@ class Design extends React.Component<any, IState> {
   }
 
   setCanvasUtilMode = (mode: ShapeType, key: any) => {
-    console.log('mode', mode)
     // @ts-ignore
     this.setState({ [key]: mode })
     this.state.cu.setMode(mode)
@@ -1187,6 +1187,7 @@ class Design extends React.Component<any, IState> {
           <div className="canvas-wrapper">
             <div className="tool-bar">
               <div className="left">
+
                 <BaseSelect
                   value={drawType}
                   selectRender={(e: any) => {
@@ -1201,6 +1202,7 @@ class Design extends React.Component<any, IState> {
                     <SelectItem name={'等比缩放'} iconName={'Scale'} hotkey={'K'}/>
                   </BaseOption>
                 </BaseSelect>
+
                 <BaseSelect
                   value={drawType2}
                   selectRender={(e: any) => {
@@ -1215,6 +1217,7 @@ class Design extends React.Component<any, IState> {
                     <SelectItem name={'切图'} iconName={'StraightRazor'} hotkey={'S'}/>
                   </BaseOption>
                 </BaseSelect>
+
                 <BaseSelect
                   value={drawType3}
                   selectRender={(e: any) => {
@@ -1249,6 +1252,7 @@ class Design extends React.Component<any, IState> {
                     <SelectItem name={'图片'} iconName={'pic'} hotkey={'Shift Ctrl K'}/>
                   </BaseOption>
                 </BaseSelect>
+
                 <BaseSelect
                   value={drawType4}
                   selectRender={(e: any) => {
@@ -1263,6 +1267,7 @@ class Design extends React.Component<any, IState> {
                     <SelectItem name={'铅笔'} iconName={'ElectronicPen'} hotkey={'Shift P'}/>
                   </BaseOption>
                 </BaseSelect>
+
                 <div className="tool">
                   <Icon type={'Text'} size="20"/>
                 </div>

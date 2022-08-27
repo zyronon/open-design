@@ -66,7 +66,6 @@ const BaseSelect = memo((props: IProps) => {
   const [selectItem, setSelectItem] = useState<any>({});
 
   useEffect(() => {
-    console.log('value', value)
     if (value !== null) {
       setSelectItem(props?.children?.find((item: any) => item.props.value === value)?.props)
     }

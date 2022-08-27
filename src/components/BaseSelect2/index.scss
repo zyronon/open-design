@@ -44,6 +44,7 @@
   opacity: 1;
   min-width: 96rem;
   padding: 6rem;
+  font-size: 16rem;
 
   .b-select-option {
     border-radius: 4rem;
@@ -52,6 +53,14 @@
     display: flex;
     align-items: center;
     height: $height;
+    padding: 0 10rem;
+
+    .i-icon-check-small{
+      display: flex;
+      align-items: center;
+      margin-right: 12rem;
+    }
+
 
     &.b-select-selected {
       background: $primary;

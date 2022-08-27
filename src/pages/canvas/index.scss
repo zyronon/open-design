@@ -275,24 +275,15 @@
 }
 
 .tool-option {
-  padding: 0 10rem;
-  width: 160rem;
+  width: 140rem;
   height: 100%;
   cursor: default;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 14rem;
+  padding-right: 4rem;
 
-
-  &.active {
-    .i-icon {
-
-      &:first-child {
-        opacity: 1;
-      }
-    }
-  }
 
   > .left {
     display: flex;
@@ -304,15 +295,7 @@
     font-size: 16rem;
     display: inline-flex;
     align-items: center;
-
-    &:first-child {
-      margin-right: 10rem;
-      opacity: 0;
-    }
-
-    &:nth-child(2) {
-      margin-right: 4rem;
-    }
+    margin-right: 6rem;
   }
 
 }

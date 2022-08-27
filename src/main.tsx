@@ -9,7 +9,6 @@ import { Provider } from "react-redux";
 import Design from "./pages/canvas/Design";
 import Test from "./pages/test/Test";
 
-
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
     <Provider store={store}>

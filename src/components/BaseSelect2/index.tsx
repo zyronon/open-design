@@ -1,8 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import './index.scss';
 import cx from 'classnames';
 import ReactDOM from 'react-dom';
-import { Down } from "@icon-park/react";
+import { CheckSmall, Down } from "@icon-park/react";
+import Icon from "@icon-park/react/es/all";
+import { useToggle } from "ahooks";
 
 interface IProps {
   value: any;
@@ -14,7 +16,7 @@ interface IProps {
   alwaysTop?: boolean;
 }
 
-const List = (props: any) => {
+const List = memo((props: any) => {
   let { open, cc, onClose } = props;
 
   const [style, setStyle] = useState<any>({});
@@ -22,7 +24,7 @@ const List = (props: any) => {
   useEffect(() => {
     if (props.parentRef.current) {
       let rect = props.parentRef.current.getBoundingClientRect();
-      console.log('rect.height', rect)
+      // console.log('rect.height', rect)
       setStyle({
         top: rect.height + rect.top + 10 + 'px',
         left: rect.left + 'px',
@@ -33,6 +35,7 @@ const List = (props: any) => {
   if (!open) {
     return null;
   }
+
   return ReactDOM.createPortal(
     <div className={cx('b-select-option-list')} style={style}>
       {React.Children.map(cc, (child: { props: { value: any } }) => {
@@ -41,7 +44,7 @@ const List = (props: any) => {
         }
         const childProps = {
           ...child.props,
-          selected: props.selectItem.value === child.props.value,
+          selected: props.selectItem?.value === child.props.value,
           onSelect: () => props.onSelect(child.props.value),
         };
         return React.cloneElement(child, childProps);
@@ -49,9 +52,9 @@ const List = (props: any) => {
     </div>,
     document.body,
   );
-};
+});
 
-const BaseSelect = (props: IProps) => {
+const BaseSelect = memo((props: IProps) => {
   const {
     value = null,
     onChange,
@@ -63,16 +66,11 @@ const BaseSelect = (props: IProps) => {
   const [selectItem, setSelectItem] = useState<any>({});
 
   useEffect(() => {
+    console.log('value', value)
     if (value !== null) {
-      // console.log('value', value)
-      props.children.map((item: any) => {
-        // console.log('item.props.value',item.props.value)
-        if (item.props.value === value) {
-          setSelectItem(item.props);
-        }
-      });
+      setSelectItem(props?.children?.find((item: any) => item.props.value === value)?.props)
     }
-  }, [value, props.children]);
+  }, [value,]);
 
   useEffect(() => {
     if (value !== null) {
@@ -85,7 +83,7 @@ const BaseSelect = (props: IProps) => {
     }
   }, []);
 
-  const [show, setShow] = useState<boolean>(false);
+  const [show, { toggle, set }] = useToggle<boolean>(false);
   const elRef: any = useRef(null);
 
   useEffect(() => {
@@ -96,7 +94,7 @@ const BaseSelect = (props: IProps) => {
       let list: any = document.querySelector('.b-select-option-list');
       let r = list.contains(e.target);
       if (!r) {
-        setShow(false);
+        set(false);
       }
     };
     if (show) {
@@ -113,19 +111,11 @@ const BaseSelect = (props: IProps) => {
     };
   }, [show, alwaysTop]);
 
-  function toggle() {
-    setShow(!show);
-  }
-
   function onSelect(e: any) {
     if (onChange) {
       onChange(e);
     } else {
-      props.children.map((item: any) => {
-        if (item.props.value === e) {
-          setSelectItem(item.props);
-        }
-      });
+      setSelectItem(props?.children?.find((item: any) => item.props.value === value)?.props)
     }
     toggle();
   }
@@ -134,7 +124,10 @@ const BaseSelect = (props: IProps) => {
     <>
       <div className={'b-select'} onClick={toggle} ref={elRef}>
         <div className={'b-select-left'}>
-          {selectRender ? selectRender(selectItem) : selectItem.label}
+          {
+            selectItem &&
+            (selectRender ? selectRender(selectItem) : selectItem.label)
+          }
         </div>
         <div className={'b-select-right'}>
           <Down theme="outline" size="14" fill="#ffffff" className={cx({ 'b-select-arrow': show })}/>
@@ -149,9 +142,9 @@ const BaseSelect = (props: IProps) => {
       />
     </>
   );
-};
+})
 
-const BaseOption = (props: any) => {
+const BaseOption = memo((props: any) => {
   const { value, children, selected, onSelect } = props;
   return (
     <div
@@ -159,10 +152,11 @@ const BaseOption = (props: any) => {
       className={cx('b-select-option', { 'b-select-selected': selected })}
       onClick={onSelect}
     >
+      <Icon type={'CheckSmall'} style={{ opacity: selected ? 1 : 0 }}/>
       {children}
     </div>
   );
-};
+});
 
 export {
   BaseSelect,

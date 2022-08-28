@@ -81,14 +81,6 @@ export class CanvasUtil {
     return this.instance
   }
 
-  clearChild() {
-    this.children = []
-  }
-
-  addChild(shape: Shape) {
-    this.children.push(shape)
-  }
-
   _draw() {
     EventBus.emit('draw')
     // console.log('重绘所有图形')
@@ -251,4 +243,14 @@ export class CanvasUtil {
     this.startX = -1
     this.startY = -1
   }
+
+
+  clearChild() {
+    this.children = []
+  }
+
+  addChild(shape: Shape) {
+    this.children.push(shape)
+  }
+
 }

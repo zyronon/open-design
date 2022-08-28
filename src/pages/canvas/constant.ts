@@ -328,9 +328,9 @@ export const rects2 = [
 export const rects = [
   {
     "select": false,
-    "x": 433,
+    "x": 233,
     "y": 30,
-    "abX": 433,
+    "abX": 233,
     "abY": 30,
     "w": 280,
     "h": 580,

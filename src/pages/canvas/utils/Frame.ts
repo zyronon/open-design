@@ -1,31 +1,31 @@
-import {Shape} from "./Shape";
-import {ShapeType} from "../type";
-import {getPath, renderRoundRect} from "../utils";
-import {CanvasUtil} from "./CanvasUtil";
-import {cloneDeep} from "lodash";
+import { Shape } from "./Shape";
+import { ShapeType } from "../type";
+import { getPath, renderRoundRect } from "../utils";
+import { CanvasUtil } from "./CanvasUtil";
+import { cloneDeep } from "lodash";
 
 export class Frame extends Shape {
 
   constructor(props: any) {
     super(props);
-    this.config.children = this.config.children.map((child: any) => {
+    this.children = this.config.children.map((child: any) => {
       return new Frame(child)
     })
   }
 
-  draw(ctx: CanvasRenderingContext2D, p?: any): void {
-    // console.log('draw', this.config.name)
+  static draw(ctx: CanvasRenderingContext2D, config: any, status: any, parent?: any,) {
     ctx.save()
-    let {x, y} = this.calcPosition(ctx, p)
+    const { isHover, isSelect } = status
+    let { x, y } = Shape.calcPosition(ctx, config, parent)
     let {
       w, h, radius,
       fillColor, borderColor, rotate, lineWidth,
       type, flipVertical, flipHorizontal, children,
       selected
-    } = this.config
+    } = config
 
     if (radius) {
-      renderRoundRect({x, y, w, h}, radius, ctx)
+      renderRoundRect({ x, y, w, h }, radius, ctx)
     } else {
       ctx.beginPath()
       ctx.moveTo(x, y)
@@ -40,7 +40,13 @@ export class Frame extends Shape {
       ctx.stroke()
     }
 
-    this.hoverAndSelect(ctx, {...this.config, x, y})
+    if (isHover) {
+      Shape.hover(ctx, { ...config, x, y })
+    }
+    if (isSelect) {
+      Shape.selected(ctx, { ...config, x, y })
+    }
+
     ctx.restore()
 
     // ctx.save()
@@ -51,11 +57,18 @@ export class Frame extends Shape {
     // ctx.fillText(rect.name, x, y - 18);
     // ctx.restore()
 
-    this.config.abX = x
-    this.config.abY = y
-    this.config = getPath(this.config)
-    if (children) {
-      children.map((v: any) => v.draw(ctx, this.config))
+    config.abX = x
+    config.abY = y
+    config = getPath(config)
+  }
+
+  render(ctx: CanvasRenderingContext2D, parent?: any): void {
+    Frame.draw(ctx, this.config, {
+      isHover: this.isHover,
+      isSelect: this.isSelect
+    }, parent)
+    if (this.children) {
+      this.children.map((item: any) => item.render(ctx, this.config))
     }
   }
 
@@ -82,7 +95,7 @@ export class Frame extends Shape {
   }
 
   event(event: any, parent?: any, cb?: Function) {
-    let {e, coordinate, type} = event
+    let { e, coordinate, type } = event
     // console.log('event', this.config.name, `type：${type}`,)
     if (e.capture) return
 
@@ -103,10 +116,7 @@ export class Frame extends Shape {
       cb?.()
       // console.log('捕获', this.config.name)
       if (!this.isCapture || !cu.isDesign()) {
-        let {children} = this.config
-        if (children) {
-          children.map((child: any) => child.event(event, this.config))
-        }
+        this.children.map((child: any) => child.event(event, this.config))
       }
 
       if (e.capture) return
@@ -127,7 +137,7 @@ export class Frame extends Shape {
   }
 
   mousedown(event: any, p: any) {
-    let {e, coordinate, type} = event
+    let { e, coordinate, type } = event
     let cu = CanvasUtil.getInstance()
     if (!cu.isDesign()) {
       cu.startX = coordinate.x
@@ -142,19 +152,14 @@ export class Frame extends Shape {
       // cu.draw()
       // this.isSelect = false
       this.isCapture = false
-      let {
-        children, capture
-      } = this.config
-      if (children) {
-        children.map((child: any) => child.event(event, this.config, () => {
-          cu.childIsIn = true
-        }))
-        if (!cu.childIsIn) {
-          cu.childIsIn = false
-          this.isCapture = true
-        } else {
-          console.log('选中了')
-        }
+      this.children.map((child: any) => child.event(event, this.config, () => {
+        cu.childIsIn = true
+      }))
+      if (!cu.childIsIn) {
+        cu.childIsIn = false
+        this.isCapture = true
+      } else {
+        console.log('选中了')
       }
       return;
     }
@@ -178,7 +183,7 @@ export class Frame extends Shape {
     this.isSelect = true
     // this.isCapture = true
     this.isHover = false
-    this.draw(cu.ctx, p)
+    this.render(cu.ctx, p)
   }
 
   mouseup(event: any, p: any) {
@@ -188,7 +193,7 @@ export class Frame extends Shape {
   }
 
   mousemove(event: any, p: any) {
-    let {e, coordinate, type} = event
+    let { e, coordinate, type } = event
 
     // console.log('mousemove', [this.handDown,])
     let cu = CanvasUtil.getInstance();
@@ -198,7 +203,7 @@ export class Frame extends Shape {
 
     if (this.handDown) {
       // console.log('enter')
-      let {x, y} = coordinate
+      let { x, y } = coordinate
       let handScale = 1
       let dx = (x - this.startX) / handScale
       let dy = (y - this.startY) / handScale
@@ -229,7 +234,7 @@ export class Frame extends Shape {
     ctx.save()
     // let nv = currentMat
     // ctx.transform(nv[0], nv[4], nv[1], nv[5], nv[12], nv[13]);
-    this.draw(ctx)
+    this.render(ctx)
     ctx.restore()
     // console.log('mousemove', this.config.name, ctx)
   }

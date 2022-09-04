@@ -89,7 +89,7 @@ export class CanvasUtil {
     }, this.ctx)
     this.ctx.save()
     // console.log('this.children,', this.children)
-    this.children.forEach(shape => shape.draw(this.ctx, {abX: 0, abY: 0}))
+    this.children.forEach(shape => shape.render(this.ctx, {abX: 0, abY: 0}))
     this.ctx.restore()
   }
 
@@ -216,32 +216,58 @@ export class CanvasUtil {
     let w = coordinate.x - this.startX
     let h = coordinate.y - this.startY
     return
-    this.addChild(new Frame({
-      "select": false,
-      "x": x,
-      "y": y,
-      "abX": x,
-      "abY": y,
-      w,
-      h,
-      "rotate": 0,
-      "lineWidth": 2,
-      "type": 100,
-      "color": "gray",
-      "radius": 40,
-      "children": [],
-      "brokenTexts": [],
-      "borderColor": "rgb(216,216,216)",
-      "fillColor": "rgb(216,216,216)",
-      "fontSize": 16,
-      "fontWeight": 500,
-      "fontFamily": "SourceHanSansCN",
-      "texts": [],
-      "name": "新增容器",
-    }))
-
-    this.startX = -1
-    this.startY = -1
+    // this.addChild(new Frame({
+    //   "select": false,
+    //   "x": x,
+    //   "y": y,
+    //   "abX": x,
+    //   "abY": y,
+    //   w,
+    //   h,
+    //   "rotate": 0,
+    //   "lineWidth": 2,
+    //   "type": 100,
+    //   "color": "gray",
+    //   "radius": 40,
+    //   "children": [],
+    //   "brokenTexts": [],
+    //   "borderColor": "rgb(216,216,216)",
+    //   "fillColor": "rgb(216,216,216)",
+    //   "fontSize": 16,
+    //   "fontWeight": 500,
+    //   "fontFamily": "SourceHanSansCN",
+    //   "texts": [],
+    //   "name": "新增容器",
+    // }))
+    //
+    // this.startX = -1
+    // this.startY = -1
+    // this.addChild(new Frame({
+    //   "select": false,
+    //   "x": x,
+    //   "y": y,
+    //   "abX": x,
+    //   "abY": y,
+    //   w,
+    //   h,
+    //   "rotate": 0,
+    //   "lineWidth": 2,
+    //   "type": 100,
+    //   "color": "gray",
+    //   "radius": 40,
+    //   "children": [],
+    //   "brokenTexts": [],
+    //   "borderColor": "rgb(216,216,216)",
+    //   "fillColor": "rgb(216,216,216)",
+    //   "fontSize": 16,
+    //   "fontWeight": 500,
+    //   "fontFamily": "SourceHanSansCN",
+    //   "texts": [],
+    //   "name": "新增容器",
+    // }))
+    //
+    // this.startX = -1
+    // this.startY = -1
   }
 
 

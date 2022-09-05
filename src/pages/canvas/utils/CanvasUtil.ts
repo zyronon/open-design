@@ -1,19 +1,16 @@
-import {Shape} from "./Shape";
-import {clear} from "../utils";
-import {cloneDeep, throttle} from "lodash";
-import {BaseEvent, EventType, ShapeType} from "../type";
+import { Shape } from "./Shape";
+import { clear } from "../utils";
+import { cloneDeep, throttle } from "lodash";
+import { BaseEvent, EventType, ShapeType } from "../type";
 import EventBus from "../../../utils/event-bus";
-import {Colors} from "../constant";
-import {Frame} from "./Frame";
+import { Frame } from "./Frame";
 
 
 export class CanvasUtil {
   // @ts-ignore
   private canvas: HTMLCanvasElement;
-  private copyCanvas: Node | undefined;
   // @ts-ignore
   public ctx: CanvasRenderingContext2D;
-  public copyCtx: CanvasRenderingContext2D | undefined;
   // @ts-ignore
   private canvasRect: DOMRect;
   // @ts-ignore
@@ -29,33 +26,17 @@ export class CanvasUtil {
   mode: ShapeType = ShapeType.SELECT
   startX: number = -1
   startY: number = -1
+  isMouseDown: boolean = false
 
   constructor(canvas: HTMLCanvasElement) {
     this.init(canvas)
-  }
-
-  setMode(mode: ShapeType) {
-    this.mode = mode
-  }
-
-  print(list: any) {
-    return list.map((item: any) => {
-      if (item.config.children) {
-        item.config.children = this.print(item.config.children)
-      }
-      return item.config
-    })
-  }
-
-  print2() {
-    return this.print(cloneDeep(this.children))
   }
 
   init(canvas: HTMLCanvasElement) {
     this.children = []
     let canvasRect = canvas.getBoundingClientRect()
     let ctx: CanvasRenderingContext2D = canvas.getContext('2d')!
-    let {width, height} = canvasRect
+    let { width, height } = canvasRect
     let dpr = window.devicePixelRatio;
     if (dpr) {
       canvas.style.width = width + "px";
@@ -81,6 +62,24 @@ export class CanvasUtil {
     return this.instance
   }
 
+  setMode(mode: ShapeType) {
+    console.log('mode', mode)
+    this.mode = mode
+  }
+
+  print(list: any) {
+    return list.map((item: any) => {
+      if (item.config.children) {
+        item.config.children = this.print(item.config.children)
+      }
+      return item.config
+    })
+  }
+
+  print2() {
+    return this.print(cloneDeep(this.children))
+  }
+
   _draw() {
     EventBus.emit('draw')
     // console.log('重绘所有图形')
@@ -89,29 +88,32 @@ export class CanvasUtil {
     }, this.ctx)
     this.ctx.save()
     // console.log('this.children,', this.children)
-    this.children.forEach(shape => shape.render(this.ctx, {abX: 0, abY: 0}))
+    this.children.forEach(shape => shape.render(this.ctx, { abX: 0, abY: 0 }))
     this.ctx.restore()
   }
 
   drawNewShape(coordinate: any) {
-    clear({
-      x: 0, y: 0, w: this.canvas.width, h: this.canvas.height
-    }, this.copyCtx)
+    this.draw()
     let x = this.startX
     let y = this.startY
     let w = coordinate.x - this.startX
     let h = coordinate.y - this.startY
-    this.copyCtx.beginPath()
-    this.copyCtx.moveTo(x, y)
-    this.copyCtx.lineTo(x + w, y);
-    this.copyCtx.lineTo(x + w, y + h);
-    this.copyCtx.lineTo(x, y + h);
-    this.copyCtx.lineTo(x, y);
-    this.copyCtx.closePath()
-    this.copyCtx.fillStyle = Colors.line
-    this.copyCtx.fill()
-    this.copyCtx.strokeStyle = Colors.line
-    this.copyCtx.stroke()
+    Frame.draw(this.ctx, {
+        "select": false,
+        "x": x,
+        "y": y,
+        "abX": x,
+        "abY": y,
+        "w": w,
+        "h": h,
+        "rotate": 0,
+        "lineWidth": 2,
+        "type": 102,
+        "color": "gray",
+        "radius": 0,
+        "children": []
+      },
+    )
   }
 
   isDesign() {
@@ -131,38 +133,38 @@ export class CanvasUtil {
   _handleEvent = (e: any) => {
     if (e.type === EventType.onMouseEnter) {
       if (this.mode !== ShapeType.SELECT) {
-        this.copyCanvas = this.canvas.cloneNode()
-        this.copyCtx = this.copyCanvas.getContext('2d')!
-        let dpr = window.devicePixelRatio;
-        this.copyCtx.scale(dpr, dpr);
-        this.copyCanvas.style['pointer-events'] = 'none'
-        let area = document.querySelector('#canvasArea')
-        area!.append(this.copyCanvas)
         document.body.style.cursor = "crosshair"
       }
       return
     }
     if (e.type === EventType.onMouseLeave) {
       if (this.mode !== ShapeType.SELECT) {
-        if (this.copyCanvas) {
-          console.log('onMouseLeave')
-          this.copyCanvas.remove()
-          this.startX = -1
-          this.startY = -1
-        }
         document.body.style.cursor = "default"
       }
       return
     }
-    //重写禁止伟播事件
+    //重写禁止传播事件
     e.stopPropagation = () => e.capture = true
     // console.log('e.type', e.type)
     let x = e.x - this.canvasRect.left
     let y = e.y - this.canvasRect.top
     let baseEvent = {
       e,
-      coordinate: {x, y},
+      coordinate: { x, y },
       type: e.type
+    }
+
+    if (this.mode === ShapeType.RECT) {
+      if (e.type === EventType.onMouseMove) {
+        this.onMouseMove(e, { x, y })
+      }
+      if (e.type === EventType.onMouseDown) {
+        this.onMouseDown(e, { x, y })
+      }
+      if (e.type === EventType.onMouseUp) {
+        this.onMouseUp(e, { x, y })
+      }
+      return;
     }
     if (this.startX === -1) {
       if (this.inShape) {
@@ -180,26 +182,31 @@ export class CanvasUtil {
       }
     } else {
       if (e.type === EventType.onMouseMove) {
-        this.onMouseMove(e, {x, y})
+        this.onMouseMove(e, { x, y })
       }
     }
     if (e.type === EventType.onMouseDown) {
-      this.onMouseDown(e, {x, y})
+      this.onMouseDown(e, { x, y })
     }
     if (e.type === EventType.onMouseUp) {
-      this.onMouseUp(e, {x, y})
+      this.onMouseUp(e, { x, y })
     }
   }
 
   onMouseMove(e: BaseEvent, coordinate: any,) {
-    // console.log('canvas画布-onMouseMove')
-    return
-    this.drawNewShape(coordinate)
+    console.log('canvas画布-onMouseMove')
+    if (this.isMouseDown) this.drawNewShape(coordinate)
   }
 
   onMouseDown(e: BaseEvent, coordinate: any,) {
     if (e.capture) return
     console.log('canvas画布-onMouseDown')
+    if (!this.isDesign()) {
+      this.startX = coordinate.x
+      this.startY = coordinate.y
+      this.isMouseDown = true
+    }
+    return;
     if (this.selectedShape) {
       this.selectedShape.isSelect = false
     }
@@ -210,11 +217,8 @@ export class CanvasUtil {
 
   onMouseUp(e: BaseEvent, coordinate: any,) {
     console.log('canvas画布-onMouseUp')
-
-    let x = this.startX
-    let y = this.startY
-    let w = coordinate.x - this.startX
-    let h = coordinate.y - this.startY
+    this.isMouseDown = false
+    this.draw()
     return
     // this.addChild(new Frame({
     //   "select": false,

@@ -13,9 +13,17 @@ export class Frame extends Shape {
     })
   }
 
-  static draw(ctx: CanvasRenderingContext2D, config: any, status: any, parent?: any,) {
+  static draw(
+    ctx: CanvasRenderingContext2D,
+    config: any,
+    status?: {
+      isHover: boolean,
+      isSelect: boolean
+    },
+    parent?: any
+  ) {
     ctx.save()
-    const { isHover, isSelect } = status
+    const { isHover = false, isSelect = false } = status || {}
     let { x, y } = Shape.calcPosition(ctx, config, parent)
     let {
       w, h, radius,

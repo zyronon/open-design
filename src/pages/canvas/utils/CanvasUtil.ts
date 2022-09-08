@@ -3,7 +3,7 @@ import { clear, draw } from "../utils";
 import { cloneDeep, throttle } from "lodash";
 import { BaseEvent, EventType, ShapeType } from "../type";
 import EventBus from "../../../utils/event-bus";
-import { Frame } from "./Frame";
+import Frame from "./Frame";
 
 
 export class CanvasUtil {
@@ -27,6 +27,7 @@ export class CanvasUtil {
   startX: number = -1
   startY: number = -1
   isMouseDown: boolean = false
+  drawShapeConfig: any = null
 
   constructor(canvas: HTMLCanvasElement) {
     this.init(canvas)
@@ -92,36 +93,12 @@ export class CanvasUtil {
     this.ctx.restore()
   }
 
-  drawNewShape(coordinate: any) {
-    this.render()
-    let x = this.startX
-    let y = this.startY
-    let w = coordinate.x - this.startX
-    let h = coordinate.y - this.startY
-    draw(this.ctx, {
-        "select": false,
-        "x": x,
-        "y": y,
-        "abX": x,
-        "abY": y,
-        "w": w,
-        "h": h,
-        "rotate": 0,
-        "lineWidth": 2,
-        "type": 102,
-        "color": "gray",
-        "radius": 0,
-        "children": []
-      },
-    )
-  }
-
   isDesign() {
     return this.mode === ShapeType.SELECT
   }
 
   // draw = debounce(this._draw, 50)
-  render = throttle(this._render, 10)
+  render = throttle(this._render, 0)
   handleEvent = throttle(e => this._handleEvent(e), 10)
 
   initEvent() {
@@ -154,7 +131,7 @@ export class CanvasUtil {
       type: e.type
     }
 
-    if (this.mode === ShapeType.RECT) {
+    if (!this.isDesign()) {
       if (e.type === EventType.onMouseMove) {
         this.onMouseMove(e, { x, y })
       }
@@ -166,24 +143,22 @@ export class CanvasUtil {
       }
       return;
     }
-    if (this.startX === -1) {
-      if (this.inShape) {
-        this.inShape.event(baseEvent)
-      } else {
-        this.children
-          .forEach(shape => shape.event(baseEvent, null, () => {
-            this.childIsIn = true
-          }))
-        if (!this.childIsIn) {
-          // this.hoverShape?.isHover = false
-          // this.draw()
-        }
-        this.childIsIn = false
-      }
+
+    if (this.inShape) {
+      this.inShape.event(baseEvent)
     } else {
-      if (e.type === EventType.onMouseMove) {
-        this.onMouseMove(e, { x, y })
+      this.children
+        .forEach(shape => shape.event(baseEvent, null, () => {
+          this.childIsIn = true
+        }))
+      if (!this.childIsIn) {
+        // this.hoverShape?.isHover = false
+        // this.draw()
       }
+      this.childIsIn = false
+    }
+    if (e.type === EventType.onMouseMove) {
+      this.onMouseMove(e, { x, y })
     }
     if (e.type === EventType.onMouseDown) {
       this.onMouseDown(e, { x, y })
@@ -191,6 +166,31 @@ export class CanvasUtil {
     if (e.type === EventType.onMouseUp) {
       this.onMouseUp(e, { x, y })
     }
+  }
+
+  drawNewShape(coordinate: any) {
+    this.render()
+    let x = this.startX
+    let y = this.startY
+    let w = coordinate.x - this.startX
+    let h = coordinate.y - this.startY
+    this.drawShapeConfig = {
+      "x": x,
+      "y": y,
+      "abX": x,
+      "abY": y,
+      "w": w,
+      "h": h,
+      "rotate": 0,
+      "lineWidth": 2,
+      "type": 102,
+      "color": "gray",
+      "radius": 1,
+      "children": [],
+      "borderColor": "rgb(216,216,216)",
+      "fillColor": "rgb(216,216,216)",
+    }
+    draw(this.ctx, this.drawShapeConfig, { isSelect: true })
   }
 
   onMouseMove(e: BaseEvent, coordinate: any,) {
@@ -206,12 +206,15 @@ export class CanvasUtil {
       this.startY = coordinate.y
       this.isMouseDown = true
     }
-
   }
 
   onMouseUp(e: BaseEvent, coordinate: any,) {
     console.log('canvas画布-onMouseUp')
     this.isMouseDown = false
+    document.body.style.cursor = "default"
+    this.setMode(ShapeType.SELECT)
+    this.addChild(new Frame({ ...this.drawShapeConfig, isSelect: true }))
+    // this.children.push(new Frame({ ...this.drawShapeConfig, isSelect: true }))
     this.render()
   }
 

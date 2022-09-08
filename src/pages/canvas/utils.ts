@@ -534,8 +534,8 @@ export function draw(
   ctx: CanvasRenderingContext2D,
   config: any,
   status?: {
-    isHover: boolean,
-    isSelect: boolean
+    isHover?: boolean,
+    isSelect?: boolean
   },
   parent?: any
 ) {

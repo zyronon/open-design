@@ -37,7 +37,8 @@ import { clearAll, getPath, renderCanvas, renderRound } from "./utils";
 import { message, Popover } from "antd";
 import Left from "./components/Left/left"
 import { CanvasUtil } from "./utils/CanvasUtil";
-import { Frame } from "./utils/Frame";
+// import { Frame } from "./utils/Frame";
+import Frame  from "./utils/Frame";
 import EventBus from "../../utils/event-bus";
 
 const out = new Float32Array([

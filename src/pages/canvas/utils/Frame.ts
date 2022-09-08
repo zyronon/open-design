@@ -5,70 +5,13 @@ import { CanvasUtil } from "./CanvasUtil";
 import { cloneDeep } from "lodash";
 import { draw } from "../utils";
 
-export class Frame extends Shape {
+class Frame extends Shape {
 
   constructor(props: any) {
     super(props);
     this.children = this.config.children.map((child: any) => {
       return new Frame(child)
     })
-  }
-
-  static draw(
-    ctx: CanvasRenderingContext2D,
-    config: any,
-    status?: {
-      isHover: boolean,
-      isSelect: boolean
-    },
-    parent?: any
-  ) {
-    ctx.save()
-    const { isHover = false, isSelect = false } = status || {}
-    let { x, y } = Shape.calcPosition(ctx, config, parent)
-    let {
-      w, h, radius,
-      fillColor, borderColor, rotate, lineWidth,
-      type, flipVertical, flipHorizontal, children,
-      selected
-    } = config
-
-    if (radius) {
-      renderRoundRect({ x, y, w, h }, radius, ctx)
-    } else {
-      ctx.beginPath()
-      ctx.moveTo(x, y)
-      ctx.lineTo(x + w, y);
-      ctx.lineTo(x + w, y + h);
-      ctx.lineTo(x, y + h);
-      ctx.lineTo(x, y);
-      ctx.closePath()
-      ctx.fillStyle = fillColor
-      ctx.fill()
-      ctx.strokeStyle = borderColor
-      ctx.stroke()
-    }
-
-    if (isHover) {
-      Shape.hover(ctx, { ...config, x, y })
-    }
-    if (isSelect) {
-      Shape.selected(ctx, { ...config, x, y })
-    }
-
-    ctx.restore()
-
-    // ctx.save()
-    // let rect = this.config
-    // ctx.fillStyle = 'gray'
-    // ctx.font = `${rect.fontWeight} ${rect.fontSize}rem "${rect.fontFamily}", sans-serif`;
-    // ctx.textBaseline = 'top'
-    // ctx.fillText(rect.name, x, y - 18);
-    // ctx.restore()
-
-    config.abX = x
-    config.abY = y
-    config = getPath(config)
   }
 
   render(ctx: CanvasRenderingContext2D, parent?: any): void {
@@ -249,3 +192,5 @@ export class Frame extends Shape {
   }
 
 }
+
+export default Frame

@@ -3,6 +3,7 @@ import { ShapeType } from "../type";
 import { getPath, renderRoundRect } from "../utils";
 import { CanvasUtil } from "./CanvasUtil";
 import { cloneDeep } from "lodash";
+import { draw } from "../utils";
 
 export class Frame extends Shape {
 
@@ -71,7 +72,7 @@ export class Frame extends Shape {
   }
 
   render(ctx: CanvasRenderingContext2D, parent?: any): void {
-    Frame.draw(ctx, this.config, {
+    draw(ctx, this.config, {
       isHover: this.isHover,
       isSelect: this.isSelect
     }, parent)
@@ -117,7 +118,7 @@ export class Frame extends Shape {
         // console.log('cu.inShape', cu.inShape.config.name, cu.inShape !== this)
         if (cu.inShape !== this) {
           cu.inShape.isHover = false
-          cu.draw()
+          cu.render()
         }
       }
       cu.inShape = this
@@ -139,7 +140,7 @@ export class Frame extends Shape {
       }
       // console.log('isIn', this.isHover)
       cu.hoverShape = null
-      cu.draw()
+      cu.render()
       this.isHover = false
     }
   }
@@ -185,7 +186,7 @@ export class Frame extends Shape {
     if (cu.selectedShape) {
       cu.selectedShape.isSelect = false
       // cu.selectedShape.isCapture = true
-      cu.draw()
+      cu.render()
     }
     cu.selectedShape = this
     this.isSelect = true
@@ -219,7 +220,7 @@ export class Frame extends Shape {
       this.config.y = this.original.y + dy
       this.config = getPath(this.config)
       // cu.hoverShape = this
-      cu.draw()
+      cu.render()
       return;
     }
 

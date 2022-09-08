@@ -1,5 +1,5 @@
 import { Shape } from "./Shape";
-import { clear } from "../utils";
+import { clear, draw } from "../utils";
 import { cloneDeep, throttle } from "lodash";
 import { BaseEvent, EventType, ShapeType } from "../type";
 import EventBus from "../../../utils/event-bus";
@@ -80,7 +80,7 @@ export class CanvasUtil {
     return this.print(cloneDeep(this.children))
   }
 
-  _draw() {
+  _render() {
     EventBus.emit('draw')
     // console.log('重绘所有图形')
     clear({
@@ -93,12 +93,12 @@ export class CanvasUtil {
   }
 
   drawNewShape(coordinate: any) {
-    this.draw()
+    this.render()
     let x = this.startX
     let y = this.startY
     let w = coordinate.x - this.startX
     let h = coordinate.y - this.startY
-    Frame.draw(this.ctx, {
+    draw(this.ctx, {
         "select": false,
         "x": x,
         "y": y,
@@ -121,7 +121,7 @@ export class CanvasUtil {
   }
 
   // draw = debounce(this._draw, 50)
-  draw = throttle(this._draw, 10)
+  render = throttle(this._render, 10)
   handleEvent = throttle(e => this._handleEvent(e), 10)
 
   initEvent() {
@@ -206,72 +206,13 @@ export class CanvasUtil {
       this.startY = coordinate.y
       this.isMouseDown = true
     }
-    return;
-    if (this.selectedShape) {
-      this.selectedShape.isSelect = false
-    }
-    this.selectedShape = null
-    this.hoverShape = null
-    this.draw()
+
   }
 
   onMouseUp(e: BaseEvent, coordinate: any,) {
     console.log('canvas画布-onMouseUp')
     this.isMouseDown = false
-    this.draw()
-    return
-    // this.addChild(new Frame({
-    //   "select": false,
-    //   "x": x,
-    //   "y": y,
-    //   "abX": x,
-    //   "abY": y,
-    //   w,
-    //   h,
-    //   "rotate": 0,
-    //   "lineWidth": 2,
-    //   "type": 100,
-    //   "color": "gray",
-    //   "radius": 40,
-    //   "children": [],
-    //   "brokenTexts": [],
-    //   "borderColor": "rgb(216,216,216)",
-    //   "fillColor": "rgb(216,216,216)",
-    //   "fontSize": 16,
-    //   "fontWeight": 500,
-    //   "fontFamily": "SourceHanSansCN",
-    //   "texts": [],
-    //   "name": "新增容器",
-    // }))
-    //
-    // this.startX = -1
-    // this.startY = -1
-    // this.addChild(new Frame({
-    //   "select": false,
-    //   "x": x,
-    //   "y": y,
-    //   "abX": x,
-    //   "abY": y,
-    //   w,
-    //   h,
-    //   "rotate": 0,
-    //   "lineWidth": 2,
-    //   "type": 100,
-    //   "color": "gray",
-    //   "radius": 40,
-    //   "children": [],
-    //   "brokenTexts": [],
-    //   "borderColor": "rgb(216,216,216)",
-    //   "fillColor": "rgb(216,216,216)",
-    //   "fontSize": 16,
-    //   "fontWeight": 500,
-    //   "fontFamily": "SourceHanSansCN",
-    //   "texts": [],
-    //   "name": "新增容器",
-    // }))
-    //
-    // this.startX = -1
-    // this.startY = -1
+    this.render()
   }
 
 

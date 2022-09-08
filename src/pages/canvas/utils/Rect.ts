@@ -92,7 +92,7 @@ export class Rect2 extends Shape {
     } else {
       let instance = CanvasUtil.getInstance()
       instance.hoverShape = null
-      instance.draw()
+      instance.render()
     }
   }
 
@@ -124,7 +124,7 @@ export class Rect2 extends Shape {
     if (this.config.selected) return
     if (instance.selectedShape) {
       instance.selectedShape.config.selected = false
-      instance.draw()
+      instance.render()
     }
     instance.selectedShape = this
     this.config.selected = true
@@ -152,7 +152,7 @@ export class Rect2 extends Shape {
       this.config = getPath(this.config)
       let instance = CanvasUtil.getInstance();
       // instance.hoverShape = this
-      instance.draw()
+      instance.render()
       return;
     }
 

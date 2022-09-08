@@ -99,7 +99,7 @@ class Design extends React.Component<any, IState> {
       // @ts-ignore
       c.addChild(r)
     })
-    c.draw()
+    c.render()
     c.initEvent()
     this.setState({ cu: c })
     EventBus.on('draw', () => {

@@ -1,0 +1,24 @@
+@import "variable";
+@import "font";
+@import '@icon-park/react/styles/index.css';
+
+body {
+  font-family: 'SourceHanSansCN', serif;
+  font-weight: normal;
+}
+
+.canvas-text-input {
+  position: fixed;
+  z-index: 1000;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
+  //background-color: rgb(73,73,73);
+  background-color: gray;
+}
+
+::-webkit-scrollbar {
+  display: block;
+  width: 10px;
+}

@@ -1,0 +1,20 @@
+@import '/src/assets/css/variable.scss';
+
+.d-icon {
+  $width: $input-height;
+  min-width: $width;
+  min-height: $width;
+  max-height: $width;
+  max-width: $width;
+  //margin-left: 10rem;
+  border-radius: 4rem;
+  border: 1px solid #494949;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &.active {
+    background: $primary;
+    border: 1px solid transparent;
+  }
+}

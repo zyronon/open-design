@@ -70,8 +70,8 @@ export class CanvasUtil {
 
   print(list: any) {
     return list.map((item: any) => {
-      if (item.config.children) {
-        item.config.children = this.print(item.config.children)
+      if (item.children) {
+        item.children = this.print(item.children)
       }
       return item.config
     })
@@ -210,12 +210,13 @@ export class CanvasUtil {
 
   onMouseUp(e: BaseEvent, coordinate: any,) {
     console.log('canvas画布-onMouseUp')
-    this.isMouseDown = false
-    document.body.style.cursor = "default"
-    this.setMode(ShapeType.SELECT)
-    this.addChild(new Frame({ ...this.drawShapeConfig, isSelect: true }))
-    // this.children.push(new Frame({ ...this.drawShapeConfig, isSelect: true }))
-    this.render()
+    if (this.isMouseDown){
+      this.isMouseDown = false
+      document.body.style.cursor = "default"
+      this.setMode(ShapeType.SELECT)
+      this.addChild(new Frame({ ...this.drawShapeConfig, isSelect: true }))
+      this.render()
+    }
   }
 
 

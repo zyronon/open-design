@@ -1131,7 +1131,7 @@ class Design extends React.Component<any, IState> {
   print = () => {
     navigator.clipboard.writeText(JSON.stringify(store.rectList, null, 2))
       .then(() => {
-        message.success('复制成功')
+        message.success('复制成功1')
       })
       .catch(err => {
         message.error('复制失败')
@@ -1141,7 +1141,7 @@ class Design extends React.Component<any, IState> {
     console.log(this.state.cu.print2())
     navigator.clipboard.writeText(JSON.stringify(this.state.cu.print2(), null, 2))
       .then(() => {
-        message.success('复制成功')
+        message.success('复制成功2')
       })
       .catch(err => {
         message.error('复制失败')

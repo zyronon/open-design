@@ -326,7 +326,6 @@ export const rects2 = [
 
 export const rects = [
   {
-    "select": false,
     "x": 233,
     "y": 30,
     "abX": 233,
@@ -340,7 +339,6 @@ export const rects = [
     "radius": 40,
     "children": [
       {
-        "select": false,
         "x": 10,
         "y": 10,
         "abX": 443,
@@ -354,7 +352,6 @@ export const rects = [
         "radius": 40,
         "children": [
           {
-            "capture": true,
             "x": 20,
             "y": 10,
             "abX": 463,
@@ -368,7 +365,6 @@ export const rects = [
             "radius": 40,
             "children": [
               {
-                "bubble": false,
                 "x": 20,
                 "y": 10,
                 "abX": 483,
@@ -407,7 +403,6 @@ export const rects = [
             "id": "207d7573-5d38-46ec-b80f-ef73fdd25573"
           },
           {
-            "capture": true,
             "x": 20,
             "y": 250,
             "abX": 463,
@@ -421,7 +416,6 @@ export const rects = [
             "radius": 40,
             "children": [
               {
-                "bubble": false,
                 "x": 20,
                 "y": 10,
                 "abX": 483,
@@ -488,7 +482,6 @@ export const rects = [
     "id": "cd973e70-08e8-471a-814d-61966b891d5a"
   },
   {
-    "select": false,
     "x": 833,
     "y": 30,
     "abX": 833,

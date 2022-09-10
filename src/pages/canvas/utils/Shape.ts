@@ -14,7 +14,6 @@ export class Shape {
 
   constructor(props: any) {
     this.config = getPath(props)
-    this.isSelect = this.config.isSelect ?? false;
   }
 
   emit(event: any, p: any) {

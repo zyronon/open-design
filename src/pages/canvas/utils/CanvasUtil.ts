@@ -217,7 +217,7 @@ export class CanvasUtil {
       this.isMouseDown = false
       document.body.style.cursor = "default"
       this.setMode(ShapeType.SELECT)
-      let frame = new Frame({ ...this.drawShapeConfig, isSelect: true });
+      let frame = new Frame(this.drawShapeConfig);
       frame.isSelect = true
       this.selectedShape = frame
       this.addChild(frame)
@@ -233,5 +233,4 @@ export class CanvasUtil {
   addChild(shape: Shape) {
     this.children.push(shape)
   }
-
 }

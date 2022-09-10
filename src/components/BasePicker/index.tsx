@@ -1,7 +1,6 @@
-
-import React, {useEffect, useRef} from "react"
+import React, { useEffect, useRef } from "react"
 // @ts-ignore
-import {SketchPicker} from 'react-color'
+import { SketchPicker } from 'react-color'
 
 export default React.memo((props: any) => {
   const {color, onChange, visible, setVisible} = props

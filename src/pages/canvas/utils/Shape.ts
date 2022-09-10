@@ -4,7 +4,7 @@ export class Shape {
   protected config: any
   protected children: Shape[] = []
   protected isHover: boolean = false
-  protected isSelect: boolean = false
+  isSelect: boolean = false
   protected isCapture: boolean = true
   handDown: boolean = false
   startX: number = 0

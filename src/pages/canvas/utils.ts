@@ -3,7 +3,6 @@ import { store } from "./store";
 // @ts-ignore
 import { v4 as uuid } from 'uuid';
 import { Colors } from "./constant";
-import { getRotatedPoint } from "../../utils";
 
 export function renderCanvas(
   rect: Shape,

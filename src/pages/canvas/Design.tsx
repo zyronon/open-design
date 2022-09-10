@@ -22,7 +22,6 @@ import FlipIcon from "../../assets/icon/FlipIcon";
 import RotateIcon from "../../assets/icon/RotateIcon";
 import AngleIcon from "../../assets/icon/AngleIcon";
 import { withRouter } from "../../components/WithRouter";
-import cx from "classnames";
 import { mat4 } from 'gl-matrix'
 import Fps from "../../components/Fps";
 import { BaseOption, BaseSelect } from "../../components/BaseSelect2";
@@ -34,11 +33,11 @@ import BasePicker from "../../components/BasePicker"
 import Icon from '@icon-park/react/es/all';
 import { pushRect, removeRect, store } from "./store";
 import { clearAll, getPath, renderCanvas, renderRound } from "./utils";
-import { message, Popover } from "antd";
+import { message } from "antd";
 import Left from "./components/Left/left"
 import { CanvasUtil } from "./utils/CanvasUtil";
 // import { Frame } from "./utils/Frame";
-import Frame  from "./utils/Frame";
+import Frame from "./utils/Frame";
 import EventBus from "../../utils/event-bus";
 
 const out = new Float32Array([

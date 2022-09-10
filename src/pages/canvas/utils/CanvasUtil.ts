@@ -202,6 +202,9 @@ export class CanvasUtil {
     if (e.capture) return
     console.log('canvas画布-onMouseDown')
     if (!this.isDesign()) {
+      if (this.selectedShape) {
+        this.selectedShape.isSelect = false
+      }
       this.startX = coordinate.x
       this.startY = coordinate.y
       this.isMouseDown = true
@@ -210,11 +213,14 @@ export class CanvasUtil {
 
   onMouseUp(e: BaseEvent, coordinate: any,) {
     console.log('canvas画布-onMouseUp')
-    if (this.isMouseDown){
+    if (this.isMouseDown) {
       this.isMouseDown = false
       document.body.style.cursor = "default"
       this.setMode(ShapeType.SELECT)
-      this.addChild(new Frame({ ...this.drawShapeConfig, isSelect: true }))
+      let frame = new Frame({ ...this.drawShapeConfig, isSelect: true });
+      frame.isSelect = true
+      this.selectedShape = frame
+      this.addChild(frame)
       this.render()
     }
   }

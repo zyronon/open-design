@@ -1,9 +1,7 @@
 import { Shape } from "./Shape";
-import { ShapeType } from "../type";
-import { getPath, renderRoundRect } from "../utils";
+import { draw, getPath } from "../utils";
 import { CanvasUtil } from "./CanvasUtil";
 import { cloneDeep } from "lodash";
-import { draw } from "../utils";
 
 class Frame extends Shape {
 

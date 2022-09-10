@@ -1,5 +1,4 @@
-import {FontFamily, FontWeight, ShapeType, TextAlign, TextBaseline, TextMode} from "./type";
-import {cloneDeep} from "lodash";
+import { FontFamily, FontWeight } from "./type";
 
 export const fontFamilies = [
   {

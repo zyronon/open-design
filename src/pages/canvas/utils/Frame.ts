@@ -58,16 +58,17 @@ class Frame extends Shape {
 
     let cu = CanvasUtil.getInstance()
     if (this.isIn(coordinate.x, coordinate.y)) {
-      //如果已经选中了，那就不要再加hover效果了
-      if (!this.isSelect){
-        this.isHover = true
-      }
-      cu.setInShape(this)
       cb?.()
       // console.log('捕获', this.config.name)
       if (!this.isCapture || !cu.isDesign()) {
         this.children.map((child: any) => child.event(event, this.config))
       }
+
+      //如果已经选中了，那就不要再加hover效果了
+      if (!this.isSelect){
+        this.isHover = true
+      }
+      cu.setInShape(this)
 
       if (e.capture) return
       this.emit(event, parent)
@@ -77,7 +78,11 @@ class Frame extends Shape {
       // console.log('冒泡', this.config.name)
     } else {
       this.isHover = false
-      cu.setInShape(null)
+      if (cu.inShape === this){
+        cu.inShape = null
+        cu.render()
+      }
+      // cu.setInShape(null)
       this.children.map((child: any) => child.event(event, this.config))
     }
   }
@@ -105,13 +110,13 @@ class Frame extends Shape {
         cu.childIsIn = false
         this.isCapture = true
       } else {
-        console.log('选中了')
+        // console.log('选中了')
       }
       return;
     }
 
     this.lastClickTime = Date.now()
-    console.log('mousedown', this.config.name, this.isMouseDown, this.isSelect)
+    // console.log('mousedown', this.config.name, this.isMouseDown, this.isSelect)
 
     this.isMouseDown = true
     this.startX = coordinate.x
@@ -132,7 +137,7 @@ class Frame extends Shape {
   }
 
   mouseup(event: any, p: any) {
-    console.log('mouseup', this.config.name,)
+    // console.log('mouseup', this.config.name,)
     this.isMouseDown = false
     // this.isCapture = true
   }

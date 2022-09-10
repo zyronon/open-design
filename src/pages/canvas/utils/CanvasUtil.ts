@@ -32,8 +32,11 @@ export class CanvasUtil {
   }
 
   setInShape(shape: Shape | null) {
-    // console.log('shape', shape)
     if (this.inShape !== shape) {
+      console.log('shape', shape?.config?.name)
+      if (this.inShape) {
+        this.inShape.isHover = false
+      }
       this.inShape = shape
       this.render()
     }
@@ -201,13 +204,13 @@ export class CanvasUtil {
 
   onMouseMove(e: BaseEvent, coordinate: any,) {
     if (e.capture) return
-    console.log('canvas画布-onMouseMove')
+    // console.log('canvas画布-onMouseMove')
     if (this.isMouseDown) this.drawNewShape(coordinate)
   }
 
   onMouseDown(e: BaseEvent, coordinate: any,) {
     if (e.capture) return
-    console.log('canvas画布-onMouseDown')
+    // console.log('canvas画布-onMouseDown')
     if (!this.isDesign()) {
       if (this.selectedShape) {
         this.selectedShape.isSelect = false
@@ -220,7 +223,7 @@ export class CanvasUtil {
 
   onMouseUp(e: BaseEvent, coordinate: any,) {
     if (e.capture) return
-    console.log('canvas画布-onMouseUp')
+    // console.log('canvas画布-onMouseUp')
     if (this.selectedShape) {
       this.selectedShape.isSelect = false
       this.render()

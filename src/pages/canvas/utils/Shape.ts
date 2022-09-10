@@ -1,7 +1,7 @@
 import { clear, getPath, renderRoundRect } from "../utils";
 
 export class Shape {
-  protected config: any
+  config: any
   protected children: Shape[] = []
   protected isHover: boolean = false
   isSelect: boolean = false

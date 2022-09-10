@@ -6,7 +6,7 @@ export class Shape {
   protected isHover: boolean = false
   isSelect: boolean = false
   protected isCapture: boolean = true
-  handDown: boolean = false
+  isMouseDown: boolean = false
   startX: number = 0
   startY: number = 0
   original: any = null

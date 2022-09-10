@@ -49,20 +49,20 @@ class Frame extends Shape {
     // console.log('event', this.config.name, `type：${type}`,)
     if (e.capture) return
 
-    if (this.handDown) {
+    //mouseup事件，会直接走到这里
+    //这里需要禁止传播，不然canvas的onMouseUp会触发
+    if (this.isMouseDown) {
+      event.e.stopPropagation()
       return this.emit(event, parent)
     }
-    let cu = CanvasUtil.getInstance()
 
+    let cu = CanvasUtil.getInstance()
     if (this.isIn(coordinate.x, coordinate.y)) {
-      if (cu.inShape) {
-        // console.log('cu.inShape', cu.inShape.config.name, cu.inShape !== this)
-        if (cu.inShape !== this) {
-          cu.inShape.isHover = false
-          cu.render()
-        }
+      //如果已经选中了，那就不要再加hover效果了
+      if (!this.isSelect){
+        this.isHover = true
       }
-      cu.inShape = this
+      cu.setInShape(this)
       cb?.()
       // console.log('捕获', this.config.name)
       if (!this.isCapture || !cu.isDesign()) {
@@ -76,13 +76,9 @@ class Frame extends Shape {
       }
       // console.log('冒泡', this.config.name)
     } else {
-      if (cu.inShape === this) {
-        cu.inShape = null
-      }
-      // console.log('isIn', this.isHover)
-      cu.hoverShape = null
-      cu.render()
       this.isHover = false
+      cu.setInShape(null)
+      this.children.map((child: any) => child.event(event, this.config))
     }
   }
 
@@ -115,15 +111,15 @@ class Frame extends Shape {
     }
 
     this.lastClickTime = Date.now()
-    console.log('mousedown', this.config.name, this.handDown, this.isSelect)
+    console.log('mousedown', this.config.name, this.isMouseDown, this.isSelect)
 
-    this.handDown = true
+    this.isMouseDown = true
     this.startX = coordinate.x
     this.startY = coordinate.y
     this.original = cloneDeep(this.config)
-
     if (this.isSelect) return
 
+    this.isHover = false
     if (cu.selectedShape) {
       cu.selectedShape.isSelect = false
       // cu.selectedShape.isCapture = true
@@ -132,13 +128,12 @@ class Frame extends Shape {
     cu.selectedShape = this
     this.isSelect = true
     // this.isCapture = true
-    this.isHover = false
     this.render(cu.ctx, p)
   }
 
   mouseup(event: any, p: any) {
     console.log('mouseup', this.config.name,)
-    this.handDown = false
+    this.isMouseDown = false
     // this.isCapture = true
   }
 
@@ -151,7 +146,7 @@ class Frame extends Shape {
       return;
     }
 
-    if (this.handDown) {
+    if (this.isMouseDown) {
       // console.log('enter')
       let { x, y } = coordinate
       let handScale = 1
@@ -179,7 +174,6 @@ class Frame extends Shape {
       return
     }
     this.isHover = true
-    cu.hoverShape = this
     let ctx = cu.ctx
     ctx.save()
     // let nv = currentMat

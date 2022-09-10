@@ -5,7 +5,6 @@ import { BaseEvent, EventType, ShapeType } from "../type";
 import EventBus from "../../../utils/event-bus";
 import Frame from "./Frame";
 
-
 export class CanvasUtil {
   // @ts-ignore
   private canvas: HTMLCanvasElement;
@@ -19,7 +18,6 @@ export class CanvasUtil {
   private children: any[]
   static instance: CanvasUtil | null
   //当hover时，只向hover那个图形传递事件。不用递归整个树去判断isIn
-  hoverShape: any
   inShape: any
   selectedShape: any
   childIsIn: boolean = false
@@ -31,6 +29,14 @@ export class CanvasUtil {
 
   constructor(canvas: HTMLCanvasElement) {
     this.init(canvas)
+  }
+
+  setInShape(shape: Shape | null) {
+    // console.log('shape', shape)
+    if (this.inShape !== shape) {
+      this.inShape = shape
+      this.render()
+    }
   }
 
   init(canvas: HTMLCanvasElement) {
@@ -194,6 +200,7 @@ export class CanvasUtil {
   }
 
   onMouseMove(e: BaseEvent, coordinate: any,) {
+    if (e.capture) return
     console.log('canvas画布-onMouseMove')
     if (this.isMouseDown) this.drawNewShape(coordinate)
   }
@@ -212,7 +219,12 @@ export class CanvasUtil {
   }
 
   onMouseUp(e: BaseEvent, coordinate: any,) {
+    if (e.capture) return
     console.log('canvas画布-onMouseUp')
+    if (this.selectedShape) {
+      this.selectedShape.isSelect = false
+      this.render()
+    }
     if (this.isMouseDown) {
       this.isMouseDown = false
       document.body.style.cursor = "default"

@@ -31,6 +31,7 @@ export class CanvasUtil {
     this.init(canvas)
   }
 
+  //设置inShape
   setInShape(shape: Shape | null) {
     if (this.inShape !== shape) {
       console.log('shape', shape?.config?.name)
@@ -38,6 +39,14 @@ export class CanvasUtil {
         this.inShape.isHover = false
       }
       this.inShape = shape
+      this.render()
+    }
+  }
+
+  //设置inShape为null
+  setInShapeNull(target: Shape) {
+    if (this.inShape === target) {
+      this.inShape = null
       this.render()
     }
   }

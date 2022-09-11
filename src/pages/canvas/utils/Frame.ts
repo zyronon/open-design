@@ -64,13 +64,14 @@ class Frame extends Shape {
         this.children.map((child: any) => child.event(event, this.config))
       }
 
+      if (e.capture) return
+
       //如果已经选中了，那就不要再加hover效果了
-      if (!this.isSelect){
+      if (!this.isSelect) {
         this.isHover = true
       }
       cu.setInShape(this)
 
-      if (e.capture) return
       this.emit(event, parent)
       if (this.isSelect || this.isHover) {
         event.e.stopPropagation()
@@ -78,11 +79,7 @@ class Frame extends Shape {
       // console.log('冒泡', this.config.name)
     } else {
       this.isHover = false
-      if (cu.inShape === this){
-        cu.inShape = null
-        cu.render()
-      }
-      // cu.setInShape(null)
+      cu.setInShapeNull(this)
       this.children.map((child: any) => child.event(event, this.config))
     }
   }

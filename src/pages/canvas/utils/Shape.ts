@@ -5,7 +5,7 @@ export class Shape {
   protected children: Shape[] = []
   protected isHover: boolean = false
   isSelect: boolean = false
-  protected isCapture: boolean = true
+  isCapture: boolean = true
   isMouseDown: boolean = false
   startX: number = 0
   startY: number = 0

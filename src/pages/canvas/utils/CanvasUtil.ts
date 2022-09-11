@@ -19,7 +19,9 @@ export class CanvasUtil {
   static instance: CanvasUtil | null
   //当hover时，只向hover那个图形传递事件。不用递归整个树去判断isIn
   inShape: any
+  inShapeParent: any
   selectedShape: any
+  //用于标记子组件是否选中
   childIsIn: boolean = false
   mode: ShapeType = ShapeType.SELECT
   startX: number = -1
@@ -32,9 +34,15 @@ export class CanvasUtil {
   }
 
   //设置inShape
-  setInShape(shape: Shape | null) {
+  setInShape(shape: Shape, parent?: Shape) {
+    // if (this.inShapeParent && this.inShapeParent !== parent) {
+    //   this.inShapeParent.isCapture = true
+    // }
+    this.inShapeParent = parent
+
+
     if (this.inShape !== shape) {
-      console.log('shape', shape?.config?.name)
+      // console.log('shape', shape?.config?.name)
       if (this.inShape) {
         this.inShape.isHover = false
       }
@@ -163,7 +171,7 @@ export class CanvasUtil {
     }
 
     if (this.inShape) {
-      this.inShape.event(baseEvent)
+      this.inShape.event(baseEvent, this.inShapeParent)
     } else {
       this.children
         .forEach(shape => shape.event(baseEvent, null, () => {

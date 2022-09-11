@@ -10,37 +10,39 @@ export const fontFamilies = [
     value: FontFamily.SourceHanSerifCN,
   }
 ]
+
 export const fontWeight = [
-  {label: 'Light', value: FontWeight.LIGHT,},
-  {label: 'Regular', value: FontWeight.REGULAR,},
-  {label: 'Normal', value: FontWeight.Normal},
-  {label: 'Medium', value: FontWeight.MEDIUM},
-  {label: 'Bold', value: FontWeight.BOLD,},
-  {label: 'Heavy', value: FontWeight.HEAVY,},
+  { label: 'Light', value: FontWeight.LIGHT, },
+  { label: 'Regular', value: FontWeight.REGULAR, },
+  { label: 'Normal', value: FontWeight.Normal },
+  { label: 'Medium', value: FontWeight.MEDIUM },
+  { label: 'Bold', value: FontWeight.BOLD, },
+  { label: 'Heavy', value: FontWeight.HEAVY, },
 ]
 
 export const fontSize = [
-  {label: '10', value: 10,},
-  {label: '12', value: 12,},
-  {label: '14', value: 14,},
-  {label: '16', value: 16,},
-  {label: '18', value: 18,},
-  {label: '20', value: 20,},
-  {label: '24', value: 24,},
-  {label: '32', value: 32,},
-  {label: '36', value: 36,},
-  {label: '40', value: 40,},
-  {label: '48', value: 48,},
-  {label: '64', value: 64,},
-  {label: '96', value: 96,},
-  {label: '128', value: 128,},
-  {label: '256', value: 256,},
+  { label: '10', value: 10, },
+  { label: '12', value: 12, },
+  { label: '14', value: 14, },
+  { label: '16', value: 16, },
+  { label: '18', value: 18, },
+  { label: '20', value: 20, },
+  { label: '24', value: 24, },
+  { label: '32', value: 32, },
+  { label: '36', value: 36, },
+  { label: '40', value: 40, },
+  { label: '48', value: 48, },
+  { label: '64', value: 64, },
+  { label: '96', value: 96, },
+  { label: '128', value: 128, },
+  { label: '256', value: 256, },
 ]
 
 export const Colors = {
   primary: '#4B75F6FF',
   line: 'rgb(216,216,216)',
 }
+
 export const rects2 = [
   {
     capture: true,
@@ -493,7 +495,59 @@ export const rects = [
     "type": 102,
     "color": "gray",
     "radius": 40,
-    "children": [],
+    "children": [
+      {
+        "x": 10,
+        "y": 10,
+        "abX": 1203,
+        "abY": 40,
+        "w": 200,
+        "h": 400,
+        "rotate": 0,
+        "lineWidth": 2,
+        "type": 102,
+        "color": "gray",
+        "radius": 40,
+        "children": [
+          {
+            "x": 20,
+            "y": 10,
+            "abX": 1223,
+            "abY": 50,
+            "w": 100,
+            "h": 200,
+            "rotate": 0,
+            "lineWidth": 2,
+            "type": 102,
+            "color": "gray",
+            "radius": 40,
+            "brokenTexts": [],
+            "borderColor": "rgb(216,216,216)",
+            "fillColor": "rgb(216,216,216)",
+            "fontSize": 0,
+            "texts": [],
+            "name": "子组件2----111111111",
+            "leftX": 1223,
+            "rightX": 1323,
+            "topY": 50,
+            "bottomY": 250,
+            "children": [],
+            "id": "7e7b6267-0c82-422b-9b62-1232483da749"
+          }
+        ],
+        "brokenTexts": [],
+        "borderColor": "rgb(216,216,216)",
+        "fillColor": "rgb(216,216,216)",
+        "fontSize": 0,
+        "texts": [],
+        "name": "父组件1",
+        "leftX": 1203,
+        "rightX": 1403,
+        "topY": 40,
+        "bottomY": 440,
+        "id": "bfe543b4-2ffa-4f22-9b75-efa13b00b834"
+      }
+    ],
     "brokenTexts": [],
     "borderColor": "rgb(216,216,216)",
     "fillColor": "rgb(216,216,216)",

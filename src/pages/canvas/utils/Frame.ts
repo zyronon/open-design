@@ -44,9 +44,9 @@ class Frame extends Shape {
     return this.isInName(x, y)
   }
 
-  event(event: any, parent?: any, cb?: Function) {
+  event(event: any, parent?: Shape, cb?: Function) {
     let { e, coordinate, type } = event
-    // console.log('event', this.config.name, `type：${type}`,)
+    console.log('event', this.config.name, `type：${type}`,)
     if (e.capture) return
 
     //mouseup事件，会直接走到这里
@@ -61,7 +61,7 @@ class Frame extends Shape {
       cb?.()
       // console.log('捕获', this.config.name)
       if (!this.isCapture || !cu.isDesign()) {
-        this.children.map((child: any) => child.event(event, this.config))
+        this.children.map((child: any) => child.event(event, this))
       }
 
       if (e.capture) return
@@ -70,7 +70,11 @@ class Frame extends Shape {
       if (!this.isSelect) {
         this.isHover = true
       }
-      cu.setInShape(this)
+      //设置当前的inShape为自己，这位的位置很重要，当前的inShape是唯一的
+      //如果放在e.capture前面，那么会被子组件给覆盖。所以放在e.capture后面
+      //子组件isSelect或者isHover之后会stopPropagation，那么父组件就不会往
+      //下执行了
+      cu.setInShape(this, parent)
 
       this.emit(event, parent)
       if (this.isSelect || this.isHover) {
@@ -80,11 +84,16 @@ class Frame extends Shape {
     } else {
       this.isHover = false
       cu.setInShapeNull(this)
-      this.children.map((child: any) => child.event(event, this.config))
+      this.children.map((child: any) => child.event(event, this, cb))
     }
   }
 
-  mousedown(event: any, p: any) {
+  mousedown(event: any, p?: Shape) {
+    // console.log('mousedown',p?.config?.name)
+    if (p) {
+      console.log('p', p?.config?.name)
+      p && (p.isCapture = false)
+    }
     let { e, coordinate, type } = event
     let cu = CanvasUtil.getInstance()
     if (!cu.isDesign()) {
@@ -100,7 +109,7 @@ class Frame extends Shape {
       // cu.draw()
       // this.isSelect = false
       this.isCapture = false
-      this.children.map((child: any) => child.event(event, this.config, () => {
+      this.children.map((child: any) => child.event(event, this, () => {
         cu.childIsIn = true
       }))
       if (!cu.childIsIn) {
@@ -121,6 +130,8 @@ class Frame extends Shape {
     this.original = cloneDeep(this.config)
     if (this.isSelect) return
 
+
+    this.isCapture = true
     this.isHover = false
     if (cu.selectedShape) {
       cu.selectedShape.isSelect = false
@@ -130,7 +141,7 @@ class Frame extends Shape {
     cu.selectedShape = this
     this.isSelect = true
     // this.isCapture = true
-    this.render(cu.ctx, p)
+    this.render(cu.ctx, p?.config)
   }
 
   mouseup(event: any, p: any) {

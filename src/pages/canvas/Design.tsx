@@ -47,7 +47,6 @@ const out = new Float32Array([
   0, 0, 0, 0,
 ]);
 
-
 class Design extends React.Component<any, IState> {
   canvasRef: RefObject<HTMLCanvasElement> = React.createRef()
   // @ts-ignore

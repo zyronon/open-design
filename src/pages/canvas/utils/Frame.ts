@@ -44,9 +44,9 @@ class Frame extends Shape {
     return this.isInName(x, y)
   }
 
-  event(event: any, parent?: Shape, cb?: Function) {
+  event(event: any, parent?: Shape[], cb?: Function) {
     let { e, coordinate, type } = event
-    console.log('event', this.config.name, `type：${type}`,)
+    // console.log('event', this.config.name, `type：${type}`,)
     if (e.capture) return
 
     //mouseup事件，会直接走到这里
@@ -61,15 +61,11 @@ class Frame extends Shape {
       cb?.()
       // console.log('捕获', this.config.name)
       if (!this.isCapture || !cu.isDesign()) {
-        this.children.map((child: any) => child.event(event, this))
+        this.children.map((child: any) => child.event(event, parent?.concat([this])))
       }
 
       if (e.capture) return
 
-      //如果已经选中了，那就不要再加hover效果了
-      if (!this.isSelect) {
-        this.isHover = true
-      }
       //设置当前的inShape为自己，这位的位置很重要，当前的inShape是唯一的
       //如果放在e.capture前面，那么会被子组件给覆盖。所以放在e.capture后面
       //子组件isSelect或者isHover之后会stopPropagation，那么父组件就不会往
@@ -84,16 +80,12 @@ class Frame extends Shape {
     } else {
       this.isHover = false
       cu.setInShapeNull(this)
-      this.children.map((child: any) => child.event(event, this, cb))
+      this.children.map((child: any) => child.event(event, parent?.concat([this]), cb))
     }
   }
 
-  mousedown(event: any, p?: Shape) {
-    // console.log('mousedown',p?.config?.name)
-    if (p) {
-      console.log('p', p?.config?.name)
-      p && (p.isCapture = false)
-    }
+  mousedown(event: any, p: Shape[] = []) {
+    console.log('mousedown', p)
     let { e, coordinate, type } = event
     let cu = CanvasUtil.getInstance()
     if (!cu.isDesign()) {
@@ -109,7 +101,7 @@ class Frame extends Shape {
       // cu.draw()
       // this.isSelect = false
       this.isCapture = false
-      this.children.map((child: any) => child.event(event, this, () => {
+      this.children.map((child: any) => child.event(event, p?.concat([this]), () => {
         cu.childIsIn = true
       }))
       if (!cu.childIsIn) {
@@ -130,18 +122,17 @@ class Frame extends Shape {
     this.original = cloneDeep(this.config)
     if (this.isSelect) return
 
-
+    this.isSelect = true
     this.isCapture = true
     this.isHover = false
-    if (cu.selectedShape) {
+    if (cu.selectedShape && cu.selectedShape !== this) {
       cu.selectedShape.isSelect = false
-      // cu.selectedShape.isCapture = true
-      cu.render()
     }
+    cu.selectedShapeParent.map((shape: Shape) => shape.isCapture = true)
+    cu.selectedShapeParent = p
+    cu.selectedShapeParent.map((shape: Shape) => shape.isCapture = false)
     cu.selectedShape = this
-    this.isSelect = true
-    // this.isCapture = true
-    this.render(cu.ctx, p?.config)
+    cu.render()
   }
 
   mouseup(event: any, p: any) {
@@ -173,19 +164,13 @@ class Frame extends Shape {
       return;
     }
 
-    // console.log('mousemove', this.config.name, `isHover：${this.isHover}`, `cu.hoverShape：${cu.hoverShape}`)
+    // console.log('mousemove', this.config.name, `isHover：${this.isHover}`)
 
-    // if (cu.hoverShape) {
-    //   cu.hoverShape.isHover = false
-    //   cu.hoverShape = null
-    //   cu.draw()
-    // }
+    //如果已经选中了，那就不要再加hover效果了
     if (this.isSelect) return
-    if (this.isHover) {
-      // console.log('mousemove-this.isHover')
-      // cu.hoverShape = this
-      return
-    }
+    if (this.isHover) return
+    console.log('mousemove', this.config.name, `isHover：${this.isHover}`)
+
     this.isHover = true
     let ctx = cu.ctx
     ctx.save()
@@ -193,7 +178,6 @@ class Frame extends Shape {
     // ctx.transform(nv[0], nv[4], nv[1], nv[5], nv[12], nv[13]);
     this.render(ctx)
     ctx.restore()
-    // console.log('mousemove', this.config.name, ctx)
   }
 
 }

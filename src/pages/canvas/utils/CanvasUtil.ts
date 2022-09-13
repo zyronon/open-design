@@ -50,7 +50,7 @@ export class CanvasUtil {
       }
       this.inShape = shape
       //进入改成走居部重绘了，移出还是用的全体重绘
-      // this.render()
+      this.render()
     }
   }
 
@@ -244,6 +244,8 @@ export class CanvasUtil {
   onMouseUp(e: BaseEvent, coordinate: any,) {
     if (e.capture) return
     // console.log('canvas画布-onMouseUp')
+
+    this.selectedShapeParent.map((shape: Shape) => shape.isCapture = true)
     if (this.selectedShape) {
       this.selectedShape.isSelect = false
       this.render()

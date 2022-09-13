@@ -66,6 +66,11 @@ class Frame extends Shape {
 
       if (e.capture) return
 
+      //如果已经选中了，那就不要再加hover效果了
+      if (!this.isSelect) {
+        this.isHover = true
+      }
+
       //设置当前的inShape为自己，这位的位置很重要，当前的inShape是唯一的
       //如果放在e.capture前面，那么会被子组件给覆盖。所以放在e.capture后面
       //子组件isSelect或者isHover之后会stopPropagation，那么父组件就不会往
@@ -85,7 +90,7 @@ class Frame extends Shape {
   }
 
   mousedown(event: any, p: Shape[] = []) {
-    console.log('mousedown', p)
+    // console.log('mousedown', p)
     let { e, coordinate, type } = event
     let cu = CanvasUtil.getInstance()
     if (!cu.isDesign()) {
@@ -165,19 +170,6 @@ class Frame extends Shape {
     }
 
     // console.log('mousemove', this.config.name, `isHover：${this.isHover}`)
-
-    //如果已经选中了，那就不要再加hover效果了
-    if (this.isSelect) return
-    if (this.isHover) return
-    console.log('mousemove', this.config.name, `isHover：${this.isHover}`)
-
-    this.isHover = true
-    let ctx = cu.ctx
-    ctx.save()
-    // let nv = currentMat
-    // ctx.transform(nv[0], nv[4], nv[1], nv[5], nv[12], nv[13]);
-    this.render(ctx)
-    ctx.restore()
   }
 
 }

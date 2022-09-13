@@ -4,6 +4,14 @@ import { cloneDeep, throttle } from "lodash";
 import { BaseEvent, EventType, ShapeType } from "../type";
 import EventBus from "../../../utils/event-bus";
 import Frame from "./Frame";
+import { mat4 } from "gl-matrix";
+
+const out: any = new Float32Array([
+  0, 0, 0, 0,
+  0, 0, 0, 0,
+  0, 0, 0, 0,
+  0, 0, 0, 0,
+]);
 
 export class CanvasUtil {
   // @ts-ignore
@@ -35,6 +43,18 @@ export class CanvasUtil {
   startY: number = -1
   isMouseDown: boolean = false
   drawShapeConfig: any = null
+  currentMat: any = new Float32Array([
+    1, 0, 0, 0,
+    0, 1, 0, 0,
+    0, 0, 1, 0,
+    0, 0, 0, 1,
+  ])
+  handScale: number = 1
+  handMove: {
+    x: number,
+    y: number,
+  } = { x: 0, y: 0, }
+
 
   constructor(canvas: HTMLCanvasElement) {
     this.init(canvas)
@@ -113,10 +133,18 @@ export class CanvasUtil {
   _render() {
     EventBus.emit('draw')
     // console.log('重绘所有图形')
-    clear({
-      x: 0, y: 0, w: this.canvas.width, h: this.canvas.height
-    }, this.ctx)
+    clear({ x: 0, y: 0, w: this.canvas.width, h: this.canvas.height }, this.ctx)
     this.ctx.save()
+    if (this.currentMat) {
+      // console.log('平移：', currentMat[12], currentMat[13])
+      // console.log('缩放：', currentMat[0], currentMat[5])
+      let nv = this.currentMat
+      // console.log(nv)
+      this.ctx.transform(nv[0], nv[4], nv[1], nv[5], nv[12], nv[13]);
+      // ctx.translate(currentMat[12], currentMat[13])
+      // ctx.scale(currentMat[0], currentMat[5])
+    }
+    this.ctx.lineCap = 'round'
     // console.log('this.children,', this.children)
     this.children.forEach(shape => shape.render(this.ctx, { abX: 0, abY: 0 }))
     this.ctx.restore()
@@ -134,6 +162,38 @@ export class CanvasUtil {
     Object.values(EventType).forEach(eventName => {
       this.canvas.addEventListener(eventName, this.handleEvent)
     })
+
+    // this.canvas.addEventListener('wheel', this.onWheel)
+  }
+
+  onWheel = (e: any) => {
+    // console.log('e', e)
+    let { clientX, clientY, deltaY } = e;
+
+
+    let x = clientX - this.canvasRect.left
+    let y = clientY - this.canvasRect.top
+
+    const zoom = 1 + (deltaY < 0 ? 0.25 : -0.25);
+    //因为transform是连续变换，每次都是放大0.1倍，所以要让x和y变成0.1倍。这样缩放和平移是对等的
+    //QA：其实要平移的值，也可以直接用x，y剩以当前的总倍数，比如放在1.7倍，那么x*0.7，就是要平移的x坐标
+    //但是下次再缩放时，要加或减去上次平移的xy坐标
+    x = x * (1 - zoom);
+    y = y * (1 - zoom);
+    const transform = new Float32Array([
+      zoom, 0, 0, 0,
+      0, zoom, 0, 0,
+      0, 0, 1, 0,
+      x, y, 0, 1,
+    ]);
+    const newCurrentMat = mat4.multiply(out, transform, this.currentMat);
+    this.currentMat = newCurrentMat
+    this.handMove = {
+      x: newCurrentMat[12],
+      y: newCurrentMat[13],
+    }
+    this.handScale = newCurrentMat[0]
+    this.render()
   }
 
   _handleEvent = (e: any) => {
@@ -264,6 +324,14 @@ export class CanvasUtil {
 
 
   clearChild() {
+    this.handScale = 1
+    this.handMove = { x: 0, y: 0, }
+    this.currentMat = new Float32Array([
+      1, 0, 0, 0,
+      0, 1, 0, 0,
+      0, 0, 1, 0,
+      0, 0, 0, 1,
+    ])
     this.children = []
   }
 

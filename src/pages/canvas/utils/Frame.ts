@@ -36,6 +36,20 @@ class Frame extends Shape {
   isIn(x: number, y: number,): boolean {
     let rect = this.config
     // console.log('isIn-rect.leftX', rect.leftX)
+
+    if (this.isSelect) {
+      let edge = 10
+      let angle = 7
+      let rotate = 27
+      if ((rect.leftX! - edge < x && x < rect.leftX! + edge) &&
+        (rect.topY! + edge < y && y < rect.bottomY! - edge)
+      ) {
+        console.log('hoverLeft')
+        document.body.style.cursor = "col-resize"
+        return true
+        // this.setState({hoverLeft: true})
+      }
+    }
     if (rect.leftX < x && x < rect.rightX
       && rect.topY < y && y < rect.bottomY
     ) {
@@ -83,6 +97,7 @@ class Frame extends Shape {
       }
       // console.log('冒泡', this.config.name)
     } else {
+      document.body.style.cursor = "default"
       this.isHover = false
       cu.setInShapeNull(this)
       this.children.map((child: any) => child.event(event, parent?.concat([this]), cb))

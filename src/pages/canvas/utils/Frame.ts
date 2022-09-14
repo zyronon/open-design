@@ -4,6 +4,12 @@ import { CanvasUtil } from "./CanvasUtil";
 import { cloneDeep } from "lodash";
 
 class Frame extends Shape {
+  hoverL: boolean = false
+  enterL: boolean = false
+  hoverLT: boolean = false
+  enterLT: boolean = false
+  startX: number = -1
+  startY: number = -1
 
   constructor(props: any) {
     super(props);
@@ -36,6 +42,7 @@ class Frame extends Shape {
   isIn(x: number, y: number,): boolean {
     let rect = this.config
     // console.log('isIn-rect.leftX', rect.leftX)
+    if (this.enterL || this.enterLT) return true
 
     if (this.isSelect) {
       let edge = 10
@@ -46,13 +53,27 @@ class Frame extends Shape {
       ) {
         console.log('hoverLeft')
         document.body.style.cursor = "col-resize"
+        this.hoverL = true
+
+        this.hoverLT = false
         return true
-        // this.setState({hoverLeft: true})
+      } else if ((rect.leftX! - angle < x && x < rect.leftX! + angle) &&
+        (rect.topY! - angle < y && y < rect.topY! + angle)
+      ) {
+        console.log('1', rect.flipHorizontal)
+        this.hoverLT = true
+
+        this.hoverL = false
+        document.body.style.cursor = "nwse-resize"
+        return true
       }
     }
     if (rect.leftX < x && x < rect.rightX
       && rect.topY < y && y < rect.bottomY
     ) {
+      document.body.style.cursor = "default"
+      this.hoverL = false
+      this.hoverLT = false
       return true
     }
     return this.isInName(x, y)
@@ -107,6 +128,8 @@ class Frame extends Shape {
   mousedown(event: any, p: Shape[] = []) {
     // console.log('mousedown', p)
     let { e, coordinate, type } = event
+    let { x, y } = coordinate
+
     let cu = CanvasUtil.getInstance()
     if (!cu.isDesign()) {
       cu.startX = coordinate.x
@@ -133,13 +156,24 @@ class Frame extends Shape {
       return;
     }
 
+    this.original = cloneDeep(this.config)
+
+    if (this.hoverL || this.hoverLT) {
+      cu.startX = x
+      cu.startY = y
+      cu.offsetX = x - this.config.x
+      cu.offsetY = y - this.config.y
+      this.enterL = this.hoverL
+      this.enterLT = this.hoverLT
+      return;
+    }
+
     this.lastClickTime = Date.now()
     // console.log('mousedown', this.config.name, this.isMouseDown, this.isSelect)
 
     this.isMouseDown = true
-    this.startX = coordinate.x
-    this.startY = coordinate.y
-    this.original = cloneDeep(this.config)
+    this.startX = x
+    this.startY = y
     if (this.isSelect) return
 
     this.isSelect = true
@@ -158,13 +192,16 @@ class Frame extends Shape {
   mouseup(event: any, p: any) {
     // console.log('mouseup', this.config.name,)
     this.isMouseDown = false
+    this.enterL = false
+    this.enterLT = false
     // this.isCapture = true
   }
 
   mousemove(event: any, p: any) {
     let { e, coordinate, type } = event
+    // console.log('mousemove', this.config.name, `isHover：${this.isHover}`)
+    let { x, y } = coordinate
 
-    // console.log('mousemove', [this.handDown,])
     let cu = CanvasUtil.getInstance();
     if (!cu.isDesign()) {
       return;
@@ -184,9 +221,15 @@ class Frame extends Shape {
       return;
     }
 
-    // console.log('mousemove', this.config.name, `isHover：${this.isHover}`)
+    if (this.enterL) {
+      this.config.x = x - cu.offsetX
+      // one.y = one.y
+      this.config.w = this.original.w - (x - cu.startX)
+      this.config = getPath(this.config)
+      cu.render()
+      return;
+    }
   }
-
 }
 
 export default Frame

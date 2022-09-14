@@ -41,6 +41,8 @@ export class CanvasUtil {
   mode: ShapeType = ShapeType.SELECT
   startX: number = -1
   startY: number = -1
+  offsetX: number = -1
+  offsetY: number = -1
   isMouseDown: boolean = false
   drawShapeConfig: any = null
   currentMat: any = new Float32Array([

@@ -368,13 +368,17 @@ export function clear(x: any, ctx: any) {
   ctx.clearRect(x.x, x.y, x.w, x.h)
 }
 
-export function getPath(rect: any) {
-  rect.leftX = rect.abX
+export function getPath(rect: any, old?: any) {
+  rect.leftX = rect.x
   rect.rightX = rect.leftX + rect.w
-  rect.topY = rect.abY
+  rect.topY = rect.y
   rect.bottomY = rect.topY + rect.h
   if (!rect.id) {
     rect.id = uuid()
+  }
+  if (old) {
+    rect.rx = old.rx - (old.x - rect.x)
+    rect.ry = old.ry - (old.y - rect.y)
   }
   return rect
 }
@@ -384,15 +388,13 @@ export function calcPosition(ctx: CanvasRenderingContext2D, config: any, parent?
     x, y, w, h, radius,
     fillColor, borderColor, rotate, lineWidth,
     type, flipVertical, flipHorizontal, children,
-    selected
+    selected,
+    rx, ry
   }
     = config
   if (parent) {
-    x = config.abX = x + parent.abX
-    y = config.abY = y + parent.abY
-  } else {
-    x = config.abX
-    y = config.abY
+    x = rx + parent.x
+    y = ry + parent.y
   }
 // console.log('type,', type)
   let oldCenter: { x: number; y: number; }
@@ -580,7 +582,7 @@ export function draw(
   // ctx.fillText(rect.name, x, y - 18);
   // ctx.restore()
 
-  config.abX = x
-  config.abY = y
+  config.x = x
+  config.y = y
   config = getPath(config)
 }

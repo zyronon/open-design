@@ -1,7 +1,8 @@
 import { Shape } from "./Shape";
 import { draw, getPath } from "../utils";
 import { CanvasUtil } from "./CanvasUtil";
-import { cloneDeep } from "lodash";
+import { clone, cloneDeep } from "lodash";
+import getCenterPoint, { getRotatedPoint } from "../../../utils";
 
 class Frame extends Shape {
   hoverL: boolean = false
@@ -10,6 +11,7 @@ class Frame extends Shape {
   enterLT: boolean = false
   startX: number = -1
   startY: number = -1
+  sPoint: { x: number, y: number } = { x: 0, y: 0 }
 
   constructor(props: any) {
     super(props);
@@ -51,7 +53,7 @@ class Frame extends Shape {
       if ((rect.leftX! - edge < x && x < rect.leftX! + edge) &&
         (rect.topY! + edge < y && y < rect.bottomY! - edge)
       ) {
-        console.log('hoverLeft')
+        // console.log('hoverLeft')
         document.body.style.cursor = "col-resize"
         this.hoverL = true
 
@@ -60,7 +62,7 @@ class Frame extends Shape {
       } else if ((rect.leftX! - angle < x && x < rect.leftX! + angle) &&
         (rect.topY! - angle < y && y < rect.topY! + angle)
       ) {
-        console.log('1', rect.flipHorizontal)
+        // console.log('1', rect.flipHorizontal)
         this.hoverLT = true
 
         this.hoverL = false
@@ -157,6 +159,33 @@ class Frame extends Shape {
     }
 
     this.original = cloneDeep(this.config)
+    let rect = this.config
+
+    if (this.hoverLT) {
+      console.log('config', cloneDeep(this.config))
+      const center = {
+        x: rect.x + (rect.w / 2),
+        y: rect.y + (rect.h / 2)
+      }
+      //不是当前点击位置，当前点击位置算对角会有偏差
+      let rectLT = getRotatedPoint({ x: rect.x, y: rect.y }, center, rect.rotate)
+      console.log('rect', clone(rect))
+      console.log('rectLT', clone(rectLT))
+      if (rect.flipHorizontal) {
+        // rectLT.x = center.x + Math.abs(rectLT.x - center.x) * (rectLT.x < center.x ? 1 : -1)
+      }
+      if (rect.flipVertical) {
+        rectLT.y = center.y + Math.abs(rectLT.y - center.y) * (rectLT.y < center.y ? 1 : -1)
+      }
+      console.log('rectLT', rectLT)
+
+      const sPoint = {
+        x: center.x + Math.abs(rectLT.x - center.x) * (rectLT.x < center.x ? 1 : -1),
+        y: center.y + Math.abs(rectLT.y - center.y) * (rectLT.y < center.y ? 1 : -1)
+      }
+      console.log('sPoint', sPoint)
+      this.sPoint = sPoint
+    }
 
     if (this.hoverL || this.hoverLT) {
       cu.startX = x
@@ -215,8 +244,47 @@ class Frame extends Shape {
       let dy = (y - this.startY) / handScale
       this.config.x = this.original.x + dx
       this.config.y = this.original.y + dy
-      this.config = getPath(this.config)
+      this.config = getPath(this.config,this.original)
       // cu.hoverShape = this
+      cu.render()
+      return;
+    }
+
+    let rect = this.config
+    let s = this.original
+    if (this.enterLT) {
+
+      // let currentPosition = { x: x , y: y }
+      let currentPosition = {
+        x: (x - cu.handMove.x) / cu.handScale,
+        y: (y - cu.handMove.y) / cu.handScale
+      }
+      const center = {
+        x: s.x + (s.w / 2),
+        y: s.y + (s.h / 2)
+      }
+      //水平翻转，那么要把当前的x坐标一下翻转
+      //同时，draw的时候，需要把新rect的中心点和平移（选中时rect的中心点）的2倍
+      if (rect.flipHorizontal) {
+        // currentPosition.x = center.x + Math.abs(currentPosition.x - center.x) * (currentPosition.x < center.x ? 1 : -1)
+        // console.log('currentPosition', currentPosition)
+      }
+
+      let newCenterPoint = getCenterPoint(currentPosition, this.sPoint)
+      let newTopLeftPoint = getRotatedPoint(currentPosition, newCenterPoint, -s.rotate)
+      let newBottomRightPoint = getRotatedPoint(this.sPoint, newCenterPoint, -s.rotate)
+
+      let newWidth = newBottomRightPoint.x - newTopLeftPoint.x
+      let newHeight = newBottomRightPoint.y - newTopLeftPoint.y
+      rect.x = newTopLeftPoint.x
+      rect.y = newTopLeftPoint.y
+      rect.rx = this.original.rx - (this.original.x - rect.x)
+      rect.ry = this.original.ry - (this.original.y - rect.y)
+      rect.w = newWidth
+      rect.h = newHeight
+      // console.log(rect)
+
+      this.config = getPath(rect,this.original)
       cu.render()
       return;
     }

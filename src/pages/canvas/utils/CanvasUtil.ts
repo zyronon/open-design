@@ -148,7 +148,7 @@ export class CanvasUtil {
     }
     this.ctx.lineCap = 'round'
     // console.log('this.children,', this.children)
-    this.children.forEach(shape => shape.render(this.ctx, { abX: 0, abY: 0 }))
+    this.children.forEach(shape => shape.render(this.ctx))
     this.ctx.restore()
   }
 

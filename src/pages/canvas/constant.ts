@@ -326,12 +326,12 @@ export const rects2 = [
   }
 ]
 
-export const rects = [
+export const rects  = [
   {
     "x": 941,
     "y": 43,
-    "abX": 941,
-    "abY": 43,
+    "rx": 941,
+    "ry": 43,
     "w": 280,
     "h": 580,
     "rotate": 0,
@@ -341,10 +341,10 @@ export const rects = [
     "radius": 40,
     "children": [
       {
-        "x": -58,
-        "y": 7,
-        "abX": 883,
-        "abY": 50,
+        "rx": -58,
+        "ry": 7,
+        "x": 883,
+        "y": 50,
         "w": 200,
         "h": 400,
         "rotate": 0,
@@ -354,10 +354,10 @@ export const rects = [
         "radius": 40,
         "children": [
           {
-            "x": 20,
-            "y": 10,
-            "abX": 903,
-            "abY": 60,
+            "rx": 20,
+            "ry": 10,
+            "x": 903,
+            "y": 60,
             "w": 100,
             "h": 200,
             "rotate": 0,
@@ -367,10 +367,10 @@ export const rects = [
             "radius": 40,
             "children": [
               {
-                "x": 20,
-                "y": 10,
-                "abX": 923,
-                "abY": 70,
+                "rx": 20,
+                "ry": 10,
+                "x": 923,
+                "y": 70,
                 "w": 50,
                 "h": 100,
                 "rotate": 0,
@@ -405,10 +405,10 @@ export const rects = [
             "id": "207d7573-5d38-46ec-b80f-ef73fdd25573"
           },
           {
-            "x": 20,
-            "y": 250,
-            "abX": 903,
-            "abY": 300,
+            "rx": 20,
+            "ry": 250,
+            "x": 903,
+            "y": 300,
             "w": 100,
             "h": 200,
             "rotate": 0,
@@ -418,11 +418,11 @@ export const rects = [
             "radius": 40,
             "children": [
               {
-                "x": 20,
-                "y": 10,
-                "abX": 923,
-                "abY": 310,
-                "w": 50,
+                "rx": -804,
+                "ry": -241,
+                "x": 99,
+                "y": 59,
+                "w": 183,
                 "h": 100,
                 "rotate": 0,
                 "lineWidth": 2,
@@ -436,10 +436,10 @@ export const rects = [
                 "fontSize": 0,
                 "texts": [],
                 "name": "孙矩形222222222",
-                "leftX": 923,
-                "rightX": 973,
-                "topY": 310,
-                "bottomY": 410,
+                "leftX": 99,
+                "rightX": 282,
+                "topY": 59,
+                "bottomY": 159,
                 "id": "997d0f37-4f52-4bc4-a081-ac8a305722d0"
               }
             ],
@@ -486,8 +486,8 @@ export const rects = [
   {
     "x": 1251,
     "y": 42,
-    "abX": 1251,
-    "abY": 42,
+    "rx": 1251,
+    "ry": 42,
     "w": 280,
     "h": 580,
     "rotate": 0,
@@ -497,10 +497,10 @@ export const rects = [
     "radius": 40,
     "children": [
       {
-        "x": 10,
-        "y": 10,
-        "abX": 1261,
-        "abY": 52,
+        "rx": 10,
+        "ry": 10,
+        "x": 1261,
+        "y": 52,
         "w": 200,
         "h": 400,
         "rotate": 0,
@@ -510,10 +510,10 @@ export const rects = [
         "radius": 40,
         "children": [
           {
-            "x": 20,
-            "y": 10,
-            "abX": 1281,
-            "abY": 62,
+            "rx": 20,
+            "ry": 10,
+            "x": 1281,
+            "y": 62,
             "w": 100,
             "h": 200,
             "rotate": 0,
@@ -562,4 +562,34 @@ export const rects = [
     "bottomY": 622,
     "id": "8e45d15c-28ca-452d-80f5-766f870c854a"
   }
+]
+
+export const rects22 = [
+  {
+    "x": 941,
+    "y": 43,
+    "rx": 941,
+    "ry": 43,
+    "w": 280,
+    "h": 580,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": 102,
+    "color": "gray",
+    "radius": 40,
+    "children": [],
+    "brokenTexts": [],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "rgb(216,216,216)",
+    "fontSize": 16,
+    "fontWeight": 500,
+    "fontFamily": "SourceHanSansCN",
+    "texts": [],
+    "name": "容器",
+    "leftX": 941,
+    "rightX": 1221,
+    "topY": 43,
+    "bottomY": 623,
+    "id": "cd973e70-08e8-471a-814d-61966b891d5a"
+  },
 ]

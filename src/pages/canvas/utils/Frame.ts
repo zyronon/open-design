@@ -244,7 +244,7 @@ class Frame extends Shape {
       let dy = (y - this.startY) / handScale
       this.config.x = this.original.x + dx
       this.config.y = this.original.y + dy
-      this.config = getPath(this.config,this.original)
+      this.config = getPath(this.config, this.original)
       // cu.hoverShape = this
       cu.render()
       return;
@@ -284,7 +284,7 @@ class Frame extends Shape {
       rect.h = newHeight
       // console.log(rect)
 
-      this.config = getPath(rect,this.original)
+      this.config = getPath(rect, this.original)
       cu.render()
       return;
     }
@@ -293,7 +293,7 @@ class Frame extends Shape {
       this.config.x = x - cu.offsetX
       // one.y = one.y
       this.config.w = this.original.w - (x - cu.startX)
-      this.config = getPath(this.config)
+      this.config = getPath(this.config, this.original)
       cu.render()
       return;
     }

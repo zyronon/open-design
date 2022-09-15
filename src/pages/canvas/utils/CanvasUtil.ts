@@ -1,5 +1,5 @@
 import { Shape } from "./Shape";
-import { clear, draw } from "../utils";
+import { clear, draw, test } from "../utils";
 import { cloneDeep, throttle } from "lodash";
 import { BaseEvent, EventType, ShapeType } from "../type";
 import EventBus from "../../../utils/event-bus";
@@ -101,6 +101,8 @@ export class CanvasUtil {
     this.ctx = ctx
     this.dpr = dpr
     this.canvasRect = canvasRect
+    // this.fn = this.fn.bind(this)
+
   }
 
   static getInstance(canvas?: any) {
@@ -158,13 +160,17 @@ export class CanvasUtil {
 
   // draw = debounce(this._draw, 50)
   render = throttle(this._render, 0)
-  handleEvent = throttle(e => this._handleEvent(e), 10)
+  //TODO　这里过滤会导致mouseup丢失
+  handleEvent = throttle(e => this._handleEvent(e), 0)
+
+  fn() {
+    console.log(1)
+  }
 
   initEvent() {
     Object.values(EventType).forEach(eventName => {
-      this.canvas.addEventListener(eventName, this.handleEvent)
+      this.canvas.addEventListener(eventName, this.handleEvent, true)
     })
-
     // this.canvas.addEventListener('wheel', this.onWheel)
   }
 
@@ -199,6 +205,12 @@ export class CanvasUtil {
   }
 
   _handleEvent = (e: any) => {
+    if (e.type === EventType.onMouseDown) {
+      console.log('onMouseDown')
+    }
+    if (e.type === EventType.onMouseUp) {
+      console.log('onMouseUp')
+    }
     if (e.type === EventType.onMouseEnter) {
       if (this.mode !== ShapeType.SELECT) {
         document.body.style.cursor = "crosshair"
@@ -211,6 +223,7 @@ export class CanvasUtil {
       }
       return
     }
+
     //重写禁止传播事件
     e.stopPropagation = () => e.capture = true
     // console.log('e.type', e.type)
@@ -236,6 +249,7 @@ export class CanvasUtil {
     }
 
     if (this.inShape) {
+
       this.inShape.event(baseEvent, this.inShapeParent)
     } else {
       this.children
@@ -323,7 +337,6 @@ export class CanvasUtil {
       this.render()
     }
   }
-
 
   clearChild() {
     this.handScale = 1

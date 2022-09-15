@@ -3,6 +3,7 @@ import { store } from "./store";
 // @ts-ignore
 import { v4 as uuid } from 'uuid';
 import { Colors } from "./constant";
+import { CanvasUtil } from "./utils/CanvasUtil";
 
 export function renderCanvas(
   rect: Shape,
@@ -367,7 +368,11 @@ export function clearAll(state: IState) {
 export function clear(x: any, ctx: any) {
   ctx.clearRect(x.x, x.y, x.w, x.h)
 }
-
+export function test(){
+  console.log(1)
+  let c = CanvasUtil.getInstance()
+  console.log(c)
+}
 export function getPath(rect: any, old?: any) {
   rect.leftX = rect.x
   rect.rightX = rect.leftX + rect.w

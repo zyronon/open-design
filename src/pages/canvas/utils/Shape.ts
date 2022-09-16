@@ -1,10 +1,11 @@
 import { clear, getPath, renderRoundRect } from "../utils";
+import { CanvasUtil } from "./CanvasUtil";
 
 export class Shape {
   config: any
   protected children: Shape[] = []
-  protected isHover: boolean = false
-  isSelect: boolean = false
+  isHover: boolean = false
+  isSelect: boolean = true
   isCapture: boolean = true
   enter: boolean = false
   startX: number = 0
@@ -20,5 +21,15 @@ export class Shape {
     let { e, coordinate, type } = event
     // @ts-ignore
     this[type]?.(event, p)
+  }
+
+  //获取缩放平移之后的x和y值
+  getXY(coordinate: { x: number, y: number }) {
+    let { x, y } = coordinate
+    let cu = CanvasUtil.getInstance();
+    const { x: handX, y: handY } = cu.handMove
+    x = (x - handX) / cu.handScale//上面的简写
+    y = (y - handY) / cu.handScale
+    return { x, y, cu }
   }
 }

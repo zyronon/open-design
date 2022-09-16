@@ -171,3 +171,8 @@ export enum EventType {
 export interface BaseEvent extends MouseEvent {
   capture: boolean
 }
+
+export interface Point {
+  x: number,
+  y: number,
+}

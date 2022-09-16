@@ -135,8 +135,8 @@ export class CanvasUtil {
   _render() {
     EventBus.emit('draw')
 
-    // if (true){
-    if (false){
+    if (true){
+    // if (false){
       this.currentMat = new Float32Array([
         1.25, 0, 0, 0,
         0, 1.25, 0, 0,

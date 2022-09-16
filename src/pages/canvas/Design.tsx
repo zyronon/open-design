@@ -75,13 +75,13 @@ class Design extends React.Component<any, IState> {
   } as IState
 
   componentDidMount() {
-    console.log('componentDidMount')
+    // console.log('componentDidMount')
     this.init()
   }
 
   componentWillUnmount() {
     EventBus.off('draw')
-    console.log('componentWillUnmount')
+    // console.log('componentWillUnmount')
   }
 
   init() {

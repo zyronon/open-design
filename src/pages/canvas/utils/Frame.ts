@@ -2,13 +2,15 @@ import { Shape } from "./Shape";
 import { draw, getPath } from "../utils";
 import { CanvasUtil } from "./CanvasUtil";
 import { clone, cloneDeep } from "lodash";
-import getCenterPoint, { getRotatedPoint } from "../../../utils";
+import getCenterPoint, { getAngle, getRotatedPoint } from "../../../utils";
 
 class Frame extends Shape {
   hoverL: boolean = false
   enterL: boolean = false
   hoverLT: boolean = false
   enterLT: boolean = false
+  hoverLTR: boolean = false
+  enterLTR: boolean = false
   startX: number = -1
   startY: number = -1
   sPoint: { x: number, y: number } = { x: 0, y: 0 }
@@ -41,10 +43,34 @@ class Frame extends Shape {
     return false
   }
 
-  isIn(x: number, y: number,): boolean {
+  isIn(x: number, y: number, cu: CanvasUtil): boolean {
+    if (this.enterL || this.enterLT || this.enterLTR) return true
+
+    const { x: handX, y: handY } = cu.handMove
+    x = (x - handX) / cu.handScale//上面的简写
+    y = (y - handY) / cu.handScale
+
     let rect = this.config
+    if (rect.rotate !== 0 || rect.flipHorizontal) {
+      let { w, h, rotate, flipHorizontal, flipVertical } = rect
+      const center = {
+        x: rect.x + (rect.w / 2),
+        y: rect.y + (rect.h / 2)
+      }
+      if (flipHorizontal) {
+        x = center.x + Math.abs(x - center.x) * (x < center.x ? 1 : -1)
+      }
+      if (flipVertical) {
+        y = center.y + Math.abs(y - center.y) * (y < center.y ? 1 : -1)
+      }
+      let p1 = { x, y }
+      let c2 = { x: rect.x + w / 2, y: rect.y + h / 2 }
+      let s2 = getRotatedPoint(p1, c2, -rotate)
+      x = s2.x
+      y = s2.y
+    }
+
     // console.log('isIn-rect.leftX', rect.leftX)
-    if (this.enterL || this.enterLT) return true
 
     if (this.isSelect) {
       let edge = 10
@@ -68,6 +94,15 @@ class Frame extends Shape {
         this.hoverL = false
         document.body.style.cursor = "nwse-resize"
         return true
+      } else if ((rect.leftX! - rotate < x && x < rect.leftX! - angle) &&
+        (rect.topY! - rotate < y && y < rect.topY! - angle)
+      ) {
+        this.hoverLTR = true
+
+        this.hoverLT = false
+        this.hoverL = false
+        document.body.style.cursor = "pointer"
+        return true
       }
     }
     if (rect.leftX < x && x < rect.rightX
@@ -76,6 +111,7 @@ class Frame extends Shape {
       document.body.style.cursor = "default"
       this.hoverL = false
       this.hoverLT = false
+      this.hoverLTR = false
       return true
     }
     return this.isInName(x, y)
@@ -88,13 +124,13 @@ class Frame extends Shape {
 
     //mouseup事件，会直接走到这里
     //这里需要禁止传播，不然canvas的onMouseUp会触发
-    if (this.isMouseDown) {
+    if (this.enter) {
       event.e.stopPropagation()
       return this.emit(event, parent)
     }
 
     let cu = CanvasUtil.getInstance()
-    if (this.isIn(coordinate.x, coordinate.y)) {
+    if (this.isIn(coordinate.x, coordinate.y, cu)) {
       cb?.()
       // console.log('捕获', this.config.name)
       if (!this.isCapture || !cu.isDesign()) {
@@ -187,20 +223,21 @@ class Frame extends Shape {
       this.sPoint = sPoint
     }
 
-    if (this.hoverL || this.hoverLT) {
+    if (this.hoverL || this.hoverLT || this.hoverLTR) {
       cu.startX = x
       cu.startY = y
       cu.offsetX = x - this.config.x
       cu.offsetY = y - this.config.y
       this.enterL = this.hoverL
       this.enterLT = this.hoverLT
+      this.enterLTR = this.hoverLTR
       return;
     }
 
     this.lastClickTime = Date.now()
     // console.log('mousedown', this.config.name, this.isMouseDown, this.isSelect)
 
-    this.isMouseDown = true
+    this.enter = true
     this.startX = x
     this.startY = y
     if (this.isSelect) return
@@ -220,9 +257,10 @@ class Frame extends Shape {
 
   mouseup(event: any, p: any) {
     // console.log('mouseup', this.config.name,)
-    this.isMouseDown = false
+    this.enter = false
     this.enterL = false
     this.enterLT = false
+    this.enterLTR = false
     // this.isCapture = true
   }
 
@@ -236,12 +274,11 @@ class Frame extends Shape {
       return;
     }
 
-    if (this.isMouseDown) {
+    if (this.enter) {
       // console.log('enter')
       let { x, y } = coordinate
-      let handScale = 1
-      let dx = (x - this.startX) / handScale
-      let dy = (y - this.startY) / handScale
+      let dx = (x - this.startX) / cu.handScale
+      let dy = (y - this.startY) / cu.handScale
       this.config.x = this.original.x + dx
       this.config.y = this.original.y + dy
       this.config = getPath(this.config, this.original)
@@ -252,6 +289,20 @@ class Frame extends Shape {
 
     let rect = this.config
     let s = this.original
+
+    if (this.enterLTR) {
+      let selectRect = this.original
+      // console.log('x-------', x, '          y--------', y)
+      let a = getAngle([selectRect.x + selectRect.w / 2, selectRect.y + selectRect.h / 2],
+        [this.original.x, this.original.y],
+        [x, y]
+      )
+      // console.log('getAngle', a)
+      this.config.rotate = a
+      cu.render()
+      return;
+    }
+
     if (this.enterLT) {
 
       // let currentPosition = { x: x , y: y }
@@ -289,8 +340,19 @@ class Frame extends Shape {
       return;
     }
 
+    // if (this.enterL) {
+    //   let xx = (x - cu.offsetX) / cu.handScale
+    //   // this.config.x = (x - cu.offsetX) / cu.handScale
+    //   this.config.x = xx
+    //   // one.y = one.y
+    //   this.config.w = this.original.w - xx
+    //   this.config = getPath(this.config, this.original)
+    //   cu.render()
+    //   return;
+    // }
     if (this.enterL) {
-      this.config.x = x - cu.offsetX
+      // this.config.x = (x - cu.offsetX) / cu.handScale
+      this.config.x = (x - cu.offsetX)
       // one.y = one.y
       this.config.w = this.original.w - (x - cu.startX)
       this.config = getPath(this.config, this.original)

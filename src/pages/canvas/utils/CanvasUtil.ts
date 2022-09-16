@@ -1,5 +1,5 @@
 import { Shape } from "./Shape";
-import { clear, draw, test } from "../utils";
+import { clear, draw } from "../utils";
 import { cloneDeep, throttle } from "lodash";
 import { BaseEvent, EventType, ShapeType } from "../type";
 import EventBus from "../../../utils/event-bus";
@@ -101,8 +101,6 @@ export class CanvasUtil {
     this.ctx = ctx
     this.dpr = dpr
     this.canvasRect = canvasRect
-    // this.fn = this.fn.bind(this)
-
   }
 
   static getInstance(canvas?: any) {
@@ -136,6 +134,21 @@ export class CanvasUtil {
 
   _render() {
     EventBus.emit('draw')
+
+    // if (true){
+    if (false){
+      this.currentMat = new Float32Array([
+        1.25, 0, 0, 0,
+        0, 1.25, 0, 0,
+        0, 0, 1, 0,
+        -96.75, -87, 0, 1,
+      ])
+      this.handScale = this.currentMat[0]
+      this.handMove = {
+        x: this.currentMat[12],
+        y: this.currentMat[13],
+      }
+    }
     // console.log('重绘所有图形')
     clear({ x: 0, y: 0, w: this.canvas.width, h: this.canvas.height }, this.ctx)
     this.ctx.save()
@@ -162,10 +175,6 @@ export class CanvasUtil {
   render = throttle(this._render, 0)
   //TODO　这里过滤会导致mouseup丢失
   handleEvent = throttle(e => this._handleEvent(e), 0)
-
-  fn() {
-    console.log(1)
-  }
 
   initEvent() {
     Object.values(EventType).forEach(eventName => {
@@ -201,16 +210,11 @@ export class CanvasUtil {
       y: newCurrentMat[13],
     }
     this.handScale = newCurrentMat[0]
+    console.log(newCurrentMat)
     this.render()
   }
 
   _handleEvent = (e: any) => {
-    if (e.type === EventType.onMouseDown) {
-      console.log('onMouseDown')
-    }
-    if (e.type === EventType.onMouseUp) {
-      console.log('onMouseUp')
-    }
     if (e.type === EventType.onMouseEnter) {
       if (this.mode !== ShapeType.SELECT) {
         document.body.style.cursor = "crosshair"

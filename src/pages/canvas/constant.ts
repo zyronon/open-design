@@ -326,7 +326,7 @@ export const rects2 = [
   }
 ]
 
-export const rects  = [
+export const rects = [
   {
     "x": 941,
     "y": 43,
@@ -418,13 +418,13 @@ export const rects  = [
             "radius": 40,
             "children": [
               {
-                "rx": -804,
-                "ry": -241,
-                "x": 99,
-                "y": 59,
+                "rx": -486.8,
+                "ry": 22.399999999999977,
+                "x": 416.2,
+                "y": 322.4,
                 "w": 183,
                 "h": 100,
-                "rotate": 0,
+                "rotate": 10,
                 "lineWidth": 2,
                 "type": 102,
                 "color": "gray",
@@ -436,10 +436,10 @@ export const rects  = [
                 "fontSize": 0,
                 "texts": [],
                 "name": "孙矩形222222222",
-                "leftX": 99,
-                "rightX": 282,
-                "topY": 59,
-                "bottomY": 159,
+                "leftX": 416.2,
+                "rightX": 599.2,
+                "topY": 322.4,
+                "bottomY": 422.4,
                 "id": "997d0f37-4f52-4bc4-a081-ac8a305722d0"
               }
             ],
@@ -564,15 +564,15 @@ export const rects  = [
   }
 ]
 
-export const rects22 = [
+export const rects1= [
   {
-    "x": 941,
-    "y": 43,
-    "rx": 941,
-    "ry": 43,
-    "w": 280,
-    "h": 580,
-    "rotate": 0,
+    "x": 280,
+    "y": 169,
+    "rx": 280,
+    "ry": 169,
+    "w": 449,
+    "h": 242,
+    "rotate": 10,
     "lineWidth": 2,
     "type": 102,
     "color": "gray",
@@ -586,10 +586,10 @@ export const rects22 = [
     "fontFamily": "SourceHanSansCN",
     "texts": [],
     "name": "容器",
-    "leftX": 941,
-    "rightX": 1221,
-    "topY": 43,
-    "bottomY": 623,
+    "leftX": 280,
+    "rightX": 729,
+    "topY": 169,
+    "bottomY": 411,
     "id": "cd973e70-08e8-471a-814d-61966b891d5a"
-  },
+  }
 ]

@@ -368,22 +368,24 @@ export function clearAll(state: IState) {
 export function clear(x: any, ctx: any) {
   ctx.clearRect(x.x, x.y, x.w, x.h)
 }
-export function test(){
-  console.log(1)
-  let c = CanvasUtil.getInstance()
-  console.log(c)
-}
-export function getPath(rect: any, old?: any) {
+
+export function getPath(rect: any, old?: any, parent?: any) {
+  //根据老的config，计算出最新的rx,ry
+  if (old) {
+    rect.rx = old.rx - (old.x - rect.x)
+    rect.ry = old.ry - (old.y - rect.y)
+  }
+  //根据父级，计算出自己的x,y
+  if (parent) {
+    rect.x = rect.rx + parent.x
+    rect.y = rect.ry + parent.y
+  }
   rect.leftX = rect.x
   rect.rightX = rect.leftX + rect.w
   rect.topY = rect.y
   rect.bottomY = rect.topY + rect.h
   if (!rect.id) {
     rect.id = uuid()
-  }
-  if (old) {
-    rect.rx = old.rx - (old.x - rect.x)
-    rect.ry = old.ry - (old.y - rect.y)
   }
   return rect
 }
@@ -587,7 +589,5 @@ export function draw(
   // ctx.fillText(rect.name, x, y - 18);
   // ctx.restore()
 
-  config.x = x
-  config.y = y
-  config = getPath(config)
+  config = getPath(config, null, parent)
 }

@@ -15,6 +15,7 @@ class Frame extends Shape {
   startX: number = -1
   startY: number = -1
   diagonal: Point = { x: 0, y: 0 }//对角
+  handlePoint: Point = { x: 0, y: 0 }//对角
 
   constructor(props: any) {
     super(props);
@@ -202,24 +203,18 @@ class Frame extends Shape {
         x: rect.x + (rect.w / 2),
         y: rect.y + (rect.h / 2)
       }
-      //不是当前点击位置，当前点击位置算对角会有偏差
-      let rectLT = getRotatedPoint({ x: rect.x, y: rect.y }, center, rect.rotate)
-      // console.log('rect', clone(rect))
-      // console.log('rectLT', clone(rectLT))
+      //可以用当前位置，如果点击的不是点位上，那么会有细小的偏差
+      let handlePoint = getRotatedPoint({ x: rect.x, y: rect.y }, center, rect.rotate)
       if (rect.flipHorizontal) {
-        // rectLT.x = center.x + Math.abs(rectLT.x - center.x) * (rectLT.x < center.x ? 1 : -1)
+        // handlePoint.x = center.x + Math.abs(handlePoint.x - center.x) * (handlePoint.x < center.x ? 1 : -1)
       }
       if (rect.flipVertical) {
-        rectLT.y = center.y + Math.abs(rectLT.y - center.y) * (rectLT.y < center.y ? 1 : -1)
+        handlePoint.y = center.y + Math.abs(handlePoint.y - center.y) * (handlePoint.y < center.y ? 1 : -1)
       }
-      // console.log('rectLT', rectLT)
-
-      const diagonal = {
-        x: center.x + Math.abs(rectLT.x - center.x) * (rectLT.x < center.x ? 1 : -1),
-        y: center.y + Math.abs(rectLT.y - center.y) * (rectLT.y < center.y ? 1 : -1)
+      this.diagonal = {
+        x: center.x + Math.abs(handlePoint.x - center.x) * (handlePoint.x < center.x ? 1 : -1),
+        y: center.y + Math.abs(handlePoint.y - center.y) * (handlePoint.y < center.y ? 1 : -1)
       }
-      console.log('diagonal', diagonal)
-      this.diagonal = diagonal
     }
     if (this.hoverL) {
       // console.log('config', cloneDeep(this.config))
@@ -228,16 +223,15 @@ class Frame extends Shape {
         y: rect.y + (rect.h / 2)
       }
       //不是当前点击位置，当前点击位置算对角会有偏差
-      let rectLT = getRotatedPoint({ x: rect.x, y: rect.y }, center, rect.rotate)
-      // console.log('rect', clone(rect))
-      // console.log('rectLT', clone(rectLT))
-
-      const diagonal = {
-        x: center.x + Math.abs(rectLT.x - center.x) * (rectLT.x < center.x ? 1 : -1),
-        y: center.y + Math.abs(rectLT.y - center.y) * (rectLT.y < center.y ? 1 : -1)
+      let handlePoint = getRotatedPoint(
+        { x: this.config.x, y: this.config.y + this.config.h / 2 },
+        center, rect.rotate)
+      this.handlePoint = handlePoint
+      this.diagonal = {
+        x: center.x + Math.abs(handlePoint.x - center.x) * (handlePoint.x < center.x ? 1 : -1),
+        y: center.y + Math.abs(handlePoint.y - center.y) * (handlePoint.y < center.y ? 1 : -1)
       }
-      // console.log('diagonal', diagonal)
-      this.diagonal = diagonal
+      console.log('diagonal', this.diagonal)
     }
 
     cu.startX = x
@@ -328,9 +322,6 @@ class Frame extends Shape {
       return;
     }
 
-    let rect = this.config
-    let s = this.original
-
     if (this.enterLTR) {
       let selectRect = this.original
       // console.log('x-------', x, '          y--------', y)
@@ -360,21 +351,39 @@ class Frame extends Shape {
           x: s.x + (s.w / 2),
           y: s.y + (s.h / 2)
         }
-        let ss = getRotatedPoint(this.original, center, s.rotate)
-        let current = { x, y: this.config.y }
+        let sPoint = this.diagonal
+        const currentPosition = { x, y }
+        console.log('--------------------------')
 
-        // let current = { x, y }
-        let newCenter = getCenterPoint(current, this.diagonal)
-        let newTopLeftPoint = getRotatedPoint(current, newCenter, -s.rotate)
-        let newBottomRightPoint = getRotatedPoint(this.diagonal, newCenter, -s.rotate)
+        const handlePoint = this.handlePoint
+        console.log('currentPosition', currentPosition)
+        console.log('handlePoint', handlePoint)
 
-        let newWidth = newBottomRightPoint.x - newTopLeftPoint.x
-        let newHeight = newBottomRightPoint.y - newTopLeftPoint.y
-        rect.x = newTopLeftPoint.x
-        rect.y = newTopLeftPoint.y
+        const rotatedCurrentPosition = getRotatedPoint(currentPosition, handlePoint, -rect.rotate)
+        console.log('rotatedCurrentPosition', rotatedCurrentPosition)
+
+        console.log('test', rotatedCurrentPosition.x, handlePoint.y)
+
+        const rotatedLeftMiddlePoint = getRotatedPoint({
+          x: rotatedCurrentPosition.x,
+          y: handlePoint.y,
+        }, handlePoint, rect.rotate)
+        console.log('rotatedLeftMiddlePoint', rotatedLeftMiddlePoint)
+
+        const newWidth = Math.sqrt(Math.pow(rotatedLeftMiddlePoint.x - sPoint.x, 2) + Math.pow(rotatedLeftMiddlePoint.y - sPoint.y, 2))
+        console.log('newWidth', newWidth)
+        console.log('sPoint', sPoint)
+        const newCenter = {
+          x: rotatedLeftMiddlePoint.x - (Math.abs(sPoint.x - rotatedLeftMiddlePoint.x) / 2) * (rotatedLeftMiddlePoint.x > sPoint.x ? 1 : -1),
+          y: rotatedLeftMiddlePoint.y + (Math.abs(sPoint.y - rotatedLeftMiddlePoint.y) / 2) * (rotatedLeftMiddlePoint.y > sPoint.y ? -1 : 1),
+        }
+        console.log('newCenter', newCenter)
+
+
         rect.w = newWidth
-        rect.h = newHeight
-        // console.log(rect)
+        rect.y = newCenter.y - (rect.h / 2)
+        rect.x = newCenter.x - (newWidth / 2)
+        console.log(rect)
         this.config = getPath(rect, this.original)
       } else {
         this.config.x = (x - cu.offsetX)

@@ -709,26 +709,6 @@ class Design extends React.Component<any, IState> {
       return
     }
 
-    if (activeHand && enter) {
-      const transform = new Float32Array([
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        // x - startX, y - startY, 0, 1,
-        //因为transform是连续的，所以用当前偏移量，而不是从x-startX
-        e.movementX, e.movementY, 0, 1,
-      ]);
-      const newCurrentMat = mat4.multiply(out, transform, currentMat);
-      // console.log(newCurrentMat)
-      this.setState({
-        currentMat: newCurrentMat,
-        handMove: {
-          x: newCurrentMat[12],
-          y: newCurrentMat[13],
-        }
-      }, this.draw)
-      return;
-    }
 
     //旋转状态下，参考
     //https://github.com/shenhudong/snapping-demo/wiki/corner-handle
@@ -882,41 +862,6 @@ class Design extends React.Component<any, IState> {
 
       this.setState({ rectList: old }, this.draw)
       return;
-    }
-    if (enterLeft) {
-      console.log('enterLeft')
-      if (!selectRect) return;
-
-      let dx = x - startX
-      let dy = y - startY
-      let old = clone(rectList)
-      let rIndex = old.findIndex(v => v.id === selectRect?.id)
-      if (rIndex !== -1) {
-        let now = old[rIndex]
-        now.x = x - offsetX
-        // one.y = one.y
-        now.w = selectRect.w - (x - startX)
-        now = getPath(now)
-      }
-      this.setState({ rectList: old }, this.draw)
-      return;
-    }
-    if (enter) {
-      if (!selectRect?.id) return
-      // console.log('startX')
-      // console.log('按下了')
-      let dx = (x - startX) / handScale
-      let dy = (y - startY) / handScale
-      let old = clone(rectList)
-      let rIndex = old.findIndex(v => v.id === selectRect?.id)
-      if (rIndex !== -1) {
-        let now = old[rIndex]
-        now.x = selectRect.x + dx
-        now.y = selectRect.y + dy
-        now = getPath(now)
-      }
-      this.setState({ rectList: old }, this.draw)
-      return
     }
 
     for (let i = rectList.length - 1; i >= 0; i--) {
@@ -1145,6 +1090,7 @@ class Design extends React.Component<any, IState> {
     e.preventDefault()
     return false
   }
+
   print = () => {
     navigator.clipboard.writeText(JSON.stringify(store.rectList, null, 2))
       .then(() => {
@@ -1310,7 +1256,7 @@ class Design extends React.Component<any, IState> {
             <div id="canvasArea">
               {/*为 canvas 增加键盘事件的时候，需要给 canvas 增加一个属性 tabinex = 0 , 不然 绑定无效。*/}
               <canvas
-                // onContextMenu={this.onContextMenu}
+                onContextMenu={this.onContextMenu}
                 // onDoubleClick={this.onDbClick}
                 // onMouseMove={this.onMouseMoveWrapper}
                 // onMouseDown={this.onMouseDown}

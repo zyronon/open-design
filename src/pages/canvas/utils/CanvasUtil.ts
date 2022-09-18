@@ -5,7 +5,6 @@ import { BaseEvent, EventType, ShapeType } from "../type";
 import EventBus from "../../../utils/event-bus";
 import Frame from "./Frame";
 import { mat4 } from "gl-matrix";
-import eventBus from "../../../utils/event-bus";
 
 const out: any = new Float32Array([
   0, 0, 0, 0,
@@ -57,10 +56,22 @@ export class CanvasUtil {
     x: number,
     y: number,
   } = { x: 0, y: 0, }
+  cursor: string = 'default'
+  _data: any = {}
 
 
   constructor(canvas: HTMLCanvasElement) {
     this.init(canvas)
+
+    Object.defineProperty(this, 'cursor', {
+      set(val) {
+        document.body.style.cursor = val
+        this._data['cursor'] = val
+      },
+      get() {
+        return this._data['cursor']
+      }
+    })
   }
 
   //设置inShape
@@ -137,7 +148,7 @@ export class CanvasUtil {
     EventBus.emit('draw')
 
     // if (true){
-    if (false){
+    if (false) {
       this.currentMat = new Float32Array([
         1.25, 0, 0, 0,
         0, 1.25, 0, 0,
@@ -217,15 +228,40 @@ export class CanvasUtil {
 
   _handleEvent = (e: any) => {
     if (e.type === EventType.onMouseEnter) {
-      if (this.mode !== ShapeType.SELECT) {
-        document.body.style.cursor = "crosshair"
+      switch (this.mode) {
+        case ShapeType.SELECT:
+        case ShapeType.SCALE:
+          this.cursor = 'default'
+          break
+        case ShapeType.FRAME:
+        case ShapeType.SLICE:
+        case ShapeType.RECT:
+        case ShapeType.ROUND:
+        case ShapeType.ARROW:
+        case ShapeType.LINE:
+        case ShapeType.POLYGON:
+        case ShapeType.STAR:
+        case ShapeType.IMG:
+          this.cursor = 'crosshair'
+          break
+        case ShapeType.PEN:
+        case ShapeType.PENCIL:
+          this.cursor = 'crosshair'
+          break
+        case ShapeType.TEXT:
+          this.cursor = 'text'
+          break
+        case ShapeType.MOVE:
+          this.cursor = 'pointer'
+          break
+        default:
+          this.cursor = 'default'
+          break
       }
       return
     }
     if (e.type === EventType.onMouseLeave) {
-      if (this.mode !== ShapeType.SELECT) {
-        document.body.style.cursor = "default"
-      }
+      this.cursor = 'default'
       return
     }
 
@@ -296,15 +332,46 @@ export class CanvasUtil {
   onMouseMove(e: BaseEvent, coordinate: any,) {
     if (e.capture) return
     // console.log('canvas画布-onMouseMove')
-    if (this.isMouseDown) this.drawNewShape(coordinate)
+    if (this.isMouseDown) {
+      switch (this.mode) {
+        case ShapeType.RECT:
+          this.drawNewShape(coordinate)
+          break
+        case ShapeType.MOVE:
+          const transform = new Float32Array([
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            // x - startX, y - startY, 0, 1,
+            //因为transform是连续的，所以用当前偏移量，而不是从x-startX
+            e.movementX, e.movementY, 0, 1,
+          ]);
+          const newCurrentMat = mat4.multiply(out, transform, this.currentMat);
+          // console.log(newCurrentMat)
+          this.currentMat = newCurrentMat
+          this.handMove = {
+            x: newCurrentMat[12],
+            y: newCurrentMat[13],
+          }
+          console.log(newCurrentMat)
+          this.render()
+          break
+      }
+    }
   }
 
   onMouseDown(e: BaseEvent, coordinate: any,) {
     if (e.capture) return
     // console.log('canvas画布-onMouseDown')
     if (!this.isDesign()) {
-      if (this.selectedShape) {
-        this.selectedShape.isSelect = false
+      switch (this.mode) {
+        case ShapeType.RECT:
+          if (this.selectedShape) {
+            this.selectedShape.isSelect = false
+          }
+          break
+        case ShapeType.MOVE:
+          break
       }
       this.startX = coordinate.x
       this.startY = coordinate.y
@@ -323,12 +390,18 @@ export class CanvasUtil {
     }
     if (this.isMouseDown) {
       this.isMouseDown = false
-      document.body.style.cursor = "default"
-      this.setMode(ShapeType.SELECT)
-      let frame = new Frame(this.drawShapeConfig);
-      frame.isSelect = true
-      this.selectedShape = frame
-      this.addChild(frame)
+      switch (this.mode) {
+        case ShapeType.RECT:
+          let frame = new Frame(this.drawShapeConfig);
+          frame.isSelect = true
+          this.selectedShape = frame
+          this.addChild(frame)
+          this.cursor = "default"
+          this.setMode(ShapeType.SELECT)
+          break
+        case ShapeType.MOVE:
+          break
+      }
       this.render()
     }
   }

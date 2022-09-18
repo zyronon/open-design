@@ -1,3 +1,5 @@
+import { CanvasUtil } from "./utils/CanvasUtil";
+
 export type IState = {
   rectList: Shape[],
   canvas: HTMLCanvasElement,
@@ -43,7 +45,7 @@ export type IState = {
   usePen: boolean,
   enterPen: boolean,
   isEdit: boolean,
-  cu: any,
+  cu: CanvasUtil,
   drawCount: number
 
   selectDrawType: string,

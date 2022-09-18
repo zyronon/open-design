@@ -55,7 +55,7 @@ class Frame extends Shape {
     y = (y - handY) / cu.handScale
 
     let rect = this.config
-    if (rect.rotate !== 0 || rect.flipHorizontal) {
+    if (rect.rotate !== 0 || rect.flipHorizontal || rect.flipVertical) {
       let { w, h, rotate, flipHorizontal, flipVertical } = rect
       const center = {
         x: rect.x + (rect.w / 2),
@@ -280,7 +280,7 @@ class Frame extends Shape {
       y: current.y + (current.h / 2)
     }
 
-    if (current.flipHorizontal && (this.enterLT||this.enterL)) {
+    if ((flipHorizontal || flipVertical) && (this.enterLT || this.enterL)) {
       let s = this.original
       let oldCenter = {
         x: s.x + (s.w / 2),
@@ -288,8 +288,14 @@ class Frame extends Shape {
       }
       //这里把rect的x坐标，加上偏移量，因为draw的时候临时平移了中心点，不重新设定x坐标，会回弹
       //不能直接用x-startX，因为startX是鼠标点击位置，会有一丁点偏移，导致rect重绘时小抖动
-      let d = oldCenter!.x - center!.x
-      this.config.x += d * 2
+      if (flipHorizontal) {
+        let dx = oldCenter!.x - center!.x
+        this.config.x += dx * 2
+      }
+      if (flipVertical) {
+        let dy = oldCenter!.y - center!.y
+        this.config.y += dy * 2
+      }
       this.config = getPath(this.config, this.original)
     }
 
@@ -314,6 +320,9 @@ class Frame extends Shape {
     //同时，draw的时候，需要把新rect的中心点和平移（选中时rect的中心点）的2倍
     if (rect.flipHorizontal) {
       current.x = center.x + Math.abs(current.x - center.x) * (current.x < center.x ? 1 : -1)
+    }
+    if (rect.flipVertical) {
+      current.y = center.y + Math.abs(current.y - center.y) * (current.y < center.y ? 1 : -1)
     }
 
     let newCenter = getCenterPoint(current, this.diagonal)
@@ -364,6 +373,9 @@ class Frame extends Shape {
       if (rect.flipHorizontal) {
         current.x = center.x + Math.abs(current.x - center.x) * (current.x < center.x ? 1 : -1)
       }
+      if (rect.flipVertical) {
+        current.y = center.y + Math.abs(current.y - center.y) * (current.y < center.y ? 1 : -1)
+      }
       // console.log('x-------', x, '          y--------', y)
       let a = getAngle([rect.x + rect.w / 2, rect.y + rect.h / 2],
         [this.original.x, this.original.y],
@@ -396,6 +408,9 @@ class Frame extends Shape {
         console.log('--------------------------')
         if (rect.flipHorizontal) {
           current.x = center.x + Math.abs(current.x - center.x) * (current.x < center.x ? 1 : -1)
+        }
+        if (rect.flipVertical) {
+          current.y = center.y + Math.abs(current.y - center.y) * (current.y < center.y ? 1 : -1)
         }
         const handlePoint = this.handlePoint
         console.log('current', current)

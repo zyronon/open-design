@@ -156,18 +156,14 @@ class Design extends React.Component<any, IState> {
   }
 
   flip(type: number) {
-    const { selectRect, rectList } = this.state
-    if (selectRect?.id) {
-      let rIndex = rectList.findIndex(v => v.id === selectRect.id)
-      if (rIndex !== -1) {
-        if (type === 0) {
-          rectList[rIndex].flipHorizontal = !rectList[rIndex].flipHorizontal
-        } else {
-          rectList[rIndex].flipVertical = !rectList[rIndex].flipVertical
-        }
-        this.setState({ rectList: clone(rectList), selectRect: clone(rectList[rIndex]) }, this.draw)
-      }
+    let shapeConfig = this.state.selectShape.config
+    if (type === 0) {
+      shapeConfig.flipHorizontal = !shapeConfig.flipHorizontal
+    } else {
+      shapeConfig.flipVertical = !shapeConfig.flipVertical
     }
+    this.setState({ selectShape: this.state.selectShape })
+    this.state.cu.render()
   }
 
   changeSelect = (val: any) => {
@@ -1120,7 +1116,8 @@ class Design extends React.Component<any, IState> {
     this.state.cu.setMode(mode)
   }
 
-  inputOnChange = ()=>{}
+  inputOnChange = () => {
+  }
 
   render() {
     // console.log('render')
@@ -1337,7 +1334,7 @@ class Design extends React.Component<any, IState> {
                                           suffix={<PreviewClose fill="#929596"/>}
                           >
                             <div className={'test'}>
-                              <input type="text" value={selectRect?.fillColor} onChange={this.inputOnChange} />
+                              <input type="text" value={selectRect?.fillColor} onChange={this.inputOnChange}/>
                               <input type="text"/>
                             </div>
                           </BaseSlotButton>
@@ -1368,7 +1365,7 @@ class Design extends React.Component<any, IState> {
                                           suffix={<PreviewClose fill="#929596"/>}
                           >
                             <div className={'test'}>
-                              <input type="text" value={selectRect?.borderColor}  onChange={this.inputOnChange}/>
+                              <input type="text" value={selectRect?.borderColor} onChange={this.inputOnChange}/>
                               <input type="text"/>
                             </div>
                           </BaseSlotButton>

@@ -444,7 +444,7 @@ export function calcPosition(
   if (flipHorizontal) {
     scaleX = -1
     // tranX = -tranX
-    //如果在翻转情况下，拉伸要将tranX减去两个中心点偏移量
+    //如果在翻转情况下，拉伸要将tranX加上两个中心点偏移量
     if ((enterLT || enterL)) {
       // console.log('tranX1', tranX)
       let d = oldCenter!.x - currentCenter!.x
@@ -455,7 +455,21 @@ export function calcPosition(
   if (flipVertical) {
     // console.log('flipVertical', flipVertical)
     scaleY = -1
+    if ((enterLT || enterL)) {
+      // console.log('tranX1', tranX)
+      let d = oldCenter!.y - currentCenter!.y
+      tranY += d * 2
+      // console.log('tranX2', tranX)
+    }
     // tranY = -tranY
+  }
+
+  // if (true) {
+  if (false) {
+    console.log('x, y', x, y)
+    console.log('tranX, tranY', tranX, tranY)
+    console.log('tranX, tranY', scaleX, scaleY)
+    console.log('rotate', rotate)
   }
 
   ctx.translate(tranX, tranY)

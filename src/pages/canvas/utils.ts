@@ -390,7 +390,13 @@ export function getPath(rect: any, old?: any, parent?: any) {
   return rect
 }
 
-export function calcPosition(ctx: CanvasRenderingContext2D, config: any, parent?: any) {
+export function calcPosition(
+  ctx: CanvasRenderingContext2D,
+  config: any,
+  original: any,
+  status: any,
+  parent?: any) {
+  const { isHover, isSelect, enterL, enterLT } = status
   let {
     x, y, w, h, radius,
     fillColor, borderColor, rotate, lineWidth,
@@ -410,6 +416,16 @@ export function calcPosition(ctx: CanvasRenderingContext2D, config: any, parent?
     y: y + (h / 2)
   }
 
+  if (enterLT || enterL) {
+    let s = original
+    oldCenter = {
+      x: s.x + (s.w / 2),
+      y: s.y + (s.h / 2)
+    }
+    // console.log('oldCenter', oldCenter)
+    // console.log('newCenter', newCenter)
+  }
+
   ctx.lineWidth = lineWidth
   ctx.fillStyle = fillColor
   ctx.strokeStyle = borderColor
@@ -423,6 +439,23 @@ export function calcPosition(ctx: CanvasRenderingContext2D, config: any, parent?
     tranY = y + h / 2
     x = -w / 2
     y = -h / 2
+  }
+
+  if (flipHorizontal) {
+    scaleX = -1
+    // tranX = -tranX
+    //如果在翻转情况下，拉伸要将tranX减去两个中心点偏移量
+    if ((enterLT || enterL)) {
+      // console.log('tranX1', tranX)
+      let d = oldCenter!.x - currentCenter!.x
+      tranX += d * 2
+      // console.log('tranX2', tranX)
+    }
+  }
+  if (flipVertical) {
+    // console.log('flipVertical', flipVertical)
+    scaleY = -1
+    // tranY = -tranY
   }
 
   ctx.translate(tranX, tranY)
@@ -541,15 +574,24 @@ export function selected(ctx: CanvasRenderingContext2D, config: any) {
 export function draw(
   ctx: CanvasRenderingContext2D,
   config: any,
+  original: any,
   status?: {
-    isHover?: boolean,
-    isSelect?: boolean
+    isHover: boolean,
+    isSelect: boolean,
+    enterLT: boolean
+    enterL: boolean
   },
   parent?: any
 ) {
   ctx.save()
-  const { isHover = false, isSelect = false } = status || {}
-  let { x, y } = calcPosition(ctx, config, parent)
+  status = Object.assign({
+    isHover: false,
+    isSelect: false,
+    enterLT: false,
+    enterL: false
+  }, status || {})
+  let { x, y } = calcPosition(ctx, config, original, status, parent)
+  const { isHover, isSelect, enterLT } = status
   let {
     w, h, radius,
     fillColor, borderColor, rotate, lineWidth,

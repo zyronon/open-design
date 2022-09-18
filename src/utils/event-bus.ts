@@ -1,15 +1,6 @@
 export default {
   eventMap: new Map(),
-  on(eventType: string, cb: Function) {
-    let cbs = this.eventMap.get(eventType);
-    if (cbs) {
-      cbs.push(cb);
-    } else {
-      cbs = [cb];
-    }
-    this.eventMap.set(eventType, cbs);
-  },
-  ons(eventTypes: any, cb: Function) {
+  on(eventTypes: any, cb: Function) {
     if (eventTypes instanceof Array) {
       eventTypes.map(eventType => {
         let cbs = this.eventMap.get(eventType);
@@ -51,4 +42,7 @@ export default {
       this.eventMap.delete(eventTypes);
     }
   },
+  offAll(){
+    this.eventMap = new Map()
+  }
 };

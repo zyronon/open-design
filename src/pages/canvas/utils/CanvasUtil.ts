@@ -1,7 +1,7 @@
 import { Shape } from "./Shape";
 import { clear, draw } from "../utils";
 import { cloneDeep, throttle } from "lodash";
-import { BaseEvent, EventType, ShapeType } from "../type";
+import { BaseEvent, EventMapTypes, EventTypes, ShapeType } from "../type";
 import EventBus from "../../../utils/event-bus";
 import Frame from "./Frame";
 import { mat4 } from "gl-matrix";
@@ -189,7 +189,7 @@ export class CanvasUtil {
   handleEvent = throttle(e => this._handleEvent(e), 0)
 
   initEvent() {
-    Object.values(EventType).forEach(eventName => {
+    Object.values(EventMapTypes).forEach(eventName => {
       this.canvas.addEventListener(eventName, this.handleEvent, true)
     })
     this.canvas.addEventListener('wheel', this.onWheel)
@@ -198,7 +198,6 @@ export class CanvasUtil {
   onWheel = (e: any) => {
     // console.log('e', e)
     let { clientX, clientY, deltaY } = e;
-
 
     let x = clientX - this.canvasRect.left
     let y = clientY - this.canvasRect.top
@@ -222,12 +221,12 @@ export class CanvasUtil {
       y: newCurrentMat[13],
     }
     this.handScale = newCurrentMat[0]
-    console.log(newCurrentMat)
+    EventBus.emit(EventTypes.onWheel, this.handScale)
     this.render()
   }
 
   _handleEvent = (e: any) => {
-    if (e.type === EventType.onMouseEnter) {
+    if (e.type === EventMapTypes.onMouseEnter) {
       switch (this.mode) {
         case ShapeType.SELECT:
         case ShapeType.SCALE:
@@ -260,7 +259,7 @@ export class CanvasUtil {
       }
       return
     }
-    if (e.type === EventType.onMouseLeave) {
+    if (e.type === EventMapTypes.onMouseLeave) {
       this.cursor = 'default'
       return
     }
@@ -277,13 +276,13 @@ export class CanvasUtil {
     }
 
     if (!this.isDesign()) {
-      if (e.type === EventType.onMouseMove) {
+      if (e.type === EventMapTypes.onMouseMove) {
         this.onMouseMove(e, { x, y })
       }
-      if (e.type === EventType.onMouseDown) {
+      if (e.type === EventMapTypes.onMouseDown) {
         this.onMouseDown(e, { x, y })
       }
-      if (e.type === EventType.onMouseUp) {
+      if (e.type === EventMapTypes.onMouseUp) {
         this.onMouseUp(e, { x, y })
       }
       return;
@@ -293,13 +292,13 @@ export class CanvasUtil {
     } else {
       this.children.forEach(shape => shape.event(baseEvent, []))
     }
-    if (e.type === EventType.onMouseMove) {
+    if (e.type === EventMapTypes.onMouseMove) {
       this.onMouseMove(e, { x, y })
     }
-    if (e.type === EventType.onMouseDown) {
+    if (e.type === EventMapTypes.onMouseDown) {
       this.onMouseDown(e, { x, y })
     }
-    if (e.type === EventType.onMouseUp) {
+    if (e.type === EventMapTypes.onMouseUp) {
       this.onMouseUp(e, { x, y })
     }
   }
@@ -353,7 +352,6 @@ export class CanvasUtil {
             x: newCurrentMat[12],
             y: newCurrentMat[13],
           }
-          console.log(newCurrentMat)
           this.render()
           break
       }
@@ -382,6 +380,7 @@ export class CanvasUtil {
   onMouseUp(e: BaseEvent, coordinate: any,) {
     if (e.capture) return
     // console.log('canvas画布-onMouseUp')
+    EventBus.emit(EventMapTypes.onMouseUp, null)
 
     this.selectedShapeParent.map((shape: Shape) => shape.isCapture = true)
     if (this.selectedShape) {

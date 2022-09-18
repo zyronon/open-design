@@ -1,5 +1,5 @@
 import {Shape} from "./Shape";
-import {BaseEvent, EventType, ShapeType} from "../type";
+import {BaseEvent, EventMapTypes, ShapeType} from "../type";
 import {clear, getPath, renderCanvas, renderRoundRect} from "../utils";
 import {CanvasUtil} from "./CanvasUtil";
 import {clone, cloneDeep} from "lodash";

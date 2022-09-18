@@ -25,9 +25,11 @@ class Frame extends Shape {
   }
 
   render(ctx: CanvasRenderingContext2D, parent?: any): void {
-    draw(ctx, this.config, {
+    draw(ctx, this.config, this.original, {
       isHover: this.isHover,
-      isSelect: this.isSelect
+      isSelect: this.isSelect,
+      enterLT: this.enterLT,
+      enterL: this.enterL
     }, parent)
     if (this.children) {
       this.children.map((item: any) => item.render(ctx, this.config))
@@ -207,7 +209,7 @@ class Frame extends Shape {
         // handlePoint.x = center.x + Math.abs(handlePoint.x - center.x) * (handlePoint.x < center.x ? 1 : -1)
       }
       if (rect.flipVertical) {
-        handlePoint.y = center.y + Math.abs(handlePoint.y - center.y) * (handlePoint.y < center.y ? 1 : -1)
+        // handlePoint.y = center.y + Math.abs(handlePoint.y - center.y) * (handlePoint.y < center.y ? 1 : -1)
       }
       this.diagonal = {
         x: center.x + Math.abs(handlePoint.x - center.x) * (handlePoint.x < center.x ? 1 : -1),
@@ -265,11 +267,38 @@ class Frame extends Shape {
 
   mouseup(event: any, p: any) {
     // console.log('mouseup', this.config.name,)
+    let {
+      flipVertical, flipHorizontal,
+    }
+      = this.config
+    let { e, coordinate, type } = event
+    let { x, y, cu } = this.getXY(coordinate)
+
+    let current = this.config
+    let center = {
+      x: current.x + (current.w / 2),
+      y: current.y + (current.h / 2)
+    }
+
+    if (current.flipHorizontal && (this.enterLT||this.enterL)) {
+      let s = this.original
+      let oldCenter = {
+        x: s.x + (s.w / 2),
+        y: s.y + (s.h / 2)
+      }
+      //这里把rect的x坐标，加上偏移量，因为draw的时候临时平移了中心点，不重新设定x坐标，会回弹
+      //不能直接用x-startX，因为startX是鼠标点击位置，会有一丁点偏移，导致rect重绘时小抖动
+      let d = oldCenter!.x - center!.x
+      this.config.x += d * 2
+      this.config = getPath(this.config, this.original)
+    }
+
     this.enter = false
     this.enterL = false
     this.enterLT = false
     this.enterLTR = false
-    // this.isCapture = true
+
+    cu.render()
   }
 
   moveEnterLT({ x, y }: Point) {
@@ -280,11 +309,11 @@ class Frame extends Shape {
       x: s.x + (s.w / 2),
       y: s.y + (s.h / 2)
     }
+
     //水平翻转，那么要把当前的x坐标一下翻转
     //同时，draw的时候，需要把新rect的中心点和平移（选中时rect的中心点）的2倍
     if (rect.flipHorizontal) {
-      // current.x = center.x + Math.abs(current.x - center.x) * (current.x < center.x ? 1 : -1)
-      // console.log('current', current)
+      current.x = center.x + Math.abs(current.x - center.x) * (current.x < center.x ? 1 : -1)
     }
 
     let newCenter = getCenterPoint(current, this.diagonal)
@@ -325,11 +354,20 @@ class Frame extends Shape {
     }
 
     if (this.enterLTR) {
-      let selectRect = this.original
+      let rect = this.original
+      let old = this.original
+      const center = {
+        x: old.x + (old.w / 2),
+        y: old.y + (old.h / 2)
+      }
+      let current = { x, y }
+      if (rect.flipHorizontal) {
+        current.x = center.x + Math.abs(current.x - center.x) * (current.x < center.x ? 1 : -1)
+      }
       // console.log('x-------', x, '          y--------', y)
-      let a = getAngle([selectRect.x + selectRect.w / 2, selectRect.y + selectRect.h / 2],
+      let a = getAngle([rect.x + rect.w / 2, rect.y + rect.h / 2],
         [this.original.x, this.original.y],
-        [x, y]
+        [current.x, current.y]
       )
       // console.log('getAngle', a)
       this.config.rotate = a
@@ -354,14 +392,16 @@ class Frame extends Shape {
           y: s.y + (s.h / 2)
         }
         let sPoint = this.diagonal
-        const currentPosition = { x, y }
+        const current = { x, y }
         console.log('--------------------------')
-
+        if (rect.flipHorizontal) {
+          current.x = center.x + Math.abs(current.x - center.x) * (current.x < center.x ? 1 : -1)
+        }
         const handlePoint = this.handlePoint
-        console.log('currentPosition', currentPosition)
+        console.log('current', current)
         console.log('handlePoint', handlePoint)
 
-        const rotatedCurrentPosition = getRotatedPoint(currentPosition, handlePoint, -rect.rotate)
+        const rotatedCurrentPosition = getRotatedPoint(current, handlePoint, -rect.rotate)
         console.log('rotatedCurrentPosition', rotatedCurrentPosition)
 
         console.log('test', rotatedCurrentPosition.x, handlePoint.y)

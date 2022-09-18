@@ -54,7 +54,7 @@ export type IState = {
   drawType5: ShapeType,
   drawType6: ShapeType,
 
-  selectShape: Shape
+  selectShape: any
 }
 
 
@@ -163,14 +163,20 @@ export interface RectText {
 }
 
 
-export enum EventType {
+export const EventMapTypes = {
   // onClick = 'click',
-  onDoubleClick = 'dblclick',
-  onMouseMove = 'mousemove',
-  onMouseDown = 'mousedown',
-  onMouseUp = 'mouseup',
-  onMouseEnter = 'mouseenter',
-  onMouseLeave = 'mouseleave',
+  onDoubleClick: 'dblclick',
+  onMouseMove: 'mousemove',
+  onMouseDown: 'mousedown',
+  onMouseUp: 'mouseup',
+  onMouseEnter: 'mouseenter',
+  onMouseLeave: 'mouseleave',
+}
+
+export const EventTypes = {
+  onClick: 'click',
+  onWheel: 'wheel',
+  ...EventMapTypes
 }
 
 export interface BaseEvent extends MouseEvent {

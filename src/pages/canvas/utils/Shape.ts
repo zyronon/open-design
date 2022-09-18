@@ -1,7 +1,7 @@
 import { clear, getPath, renderRoundRect } from "../utils";
 import { CanvasUtil } from "./CanvasUtil";
-import eventBus from "../../../utils/event-bus";
-import { EventType } from "../type";
+import EventBus from "../../../utils/event-bus";
+import { EventMapTypes } from "../type";
 
 export class Shape {
   config: any
@@ -37,11 +37,11 @@ export class Shape {
 
   mouseDown(cu?: any) {
     // console.log('mousedown')
-    eventBus.emit(EventType.onMouseMove, cu.selectedShape)
+    EventBus.emit(EventMapTypes.onMouseMove, cu.selectedShape)
   }
 
   mouseMove(cu?: any) {
     // console.log('mousemove')
-    eventBus.emit(EventType.onMouseDown, cu.selectedShape)
+    EventBus.emit(EventMapTypes.onMouseDown, cu.selectedShape)
   }
 }

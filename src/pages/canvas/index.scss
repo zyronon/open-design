@@ -1,7 +1,7 @@
 @import '/src/assets/css/variable.scss';
 
 .design {
-  user-select:none;
+  user-select: none;
   height: 100%;
   width: 100%;
   font-size: 16rem;
@@ -82,15 +82,27 @@
           display: flex;
 
           .tool {
-            width: 45rem;
+            padding: 0 10rem;
             height: 100%;
-            //padding: 0 6rem;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
 
+            &.select{
+              padding: 0 6rem;
+            }
+
+            .b-select {
+              padding: 0;
+              background: unset;
+              .b-select-right{
+                margin-left: 5rem;
+              }
+            }
+
             .i-icon {
+              display: flex;
               font-size: 18rem;
             }
 

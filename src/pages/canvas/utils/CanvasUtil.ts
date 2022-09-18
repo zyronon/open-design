@@ -5,6 +5,7 @@ import { BaseEvent, EventType, ShapeType } from "../type";
 import EventBus from "../../../utils/event-bus";
 import Frame from "./Frame";
 import { mat4 } from "gl-matrix";
+import eventBus from "../../../utils/event-bus";
 
 const out: any = new Float32Array([
   0, 0, 0, 0,
@@ -135,8 +136,8 @@ export class CanvasUtil {
   _render() {
     EventBus.emit('draw')
 
-    if (true){
-    // if (false){
+    // if (true){
+    if (false){
       this.currentMat = new Float32Array([
         1.25, 0, 0, 0,
         0, 1.25, 0, 0,
@@ -180,7 +181,7 @@ export class CanvasUtil {
     Object.values(EventType).forEach(eventName => {
       this.canvas.addEventListener(eventName, this.handleEvent, true)
     })
-    // this.canvas.addEventListener('wheel', this.onWheel)
+    this.canvas.addEventListener('wheel', this.onWheel)
   }
 
   onWheel = (e: any) => {
@@ -251,20 +252,10 @@ export class CanvasUtil {
       }
       return;
     }
-
     if (this.inShape) {
-
       this.inShape.event(baseEvent, this.inShapeParent)
     } else {
-      this.children
-        .forEach(shape => shape.event(baseEvent, [], () => {
-          this.childIsIn = true
-        }))
-      if (!this.childIsIn) {
-        // this.hoverShape?.isHover = false
-        // this.draw()
-      }
-      this.childIsIn = false
+      this.children.forEach(shape => shape.event(baseEvent, []))
     }
     if (e.type === EventType.onMouseMove) {
       this.onMouseMove(e, { x, y })

@@ -46,10 +46,15 @@ export type IState = {
   cu: any,
   drawCount: number
 
+  selectDrawType: string,
   drawType: ShapeType,
   drawType2: ShapeType,
   drawType3: ShapeType,
   drawType4: ShapeType,
+  drawType5: ShapeType,
+  drawType6: ShapeType,
+
+  selectShape: Shape
 }
 
 

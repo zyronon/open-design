@@ -40,7 +40,7 @@
       & > .left-wrapper {
         background: transparent;
 
-        .tabs,.layer{
+        .tabs, .layer {
           opacity: 0;
         }
       }
@@ -88,6 +88,13 @@
             align-items: center;
             justify-content: center;
             color: white;
+
+            :global{
+              .i-icon {
+                display: flex;
+              }
+            }
+
 
             .arrow {
               margin-left: 2rem;
@@ -144,7 +151,6 @@
         color: white;
 
 
-
         .base-info {
           > .header {
             margin-bottom: 8rem;
@@ -199,4 +205,8 @@
     outline: none;
     width: 50%;
   }
+}
+
+.i-icon {
+  display: flex;
 }

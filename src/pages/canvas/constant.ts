@@ -326,7 +326,7 @@ export const rects2 = [
   }
 ]
 
-export const rects3 = [
+export const rects = [
   {
     "x": 941,
     "y": 43,
@@ -564,7 +564,7 @@ export const rects3 = [
   }
 ]
 
-export const rects= [
+export const rects3= [
   {
     "x": 1118.1915212015622,
     "y": 161.20695189674296,

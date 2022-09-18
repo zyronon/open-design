@@ -166,10 +166,8 @@ class Frame extends Shape {
   }
 
   mousedown(event: any, p: Shape[] = []) {
-    // console.log('mousedown', p)
     let { e, coordinate, type } = event
     let { x, y, cu } = this.getXY(coordinate)
-
     if (!cu.isDesign()) {
       cu.startX = coordinate.x
       cu.startY = coordinate.y
@@ -262,6 +260,7 @@ class Frame extends Shape {
     cu.selectedShapeParent.map((shape: Shape) => shape.isCapture = false)
     cu.selectedShape = this
     cu.render()
+    super.mouseDown(cu)
   }
 
   mouseup(event: any, p: any) {
@@ -306,6 +305,9 @@ class Frame extends Shape {
     let { e, coordinate, type } = event
     // console.log('mousemove', this.config.name, `isHover：${this.isHover}`)
     let { x, y, cu } = this.getXY(coordinate)
+    if (this.enter || this.enterLTR || this.enterLT || this.enterL) {
+      super.mouseMove(cu)
+    }
     if (!cu.isDesign()) {
       return;
     }

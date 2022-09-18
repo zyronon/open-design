@@ -1,11 +1,13 @@
 import { clear, getPath, renderRoundRect } from "../utils";
 import { CanvasUtil } from "./CanvasUtil";
+import eventBus from "../../../utils/event-bus";
+import { EventType } from "../type";
 
 export class Shape {
   config: any
   protected children: Shape[] = []
   isHover: boolean = false
-  isSelect: boolean = true
+  isSelect: boolean = false
   isCapture: boolean = true
   enter: boolean = false
   startX: number = 0
@@ -31,5 +33,15 @@ export class Shape {
     x = (x - handX) / cu.handScale//上面的简写
     y = (y - handY) / cu.handScale
     return { x, y, cu }
+  }
+
+  mouseDown(cu?: any) {
+    // console.log('mousedown')
+    eventBus.emit(EventType.onMouseMove, cu.selectedShape)
+  }
+
+  mouseMove(cu?: any) {
+    // console.log('mousemove')
+    eventBus.emit(EventType.onMouseDown, cu.selectedShape)
   }
 }

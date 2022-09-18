@@ -26,7 +26,17 @@ import { mat4 } from 'gl-matrix'
 import Fps from "../../components/Fps";
 import { BaseOption, BaseSelect } from "../../components/BaseSelect2";
 import { Colors, fontFamilies, fontSize, fontWeight, rects } from "./constant";
-import { FontFamily, FontWeight, IState, RectColorType, Shape, ShapeType, TextAlign, TextMode } from "./type";
+import {
+  EventType,
+  FontFamily,
+  FontWeight,
+  IState,
+  RectColorType,
+  Shape,
+  ShapeType,
+  TextAlign,
+  TextMode
+} from "./type";
 import { BaseRadio, BaseRadioGroup } from "../../components/BaseRadio";
 import BaseSlotButton from "../../components/BaseSlotButton";
 import BasePicker from "../../components/BasePicker"
@@ -39,6 +49,7 @@ import { CanvasUtil } from "./utils/CanvasUtil";
 // import { Frame } from "./utils/Frame";
 import Frame from "./utils/Frame";
 import EventBus from "../../utils/event-bus";
+import cx from "classnames";
 
 const out = new Float32Array([
   0, 0, 0, 0,
@@ -68,10 +79,13 @@ class Design extends React.Component<any, IState> {
     rectColor: null,
     rectColorType: null,
     drawCount: 0,
+    selectDrawType: 'drawType',
     drawType: ShapeType.SELECT,
     drawType2: ShapeType.FRAME,
     drawType3: ShapeType.RECT,
     drawType4: ShapeType.PEN,
+    drawType5: ShapeType.TEXT,
+    drawType6: ShapeType.MOVE,
   } as IState
 
   componentDidMount() {
@@ -81,6 +95,7 @@ class Design extends React.Component<any, IState> {
 
   componentWillUnmount() {
     EventBus.off('draw')
+    EventBus.off([EventType.onMouseDown, EventType.onMouseMove])
     // console.log('componentWillUnmount')
   }
 
@@ -105,6 +120,10 @@ class Design extends React.Component<any, IState> {
       this.setState(s => {
         return { drawCount: s.drawCount + 1 }
       })
+    })
+    EventBus.ons([EventType.onMouseDown, EventType.onMouseMove], (val: any) => {
+      // console.log('val', val)
+      val && this.setState({ selectShape: val })
     })
   }
 
@@ -1148,7 +1167,7 @@ class Design extends React.Component<any, IState> {
 
   setCanvasUtilMode = (mode: ShapeType, key: any) => {
     // @ts-ignore
-    this.setState({ [key]: mode })
+    this.setState({ [key]: mode, selectDrawType: key })
     this.state.cu.setMode(mode)
   }
 
@@ -1161,11 +1180,13 @@ class Design extends React.Component<any, IState> {
       drawType,
       drawType2,
       drawType3,
-      drawType4
+      drawType4,
+      selectShape,
+      selectDrawType
     } = this.state
     // console.log('selectRect', selectRect?.fontFamily)
     // @ts-ignore
-    const selectRect: Shape = this.getSelect()
+    const selectRect: Shape = selectShape?.config ?? {}
     // console.log('se', selectRect)
     const type = selectRect?.type
     return <>
@@ -1186,91 +1207,96 @@ class Design extends React.Component<any, IState> {
           <div className="canvas-wrapper">
             <div className="tool-bar">
               <div className="left">
-
-                <BaseSelect
-                  value={drawType}
-                  selectRender={(e: any) => {
-                    if (e.value === ShapeType.SELECT) return <Icon type={'MoveOne'}/>
-                    if (e.value === ShapeType.SCALE) return <Icon type={'Scale'}/>
-                  }}
-                  onChange={(e: any) => this.setCanvasUtilMode(e, 'drawType')}>
-                  <BaseOption key={1} value={ShapeType.SELECT} label={ShapeType.SELECT}>
-                    <SelectItem name={'选择'} iconName={'MoveOne'} hotkey={'V'}/>
-                  </BaseOption>
-                  <BaseOption key={2} value={ShapeType.SCALE} label={ShapeType.SCALE}>
-                    <SelectItem name={'等比缩放'} iconName={'Scale'} hotkey={'K'}/>
-                  </BaseOption>
-                </BaseSelect>
-
-                <BaseSelect
-                  value={drawType2}
-                  selectRender={(e: any) => {
-                    if (e.value === ShapeType.FRAME) return <Icon type={'Pound'}/>
-                    if (e.value === ShapeType.SLICE) return <Icon type={'StraightRazor'}/>
-                  }}
-                  onChange={(e: any) => this.setCanvasUtilMode(e, 'drawType2')}>
-                  <BaseOption key={1} value={ShapeType.FRAME} label={ShapeType.FRAME}>
-                    <SelectItem name={'窗器'} iconName={'Pound'} hotkey={'F'}/>
-                  </BaseOption>
-                  <BaseOption key={2} value={ShapeType.SLICE} label={ShapeType.SLICE}>
-                    <SelectItem name={'切图'} iconName={'StraightRazor'} hotkey={'S'}/>
-                  </BaseOption>
-                </BaseSelect>
-
-                <BaseSelect
-                  value={drawType3}
-                  selectRender={(e: any) => {
-                    if (e.value === ShapeType.RECT) return <Icon type={'RectangleOne'}/>
-                    if (e.value === ShapeType.ROUND) return <Icon type={'Round'}/>
-                    if (e.value === ShapeType.ARROW) return <Icon type={'ArrowRightUp'}/>
-                    if (e.value === ShapeType.LINE) return <Icon type={'Minus'}/>
-                    if (e.value === ShapeType.POLYGON) return <Icon type={'Triangle'}/>
-                    if (e.value === ShapeType.STAR) return <Icon type={'star'}/>
-                    if (e.value === ShapeType.IMG) return <Icon type={'pic'}/>
-                  }}
-                  onChange={(e: any) => this.setCanvasUtilMode(e, 'drawType3')}>
-                  <BaseOption key={1} value={ShapeType.RECT} label={ShapeType.RECT}>
-                    <SelectItem name={'矩形'} iconName={'RectangleOne'} hotkey={'R'}/>
-                  </BaseOption>
-                  <BaseOption key={2} value={ShapeType.ROUND} label={ShapeType.ROUND}>
-                    <SelectItem name={'圆'} iconName={'Round'} hotkey={'O'}/>
-                  </BaseOption>
-                  <BaseOption key={3} value={ShapeType.ARROW} label={ShapeType.ARROW}>
-                    <SelectItem name={'箭头'} iconName={'ArrowRightUp'} hotkey={'Shift + L'}/>
-                  </BaseOption>
-                  <BaseOption key={4} value={ShapeType.LINE} label={ShapeType.LINE}>
-                    <SelectItem name={'直线'} iconName={'Minus'} hotkey={'L'}/>
-                  </BaseOption>
-                  <BaseOption key={5} value={ShapeType.POLYGON} label={ShapeType.POLYGON}>
-                    <SelectItem name={'多边形'} iconName={'Triangle'} hotkey={''}/>
-                  </BaseOption>
-                  <BaseOption key={6} value={ShapeType.STAR} label={ShapeType.STAR}>
-                    <SelectItem name={'星形'} iconName={'star'} hotkey={''}/>
-                  </BaseOption>
-                  <BaseOption key={7} value={ShapeType.IMG} label={ShapeType.IMG}>
-                    <SelectItem name={'图片'} iconName={'pic'} hotkey={'Shift Ctrl K'}/>
-                  </BaseOption>
-                </BaseSelect>
-
-                <BaseSelect
-                  value={drawType4}
-                  selectRender={(e: any) => {
-                    if (e.value === ShapeType.PEN) return <Icon type={'pencil'}/>
-                    if (e.value === ShapeType.PENCIL) return <Icon type={'ElectronicPen'}/>
-                  }}
-                  onChange={(e: any) => this.setCanvasUtilMode(e, 'drawType4')}>
-                  <BaseOption key={1} value={ShapeType.PEN} label={ShapeType.PEN}>
-                    <SelectItem name={'钢笔'} iconName={'pencil'} hotkey={'P'}/>
-                  </BaseOption>
-                  <BaseOption key={2} value={ShapeType.PENCIL} label={ShapeType.SLICE}>
-                    <SelectItem name={'铅笔'} iconName={'ElectronicPen'} hotkey={'Shift P'}/>
-                  </BaseOption>
-                </BaseSelect>
-
-                <div className="tool">
+                <div className={cx('tool select', selectDrawType === 'drawType' && 'active')}>
+                  <BaseSelect
+                    value={drawType}
+                    selectRender={(e: any) => {
+                      if (e.value === ShapeType.SELECT) return <Icon type={'MoveOne'}/>
+                      if (e.value === ShapeType.SCALE) return <Icon type={'Scale'}/>
+                    }}
+                    onChange={(e: any) => this.setCanvasUtilMode(e, 'drawType')}>
+                    <BaseOption key={1} value={ShapeType.SELECT} label={ShapeType.SELECT}>
+                      <SelectItem name={'选择'} iconName={'MoveOne'} hotkey={'V'}/>
+                    </BaseOption>
+                    <BaseOption key={2} value={ShapeType.SCALE} label={ShapeType.SCALE}>
+                      <SelectItem name={'等比缩放'} iconName={'Scale'} hotkey={'K'}/>
+                    </BaseOption>
+                  </BaseSelect>
+                </div>
+                <div className={cx('tool select', selectDrawType === 'drawType2' && 'active')}>
+                  <BaseSelect
+                    value={drawType2}
+                    selectRender={(e: any) => {
+                      if (e.value === ShapeType.FRAME) return <Icon type={'Pound'}/>
+                      if (e.value === ShapeType.SLICE) return <Icon type={'StraightRazor'}/>
+                    }}
+                    onChange={(e: any) => this.setCanvasUtilMode(e, 'drawType2')}>
+                    <BaseOption key={1} value={ShapeType.FRAME} label={ShapeType.FRAME}>
+                      <SelectItem name={'窗器'} iconName={'Pound'} hotkey={'F'}/>
+                    </BaseOption>
+                    <BaseOption key={2} value={ShapeType.SLICE} label={ShapeType.SLICE}>
+                      <SelectItem name={'切图'} iconName={'StraightRazor'} hotkey={'S'}/>
+                    </BaseOption>
+                  </BaseSelect>
+                </div>
+                <div className={cx('tool select', selectDrawType === 'drawType3' && 'active')}>
+                  <BaseSelect
+                    value={drawType3}
+                    selectRender={(e: any) => {
+                      if (e.value === ShapeType.RECT) return <Icon type={'RectangleOne'}/>
+                      if (e.value === ShapeType.ROUND) return <Icon type={'Round'}/>
+                      if (e.value === ShapeType.ARROW) return <Icon type={'ArrowRightUp'}/>
+                      if (e.value === ShapeType.LINE) return <Icon type={'Minus'}/>
+                      if (e.value === ShapeType.POLYGON) return <Icon type={'Triangle'}/>
+                      if (e.value === ShapeType.STAR) return <Icon type={'star'}/>
+                      if (e.value === ShapeType.IMG) return <Icon type={'pic'}/>
+                    }}
+                    onChange={(e: any) => this.setCanvasUtilMode(e, 'drawType3')}>
+                    <BaseOption key={1} value={ShapeType.RECT} label={ShapeType.RECT}>
+                      <SelectItem name={'矩形'} iconName={'RectangleOne'} hotkey={'R'}/>
+                    </BaseOption>
+                    <BaseOption key={2} value={ShapeType.ROUND} label={ShapeType.ROUND}>
+                      <SelectItem name={'圆'} iconName={'Round'} hotkey={'O'}/>
+                    </BaseOption>
+                    <BaseOption key={3} value={ShapeType.ARROW} label={ShapeType.ARROW}>
+                      <SelectItem name={'箭头'} iconName={'ArrowRightUp'} hotkey={'Shift + L'}/>
+                    </BaseOption>
+                    <BaseOption key={4} value={ShapeType.LINE} label={ShapeType.LINE}>
+                      <SelectItem name={'直线'} iconName={'Minus'} hotkey={'L'}/>
+                    </BaseOption>
+                    <BaseOption key={5} value={ShapeType.POLYGON} label={ShapeType.POLYGON}>
+                      <SelectItem name={'多边形'} iconName={'Triangle'} hotkey={''}/>
+                    </BaseOption>
+                    <BaseOption key={6} value={ShapeType.STAR} label={ShapeType.STAR}>
+                      <SelectItem name={'星形'} iconName={'star'} hotkey={''}/>
+                    </BaseOption>
+                    <BaseOption key={7} value={ShapeType.IMG} label={ShapeType.IMG}>
+                      <SelectItem name={'图片'} iconName={'pic'} hotkey={'Shift Ctrl K'}/>
+                    </BaseOption>
+                  </BaseSelect>
+                </div>
+                <div className={cx('tool select', selectDrawType === 'drawType4' && 'active')}>
+                  <BaseSelect
+                    value={drawType4}
+                    selectRender={(e: any) => {
+                      if (e.value === ShapeType.PEN) return <Icon type={'pencil'}/>
+                      if (e.value === ShapeType.PENCIL) return <Icon type={'ElectronicPen'}/>
+                    }}
+                    onChange={(e: any) => this.setCanvasUtilMode(e, 'drawType4')}>
+                    <BaseOption key={1} value={ShapeType.PEN} label={ShapeType.PEN}>
+                      <SelectItem name={'钢笔'} iconName={'pencil'} hotkey={'P'}/>
+                    </BaseOption>
+                    <BaseOption key={2} value={ShapeType.PENCIL} label={ShapeType.SLICE}>
+                      <SelectItem name={'铅笔'} iconName={'ElectronicPen'} hotkey={'Shift P'}/>
+                    </BaseOption>
+                  </BaseSelect>
+                </div>
+                <div className={cx('tool', selectDrawType === 'drawType5' && 'active')}
+                     onClick={() => this.setCanvasUtilMode(ShapeType.TEXT, 'drawType5')}>
                   <Icon type={'Text'} size="20"/>
                 </div>
-                <div className="tool">
+                <div className={cx('tool', selectDrawType === 'drawType6' && 'active')}
+                     onClick={() => this.setCanvasUtilMode(ShapeType.MOVE, 'drawType6')}>
                   <Icon type={'FiveFive'} size="20"/>
                 </div>
               </div>

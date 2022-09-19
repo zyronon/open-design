@@ -326,7 +326,7 @@ export const rects2 = [
   }
 ]
 
-export const rects  = [
+export const rects3  = [
   {
     "x": 1248,
     "y": 50,
@@ -582,15 +582,15 @@ export const rects  = [
   }
 ]
 
-export const rects3 = [
+export const rects = [
   {
-    "x": 386.18076189212263,
-    "y": 166.96052319587545,
-    "rx": 386.18076189212263,
-    "ry": 166.96052319587545,
-    "w": 141.17172463184414,
-    "h": 342,
-    "rotate": 16,
+    "x": 375,
+    "y": 157,
+    "rx": 375,
+    "ry": 157,
+    "w": 442.35248652396695,
+    "h": 430.96052319587545,
+    "rotate": 0,
     "lineWidth": 2,
     "type": 102,
     "color": "gray",
@@ -598,7 +598,7 @@ export const rects3 = [
     "children": [],
     "brokenTexts": [],
     "flipHorizontal": false,
-    "flipVertical": true,
+    "flipVertical": false,
     "borderColor": "rgb(216,216,216)",
     "fillColor": "rgb(216,216,216)",
     "fontSize": 16,
@@ -606,10 +606,12 @@ export const rects3 = [
     "fontFamily": "SourceHanSansCN",
     "texts": [],
     "name": "容器",
-    "leftX": 386.18076189212263,
-    "rightX": 527.3524865239667,
-    "topY": 166.96052319587545,
-    "bottomY": 508.96052319587545,
-    "id": "cd973e70-08e8-471a-814d-61966b891d5a"
+    "leftX": 375,
+    "rightX": 817.352486523967,
+    "topY": 157,
+    "bottomY": 587.9605231958755,
+    "id": "cd973e70-08e8-471a-814d-61966b891d5a",
+    "centerX": 596.1762432619835,
+    "centerY": 372.4802615979377
   }
 ]

@@ -1,9 +1,9 @@
-import { IState, Shape, ShapeType, TextAlign } from "./type";
-import { store } from "./store";
+import {IState, Shape, ShapeType, TextAlign} from "./type";
+import {store} from "./store";
 // @ts-ignore
-import { v4 as uuid } from 'uuid';
-import { Colors } from "./constant";
-import { CanvasUtil } from "./utils/CanvasUtil";
+import {v4 as uuid} from 'uuid';
+import {Colors} from "./constant";
+import {CanvasUtil} from "./utils/CanvasUtil";
 
 export function renderCanvas(
   rect: Shape,
@@ -94,7 +94,7 @@ export function renderCanvas(
     || type === ShapeType.SELECT
   ) {
     if (radius && type !== ShapeType.SELECT) {
-      renderRoundRect({ x, y, w, h }, radius, ctx)
+      renderRoundRect({x, y, w, h}, radius, ctx)
     } else {
       ctx.beginPath()
       ctx.moveTo(x, y)
@@ -324,7 +324,7 @@ export function renderCanvas(
 
 export function renderRoundRect(rect: any, r: number, ctx: any,) {
   ctx.lineWidth = rect.lineWidth
-  let { x, y, w, h } = rect
+  let {x, y, w, h} = rect
   ctx.beginPath()
   ctx.moveTo(x + w / 2, y)
   ctx.arcTo(x + w, y, x + w, y + h, r)
@@ -336,7 +336,7 @@ export function renderRoundRect(rect: any, r: number, ctx: any,) {
 }
 
 export function renderRound(rect: any, r: number, ctx: any, type: ShapeType = ShapeType.RECT) {
-  let { x, y } = rect
+  let {x, y} = rect
   ctx.save()
   ctx.lineWidth = 2
   if (type === ShapeType.RECT) {
@@ -372,6 +372,7 @@ export function clear(x: any, ctx: any) {
 export function getPath(rect: any, old?: any, parent?: any) {
   //根据老的config，计算出最新的rx,ry
   if (old) {
+    // debugger
     rect.rx = old.rx - (old.x - rect.x)
     rect.ry = old.ry - (old.y - rect.y)
   }
@@ -384,6 +385,8 @@ export function getPath(rect: any, old?: any, parent?: any) {
   rect.rightX = rect.leftX + rect.w
   rect.topY = rect.y
   rect.bottomY = rect.topY + rect.h
+  rect.centerX = rect.x + rect.w / 2
+  rect.centerY = rect.y + rect.h / 2
   if (!rect.id) {
     rect.id = uuid()
   }
@@ -396,7 +399,7 @@ export function calcPosition(
   original: any,
   status: any,
   parent?: any) {
-  const { isHover, isSelect, enterL, enterLT } = status
+  const {isHover, isSelect, enterL, enterLT} = status
   let {
     x, y, w, h, radius,
     fillColor, borderColor, rotate, lineWidth,
@@ -434,7 +437,7 @@ export function calcPosition(
   let tranY = 0
   let scaleX = 1
   let scaleY = 1
-  if (rotate || flipHorizontal) {
+  if (rotate || flipHorizontal || flipVertical) {
     tranX = x + w / 2
     tranY = y + h / 2
     x = -w / 2
@@ -475,7 +478,7 @@ export function calcPosition(
   ctx.translate(tranX, tranY)
   ctx.scale(scaleX, scaleY)
   ctx.rotate(rotate * Math.PI / 180)
-  return { x, y }
+  return {x, y}
 }
 
 export function hover(ctx: CanvasRenderingContext2D, config: any) {
@@ -517,7 +520,7 @@ export function selected(ctx: CanvasRenderingContext2D, config: any) {
   ctx.strokeStyle = 'rgb(139,80,255)'
 
   if (radius) {
-    renderRoundRect({ x, y, w, h }, radius, ctx)
+    renderRoundRect({x, y, w, h}, radius, ctx)
   }
   ctx.beginPath()
   ctx.moveTo(x, y)
@@ -604,8 +607,8 @@ export function draw(
     enterLT: false,
     enterL: false
   }, status || {})
-  let { x, y } = calcPosition(ctx, config, original, status, parent)
-  const { isHover, isSelect, enterLT } = status
+  let {x, y} = calcPosition(ctx, config, original, status, parent)
+  const {isHover, isSelect, enterLT} = status
   let {
     w, h, radius,
     fillColor, borderColor, rotate, lineWidth,
@@ -613,7 +616,7 @@ export function draw(
   } = config
 
   if (radius) {
-    renderRoundRect({ x, y, w, h }, radius, ctx)
+    renderRoundRect({x, y, w, h}, radius, ctx)
   } else {
     ctx.beginPath()
     ctx.moveTo(x, y)
@@ -629,10 +632,10 @@ export function draw(
   }
 
   if (isHover) {
-    hover(ctx, { ...config, x, y })
+    hover(ctx, {...config, x, y})
   }
   if (isSelect) {
-    selected(ctx, { ...config, x, y })
+    selected(ctx, {...config, x, y})
   }
 
   ctx.restore()

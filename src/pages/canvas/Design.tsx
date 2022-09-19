@@ -156,12 +156,13 @@ class Design extends React.Component<any, IState> {
   }
 
   flip(type: number) {
-    let shapeConfig = this.state.selectShape.config
-    if (type === 0) {
-      shapeConfig.flipHorizontal = !shapeConfig.flipHorizontal
-    } else {
-      shapeConfig.flipVertical = !shapeConfig.flipVertical
-    }
+    this.state.selectShape.flip(type)
+    // let shapeConfig = this.state.selectShape.config
+    // if (type === 0) {
+    //   shapeConfig.flipHorizontal = !shapeConfig.flipHorizontal
+    // } else {
+    //   shapeConfig.flipVertical = !shapeConfig.flipVertical
+    // }
     this.setState({ selectShape: this.state.selectShape })
     this.state.cu.render()
   }

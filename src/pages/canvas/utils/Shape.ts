@@ -2,6 +2,7 @@ import {clear, getPath, renderRoundRect} from "../utils";
 import {CanvasUtil} from "./CanvasUtil";
 import EventBus from "../../../utils/event-bus";
 import {EventMapTypes, ShapeConfig} from "../type";
+import {clone, cloneDeep} from "lodash";
 
 export class Shape {
   config: ShapeConfig
@@ -45,28 +46,30 @@ export class Shape {
     EventBus.emit(EventMapTypes.onMouseDown, cu.selectedShape)
   }
 
+  changeChildrenFlip(children: Shape[], type: number, conf: ShapeConfig) {
+    let centerX = conf.centerX
+    let centerY = conf.centerY
+    children.map((item: Shape) => {
+      let old = clone(item.config)
+      if (type === 0) {
+        item.config.x = centerX * 2 - (item.config.rightX!)
+        item.config.flipHorizontal = !item.config.flipHorizontal;
+      } else {
+        item.config.y = centerY * 2 - (item.config.bottomY!)
+        item.config.flipVertical = !item.config.flipVertical;
+      }
+      if (item.children.length) this.changeChildrenFlip(item.children, type, item.config)
+      item.config = getPath(item.config, old)
+    })
+  }
+
   flip(type: number) {
     const conf = this.config
-    let centerX = conf.x + conf.w / 2
+    this.children.length && this.changeChildrenFlip(this.children, type, conf)
     if (type === 0) {
-      if (this.children.length) {
-        this.children.map((item: Shape) => {
-          if (this.config.flipHorizontal) {
-            // let shapeLeftDistance = centerX - item.config.x
-            // let shapeRightDistance = centerX - (item.config.x + item.config.w)
-            // item.config.x = item.config.x + shapeLeftDistance + shapeRightDistance
-            item.config.x = centerX * 2 - (item.config.leftX!)
-            item.config.flipHorizontal = true
-          } else {
-            item.config.x = centerX * 2 - (item.config.leftX!)
-            // item.config.x = centerX - (item.config.leftX! - centerX)
-            item.config.flipHorizontal = false
-          }
-        })
-      }
-      this.config.flipHorizontal = !this.config.flipHorizontal
+      conf.flipHorizontal = !conf.flipHorizontal
     } else {
-      this.config.flipVertical = !this.config.flipVertical
+      conf.flipVertical = !conf.flipVertical
     }
   }
 }

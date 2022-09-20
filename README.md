@@ -1,20 +1,49 @@
-#### 在线预览地址：http://ttentau.top/design
+### English | [简体中文](README-zh_CN.md)
 
-# 未做完，有空就更新
+## This code is for study only and should not be used for commercial purposes
 
-- 翻转后，单边拉伸、自由拉伸时，均需要将当前点{x,y}进行对应（水平就翻转x，垂直就翻转y）翻转。同时渲染时要将tran(X,Y)加上两个中心点偏移量。最后停止变换也要将对应x，y加上两个中心点偏移量
+## Open-Design
 
+**Open-Design** is a graphic drawing using Canvas,Online Design tool based on [ React ](https://reactjs.org/),If you
+have used Figma\ MasterGo, you will be familiar with it.
+Implemented by [React](https://reactjs.org/),Canvas,[gl-matrix](https://glmatrix.net/),[antd](https://ant.design)
+,[Redux](https://redux.js.org/)
 
-```javascript
- if (flipHorizontal) {
-  scaleX = -1
-  // tranX = -tranX
-  //如果在翻转情况下，拉伸要将tranX减去两个中心点偏移量
-  if ((enterLT || enterL)) {
-    console.log('tranX1', tranX)
-    let d = oldCenter!.x - currentCenter!.x
-    tranX += d * 2
-    console.log('tranX2', tranX)
-  }
-}
+## Preview Demo
+
+[Online Demo](http://ttentau.top/design)
+
+## Learn More
+
+[Some technical summaries](NOTE.md)
+
+## How to start
+
+```bash
+# Clone the project to local
+git clone https://github.com/zyronon/open-design.git
+
+# Enter the project directory
+cd open-design
+
+# Install dependencies
+npm install  or pnpm install
+
+# Start the service
+npm run start
+
+# Visit
+Chrome browser visit http://localhost:8000
 ```
+
+## Contribution
+Feel free to contribute by opening issues with any questions, bug reports or feature requests.
+
+
+## Get in touch
+
+You can reach us at <a href="mailto:zyronon@163.com">zyronon@163.com</a>
+
+## License
+
+[MIT](LICENSE)

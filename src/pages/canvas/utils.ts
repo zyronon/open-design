@@ -586,6 +586,46 @@ export function selected(ctx: CanvasRenderingContext2D, config: any) {
     h: 2 * d,
     lineWidth
   }, r, ctx)
+
+  d = 20
+  d = 40
+  r = 4
+  let t = config
+  let endTop = {
+    x: t.x + Math.min(t.w, t.h) / 2,
+    y: t.y + Math.min(t.w, t.h) / 2,
+  }
+  let endBottom = {
+    x: t.x + Math.min(t.w, t.h) / 2,
+    y: t.y + t.h - Math.min(t.w, t.h) / 2,
+  }
+  let topLeft = {
+    x: t.x + d,
+    y: t.y + d,
+  }
+  let topRight = {
+    x: t.x + t.w - d,
+    y: t.y + d,
+  }
+  let bottomLeft = {
+    x: t.x + d,
+    y: t.y + t.h - d,
+  }
+  let bottomRight = {
+    x: t.x + t.w - d,
+    y: t.y + t.h - d,
+  }
+  ctx.save()
+  // let nv = currentMat
+  // ctx.transform(nv[0], nv[4], nv[1], nv[5], nv[12], nv[13]);
+  // renderRound(endTop, r, ctx, ShapeType.SELECT)
+  // renderRound(endBottom, r, ctx, ShapeType.SELECT)
+
+  renderRound(topLeft, r, ctx, ShapeType.SELECT)
+  renderRound(topRight, r, ctx, ShapeType.SELECT)
+  renderRound(bottomLeft, r, ctx, ShapeType.SELECT)
+  renderRound(bottomRight, r, ctx, ShapeType.SELECT)
+  ctx.restore()
 }
 
 export function draw(

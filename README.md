@@ -4,7 +4,7 @@
 
 ## Open-Design
 
-**Open-Design** is a graphic drawing using Canvas,Online Design tool based on [ React ](https://reactjs.org/),If you
+**Open-Design** is a graphic drawing using Canvas,Online design tool based on [ React ](https://reactjs.org/),If you
 have used Figma\ MasterGo, you will be familiar with it.
 Implemented by [React](https://reactjs.org/),Canvas,[gl-matrix](https://glmatrix.net/),[antd](https://ant.design)
 ,[Redux](https://redux.js.org/)

@@ -338,7 +338,7 @@ export function renderRoundRect(rect: any, r: number, ctx: any,) {
 export function renderRound(rect: any, r: number, ctx: any, type: ShapeType = ShapeType.RECT) {
   let {x, y} = rect
   ctx.save()
-  ctx.lineWidth = 2
+  ctx.lineWidth = 1.5
   if (type === ShapeType.RECT) {
     ctx.fillStyle = Colors.primary
   } else {
@@ -589,7 +589,7 @@ export function selected(ctx: CanvasRenderingContext2D, config: any) {
 
   d = 20
   d = 40
-  r = 4
+  r = 5
   let t = config
   let endTop = {
     x: t.x + Math.min(t.w, t.h) / 2,

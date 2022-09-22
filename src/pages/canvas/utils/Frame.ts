@@ -1,11 +1,13 @@
-import { Shape } from "./Shape";
-import { draw, getPath } from "../utils";
-import { CanvasUtil } from "./CanvasUtil";
-import { clone, cloneDeep } from "lodash";
-import getCenterPoint, { getAngle, getRotatedPoint } from "../../../utils";
-import { Point } from "../type";
+import {Shape} from "./Shape";
+import {draw, getPath} from "../utils";
+import {CanvasUtil} from "./CanvasUtil";
+import {clone, cloneDeep} from "lodash";
+import getCenterPoint, {getAngle, getRotatedPoint} from "../../../utils";
+import {Point} from "../type";
 
 class Frame extends Shape {
+  hoverRd1: boolean = false
+  enterRd1: boolean = false
   hoverL: boolean = false
   enterL: boolean = false
   hoverLT: boolean = false
@@ -14,8 +16,8 @@ class Frame extends Shape {
   enterLTR: boolean = false
   startX: number = -1
   startY: number = -1
-  diagonal: Point = { x: 0, y: 0 }//对角
-  handlePoint: Point = { x: 0, y: 0 }//对角
+  diagonal: Point = {x: 0, y: 0}//对角
+  handlePoint: Point = {x: 0, y: 0}//对角
 
   constructor(props: any) {
     super(props);
@@ -50,13 +52,13 @@ class Frame extends Shape {
   isIn(x: number, y: number, cu: CanvasUtil): boolean {
     if (this.enterL || this.enterLT || this.enterLTR) return true
 
-    const { x: handX, y: handY } = cu.handMove
+    const {x: handX, y: handY} = cu.handMove
     x = (x - handX) / cu.handScale//上面的简写
     y = (y - handY) / cu.handScale
 
     let rect = this.config
     if (rect.rotate !== 0 || rect.flipHorizontal || rect.flipVertical) {
-      let { w, h, rotate, flipHorizontal, flipVertical } = rect
+      let {w, h, rotate, flipHorizontal, flipVertical} = rect
       const center = {
         x: rect.x + (rect.w / 2),
         y: rect.y + (rect.h / 2)
@@ -67,8 +69,8 @@ class Frame extends Shape {
       if (flipVertical) {
         y = center.y + Math.abs(y - center.y) * (y < center.y ? 1 : -1)
       }
-      let p1 = { x, y }
-      let c2 = { x: rect.x + w / 2, y: rect.y + h / 2 }
+      let p1 = {x, y}
+      let c2 = {x: rect.x + w / 2, y: rect.y + h / 2}
       let s2 = getRotatedPoint(p1, c2, -rotate)
       x = s2.x
       y = s2.y
@@ -108,6 +110,16 @@ class Frame extends Shape {
         document.body.style.cursor = "pointer"
         return true
       }
+
+      let r = rect.radius
+      let rr = 5
+      if ((rect.leftX! + r - rr < x && x < rect.leftX! + r + rr / 2) &&
+        (rect.topY! + r - rr < y && y < rect.topY! + r + rr / 2)
+      ) {
+        this.hoverRd1 = true
+        document.body.style.cursor = "pointer"
+        return true
+      }
     }
     if (rect.leftX < x && x < rect.rightX
       && rect.topY < y && y < rect.bottomY
@@ -116,13 +128,15 @@ class Frame extends Shape {
       this.hoverL = false
       this.hoverLT = false
       this.hoverLTR = false
+
+      this.hoverRd1 = false
       return true
     }
     return this.isInName(x, y)
   }
 
   event(event: any, parent?: Shape[], cb?: Function) {
-    let { e, coordinate, type } = event
+    let {e, coordinate, type} = event
     // console.log('event', this.config.name, `type：${type}`,)
     if (e.capture) return
 
@@ -168,8 +182,8 @@ class Frame extends Shape {
   }
 
   mousedown(event: any, p: Shape[] = []) {
-    let { e, coordinate, type } = event
-    let { x, y, cu } = this.getXY(coordinate)
+    let {e, coordinate, type} = event
+    let {x, y, cu} = this.getXY(coordinate)
     if (!cu.isDesign()) {
       cu.startX = coordinate.x
       cu.startY = coordinate.y
@@ -204,7 +218,7 @@ class Frame extends Shape {
         y: rect.y + (rect.h / 2)
       }
       //可以用当前位置，如果点击的不是点位上，那么会有细小的偏差
-      let handlePoint = getRotatedPoint({ x: rect.x, y: rect.y }, center, rect.rotate)
+      let handlePoint = getRotatedPoint({x: rect.x, y: rect.y}, center, rect.rotate)
       if (rect.flipHorizontal) {
         // handlePoint.x = center.x + Math.abs(handlePoint.x - center.x) * (handlePoint.x < center.x ? 1 : -1)
       }
@@ -224,7 +238,7 @@ class Frame extends Shape {
       }
       //不是当前点击位置，当前点击位置算对角会有偏差
       let handlePoint = getRotatedPoint(
-        { x: this.config.x, y: this.config.y + this.config.h / 2 },
+        {x: this.config.x, y: this.config.y + this.config.h / 2},
         center, rect.rotate)
       this.handlePoint = handlePoint
       this.diagonal = {
@@ -236,6 +250,9 @@ class Frame extends Shape {
 
     cu.startX = x
     cu.startY = y
+    if (this.hoverRd1) {
+      this.enterRd1 = true
+    }
     if (this.hoverL || this.hoverLT || this.hoverLTR) {
       cu.offsetX = x - this.config.x
       cu.offsetY = y - this.config.y
@@ -271,8 +288,8 @@ class Frame extends Shape {
       flipVertical, flipHorizontal,
     }
       = this.config
-    let { e, coordinate, type } = event
-    let { x, y, cu } = this.getXY(coordinate)
+    let {e, coordinate, type} = event
+    let {x, y, cu} = this.getXY(coordinate)
 
     let current = this.config
     let center = {
@@ -303,14 +320,15 @@ class Frame extends Shape {
     this.enterL = false
     this.enterLT = false
     this.enterLTR = false
+    this.enterRd1 = false
 
     cu.render()
   }
 
-  moveEnterLT({ x, y }: Point) {
+  moveEnterLT({x, y}: Point) {
     let rect = this.config
     let s = this.original
-    let current = { x, y }
+    let current = {x, y}
     const center = {
       x: s.x + (s.w / 2),
       y: s.y + (s.h / 2)
@@ -340,13 +358,23 @@ class Frame extends Shape {
   }
 
   mousemove(event: any, p: any) {
-    let { e, coordinate, type } = event
+    let {e, coordinate, type} = event
     // console.log('mousemove', this.config.name, `isHover：${this.isHover}`)
-    let { x, y, cu } = this.getXY(coordinate)
+    let {x, y, cu} = this.getXY(coordinate)
     if (this.enter || this.enterLTR || this.enterLT || this.enterL) {
       super.mouseMove(cu)
     }
     if (!cu.isDesign()) {
+      return;
+    }
+
+    if (this.enterRd1) {
+      let dx = (x - cu.startX)
+      this.config.radius = this.original.radius + dx
+
+      cu.render()
+
+      console.log('th.enterRd1')
       return;
     }
 
@@ -369,7 +397,7 @@ class Frame extends Shape {
         x: old.x + (old.w / 2),
         y: old.y + (old.h / 2)
       }
-      let current = { x, y }
+      let current = {x, y}
       if (rect.flipHorizontal) {
         current.x = center.x + Math.abs(current.x - center.x) * (current.x < center.x ? 1 : -1)
       }
@@ -388,7 +416,7 @@ class Frame extends Shape {
     }
 
     if (this.enterLT) {
-      this.moveEnterLT({ x, y })
+      this.moveEnterLT({x, y})
       cu.render()
       return;
     }
@@ -404,7 +432,7 @@ class Frame extends Shape {
           y: s.y + (s.h / 2)
         }
         let sPoint = this.diagonal
-        const current = { x, y }
+        const current = {x, y}
         console.log('--------------------------')
         if (rect.flipHorizontal) {
           current.x = center.x + Math.abs(current.x - center.x) * (current.x < center.x ? 1 : -1)

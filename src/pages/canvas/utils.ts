@@ -4,7 +4,7 @@ import {store} from "./store";
 import {v4 as uuid} from 'uuid';
 import {Colors} from "./constant";
 import {CanvasUtil} from "./utils/CanvasUtil";
-import {getHypotenuse2} from "../../utils";
+import {getHypotenuse2, jiaodu2hudu} from "../../utils";
 
 export function renderCanvas(
   rect: Shape,
@@ -515,15 +515,20 @@ export function selected(ctx: CanvasRenderingContext2D, config: any) {
     lineWidth
   }, r, ctx)
 
-
+  let radius2 = 200
   let min = Math.min(w, h)
+  // debugger
   let maxRadius = min / 2
   let hypotenuse = Math.sqrt(Math.pow(maxRadius, 2) + Math.pow(maxRadius, 2))
+  let radiusHyp = hypotenuse / maxRadius * radius2
+  let cos = Math.cos(jiaodu2hudu(45))
+  let hey = cos * radiusHyp
+  // console.log(hey)
 
 
   d = 20
-  d = 40
-  r = 5
+  d = radius
+  let r2 = 5
   let t = config
   let endTop = {
     x: t.x + Math.min(t.w, t.h) / 2,
@@ -555,10 +560,10 @@ export function selected(ctx: CanvasRenderingContext2D, config: any) {
   // renderRound(endTop, r, ctx, ShapeType.SELECT)
   // renderRound(endBottom, r, ctx, ShapeType.SELECT)
 
-  renderRound(topLeft, r, ctx, ShapeType.SELECT)
-  renderRound(topRight, r, ctx, ShapeType.SELECT)
-  renderRound(bottomLeft, r, ctx, ShapeType.SELECT)
-  renderRound(bottomRight, r, ctx, ShapeType.SELECT)
+  renderRound(topLeft, r2, ctx, ShapeType.SELECT)
+  renderRound(topRight, r2, ctx, ShapeType.SELECT)
+  renderRound(bottomLeft, r2, ctx, ShapeType.SELECT)
+  renderRound(bottomRight, r2, ctx, ShapeType.SELECT)
   ctx.restore()
 }
 

@@ -594,7 +594,7 @@ export const rects = [
     "lineWidth": 2,
     "type": 102,
     "color": "gray",
-    "radius": 0,
+    "radius": 115,
     "children": [],
     "brokenTexts": [],
     "flipHorizontal": false,

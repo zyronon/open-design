@@ -4,6 +4,7 @@ import {store} from "./store";
 import {v4 as uuid} from 'uuid';
 import {Colors} from "./constant";
 import {CanvasUtil} from "./utils/CanvasUtil";
+import {getHypotenuse2} from "../../utils";
 
 export function renderCanvas(
   rect: Shape,
@@ -188,12 +189,6 @@ export function renderCanvas(
         text && ctx.fillText(text, lX, y + (index * rect.textLineHeight));
       })
       break
-    case ShapeType.RECT:
-      ctx.fillStyle = fillColor
-      ctx.fill()
-      ctx.strokeStyle = borderColor
-      ctx.stroke()
-      break
     case ShapeType.IMG:
       let currentImg = store.images.get(rect.id)
       if (currentImg) {
@@ -211,10 +206,6 @@ export function renderCanvas(
       // ctx.fill()
       // ctx.strokeStyle = borderColor
       // ctx.stroke()
-      break
-    case ShapeType.HOVER:
-      ctx.strokeStyle = 'rgb(139,80,255)'
-      ctx.stroke()
       break
     case ShapeType.PENCIL:
       if (rect.points?.length) {
@@ -250,69 +241,6 @@ export function renderCanvas(
           }
         })
       }
-      break
-    case ShapeType.SELECT: {
-      // console.log('select')
-
-      ctx.strokeStyle = 'rgb(139,80,255)'
-      ctx.stroke()
-      let d = 4
-      clear({
-        x: x - d,
-        y: y - d,
-        w: 2 * d,
-        h: 2 * d
-      }, ctx)
-      clear({
-        x: x + w - d,
-        y: y - d,
-        w: 2 * d,
-        h: 2 * d
-      }, ctx)
-      clear({
-        x: x + w - d,
-        y: y + h - d,
-        w: 2 * d,
-        h: 2 * d
-      }, ctx)
-      clear({
-        x: x - d,
-        y: y + h - d,
-        w: 2 * d,
-        h: 2 * d
-      }, ctx)
-
-      let r = 3
-      let lineWidth = 1.5
-      renderRoundRect({
-        x: x - d,
-        y: y - d,
-        w: 2 * d,
-        h: 2 * d,
-        lineWidth
-      }, r, ctx)
-      renderRoundRect({
-        x: x + w - d,
-        y: y - d,
-        w: 2 * d,
-        h: 2 * d,
-        lineWidth
-      }, r, ctx)
-      renderRoundRect({
-        x: x + w - d,
-        y: y + h - d,
-        w: 2 * d,
-        h: 2 * d,
-        lineWidth
-      }, r, ctx)
-      renderRoundRect({
-        x: x - d,
-        y: y + h - d,
-        w: 2 * d,
-        h: 2 * d,
-        lineWidth
-      }, r, ctx)
-    }
       break
   }
 
@@ -586,6 +514,12 @@ export function selected(ctx: CanvasRenderingContext2D, config: any) {
     h: 2 * d,
     lineWidth
   }, r, ctx)
+
+
+  let min = Math.min(w, h)
+  let maxRadius = min / 2
+  let hypotenuse = Math.sqrt(Math.pow(maxRadius, 2) + Math.pow(maxRadius, 2))
+
 
   d = 20
   d = 40

@@ -582,12 +582,12 @@ export const rects3  = [
   }
 ]
 
-export const rects = [
+export const rects =[
   {
-    "x": 35,
-    "y": 36,
-    "rx": 35,
-    "ry": 36,
+    "x": 855,
+    "y": 98,
+    "rx": 855,
+    "ry": 98,
     "w": 442.35248652396695,
     "h": 430.96052319587545,
     "rotate": 0,
@@ -606,12 +606,12 @@ export const rects = [
     "fontFamily": "SourceHanSansCN",
     "texts": [],
     "name": "容器",
-    "leftX": 35,
-    "rightX": 477.35248652396695,
-    "topY": 36,
-    "bottomY": 466.96052319587545,
+    "leftX": 855,
+    "rightX": 1297.352486523967,
+    "topY": 98,
+    "bottomY": 528.9605231958755,
     "id": "cd973e70-08e8-471a-814d-61966b891d5a",
-    "centerX": 256.1762432619835,
-    "centerY": 251.48026159793773
+    "centerX": 1076.1762432619835,
+    "centerY": 313.4802615979377
   }
 ]

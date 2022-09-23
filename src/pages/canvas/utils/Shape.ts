@@ -8,7 +8,8 @@ export class Shape {
   config: ShapeConfig
   protected children: Shape[] = []
   isHover: boolean = false
-  isSelect: boolean = true
+  isSelect: boolean = false
+  isEdit: boolean = true
   isCapture: boolean = true
   enter: boolean = false
   startX: number = 0

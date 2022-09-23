@@ -30,6 +30,7 @@ class Frame extends Shape {
     draw(ctx, this.config, this.original, {
       isHover: this.isHover,
       isSelect: this.isSelect,
+      isEdit: this.isEdit,
       enterLT: this.enterLT,
       enterL: this.enterL
     }, parent)
@@ -371,9 +372,7 @@ class Frame extends Shape {
     if (this.enterRd1) {
       let dx = (x - cu.startX)
       this.config.radius = this.original.radius + dx
-
       cu.render()
-
       console.log('th.enterRd1')
       return;
     }

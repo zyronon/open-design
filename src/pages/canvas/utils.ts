@@ -1,4 +1,4 @@
-import {IState, Shape, ShapeType, TextAlign} from "./type";
+import {IState, Shape, ShapeConfig, ShapeType, TextAlign} from "./type";
 import {store} from "./store";
 // @ts-ignore
 import {v4 as uuid} from 'uuid';
@@ -297,7 +297,7 @@ export function clear(x: any, ctx: any) {
   ctx.clearRect(x.x, x.y, x.w, x.h)
 }
 
-export function getPath(rect: any, old?: any, parent?: any) {
+export function getPath(rect: ShapeConfig | any, old?: any, parent?: any) {
   //根据老的config，计算出最新的rx,ry
   if (old) {
     // debugger
@@ -315,6 +315,9 @@ export function getPath(rect: any, old?: any, parent?: any) {
   rect.bottomY = rect.topY + rect.h
   rect.centerX = rect.x + rect.w / 2
   rect.centerY = rect.y + rect.h / 2
+
+  rect.points = []
+
   if (!rect.id) {
     rect.id = uuid()
   }
@@ -574,6 +577,7 @@ export function draw(
   status?: {
     isHover: boolean,
     isSelect: boolean,
+    isEdit: boolean,
     enterLT: boolean
     enterL: boolean
   },
@@ -583,11 +587,12 @@ export function draw(
   status = Object.assign({
     isHover: false,
     isSelect: false,
+    isEdit: false,
     enterLT: false,
     enterL: false
   }, status || {})
   let {x, y} = calcPosition(ctx, config, original, status, parent)
-  const {isHover, isSelect, enterLT} = status
+  const {isHover, isSelect, isEdit, enterLT} = status
   let {
     w, h, radius,
     fillColor, borderColor, rotate, lineWidth,
@@ -616,6 +621,9 @@ export function draw(
   if (isSelect) {
     selected(ctx, {...config, x, y})
   }
+  if (isEdit) {
+    edit(ctx, {...config, x, y})
+  }
 
   ctx.restore()
 
@@ -628,4 +636,88 @@ export function draw(
   // ctx.restore()
 
   config = getPath(config, null, parent)
+}
+
+export function edit(ctx: CanvasRenderingContext2D, config: any) {
+  let {
+    x, y, w, h, radius,
+    fillColor, borderColor, rotate,
+    type, flipVertical, flipHorizontal, children,
+  } = config
+  ctx.strokeStyle = 'rgb(139,80,255)'
+
+  ctx.beginPath()
+  ctx.moveTo(x, y)
+  ctx.lineTo(x + w, y);
+  ctx.lineTo(x + w, y + h);
+  ctx.lineTo(x, y + h);
+  ctx.lineTo(x, y);
+  ctx.closePath()
+  ctx.stroke()
+  let d = 4
+  clear({
+    x: x - d,
+    y: y - d,
+    w: 2 * d,
+    h: 2 * d
+  }, ctx)
+  clear({
+    x: x + w - d,
+    y: y - d,
+    w: 2 * d,
+    h: 2 * d
+  }, ctx)
+  clear({
+    x: x + w - d,
+    y: y + h - d,
+    w: 2 * d,
+    h: 2 * d
+  }, ctx)
+  clear({
+    x: x - d,
+    y: y + h - d,
+    w: 2 * d,
+    h: 2 * d
+  }, ctx)
+
+  let r = 3
+  let lineWidth = 1.5
+  renderRoundRect({
+    x: x - d,
+    y: y - d,
+    w: 2 * d,
+    h: 2 * d,
+    lineWidth
+  }, r, ctx)
+  renderRoundRect({
+    x: x + w - d,
+    y: y - d,
+    w: 2 * d,
+    h: 2 * d,
+    lineWidth
+  }, r, ctx)
+  renderRoundRect({
+    x: x + w - d,
+    y: y + h - d,
+    w: 2 * d,
+    h: 2 * d,
+    lineWidth
+  }, r, ctx)
+  renderRoundRect({
+    x: x - d,
+    y: y + h - d,
+    w: 2 * d,
+    h: 2 * d,
+    lineWidth
+  }, r, ctx)
+
+
+  d = 40
+  let r2 = 5
+  let t = config
+  let topLeft = {
+    x: t.x + d,
+    y: t.y + d,
+  }
+  renderRound(topLeft, r2, ctx, ShapeType.SELECT)
 }

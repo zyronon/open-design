@@ -121,6 +121,8 @@ export interface ShapeConfig {
     y: number,
     w: number,
     h: number,
+    rx: number,
+    ry: number,
     rotate: number,
     lineWidth: number,
     type: ShapeType,

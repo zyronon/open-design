@@ -15,3 +15,8 @@
   }
 }
 ```
+
+- figma的多边形
+  - 当radius为0时，纯直线绘制，只需要用lineTo方法
+  - 不为0是，采用arcTo绘制
+  - 当自定义后，采用acrTo和quadraticCurveTo混合绘制，其中quadraticCurveTo又分为3种模式（完全对称、角度对称、不对称）

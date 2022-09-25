@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import { Button } from 'antd';
+import React, {Component} from 'react';
+import {Button} from 'antd';
 import './index.scss'
-import { withRouter } from "../../components/WithRouter";
+import {withRouter} from "../../components/WithRouter";
 
 class T extends Component<any, any> {
   constructor(props: any) {
@@ -13,23 +13,39 @@ class T extends Component<any, any> {
     let ctx = canvas!.getContext('2d')!;
     ctx.clearRect(0, 0, 500, 500)
     ctx.save()
+    let rect = {
+      x: 0,
+      y: 0,
+      w: 200,
+      h: 500
+    }
+    const {x, y, w, h} = rect
+    let top = {
+      x: x + w / 2,
+      y
+    }
+    let left = {
+      x,
+      y: y + h / 3 * 2
+    }
+    let right = {
+      x: x + w,
+      y: y + h / 3 * 2
+    }
+    ctx.moveTo(top.x, top.y)
+    ctx.lineTo(left.x, left.y)
+    ctx.lineTo(right.x, right.y)
+    ctx.lineTo(top.x, top.y)
 
-    let r = 90 * Math.PI / 180
-    // ctx.translate(100, 100)
-    // ctx.transform(0, r, -r, 0, 100, 100)
-    ctx.setTransform(
-      0, 1, 1,
-      0, 0, 0
-    )
-    // ctx.transform(1,1,-1,1,0,0);
+    ctx.moveTo(left.x, left.y)
+    // ctx.quadraticCurveTo(top.x, top.y, right.x, right.y)
 
-    // ctx.rotate(r)
-    ctx.moveTo(0, 0)
-    ctx.lineTo(400, 0)
-    ctx.lineTo(400, 100)
-    ctx.lineTo(0, 100)
-    ctx.lineTo(0, 0)
-    // ctx.stroke()
+    ctx.arcTo(top.x, top.y, right.x, right.y, 50)
+    ctx.arcTo(right.x, right.y, left.x, left.y, 50)
+    ctx.arcTo(left.x, left.y, top.x, top.y, 50)
+    // ctx.closePath()
+    ctx.stroke()
+
     ctx.restore()
   }
 
@@ -38,10 +54,12 @@ class T extends Component<any, any> {
   }
 
   render() {
-    return <div>
-      <canvas width="500" height="500"></canvas>
-      <Button onClick={() => this.nav('/')}>回/</Button>
-    </div>;
+    return (
+      <div className={'content'}>
+        <canvas width="500" height="500"></canvas>
+        <Button onClick={() => this.nav('/')}>回/</Button>
+      </div>
+    )
   }
 }
 

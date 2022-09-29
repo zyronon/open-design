@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Button} from 'antd';
 import './index.scss'
 import {withRouter} from "../../components/WithRouter";
+import {renderRoundRect} from "../canvas/utils";
 
 function bezier(pots: any, amount: any) {
   let pot;
@@ -58,9 +59,9 @@ class T extends Component<any, any> {
     ctx.save()
     let rect = {
       x: 0,
-      y: 0,
+      y: 100,
       w: 200,
-      h: 500
+      h: 400
     }
     const {x, y, w, h} = rect
     let top = {
@@ -75,25 +76,63 @@ class T extends Component<any, any> {
       x: x + w,
       y: y + h / 3 * 2
     }
+    //三角形
     // ctx.moveTo(top.x, top.y)
     // ctx.lineTo(left.x, left.y)
     // ctx.lineTo(right.x, right.y)
     // ctx.lineTo(top.x, top.y)
-    //
-    // ctx.moveTo(left.x, left.y)
-    //
+
+    //三角形，角为50度
+    // ctx.moveTo(left.x , left.y)
     // ctx.arcTo(top.x, top.y, right.x, right.y, 50)
     // ctx.arcTo(right.x, right.y, left.x, left.y, 50)
     // ctx.arcTo(left.x, left.y, top.x, top.y, 50)
     // ctx.stroke()
-    let r: any[] = bezier([left, top, right], 20)
-    console.log(r)
-    ctx.moveTo(r[0].x, r[0].y)
-    r.slice(1).map(item => {
-      // console.log(item)
-      ctx.lineTo(item.x, item.y)
-    })
+
+    let cp1 = {
+      x: top.x - w / 4,
+      y: top.y
+    }
+    let cp2 = {
+      x: top.x + w / 4,
+      y: top.y
+    }
+
+    //贝塞尔曲线
+    ctx.moveTo(left.x, left.y)
+    // ctx.bezierCurveTo2(left,top, right)
+    // ctx.quadraticCurveTo2(top, right)
+    ctx.quadraticCurveTo2(cp1, top)
+    ctx.quadraticCurveTo2(cp2, right)
+    ctx.closePath()
+    let d = 4
+    let lineWidth = 2
+    let r = 2
     ctx.stroke()
+
+    renderRoundRect({
+      x: cp1.x,
+      y: cp1.y,
+      w: 2 * d,
+      h: 2 * d,
+      lineWidth
+    }, r, ctx)
+    renderRoundRect({
+      x: cp2.x,
+      y: cp2.y,
+      w: 2 * d,
+      h: 2 * d,
+      lineWidth
+    }, r, ctx)
+
+    // let r: any[] = bezier([left, top, right], 20)
+    // console.log(r)
+    // ctx.moveTo(r[0].x, r[0].y)
+    // r.slice(1).map(item => {
+    //   // console.log(item)
+    //   ctx.lineTo(item.x, item.y)
+    // })
+    // ctx.stroke()
     ctx.restore()
   }
 

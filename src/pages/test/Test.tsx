@@ -98,13 +98,18 @@ class T extends Component<any, any> {
       y: top.y
     }
 
-    //贝塞尔曲线
+    //二次贝塞尔曲线
     ctx.moveTo(left.x, left.y)
-    // ctx.bezierCurveTo2(left,top, right)
-    // ctx.quadraticCurveTo2(top, right)
-    ctx.quadraticCurveTo2(cp1, top)
-    ctx.quadraticCurveTo2(cp2, right)
-    ctx.closePath()
+    // ctx.quadraticCurveTo2(cp1, top)
+    // ctx.quadraticCurveTo2(cp2, right)
+    // ctx.closePath()
+
+    //三次贝塞尔曲线
+    // ctx.moveTo(left.x, left.y)
+    // ctx.bezierCurveTo2(cp1,cp2, right)
+    // ctx.closePath()
+    // ctx.stroke()
+
     let d = 4
     let lineWidth = 2
     let r = 2
@@ -125,14 +130,17 @@ class T extends Component<any, any> {
       lineWidth
     }, r, ctx)
 
-    // let r: any[] = bezier([left, top, right], 20)
-    // console.log(r)
-    // ctx.moveTo(r[0].x, r[0].y)
-    // r.slice(1).map(item => {
-    //   // console.log(item)
-    //   ctx.lineTo(item.x, item.y)
-    // })
-    // ctx.stroke()
+
+
+    // let r2: any[] = bezier([left, top, right], 20)
+    let r2: any[] = bezier([left,cp1, cp2, right], 20)
+    console.log(r2)
+    ctx.moveTo(r2[0].x, r2[0].y)
+    r2.slice(1).map(item => {
+      // console.log(item)
+      ctx.lineTo(item.x, item.y)
+    })
+    ctx.stroke()
     ctx.restore()
   }
 

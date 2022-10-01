@@ -5,7 +5,8 @@ export function getHypotenuse(one: number[], two: number[]) {
   let [twoX, twoY] = two
   let dx = twoX - oneX
   let dy = twoY - oneY
-  return Math.sqrt(dx * dx + dy * dy)
+  // return Math.sqrt(dx * dx + dy * dy)
+  return Math.hypot(dx, dy)
 }
 
 /**
@@ -21,7 +22,8 @@ export function computedIncludedAngle(av: any, bv: any) {
 export function getHypotenuse2(p1: any, p2: any) {
   let {x: p1X, y: p1Y} = p1
   let {x: p2X, y: p2Y} = p2
-  return Math.sqrt(Math.pow(p2X - p1X, 2) + Math.pow(p2Y - p1Y, 2))
+  // return Math.sqrt(Math.pow(p2X - p1X, 2) + Math.pow(p2Y - p1Y, 2))
+  return Math.hypot(p2X - p1X, p2Y - p1Y)
 }
 
 export function hudu2juedu(v: number) {

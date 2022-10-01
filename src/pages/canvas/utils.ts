@@ -522,7 +522,9 @@ export function selected(ctx: CanvasRenderingContext2D, config: any) {
   let min = Math.min(w, h)
   // debugger
   let maxRadius = min / 2
-  let hypotenuse = Math.sqrt(Math.pow(maxRadius, 2) + Math.pow(maxRadius, 2))
+  // let hypotenuse = Math.sqrt(Math.pow(maxRadius, 2) + Math.pow(maxRadius, 2))
+  let hypotenuse = Math.hypot(maxRadius, maxRadius)
+
   let radiusHyp = hypotenuse / maxRadius * radius2
   let cos = Math.cos(jiaodu2hudu(45))
   let hey = cos * radiusHyp

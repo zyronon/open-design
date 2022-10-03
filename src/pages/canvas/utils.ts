@@ -752,6 +752,21 @@ export function bezier3(t: number, p1: any, p2: any, p3: any, p4: any,) {
   return {x, y}
 }
 
+export function bezier3copy(t: number, points: any) {
+  let [p1, p2, p3, p4] = points
+  let x = Math.pow(1 - t, 3) * p1.x + 3 * Math.pow(1 - t, 2) * t * p2.x
+    + 3 * (1 - t) * Math.pow(t, 2) * p3.x + Math.pow(t, 3) * p4.x
+  let y = Math.pow(1 - t, 3) * p1.y + 3 * Math.pow(1 - t, 2) * t * p2.y
+    + 3 * (1 - t) * Math.pow(t, 2) * p3.y + Math.pow(t, 3) * p4.y
+  return {x, y}
+}
+
+//取小数部分
+export function getDecimal(num: number) {
+  return num - Math.trunc(num);
+}
+
+
 //采用https://juejin.cn/post/6995482699037147166#heading-13
 //t取的1/4和3/4，算的结果较为精准
 //同样的曲线，t取的1/4和3/4的结果，比t取的1/3和2/3的结果，没有小数点

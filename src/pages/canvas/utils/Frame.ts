@@ -454,7 +454,8 @@ class Frame extends Shape {
         }, handlePoint, rect.rotate)
         console.log('rotatedLeftMiddlePoint', rotatedLeftMiddlePoint)
 
-        const newWidth = Math.sqrt(Math.pow(rotatedLeftMiddlePoint.x - sPoint.x, 2) + Math.pow(rotatedLeftMiddlePoint.y - sPoint.y, 2))
+        // const newWidth = Math.sqrt(Math.pow(rotatedLeftMiddlePoint.x - sPoint.x, 2) + Math.pow(rotatedLeftMiddlePoint.y - sPoint.y, 2))
+        const newWidth = Math.hypot(rotatedLeftMiddlePoint.x - sPoint.x, rotatedLeftMiddlePoint.y - sPoint.y)
         console.log('newWidth', newWidth)
         console.log('sPoint', sPoint)
         const newCenter = {

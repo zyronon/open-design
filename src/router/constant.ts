@@ -1,5 +1,5 @@
-import Test from "../pages/test/Test-list-call";
 import Home from "../pages/home";
+import Test from "../pages/test";
 
 export default [
   {

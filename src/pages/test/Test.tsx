@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Button} from 'antd';
 import './index.scss'
 import {withRouter} from "../../components/WithRouter";
-import {bezier3, con, getCp2, renderRoundRect} from "../canvas/utils";
+import {bezier3, con, getCp2, renderRoundRect, renderRoundRect2} from "../canvas/utils";
 
 class T extends Component<any, any> {
   constructor(props: any) {
@@ -81,6 +81,18 @@ class T extends Component<any, any> {
       x: left.x,
       y: left.y + oy
     }
+    let cp5 = {
+      x: left.x,
+      y: left.y - oy
+    }
+    let top = {
+      x: 0,
+      y: -h2
+    }
+    let cp6 = {
+      x: top.x - ox,
+      y: top.y
+    }
 
     ctx.beginPath()
     ctx.translate(x + a, y + b);
@@ -141,6 +153,9 @@ class T extends Component<any, any> {
     //   h: 2 * d,
     //   lineWidth
     // }, r, ctx)
+    renderRoundRect2(ctx, cp5)
+    renderRoundRect2(ctx, top)
+    renderRoundRect2(ctx, cp6)
 
 
     let distance = 0.6

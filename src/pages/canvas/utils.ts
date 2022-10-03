@@ -263,6 +263,22 @@ export function renderRoundRect(rect: any, r: number, ctx: any,) {
   ctx.stroke()
 }
 
+export function renderRoundRect2(ctx: CanvasRenderingContext2D, rect: any, r: number = 2, d: number = 4) {
+  let {x, y, w = 2 * d, h = 2 * d, lineWidth = 2} = rect
+  ctx.save()
+  ctx.lineWidth = lineWidth
+  ctx.translate(x - w / 2, y - h / 2)
+  ctx.beginPath()
+  ctx.moveTo(0, 0)
+  ctx.arcTo(x + w, y, x + w, y + h, r)
+  ctx.arcTo(x + w, y + h, x, y + h, r)
+  ctx.arcTo(x, y + h, x, y, r)
+  ctx.arcTo(x, y, x + w / 2, y, r)
+  ctx.closePath()
+  ctx.stroke()
+  ctx.restore()
+}
+
 export function renderRound(rect: any, r: number, ctx: any, type: ShapeType = ShapeType.RECT) {
   let {x, y} = rect
   ctx.save()

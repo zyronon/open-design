@@ -93,6 +93,10 @@ class T extends Component<any, any> {
       x: top.x - ox,
       y: top.y
     }
+    let cp7 = {
+      x: top.x + ox,
+      y: top.y
+    }
 
     ctx.beginPath()
     ctx.translate(x + a, y + b);
@@ -101,61 +105,17 @@ class T extends Component<any, any> {
     ctx.bezierCurveTo2(cp3, cp4, left);
     ctx.stroke()
 
-    let d = 4
-    let lineWidth = 2
-    let r = 2
-    // renderRoundRect({
-    //   x: start.x,
-    //   y: start.y,
-    //   w: 2 * d,
-    //   h: 2 * d,
-    //   lineWidth
-    // }, r, ctx)
-    // renderRoundRect({
-    //   x: cp1.x,
-    //   y: cp1.y,
-    //   w: 2 * d,
-    //   h: 2 * d,
-    //   lineWidth
-    // }, r, ctx)
-    // renderRoundRect({
-    //   x: bottom.x,
-    //   y: bottom.y,
-    //   w: 2 * d,
-    //   h: 2 * d,
-    //   lineWidth
-    // }, r, ctx)
-    // renderRoundRect({
-    //   x: cp2.x,
-    //   y: cp2.y,
-    //   w: 2 * d,
-    //   h: 2 * d,
-    //   lineWidth
-    // }, r, ctx)
-    // renderRoundRect({
-    //   x: cp3.x,
-    //   y: cp3.y,
-    //   w: 2 * d,
-    //   h: 2 * d,
-    //   lineWidth
-    // }, r, ctx)
-    // renderRoundRect({
-    //   x: left.x,
-    //   y: left.y,
-    //   w: 2 * d,
-    //   h: 2 * d,
-    //   lineWidth
-    // }, r, ctx)
-    // renderRoundRect({
-    //   x: cp4.x,
-    //   y: cp4.y,
-    //   w: 2 * d,
-    //   h: 2 * d,
-    //   lineWidth
-    // }, r, ctx)
+    renderRoundRect2(ctx, start)
+    renderRoundRect2(ctx, cp1)
+    renderRoundRect2(ctx, bottom)
+    renderRoundRect2(ctx, cp2)
+    renderRoundRect2(ctx, cp3)
+    renderRoundRect2(ctx, left)
+    renderRoundRect2(ctx, cp4)
     renderRoundRect2(ctx, cp5)
     renderRoundRect2(ctx, top)
     renderRoundRect2(ctx, cp6)
+    renderRoundRect2(ctx, cp7)
 
 
     let distance = 0.6
@@ -211,13 +171,7 @@ class T extends Component<any, any> {
     con(s)
 
     s.map(item => {
-      renderRoundRect({
-        x: item.x,
-        y: item.y,
-        w: 2 * d,
-        h: 2 * d,
-        lineWidth
-      }, r, ctx)
+      renderRoundRect2(ctx, {x: item.x, y: item.y,})
     })
 
     ctx.moveTo(item.x, item.y)

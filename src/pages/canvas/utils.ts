@@ -265,15 +265,17 @@ export function renderRoundRect(rect: any, r: number, ctx: any,) {
 
 export function renderRoundRect2(ctx: CanvasRenderingContext2D, rect: any, r: number = 2, d: number = 4) {
   let {x, y, w = 2 * d, h = 2 * d, lineWidth = 2} = rect
+  let ow = w / 2
+  let oh = h / 2
   ctx.save()
   ctx.lineWidth = lineWidth
-  ctx.translate(x - w / 2, y - h / 2)
+  ctx.translate(x, y)
   ctx.beginPath()
-  ctx.moveTo(0, 0)
-  ctx.arcTo(x + w, y, x + w, y + h, r)
-  ctx.arcTo(x + w, y + h, x, y + h, r)
-  ctx.arcTo(x, y + h, x, y, r)
-  ctx.arcTo(x, y, x + w / 2, y, r)
+  ctx.moveTo(0, -oh)
+  ctx.arcTo(ow, -oh, ow, oh, r)
+  ctx.arcTo(ow, oh, -ow, oh, r)
+  ctx.arcTo(-ow, oh, -ow, -oh, r)
+  ctx.arcTo(-ow, -oh, 0, -oh, r)
   ctx.closePath()
   ctx.stroke()
   ctx.restore()

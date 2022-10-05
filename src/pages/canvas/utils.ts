@@ -110,8 +110,8 @@ export function renderCanvas(
   switch (type) {
     case ShapeType.ROUND:
       let a = w / 2, b = h / 2
-      let ox = 0.5 * a,
-        oy = .6 * b;
+      let ox = .5 * a
+      let oy = .6 * b
 
       ctx.save();
       ctx.translate(x + a, y + b);
@@ -263,7 +263,7 @@ export function renderRoundRect(rect: any, r: number, ctx: any,) {
   ctx.stroke()
 }
 
-export function renderRoundRect2(ctx: CanvasRenderingContext2D, rect: any, r: number = 2, d: number = 4) {
+export function drawRoundRect(ctx: CanvasRenderingContext2D, rect: any, r: number = 2, d: number = 4) {
   let {x, y, w = 2 * d, h = 2 * d, lineWidth = 2} = rect
   let ow = w / 2
   let oh = h / 2
@@ -297,6 +297,20 @@ export function renderRound(rect: any, r: number, ctx: any, type: ShapeType = Sh
   } else {
     ctx.stroke()
   }
+  ctx.restore()
+}
+
+export function drawRound(ctx: any, rect: any, r: number = 4, type: ShapeType = ShapeType.ROUND) {
+  let d = 4
+  let {x, y, w = 2 * d, h = 2 * d, lineWidth = 1.5} = rect
+  ctx.save()
+  ctx.lineWidth = lineWidth
+  ctx.fillStyle = Colors.white
+  ctx.strokeStyle = Colors.primary
+  ctx.beginPath()
+  ctx.arc(x, y, r, 0, 2 * Math.PI)
+  ctx.fill()
+  ctx.stroke()
   ctx.restore()
 }
 
@@ -591,6 +605,59 @@ export function selected(ctx: CanvasRenderingContext2D, config: any) {
 }
 
 export function draw(
+  ctx: CanvasRenderingContext2D,
+  config: any,
+  original: any,
+  status?: {
+    isHover: boolean,
+    isSelect: boolean,
+    isEdit: boolean,
+    enterLT: boolean
+    enterL: boolean
+  },
+  parent?: any
+) {
+  ctx.save()
+  status = Object.assign({
+    isHover: false,
+    isSelect: false,
+    isEdit: false,
+    enterLT: false,
+    enterL: false
+  }, status || {})
+  let {x, y} = calcPosition(ctx, config, original, status, parent)
+  const {isHover, isSelect, isEdit, enterLT} = status
+  let {
+    w, h, radius,
+    fillColor, borderColor, rotate, lineWidth,
+    type, flipVertical, flipHorizontal, children,
+  } = config
+
+  let a = w / 2, b = h / 2
+  let ox = .55 * a
+  let oy = .55 * b
+
+  ctx.save();
+  ctx.translate(x + a, y + b);
+  // ctx.beginPath();
+  ctx.moveTo(0, b);
+  ctx.bezierCurveTo(ox, b, a, oy, a, 0);
+  ctx.bezierCurveTo(a, -oy, ox, -b, 0, -b);
+  ctx.bezierCurveTo(-ox, -b, -a, -oy, -a, 0);
+  ctx.bezierCurveTo(-a, oy, -ox, b, 0, b);
+  // ctx.closePath();
+  ctx.stroke();
+  ctx.restore();
+  if (isHover) {
+    hover(ctx, {...config, x, y})
+  }
+  if (isSelect) {
+    selected(ctx, {...config, x, y})
+  }
+  config = getPath(config, null, parent)
+}
+
+export function draw2(
   ctx: CanvasRenderingContext2D,
   config: any,
   original: any,

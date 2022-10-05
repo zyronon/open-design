@@ -40,7 +40,8 @@ export const fontSize = [
 
 export const Colors = {
   primary: '#4B75F6FF',
-  line: 'rgb(216,216,216)',
+  line: 'rgb(183,183,183)',
+  white: 'white',
 }
 
 export const rects2 = [
@@ -588,13 +589,13 @@ export const rects =[
     "y": 98,
     "rx": 855,
     "ry": 98,
-    "w": 442.35248652396695,
-    "h": 430.96052319587545,
+    "w": 400,
+    "h": 400,
     "rotate": 0,
     "lineWidth": 2,
     "type": 102,
     "color": "gray",
-    "radius": 115,
+    "radius": 0,
     "children": [],
     "brokenTexts": [],
     "flipHorizontal": false,

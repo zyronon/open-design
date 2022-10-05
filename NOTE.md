@@ -16,10 +16,16 @@
 }
 ```
 
-- figma的多边形
+- 多边形
   - 当radius为0时，纯直线绘制，只需要用lineTo方法
   - 不为0是，采用arcTo绘制
   - 当自定义后，采用acrTo和quadraticCurveTo混合绘制，其中quadraticCurveTo又分为3种模式（完全对称、角度对称、不对称）
+
+- 圆形
+  - 用bezierCurveTo绘制，一个控制点为0.6倍长，另一个为0.5倍宽，可以对调
+  - http://www.alloyteam.com/2015/07/canvas-hua-tuo-yuan-di-fang-fa/
+  - 默认椭圆可以用直接用canvas api
+  - 默认椭圆可以用压缩法来画
 
 - 贝塞尔曲线
   - 原理

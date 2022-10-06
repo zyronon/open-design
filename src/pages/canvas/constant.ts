@@ -40,7 +40,8 @@ export const fontSize = [
 
 export const Colors = {
   primary: '#4B75F6FF',
-  line: 'rgb(183,183,183)',
+  line: 'rgb(217,217,217)',
+  line2: 'rgb(140,140,140)',
   white: 'white',
 }
 

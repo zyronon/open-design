@@ -1,4 +1,4 @@
-import {IState, Shape, ShapeConfig, ShapeType, TextAlign} from "./type";
+import {BezierPoint, IState, Point2, Shape, ShapeConfig, ShapeType, TextAlign} from "./type";
 import {store} from "./store";
 // @ts-ignore
 import {v4 as uuid} from 'uuid';
@@ -300,7 +300,7 @@ export function renderRound(rect: any, r: number, ctx: any, type: ShapeType = Sh
   ctx.restore()
 }
 
-export function drawRound(ctx: any, rect: any, r: number = 4, type: ShapeType = ShapeType.ROUND) {
+export function drawRound(ctx: any, rect: any, r: number = 4) {
   let d = 4
   let {x, y, w = 2 * d, h = 2 * d, lineWidth = 1.5} = rect
   ctx.save()
@@ -312,6 +312,31 @@ export function drawRound(ctx: any, rect: any, r: number = 4, type: ShapeType = 
   ctx.fill()
   ctx.stroke()
   ctx.restore()
+}
+
+export function drawCp(ctx: CanvasRenderingContext2D, rect: any, center: Point2) {
+  let d = 3
+  let {x, y, w = 2 * d, h = 2 * d, lineWidth = 1} = rect
+  let ow = w / 2
+
+  ctx.beginPath()
+  ctx.moveTo2(rect)
+  ctx.lineTo2(center)
+  ctx.strokeStyle = Colors.line2
+  ctx.stroke()
+
+  ctx.save()
+  ctx.lineWidth = lineWidth
+  ctx.fillStyle = Colors.white
+  ctx.strokeStyle = Colors.primary
+  ctx.translate(x, y)
+  ctx.rotate(jiaodu2hudu(45))
+  ctx.beginPath()
+  ctx.rect(-ow, -ow, w, h)
+  ctx.fill()
+  ctx.stroke()
+  ctx.restore()
+
 }
 
 export function clearAll(state: IState) {

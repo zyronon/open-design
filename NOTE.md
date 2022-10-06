@@ -22,10 +22,22 @@
   - 当自定义后，采用acrTo和quadraticCurveTo混合绘制，其中quadraticCurveTo又分为3种模式（完全对称、角度对称、不对称）
 
 - 圆形
-  - 用bezierCurveTo绘制，一个控制点为0.6倍长，另一个为0.5倍宽，可以对调
   - http://www.alloyteam.com/2015/07/canvas-hua-tuo-yuan-di-fang-fa/
-  - 默认椭圆可以用直接用canvas api
-  - 默认椭圆可以用压缩法来画
+  - 默认椭圆可以用直接用canvas api 
+  - https://developer.mozilla.org/zh-CN/docs/Web/API/CanvasRenderingContext2D/ellipse
+  - 完整圆形点击之后用4条用bezierCurveTo绘制，一个控制点为0.6倍长，另一个为0.5倍宽，可以对调
+  - 不完整圆形，用N条曲线绘制
+    - 大于1/2：8条
+    - 大于1/4小于1/2:4条
+    - 小于1/4：2条
+  - 难点1，如何把原来的4条曲线，拆分为N条，并保持弧度不变？
+    - 可以利用曲线反推控制点这个公式，计算出某条曲线上的几分之一的两个控制点，
+    - 利用计算好的新的两个控制点，只绘制曲线上几分之一
+  - 难点2：两条相连的曲线，如何绘制一条新的跨越两条的曲线？
+    - 也是用曲线反推控制点这个公式。
+    - tp1T = (getDecimal(lastT) + perPart * (1 / 4))
+      laseT = 1 - tp1T
+      tp2T = perPart * (2 / 4) - laseT
 
 - 贝塞尔曲线
   - 原理

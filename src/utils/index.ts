@@ -27,10 +27,12 @@ export function getHypotenuse2(p1: any, p2: any) {
 }
 
 export function hudu2juedu(v: number) {
+  if (!v) return 0
   return v * 180 / Math.PI
 }
 
 export function jiaodu2hudu(v: number) {
+  if (!v) return 0
   return (v * Math.PI) / 180
 }
 

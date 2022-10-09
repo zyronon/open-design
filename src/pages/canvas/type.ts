@@ -1,5 +1,5 @@
 import {CanvasUtil} from "./utils/CanvasUtil";
-import {bezier3copy} from "./utils";
+import {bezier3} from "./utils";
 
 export type IState = {
   rectList: Shape[],

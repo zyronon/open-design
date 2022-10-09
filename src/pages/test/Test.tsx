@@ -2,10 +2,10 @@ import React, {Component} from 'react';
 import {Button} from 'antd';
 import './index.scss'
 import {withRouter} from "../../components/WithRouter";
-import {bezier3copy, drawCp, drawRound, getCp2, getDecimal} from "../canvas/utils";
+import {bezier3, drawCp, drawRound, getCp2, getDecimal} from "../canvas/utils";
 import {Colors} from "../canvas/constant";
 import {BezierPoint, BezierPointType, getDefaultPoint, LineType, Point2} from "../canvas/type";
-import {jiaodu2hudu} from "../../utils";
+import {getAngle2, jiaodu2hudu} from "../../utils";
 
 class T extends Component<any, any> {
   constructor(props: any) {
@@ -37,7 +37,10 @@ class T extends Component<any, any> {
     ctx.stroke()
 
     let w2 = w / 2, h2 = h / 2
-    let ox = 0.5 * w2, oy = .6 * h2;
+    //http://www.alloyteam.com/2015/07/canvas-hua-tuo-yuan-di-fang-fa/
+    //这里如果用.5和.6来算ox和oy。虽然看起来差不多，但是一条曲线上的对应比例的点的坐标，算出来的角度不正确
+    //如果第一条线上比例为0.49875（总长为3.99时）的点的坐标，计算出来的角度为46度，正确的角度应该为接近45度，但绝不会超过45度
+    let ox = 0.5522848 * w2, oy = .5522848 * h2;
 
     let center = {
       x: 0,
@@ -121,14 +124,13 @@ class T extends Component<any, any> {
     ctx.beginPath()
 
     let bezierCps: BezierPoint[] = []
-    let totalT = 4
+    let totalT = 3.5
     let totalPart = 8
     if (Math.trunc(totalT) === 1) totalPart = 4
     if (Math.trunc(totalT) === 0) totalPart = 2
     if (totalT === 4) {
       // ctx.ellipse(0, 0, w2, h2, jiaodu2hudu(0), 0, 2 * Math.PI); //倾斜 45°角
       // ctx.stroke();
-
       bezierCps.push({
         cp1: {...getDefaultPoint(true), ...cp8},
         center: {...getDefaultPoint(true), ...start},
@@ -156,7 +158,7 @@ class T extends Component<any, any> {
       // ctx.ellipse(x,y,ox,oy)
     } else {
       let perPart = totalT / totalPart
-      // console.log('每一份', perPart)
+      console.log('每一份', perPart)
 
       let currentP, lastP = start
       let bezier1, bezier2
@@ -220,10 +222,10 @@ class T extends Component<any, any> {
               break
           }
         }
-        currentP = bezier3copy(currentT - intCurrentT, bezier2)
+        currentP = bezier3(currentT - intCurrentT, bezier2)
         // drawRound(ctx, currentP)
-        tp1 = bezier3copy(tp1T, bezier1)
-        tp2 = bezier3copy(tp2T, bezier2)
+        tp1 = bezier3(tp1T, bezier1)
+        tp2 = bezier3(tp2T, bezier2)
         temp2 = getCp2(tp1, tp2, lastP, currentP)
 
         let lastBezierCp = bezierCps[bezierCps.length - 1]
@@ -274,7 +276,6 @@ class T extends Component<any, any> {
         type: BezierPointType.RightAngle
       })
     }
-
 
     // ctx.lineTo(0, 0)
     // ctx.lineTo(start.x, start.y)
@@ -347,7 +348,20 @@ class T extends Component<any, any> {
       // }
     })
 
-    return
+    let startPoint = bezierCps[0].center
+    // let lastPoint = bezierCps[bezierCps.length - 2].center
+    let lastPoint = bezierCps[1].center
+    // console.log('startPoint', startPoint)
+    // console.log('lastPoint', lastPoint)
+    // console.log('center', center)
+    let angle = getAngle2(center as Point2, startPoint, lastPoint)
+    // angle = angle % 90
+    let a = (angle * (100 / 90)) / 100
+    console.log('s', angle)
+    console.log('a', a)
+
+    angle = getAngle2({x: 531, y: 4511.98} as Point2, {x: 631, y: 4511.98} as Point2, {x: 646.95, y: 4638.85} as Point2)
+    console.log('s22', angle)
   }
 
   nav(path: any) {

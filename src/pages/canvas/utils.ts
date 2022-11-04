@@ -836,7 +836,7 @@ export function edit(ctx: CanvasRenderingContext2D, config: any) {
 
 //P = (1−t)3P1 + 3(1−t)2tP2 +3(1−t)t2P3 + t3P4
 //x = (1−t)3x + 3(1−t)2tx +3(1−t)t2x + t3x
-export function bezier3(t: number, points: any) {
+export function getBezierPointByLength(t: number, points: any) {
   let [p1, p2, p3, p4] = points
   let x = Math.pow(1 - t, 3) * p1.x + 3 * Math.pow(1 - t, 2) * t * p2.x
     + 3 * (1 - t) * Math.pow(t, 2) * p3.x + Math.pow(t, 3) * p4.x
@@ -858,11 +858,18 @@ export function getDecimal(num: number) {
 // 将公式(5)和公式(6)代入化简可得：这步应该是
 // P1 =(3Pc − Pd )/72
 // P2 =(3Pd − Pc )/72
-export function getCp2(tp1: any, tp2: any, p1: any, p4: any) {
-  let xb = 64 * tp1.x - 27 * p1.x - p4.x
-  let yb = 64 * tp1.y - 27 * p1.y - p4.y
-  let xc = 64 * tp2.x - p1.x - 27 * p4.x
-  let yc = 64 * tp2.y - p1.y - 27 * p4.y
+/**
+ * @description 获取指定一段贝塞尔曲线上的两个控制点
+ * @param tp1 线段上1/4的点
+ * @param tp2 线段上3/4的点
+ * @param start 起始点
+ * @param end 终点
+ * */
+export function getBezier3ControlPoints(tp1: any, tp2: any, start: any, end: any) {
+  let xb = 64 * tp1.x - 27 * start.x - end.x
+  let yb = 64 * tp1.y - 27 * start.y - end.y
+  let xc = 64 * tp2.x - start.x - 27 * end.x
+  let yc = 64 * tp2.y - start.y - 27 * end.y
 
   let x1 = (3 * xb - xc) / 72
   let y1 = (3 * yb - yc) / 72

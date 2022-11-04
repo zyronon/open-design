@@ -1,5 +1,5 @@
 import {CanvasUtil} from "./utils/CanvasUtil";
-import {bezier3} from "./utils";
+import {getBezierPointByLength} from "./utils";
 
 export type IState = {
   rectList: Shape[],
@@ -220,10 +220,10 @@ export interface Point {
 }
 
 export enum BezierPointType {
-  RightAngle = 0,//直角
-  MirrorAngleAndLength = 1,//完全对称
-  MirrorAngle = 2,//角度对称
-  NoMirror = 3,//不对称
+  RightAngle = 'RightAngle',//直角
+  MirrorAngleAndLength = 'MirrorAngleAndLength',//完全对称
+  MirrorAngle = 'MirrorAngle',//角度对称
+  NoMirror = 'NoMirror',//不对称
 }
 
 export enum LineType {

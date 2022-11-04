@@ -7,7 +7,6 @@ import {Colors} from "../canvas/constant";
 import {BezierPoint, BezierPointType, getDefaultPoint, LineType, Point2} from "../canvas/type";
 import {getAngle2, jiaodu2hudu} from "../../utils";
 
-
 class T extends Component<any, any> {
   constructor(props: any) {
     super(props);
@@ -20,7 +19,7 @@ class T extends Component<any, any> {
     ctx.rect(0, 0, 500, 500)
     ctx.stroke()
     let rect = {
-      x: 100,
+      x: 50,
       y: 50,
       w: 300,
       h: 400
@@ -160,27 +159,15 @@ class T extends Component<any, any> {
       })
       // ctx.ellipse(x,y,ox,oy)
     } else {
-
-      const getBezierControlPoint = (length: number) => {
-        switch (length) {
-          case 0:
-            return [start, cp1, cp2, bottom]
-          case 1:
-            return [bottom, cp3, cp4, left]
-          case 2:
-            return [left, cp5, cp6, top]
-          case 3:
-            return [top, cp7, cp8, start]
-        }
-      }
-
       let perPart = totalLength / totalPart
       console.log('每一份', perPart)
-      let currentPoint, lastPoint = start
-      let bezierPrevious, bezierCurrent
-      let length14Point, length34Point = null
+
+      let currentP, lastP = start
+      let bezier1, bezier2
+      let tp1, tp2, laseT, tp2Length, tp1Length = null
       let intLastLength, intCurrentLength, lastLength = 0
       let currentLength = perPart
+      let temp2 = null
       // console.log('currentLength', currentLength, 'lastLength', lastLength)
       // drawRound(ctx, start)
       bezierCps.push({
@@ -200,39 +187,63 @@ class T extends Component<any, any> {
       for (let i = 1; i <= totalPart; i++) {
         intCurrentLength = Math.trunc(currentLength)
         intLastLength = Math.trunc(lastLength)
+        //上个点和当前点，上个点加上第一段长度和当前点。如果都在同一段
+        if (intCurrentLength === intLastLength && Math.trunc(lastLength + perPart) === intCurrentLength) {
+          tp1Length = (getDecimal(lastLength) + perPart * (1 / 4))
+          tp2Length = (getDecimal(lastLength) + perPart * (3 / 4))
+          // tp2Length = getDecimal(perPart * (2 / 4) + tp1Length)
 
-        //计算1/4，3/4长度
-        let length14 = (lastLength + perPart * (1 / 4))
-        let length34 = perPart * (2 / 4) + length14
+          switch (intCurrentLength) {
+            case 0:
+              bezier1 = bezier2 = [start, cp1, cp2, bottom]
+              break
+            case 1:
+              bezier1 = bezier2 = [bottom, cp3, cp4, left]
+              break
+            case 2:
+              bezier1 = bezier2 = [left, cp5, cp6, top]
+              break
+            case 3:
+              bezier1 = bezier2 = [top, cp7, cp8, start]
+              break
+          }
+        } else {
+          tp1Length = (getDecimal(lastLength) + perPart * (1 / 4))
+          laseT = 1 - tp1Length
+          tp2Length = perPart * (2 / 4) - laseT
+          // tp2Length = getDecimal(perPart * (2 / 4) + tp1Length)
+          tp2Length = Math.abs(tp2Length)
+          console.log('tp1Length',tp1Length)
+          console.log('tp2Length',tp2Length)
 
-        //默认情况下，用于计算1/4点，3/4点，可以共用一条对应的线段
-        bezierCurrent = bezierPrevious = getBezierControlPoint(intCurrentLength)
-        //计算当前点必须用当前长度线段的4个控制点来算
-        currentPoint = getBezierPointByLength(getDecimal(currentLength), bezierCurrent)
 
-        //特殊情况
-        //如果，1/4的长度，不在当前线段内，那么肯定在上一个线段内
-        if (Math.trunc(length14) !== intCurrentLength) {
-          bezierPrevious = getBezierControlPoint(intCurrentLength - 1)
+          switch (intCurrentLength) {
+            case 1:
+              bezier1 = [start, cp1, cp2, bottom]
+              bezier2 = [bottom, cp3, cp4, left]
+              break
+            case 2:
+              bezier1 = [bottom, cp3, cp4, left]
+              bezier2 = [left, cp5, cp6, top]
+              break
+            case 3:
+              bezier1 = [left, cp5, cp6, top]
+              bezier2 = [top, cp7, cp8, start]
+              break
+          }
         }
-        //如果，3/4的长度，不在当前线段内，那么肯定在上一个线段内
-        if (Math.trunc(length34) !== intCurrentLength) {
-          bezierCurrent = getBezierControlPoint(intCurrentLength - 1)
-        }
-
-        //计算1/4长度，3/4长度对应的点
-        length14Point = getBezierPointByLength(getDecimal(length14), bezierPrevious)
-        length34Point = getBezierPointByLength(getDecimal(length34), bezierCurrent)
-
-        //利用1/4点、3/4点、起始点、终点，反推控制点
-        let cps = getBezier3ControlPoints(length14Point, length34Point, lastPoint, currentPoint)
+        currentP = getBezierPointByLength(currentLength - intCurrentLength, bezier2)
+        // drawRound(ctx, currentP)
+        tp1 = getBezierPointByLength(tp1Length, bezier1)
+        tp2 = getBezierPointByLength(tp2Length, bezier2)
+        temp2 = getBezier3ControlPoints(tp1, tp2, lastP, currentP)
 
         // 因为最后一个控制点（非数组的最后一个点）默认只需center和cp1与前一个点的center和cp2的4个点，组成贝塞尔曲线
         //所以cp2是无用的，所以添加当前点时，需要把上一个点的cp2为正确的值并启用
         bezierCps[bezierCps.length - 1].cp2 = {
           use: true,
-          x: cps[0].x,
-          y: cps[0].y,
+          x: temp2[0].x,
+          y: temp2[0].y,
           px: 0,
           py: 0,
           rx: 0,
@@ -243,8 +254,8 @@ class T extends Component<any, any> {
         bezierCps.push({
           cp1: {
             use: true,
-            x: cps[1].x,
-            y: cps[1].y,
+            x: temp2[1].x,
+            y: temp2[1].y,
             px: 0,
             py: 0,
             rx: 0,
@@ -252,8 +263,8 @@ class T extends Component<any, any> {
           },
           center: {
             use: true,
-            x: currentPoint.x,
-            y: currentPoint.y,
+            x: currentP.x,
+            y: currentP.y,
             px: 0,
             py: 0,
             rx: 0,
@@ -263,10 +274,10 @@ class T extends Component<any, any> {
           type: BezierPointType.MirrorAngleAndLength
         })
         // ctx.beginPath()
-        // ctx.moveTo(lastPoint.x, lastPoint.y)
-        // ctx.bezierCurveTo2(cps[0], cps[1], currentPoint)
+        // ctx.moveTo(lastP.x, lastP.y)
+        // ctx.bezierCurveTo2(temp2[0], temp2[1], currentP)
         // ctx.stroke()
-        lastPoint = currentPoint
+        lastP = currentP
         lastLength = currentLength
         currentLength += perPart
       }
@@ -345,10 +356,10 @@ class T extends Component<any, any> {
     bezierCps.map((currentPoint: BezierPoint) => {
       drawRound(ctx, currentPoint.center)
       if (currentPoint.cp1.use) {
-        drawCp(ctx, currentPoint.cp1, currentPoint.center)
+        // drawCp(ctx, currentPoint.cp1, currentPoint.center)
       }
       if (currentPoint.cp2.use) {
-        drawCp(ctx, currentPoint.cp2, currentPoint.center)
+        // drawCp(ctx, currentPoint.cp2, currentPoint.center)
       }
     })
 

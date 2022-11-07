@@ -43,9 +43,14 @@
   - 原理
     - https://zh.javascript.info/bezier-curve
     - https://www.zhihu.com/question/29565629
+    - https://pomax.github.io/bezierinfo/zh-CN/index.html#matrix
   -在线
     - https://jarenchow.github.io/JanvasExamples/html/beziermaker.html
   - 从贝塞尔曲线反推控制点
     - https://jermmy.github.io/2016/08/01/2016-8-1-Bezier-Curve-SVG/
     - https://juejin.cn/post/6995482699037147166
+  - 贝塞尔曲线如何通过坐标反推出 t (时间)
+    - https://www.zhihu.com/question/30570430
+    - https://juejin.cn/post/6844903958616473613#heading-3
+    - https://math.stackexchange.com/questions/527005/find-value-of-t-at-a-point-on-a-cubic-bezier-curve
   

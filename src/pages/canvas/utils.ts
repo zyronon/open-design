@@ -836,6 +836,9 @@ export function edit(ctx: CanvasRenderingContext2D, config: any) {
 
 //P = (1−t)3P1 + 3(1−t)2tP2 +3(1−t)t2P3 + t3P4
 //x = (1−t)3x + 3(1−t)2tx +3(1−t)t2x + t3x
+/**
+ * @description 根据长度（即T）获取对应的点
+* */
 export function getBezierPointByLength(t: number, points: any) {
   let [p1, p2, p3, p4] = points
   let x = Math.pow(1 - t, 3) * p1.x + 3 * Math.pow(1 - t, 2) * t * p2.x
@@ -845,9 +848,18 @@ export function getBezierPointByLength(t: number, points: any) {
   return {x, y}
 }
 
-//取小数部分
-export function getDecimal(num: number) {
-  return num - Math.trunc(num);
+//P = (1−t)3P1 + 3(1−t)2tP2 +3(1−t)t2P3 + t3P4
+//x = (1−t)3x + 3(1−t)2tx +3(1−t)t2x + t3x
+/**
+ * @description 根据长度（即T）获取对应的点
+* */
+export function getLengthByBezierPoint(t: number, points: any) {
+  let [p1, p2, p3, p4] = points
+  let x = Math.pow(1 - t, 3) * p1.x + 3 * Math.pow(1 - t, 2) * t * p2.x
+    + 3 * (1 - t) * Math.pow(t, 2) * p3.x + Math.pow(t, 3) * p4.x
+  let y = Math.pow(1 - t, 3) * p1.y + 3 * Math.pow(1 - t, 2) * t * p2.y
+    + 3 * (1 - t) * Math.pow(t, 2) * p3.y + Math.pow(t, 3) * p4.y
+  return {x, y}
 }
 
 
@@ -877,6 +889,13 @@ export function getBezier3ControlPoints(tp1: any, tp2: any, start: any, end: any
   let y2 = (3 * yc - yb) / 72
   return [{x: x1, y: y1}, {x: x2, y: y2}]
 }
+
+
+//取小数部分
+export function getDecimal(num: number) {
+  return num - Math.trunc(num);
+}
+
 
 export function con(val: any) {
   console.log(JSON.stringify(val, null, 2))
@@ -913,6 +932,7 @@ function cuberoot(x: any) {
 
 //网上找的，解一元三次方程
 export function solveCubic(a: number, b: number, c: number, d: number) {
+  console.log(arguments)
   if (Math.abs(a) < 1e-8) { // Quadratic case, ax^2+bx+c=0
     a = b;
     b = c;

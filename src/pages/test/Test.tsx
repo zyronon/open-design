@@ -15,7 +15,6 @@ import {BezierPoint, BezierPointType, getDefaultPoint, LineType, Point2} from ".
 import {getAngle2, jiaodu2hudu} from "../../utils";
 
 
-
 class T extends Component<any, any> {
   constructor(props: any) {
     super(props);
@@ -366,40 +365,66 @@ class T extends Component<any, any> {
     // let a = test(last.x, cp3s[1], cp3s[2])
     // console.log('a', a)
 
-    let p0 = {
-      x: 0,
-      y: 0
-    }
-    let p1 = {
-      x: p0.x + ox,
-      y: p0.y
-    }
-    let p2 = {
-      x: w2,
-      y: h2
-    }
-    let p3 = {
-      x: p2.x,
-      y: p2.y - oy
-    }
-    drawRound(ctx, p0)
-    drawRound(ctx, p1)
-    drawRound(ctx, p2)
-    drawRound(ctx, p3)
 
-    ctx.moveTo2(p0)
-    ctx.bezierCurveTo2(p1, p3, p2)
-    // ctx.closePath()
-    ctx.stroke()
+    let a, b, c, d = 0
+    let p0, p1, p2, p3, p = null
+    if (false) {
+      p0 = {
+        x: 0,
+        y: 0
+      }
+      p1 = {
+        x: p0.x + ox,
+        y: p0.y
+      }
+      p3 = {
+        x: w2,
+        y: h2
+      }
+      p2 = {
+        x: p3.x,
+        y: p3.y - oy
+      }
+      drawRound(ctx, p0)
+      drawRound(ctx, p1)
+      drawRound(ctx, p2)
+      drawRound(ctx, p3)
 
-    let p = getBezierPointByLength(0.5, [p0, p1, p3, p2])
-    drawRound(ctx, p)
-    console.log('p', p)
+      ctx.moveTo2(p0)
+      ctx.bezierCurveTo2(p1, p2, p3)
+      // ctx.closePath()
+      ctx.stroke()
 
-    let a = p3.x - 3 * p2.x + 3 * p1.x - p0.x
-    let b = 3 * (p2.x - 2 * p1.x + p0.x)
-    let c = 3 * (p1.x - p0.x)
-    let d = p0.x - p.x
+      let p = getBezierPointByLength(0.5, [p0, p1, p2, p3])
+      drawRound(ctx, p)
+      console.log('p', p)
+      a = p3.x - 3 * p2.x + 3 * p1.x - p0.x
+      b = 3 * (p2.x - 2 * p1.x + p0.x)
+      c = 3 * (p1.x - p0.x)
+      d = p0.x - p.x
+    } else {
+      let bs: any = getBezierControlPoint(3)
+      p3 = bs[3]
+      p2 = bs[2]
+      p1 = bs[1]
+      p0 = bs[0]
+      drawRound(ctx, p0)
+      drawRound(ctx, p1)
+      drawRound(ctx, p2)
+      drawRound(ctx, p3)
+      p = getBezierPointByLength(0.5, [p0, p1, p2, p3])
+      drawRound(ctx, p)
+      console.log('p', p)
+
+      a = p3.x - 3 * p2.x + 3 * p1.x - p0.x
+      b = 3 * (p2.x - 2 * p1.x + p0.x)
+      c = 3 * (p1.x - p0.x)
+      d = p0.x - p.x
+
+
+      let otherPoint = {x: p.x + 20, y: p.y - 20}
+      drawRound(ctx, otherPoint)
+    }
 
     // let t = 0.5
     // let q = pow(t, 3) * a
@@ -409,24 +434,6 @@ class T extends Component<any, any> {
     // console.log('q', q)
 
     console.log(solveCubic(a, b, c, d))
-
-    // let a = test(p.x, p1, p3)
-    // console.log('a', a)
-
-    // let startPoint = bezierCps[0].center
-    // // let lastPoint = bezierCps[bezierCps.length - 2].center
-    // let lastPoint = bezierCps[1].center
-    // // console.log('startPoint', startPoint)
-    // // console.log('lastPoint', lastPoint)
-    // // console.log('center', center)
-    // let angle = getAngle2(center as Point2, startPoint, lastPoint)
-    // // angle = angle % 90
-    // let a = (angle * (100 / 90)) / 100
-    // console.log('p0', angle)
-    // console.log('a', a)
-    //
-    // angle = getAngle2({x: 531, y: 4511.98} as Point2, {x: 631, y: 4511.98} as Point2, {x: 646.95, y: 4638.85} as Point2)
-    // console.log('s22', angle)
   }
 
   nav(path: any) {

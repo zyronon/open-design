@@ -408,11 +408,12 @@ class T extends Component<any, any> {
       p2 = bs[2]
       p1 = bs[1]
       p0 = bs[0]
-      drawRound(ctx, p0)
-      drawRound(ctx, p1)
-      drawRound(ctx, p2)
-      drawRound(ctx, p3)
-      p = getBezierPointByLength(0.5, [p0, p1, p2, p3])
+      // drawRound(ctx, p0)
+      // drawRound(ctx, p1)
+      // drawRound(ctx, p2)
+      // drawRound(ctx, p3)
+      let ps = [p0, p1, p2, p3]
+      p = getBezierPointByLength(0.5, ps)
       drawRound(ctx, p)
       console.log('p', p)
 
@@ -421,19 +422,46 @@ class T extends Component<any, any> {
       c = 3 * (p1.x - p0.x)
       d = p0.x - p.x
 
+      // let t = 0.5
+      // let q = pow(t, 3) * a
+      //   + pow(t, 2) * b
+      //   + t * c
+      //   + d
+      // console.log('q', q)
 
-      let otherPoint = {x: p.x + 20, y: p.y - 20}
+      // console.log(solveCubic(a, b, c, d))
+
+      let mousePoint = p1
+      let k = mousePoint.y / mousePoint.x
+      let x1 = mousePoint.x + 10
+      let y1 = k * x1
+      let otherPoint = {x: x1, y: y1}
       drawRound(ctx, otherPoint)
+      console.log('otherPoint', otherPoint)
+
+      let XA = p3.x - 3 * p2.x + 3 * p1.x - p0.x,
+        XB = 3 * (p2.x - 2 * p1.x + p0.x),
+        XC = 3 * (p1.x - p0.x),
+        XD = p0.x
+      let YA = p3.y - 3 * p2.y + 3 * p1.y - p0.y,
+        YB = 3 * (p2.y - 2 * p1.y + p0.y),
+        YC = 3 * (p1.y - p0.y),
+        YD = p0.y
+      let A = k * XA - YA
+      let B = k * XB - YB
+      let C = k * XC - YC
+      let D = k * XD - YD
+
+      let t: any[] = solveCubic(A, B, C, D)
+      t = t.filter(v => 0 <= v && v <= 1.01)
+      console.log('t', t)
+      let mousePoint2 = getBezierPointByLength(t[0],ps)
+
+      drawRound(ctx, mousePoint2)
+
     }
 
-    // let t = 0.5
-    // let q = pow(t, 3) * a
-    //   + pow(t, 2) * b
-    //   + t * c
-    //   + d
-    // console.log('q', q)
 
-    console.log(solveCubic(a, b, c, d))
   }
 
   nav(path: any) {

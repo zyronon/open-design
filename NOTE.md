@@ -53,4 +53,4 @@
     - https://www.zhihu.com/question/30570430
     - https://juejin.cn/post/6844903958616473613#heading-3
     - https://math.stackexchange.com/questions/527005/find-value-of-t-at-a-point-on-a-cubic-bezier-curve
-  
+  - 计算曲线与直线相交，直接用曲线公式与直线公式（y=k*x）联立求解出T，再根据T计算出曲线上的点，就是相交的点

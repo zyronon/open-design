@@ -69,7 +69,7 @@ export enum ShapeType {
   SLICE = 103,
 
   RECT = 104,
-  ROUND = 105,
+  ELLIPSE = 105,
   ARROW = 106,
   LINE = 107,
   POLYGON = 108,

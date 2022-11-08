@@ -1,11 +1,11 @@
 import {Shape} from "./Shape";
-import {draw, draw2, getPath} from "../utils";
+import {draw, draw2, draw3, getPath} from "../utils";
 import {CanvasUtil} from "./CanvasUtil";
 import {clone, cloneDeep} from "lodash";
 import getCenterPoint, {getAngle, getRotatedPoint} from "../../../utils";
 import {Point} from "../type";
 
-class Frame extends Shape {
+class Ellipse extends Shape {
   hoverRd1: boolean = false
   enterRd1: boolean = false
   hoverL: boolean = false
@@ -22,12 +22,12 @@ class Frame extends Shape {
   constructor(props: any) {
     super(props);
     this.children = this.config.children.map((child: any) => {
-      return new Frame(child)
+      return new Ellipse(child)
     })
   }
 
   render(ctx: CanvasRenderingContext2D, parent?: any): void {
-    draw2(ctx, this.config, this.original, {
+    draw3(ctx, this.config, this.original, {
       isHover: this.isHover,
       isSelect: this.isSelect,
       isEdit: this.isEdit,
@@ -481,4 +481,4 @@ class Frame extends Shape {
   }
 }
 
-export default Frame
+export default Ellipse

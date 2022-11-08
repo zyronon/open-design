@@ -108,7 +108,7 @@ export function renderCanvas(
   }
 
   switch (type) {
-    case ShapeType.ROUND:
+    case ShapeType.ELLIPSE:
       let a = w / 2, b = h / 2
       let ox = .5 * a
       let oy = .6 * b
@@ -750,6 +750,92 @@ export function draw2(
   config = getPath(config, null, parent)
 }
 
+export function draw3(
+  ctx: CanvasRenderingContext2D,
+  config: any,
+  original: any,
+  status?: {
+    isHover: boolean,
+    isSelect: boolean,
+    isEdit: boolean,
+    enterLT: boolean
+    enterL: boolean
+  },
+  parent?: any
+) {
+  ctx.save()
+  status = Object.assign({
+    isHover: false,
+    isSelect: false,
+    isEdit: false,
+    enterLT: false,
+    enterL: false
+  }, status || {})
+  let {x, y} = calcPosition(ctx, config, original, status, parent)
+  const {isHover, isSelect, isEdit, enterLT} = status
+  let {
+    w, h, radius,
+    fillColor, borderColor, rotate, lineWidth,
+    type, flipVertical, flipHorizontal, children,
+  } = config
+
+  switch (type) {
+    case ShapeType.ELLIPSE:
+      drawEllipse(ctx, {x, y, ...config})
+      break
+  }
+
+  if (isHover) {
+    hover(ctx, {...config, x, y})
+  }
+  if (isSelect) {
+    selected(ctx, {...config, x, y})
+  }
+  if (isEdit) {
+    edit(ctx, {...config, x, y})
+  }
+
+  ctx.restore()
+
+  // ctx.save()
+  // let rect = this.config
+  // ctx.fillStyle = 'gray'
+  // ctx.font = `${rect.fontWeight} ${rect.fontSize}rem "${rect.fontFamily}", sans-serif`;
+  // ctx.textBaseline = 'top'
+  // ctx.fillText(rect.name, x, y - 18);
+  // ctx.restore()
+
+  config = getPath(config, null, parent)
+}
+
+function drawEllipse(
+  ctx: CanvasRenderingContext2D,
+  config: any,
+) {
+  let {
+    x, y, w, h, radius,
+    fillColor, borderColor, rotate, lineWidth,
+    type, flipVertical, flipHorizontal, children,
+  } = config
+  let w2 = w / 2, h2 = h / 2
+  //http://www.alloyteam.com/2015/07/canvas-hua-tuo-yuan-di-fang-fa/
+  //这里也可以用.5和.6来算ox和oy
+  let ox = 0.5522848 * w2, oy = .5522848 * h2;
+
+  ctx.save();
+  ctx.translate(x + w2, y + h2);
+
+  ctx.ellipse(0, 0, w2, h2, jiaodu2hudu(0), 0, 2 * Math.PI); //倾斜 45°角
+
+
+
+  ctx.fillStyle = fillColor
+  ctx.fill()
+  ctx.strokeStyle = borderColor
+  ctx.stroke();
+  ctx.restore();
+}
+
 export function edit(ctx: CanvasRenderingContext2D, config: any) {
   let {
     x, y, w, h, radius,
@@ -838,7 +924,7 @@ export function edit(ctx: CanvasRenderingContext2D, config: any) {
 //x = (1−t)3x + 3(1−t)2tx +3(1−t)t2x + t3x
 /**
  * @description 根据长度（即T）获取对应的点
-* */
+ * */
 export function getBezierPointByLength(t: number, points: any) {
   let [p1, p2, p3, p4] = points
   let x = Math.pow(1 - t, 3) * p1.x + 3 * Math.pow(1 - t, 2) * t * p2.x
@@ -852,7 +938,7 @@ export function getBezierPointByLength(t: number, points: any) {
 //x = (1−t)3x + 3(1−t)2tx +3(1−t)t2x + t3x
 /**
  * @description 根据长度（即T）获取对应的点
-* */
+ * */
 export function getLengthByBezierPoint(t: number, points: any) {
   let [p1, p2, p3, p4] = points
   let x = Math.pow(1 - t, 3) * p1.x + 3 * Math.pow(1 - t, 2) * t * p2.x

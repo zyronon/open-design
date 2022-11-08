@@ -235,7 +235,7 @@ export class CanvasUtil {
         case ShapeType.FRAME:
         case ShapeType.SLICE:
         case ShapeType.RECT:
-        case ShapeType.ROUND:
+        case ShapeType.ELLIPSE:
         case ShapeType.ARROW:
         case ShapeType.LINE:
         case ShapeType.POLYGON:

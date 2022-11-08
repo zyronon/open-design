@@ -9,7 +9,7 @@ export class Shape {
   protected children: Shape[] = []
   isHover: boolean = false
   isSelect: boolean = false
-  isEdit: boolean = true
+  isEdit: boolean = false
   isCapture: boolean = true
   enter: boolean = false
   startX: number = 0

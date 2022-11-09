@@ -1,7 +1,7 @@
 import {Shape} from "./Shape";
-import {draw, draw2, draw3, getPath} from "../utils";
+import {draw3, drawRound, getBezierPointByLength, getPath, solveCubic} from "../utils";
 import {CanvasUtil} from "./CanvasUtil";
-import {clone, cloneDeep} from "lodash";
+import {cloneDeep} from "lodash";
 import getCenterPoint, {getAngle, getRotatedPoint} from "../../../utils";
 import {Point} from "../type";
 
@@ -14,6 +14,8 @@ class Ellipse extends Shape {
   enterLT: boolean = false
   hoverLTR: boolean = false
   enterLTR: boolean = false
+  hoverTest: boolean = false
+  enterTest: boolean = false
   startX: number = -1
   startY: number = -1
   diagonal: Point = {x: 0, y: 0}//对角
@@ -80,6 +82,8 @@ class Ellipse extends Shape {
     // console.log('isIn-rect.leftX', rect.leftX)
 
     if (this.isSelect) {
+      this.hoverTest = true
+      return true
       let edge = 10
       let angle = 7
       let rotate = 27
@@ -131,6 +135,7 @@ class Ellipse extends Shape {
       this.hoverLTR = false
 
       this.hoverRd1 = false
+      this.hoverTest = false
       return true
     }
     return this.isInName(x, y)
@@ -262,6 +267,11 @@ class Ellipse extends Shape {
       this.enterLTR = this.hoverLTR
       return;
     }
+    if (this.hoverTest) {
+      this.enterTest = true
+      return;
+    }
+
 
     this.lastClickTime = Date.now()
     // console.log('mousedown', this.config.name, this.isMouseDown, this.isSelect)
@@ -322,6 +332,7 @@ class Ellipse extends Shape {
     this.enterLT = false
     this.enterLTR = false
     this.enterRd1 = false
+    this.enterTest = false
 
     cu.render()
   }
@@ -362,10 +373,127 @@ class Ellipse extends Shape {
     let {e, coordinate, type} = event
     // console.log('mousemove', this.config.name, `isHover：${this.isHover}`)
     let {x, y, cu} = this.getXY(coordinate)
+    let cx = x
+    let cy = y
     if (this.enter || this.enterLTR || this.enterLT || this.enterL) {
       super.mouseMove(cu)
     }
     if (!cu.isDesign()) {
+      return;
+    }
+
+    if (this.enterTest) {
+      // console.log('mousemove', cu.startX, cu.startY))
+      const {x, y, w, h} = this.config
+      let w2 = w / 2, h2 = h / 2
+      let ox = 0.5522848 * w2, oy = .5522848 * h2;
+
+      let start = {
+        x: w2,
+        y: 0
+      }
+      let cp1 = {
+        x: start.x,
+        y: start.y + oy
+      }
+      let bottom = {
+        x: 0,
+        y: h2
+      }
+      let cp2 = {
+        x: bottom.x + ox,
+        y: bottom.y
+      }
+      let cp3 = {
+        x: bottom.x - ox,
+        y: bottom.y
+      }
+      let left = {
+        x: -w2,
+        y: 0
+      }
+      let cp4 = {
+        x: left.x,
+        y: left.y + oy
+      }
+      let cp5 = {
+        x: left.x,
+        y: left.y - oy
+      }
+      let top = {
+        x: 0,
+        y: -h2
+      }
+      let cp6 = {
+        x: top.x - ox,
+        y: top.y
+      }
+      let cp7 = {
+        x: top.x + ox,
+        y: top.y
+      }
+      let cp8 = {
+        x: start.x,
+        y: start.y - oy
+      }
+
+      //获取第几条曲线的所有控制点
+      const getBezierControlPoint = (length: number) => {
+        switch (length) {
+          case 0:
+            return [start, cp1, cp2, bottom]
+          case 1:
+            return [bottom, cp3, cp4, left]
+          case 2:
+            return [left, cp5, cp6, top]
+          case 3:
+            return [top, cp7, cp8, start]
+        }
+      }
+
+      let bs: any = getBezierControlPoint(3)
+
+      let a, b, c, d = 0
+      let p0, p1, p2, p3, p = null
+      p3 = bs[3]
+      p2 = bs[2]
+      p1 = bs[1]
+      p0 = bs[0]
+
+      let mousePoint = {x: cx, y: cy}
+      let k = mousePoint.y / mousePoint.x
+      console.log('k', k, mousePoint)
+      k = (mousePoint.y - y - h2) / (mousePoint.x - x - w2)
+      console.log('k2', k)
+      drawRound(cu.ctx, mousePoint)
+
+      let ps = [p0, p1, p2, p3]
+
+      let XA = p3.x - 3 * p2.x + 3 * p1.x - p0.x,
+        XB = 3 * (p2.x - 2 * p1.x + p0.x),
+        XC = 3 * (p1.x - p0.x),
+        XD = p0.x
+      let YA = p3.y - 3 * p2.y + 3 * p1.y - p0.y,
+        YB = 3 * (p2.y - 2 * p1.y + p0.y),
+        YC = 3 * (p1.y - p0.y),
+        YD = p0.y
+      let A = k * XA - YA
+      let B = k * XB - YB
+      let C = k * XC - YC
+      let D = k * XD - YD
+
+      let t: any[] = solveCubic(A, B, C, D)
+      t = t.filter(v => 0 <= v && v <= 1.01)
+      console.log('t', t)
+      if (t.length){
+        // @ts-ignore
+        this.config.totalLength = 3 + t[0] ?? 0.5
+        cu.render()
+      }
+      // let mousePoint2 = getBezierPointByLength(t[0], ps)
+      // console.log('mousePoint2', mousePoint2)
+      // drawRound(cu.ctx, mousePoint2)
+
       return;
     }
 

@@ -437,7 +437,7 @@ class T extends Component<any, any> {
       let y1 = k * x1
       let otherPoint = {x: x1, y: y1}
       drawRound(ctx, otherPoint)
-      console.log('otherPoint', otherPoint)
+      console.log('otherPoint', k, otherPoint)
 
       let XA = p3.x - 3 * p2.x + 3 * p1.x - p0.x,
         XB = 3 * (p2.x - 2 * p1.x + p0.x),
@@ -455,7 +455,7 @@ class T extends Component<any, any> {
       let t: any[] = solveCubic(A, B, C, D)
       t = t.filter(v => 0 <= v && v <= 1.01)
       console.log('t', t)
-      let mousePoint2 = getBezierPointByLength(t[0],ps)
+      let mousePoint2 = getBezierPointByLength(t[0], ps)
 
       drawRound(ctx, mousePoint2)
 

@@ -12,30 +12,30 @@ export const fontFamilies = [
 ]
 
 export const fontWeight = [
-  { label: 'Light', value: FontWeight.LIGHT, },
-  { label: 'Regular', value: FontWeight.REGULAR, },
-  { label: 'Normal', value: FontWeight.Normal },
-  { label: 'Medium', value: FontWeight.MEDIUM },
-  { label: 'Bold', value: FontWeight.BOLD, },
-  { label: 'Heavy', value: FontWeight.HEAVY, },
+  {label: 'Light', value: FontWeight.LIGHT,},
+  {label: 'Regular', value: FontWeight.REGULAR,},
+  {label: 'Normal', value: FontWeight.Normal},
+  {label: 'Medium', value: FontWeight.MEDIUM},
+  {label: 'Bold', value: FontWeight.BOLD,},
+  {label: 'Heavy', value: FontWeight.HEAVY,},
 ]
 
 export const fontSize = [
-  { label: '10', value: 10, },
-  { label: '12', value: 12, },
-  { label: '14', value: 14, },
-  { label: '16', value: 16, },
-  { label: '18', value: 18, },
-  { label: '20', value: 20, },
-  { label: '24', value: 24, },
-  { label: '32', value: 32, },
-  { label: '36', value: 36, },
-  { label: '40', value: 40, },
-  { label: '48', value: 48, },
-  { label: '64', value: 64, },
-  { label: '96', value: 96, },
-  { label: '128', value: 128, },
-  { label: '256', value: 256, },
+  {label: '10', value: 10,},
+  {label: '12', value: 12,},
+  {label: '14', value: 14,},
+  {label: '16', value: 16,},
+  {label: '18', value: 18,},
+  {label: '20', value: 20,},
+  {label: '24', value: 24,},
+  {label: '32', value: 32,},
+  {label: '36', value: 36,},
+  {label: '40', value: 40,},
+  {label: '48', value: 48,},
+  {label: '64', value: 64,},
+  {label: '96', value: 96,},
+  {label: '128', value: 128,},
+  {label: '256', value: 256,},
 ]
 
 export const Colors = {
@@ -46,7 +46,7 @@ export const Colors = {
 }
 
 
-export const rects2  = [
+export const rects2 = [
   {
     "x": 1248,
     "y": 50,
@@ -302,7 +302,7 @@ export const rects2  = [
   }
 ]
 
-export const rects =[
+export const rects = [
   {
     "x": 100,
     "y": 50,
@@ -313,6 +313,7 @@ export const rects =[
     "rotate": 0,
     "lineWidth": 2,
     "type": ShapeType.ELLIPSE,
+    totalLength: 3.6,
     "color": "gray",
     "radius": 0,
     "children": [],
@@ -320,7 +321,7 @@ export const rects =[
     "flipHorizontal": false,
     "flipVertical": false,
     "borderColor": "rgb(216,216,216)",
-    "fillColor": "white",
+    "fillColor": "rgb(216,216,216)",
     "fontSize": 16,
     "fontWeight": 500,
     "fontFamily": "SourceHanSansCN",

@@ -304,13 +304,14 @@ export function drawRound(ctx: any, rect: any, r: number = 4) {
   let d = 4
   let {x, y, w = 2 * d, h = 2 * d, lineWidth = 1.5} = rect
   ctx.save()
+  ctx.beginPath()
   ctx.lineWidth = lineWidth
   ctx.fillStyle = Colors.white
   ctx.strokeStyle = Colors.primary
-  ctx.beginPath()
   ctx.arc(x, y, r, 0, 2 * Math.PI)
   ctx.fill()
   ctx.stroke()
+  ctx.closePath()
   ctx.restore()
 }
 
@@ -763,7 +764,7 @@ export function draw3(
   },
   parent?: any
 ) {
-  ctx.save()
+  // ctx.save()
   status = Object.assign({
     isHover: false,
     isSelect: false,
@@ -785,17 +786,17 @@ export function draw3(
       break
   }
 
-  if (isHover) {
-    hover(ctx, {...config, x, y})
-  }
-  if (isSelect) {
-    selected(ctx, {...config, x, y})
-  }
-  if (isEdit) {
-    edit(ctx, {...config, x, y})
-  }
+  // if (isHover) {
+  //   hover(ctx, {...config, x, y})
+  // }
+  // if (isSelect) {
+  //   selected(ctx, {...config, x, y})
+  // }
+  // if (isEdit) {
+  //   edit(ctx, {...config, x, y})
+  // }
 
-  ctx.restore()
+  // ctx.restore()
 
   // ctx.save()
   // let rect = this.config
@@ -816,18 +817,104 @@ function drawEllipse(
     x, y, w, h, radius,
     fillColor, borderColor, rotate, lineWidth,
     type, flipVertical, flipHorizontal, children,
+    totalLength
   } = config
   let w2 = w / 2, h2 = h / 2
-  //http://www.alloyteam.com/2015/07/canvas-hua-tuo-yuan-di-fang-fa/
-  //这里也可以用.5和.6来算ox和oy
-  let ox = 0.5522848 * w2, oy = .5522848 * h2;
 
   ctx.save();
   ctx.translate(x + w2, y + h2);
+  if (totalLength === 4) {
+    ctx.beginPath()
+    ctx.ellipse(0, 0, w2, h2, jiaodu2hudu(0), 0, 2 * Math.PI); //倾斜 45°角
+    ctx.closePath()
+  } else {
+    //http://www.alloyteam.com/2015/07/canvas-hua-tuo-yuan-di-fang-fa/
+    //这里也可以用.5和.6来算ox和oy
+    let ox = 0.5522848 * w2, oy = .5522848 * h2;
 
-  ctx.ellipse(0, 0, w2, h2, jiaodu2hudu(0), 0, 2 * Math.PI); //倾斜 45°角
+    //TODO 可以优化
+    //图形为整圆时的，4个线段中间点，以及相邻两个控制点。
+    let start = {
+      x: w2,
+      y: 0
+    }
+    let cp1 = {
+      x: start.x,
+      y: start.y + oy
+    }
+    let bottom = {
+      x: 0,
+      y: h2
+    }
+    let cp2 = {
+      x: bottom.x + ox,
+      y: bottom.y
+    }
+    let cp3 = {
+      x: bottom.x - ox,
+      y: bottom.y
+    }
+    let left = {
+      x: -w2,
+      y: 0
+    }
+    let cp4 = {
+      x: left.x,
+      y: left.y + oy
+    }
+    let cp5 = {
+      x: left.x,
+      y: left.y - oy
+    }
+    let top = {
+      x: 0,
+      y: -h2
+    }
+    let cp6 = {
+      x: top.x - ox,
+      y: top.y
+    }
+    let cp7 = {
+      x: top.x + ox,
+      y: top.y
+    }
+    let cp8 = {
+      x: start.x,
+      y: start.y - oy
+    }
 
+    //获取第几条曲线的所有控制点
+    const getBezierControlPoint = (length: number) => {
+      switch (length) {
+        case 0:
+          return [start, cp1, cp2, bottom]
+        case 1:
+          return [bottom, cp3, cp4, left]
+        case 2:
+          return [left, cp5, cp6, top]
+        case 3:
+          return [top, cp7, cp8, start]
+      }
+    }
 
+    //渲染，整个圆时，所有的控制点
+    let showCp = true
+    if (showCp) {
+      drawRound(ctx, start)
+      drawRound(ctx, cp1)
+      drawRound(ctx, bottom)
+      drawRound(ctx, cp2)
+      drawRound(ctx, cp3)
+      drawRound(ctx, left)
+      drawRound(ctx, cp4)
+      drawRound(ctx, cp5)
+      drawRound(ctx, top)
+      drawRound(ctx, cp6)
+      drawRound(ctx, cp7)
+      drawRound(ctx, cp8)
+    }
+  }
+  ctx.beginPath()
 
   ctx.fillStyle = fillColor
   ctx.fill()

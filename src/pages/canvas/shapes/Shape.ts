@@ -1,8 +1,8 @@
-import {getPath} from "./pages/canvas/utils";
-import {Shape, ShapeConfig} from "./pages/canvas/type";
-import {CanvasUtil} from "./pages/canvas/utils/CanvasUtil";
+import {ShapeConfig} from "../type";
+import {getPath} from "../utils";
+import {CanvasUtil} from "../utils/CanvasUtil";
 
-export abstract class P {
+export abstract class Shape {
   hoverRd1: boolean = false
   enterRd1: boolean = false
   hoverL: boolean = false
@@ -56,26 +56,4 @@ export abstract class P {
     y = (y - handY) / cu.handScale
     return {x, y, cu}
   }
-}
-
-export class C extends P {
-  constructor(props: any) {
-    super(props);
-  }
-
-  isIn(): void {
-  }
-
-  mousedown(): void {
-  }
-
-  mousemove(): void {
-  }
-
-  mouseup(): void {
-  }
-
-  render(): void {
-  }
-
 }

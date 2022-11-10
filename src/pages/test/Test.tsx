@@ -21,6 +21,8 @@ class T extends Component<any, any> {
   }
 
   componentDidMount() {
+
+
     let canvas = document.querySelector('canvas');
     let ctx = canvas!.getContext('2d')!;
     ctx.clearRect(0, 0, 500, 500)

@@ -1,6 +1,7 @@
-import {Shape} from "./Shape";
+import {BaseShape} from "./BaseShape";
+import {draw3} from "../utils";
 
-export class Ellipse extends Shape{
+export class Ellipse extends BaseShape{
   isIn(): void {
   }
 
@@ -13,7 +14,17 @@ export class Ellipse extends Shape{
   mouseup(): void {
   }
 
-  render(): void {
+  render(ctx: CanvasRenderingContext2D, parent?: any): void {
+    draw3(ctx, this.config, this.original, {
+      isHover: this.isHover,
+      isSelect: this.isSelect,
+      isEdit: this.isEdit,
+      enterLT: this.enterLT,
+      enterL: this.enterL
+    }, parent)
+    if (this.children) {
+      this.children.map((item: any) => item.render(ctx, this.config))
+    }
   }
 
 }

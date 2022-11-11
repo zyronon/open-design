@@ -1,4 +1,4 @@
-import {BezierPoint, Point2} from "../pages/canvas/type";
+import {BezierPoint, P2} from "../pages/canvas/type";
 
 export {};
 
@@ -13,11 +13,11 @@ declare global {
     bezierCurveTo2(cp1: Point, cp2: Point, end: Point): void
 
     //二次贝塞尔曲线
-    quadraticCurveTo2(cp1: Point | Point2, end: Point): void
+    quadraticCurveTo2(cp1: Point | P2, end: Point): void
 
-    moveTo2(cp1: Point | Point2): void
+    moveTo2(cp1: Point | P2): void
 
-    lineTo2(cp1: Point | Point2): void
+    lineTo2(cp1: Point | P2): void
   }
 }
 

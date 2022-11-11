@@ -1,6 +1,6 @@
-import {Shape} from "./Shape";
+import {BaseShape} from "./BaseShape";
 
-export class Text extends Shape{
+export class Text extends BaseShape{
   isIn(): void {
   }
 

@@ -1,9 +1,9 @@
 import {Shape} from "./Shape";
 import {draw3, drawRound, getBezierPointByLength, getPath, solveCubic} from "../utils";
-import {CanvasUtil} from "./CanvasUtil";
+import {CanvasUtil2} from "./CanvasUtil";
 import {cloneDeep} from "lodash";
 import getCenterPoint, {getAngle, getRotatedPoint} from "../../../utils";
-import {Point} from "../type";
+import {P} from "../type";
 
 class Ellipse extends Shape {
   hoverRd1: boolean = false
@@ -18,8 +18,8 @@ class Ellipse extends Shape {
   enterTest: boolean = false
   startX: number = -1
   startY: number = -1
-  diagonal: Point = {x: 0, y: 0}//对角
-  handlePoint: Point = {x: 0, y: 0}//对角
+  diagonal: P = {x: 0, y: 0}//对角
+  handlePoint: P = {x: 0, y: 0}//对角
 
   constructor(props: any) {
     super(props);
@@ -52,7 +52,7 @@ class Ellipse extends Shape {
     return false
   }
 
-  isIn(x: number, y: number, cu: CanvasUtil): boolean {
+  isIn(x: number, y: number, cu: CanvasUtil2): boolean {
     if (this.enterL || this.enterLT || this.enterLTR) return true
 
     const {x: handX, y: handY} = cu.handMove
@@ -153,7 +153,7 @@ class Ellipse extends Shape {
       return this.emit(event, parent)
     }
 
-    let cu = CanvasUtil.getInstance()
+    let cu = CanvasUtil2.getInstance()
     if (this.isIn(coordinate.x, coordinate.y, cu)) {
       cb?.()
       // console.log('捕获', this.config.name)
@@ -337,7 +337,7 @@ class Ellipse extends Shape {
     cu.render()
   }
 
-  moveEnterLT({x, y}: Point) {
+  moveEnterLT({x, y}: P) {
     let rect = this.config
     let s = this.original
     let current = {x, y}

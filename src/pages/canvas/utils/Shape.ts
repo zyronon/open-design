@@ -1,5 +1,5 @@
 import {clear, getPath, renderRoundRect} from "../utils";
-import {CanvasUtil} from "./CanvasUtil";
+import {CanvasUtil2} from "./CanvasUtil";
 import EventBus from "../../../utils/event-bus";
 import {EventMapTypes, ShapeConfig} from "../type";
 import {clone, cloneDeep} from "lodash";
@@ -30,7 +30,7 @@ export class Shape {
   //获取缩放平移之后的x和y值
   getXY(coordinate: { x: number, y: number }) {
     let {x, y} = coordinate
-    let cu = CanvasUtil.getInstance();
+    let cu = CanvasUtil2.getInstance();
     const {x: handX, y: handY} = cu.handMove
     x = (x - handX) / cu.handScale//上面的简写
     y = (y - handY) / cu.handScale

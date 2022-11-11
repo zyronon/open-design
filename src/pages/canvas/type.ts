@@ -1,5 +1,5 @@
-import {CanvasUtil} from "./utils/CanvasUtil";
 import {getBezierPointByLength} from "./utils";
+import CanvasUtil2 from "./CanvasUtil2";
 
 export type IState = {
   rectList: Shape[],
@@ -46,7 +46,7 @@ export type IState = {
   usePen: boolean,
   enterPen: boolean,
   isEdit: boolean,
-  cu: CanvasUtil,
+  cu: CanvasUtil2,
   drawCount: number
 
   selectDrawType: string,
@@ -61,6 +61,7 @@ export type IState = {
 }
 
 
+//图形类型
 export enum ShapeType {
   SELECT = 100,
   SCALE = 101,
@@ -68,13 +69,13 @@ export enum ShapeType {
   FRAME = 102,
   SLICE = 103,
 
-  RECT = 104,
+  RECTANGLE = 104,
   ELLIPSE = 105,
   ARROW = 106,
   LINE = 107,
   POLYGON = 108,
   STAR = 109,
-  IMG = 110,
+  IMAGE = 110,
 
   PEN = 111,
   PENCIL = 112,
@@ -90,6 +91,7 @@ export enum ShapeType {
 export interface RectImg {
   img: any,
 }
+
 
 export interface Shape extends RectText, RectImg {
   id: number | string,
@@ -124,23 +126,25 @@ export interface ShapeConfig {
   h: number,
   rx: number,
   ry: number,
-  rotate: number,
-  lineWidth: number,
-  type: ShapeType,
-  color: string,
-  fillColor: string,
-  borderColor: string,
   leftX: number,
   topY: number,
   rightX: number,
   bottomY: number,
   centerX: number,
   centerY: number,
+  location: P2,
+  rotate: number,
+  lineWidth: number,
+  type: ShapeType,
+  color: string,
+  fillColor: string,
+  borderColor: string,
   radius: number,
-  children: Shape[],
+  children: any[],
   flipVertical?: boolean,
   flipHorizontal?: boolean,
-  points?: any[]
+  points?: any[],
+  totalLength?: number
 }
 
 export enum TextMode {
@@ -207,18 +211,22 @@ export const EventMapTypes = {
 export const EventTypes = {
   onClick: 'click',
   onWheel: 'wheel',
-  ...EventMapTypes
+  ...EventMapTypes,//TODO 当老的删除CanvasUtil.ts删除掉这行
+  onDoubleClick: 'dblclick',
+  onMouseMove: 'mousemove',
+  onMouseDown: 'mousedown',
+  onMouseUp: 'mouseup',
+  onMouseEnter: 'mouseenter',
+  onMouseLeave: 'mouseleave',
+  draw: 'draw'
 }
+
 
 export interface BaseEvent extends MouseEvent {
   capture: boolean
 }
 
-export interface Point {
-  x: number,
-  y: number,
-}
-
+//贝塞尔点的类型
 export enum BezierPointType {
   RightAngle = 'RightAngle',//直角
   MirrorAngleAndLength = 'MirrorAngleAndLength',//完全对称
@@ -232,7 +240,14 @@ export enum LineType {
   Bezier3 = 2,
 }
 
-export interface Point2 {
+//简单点
+export interface P {
+  x: number,
+  y: number,
+}
+
+//复杂的点
+export interface P2 {
   use: boolean
   x: number,
   y: number,
@@ -246,14 +261,14 @@ export interface Point2 {
 // 二次贝塞尔曲线：同上，只不过取任中一个cp点作为控制点
 // 直线：直接取两个点的center点相连
 export interface BezierPoint {
-  cp1: Point2,//右边的控制点
-  center: Point2//中边的点
-  cp2: Point2//左边的控制点
+  cp1: P2,//右边的控制点
+  center: P2//中边的点
+  cp2: P2//左边的控制点
   type: BezierPointType,
 }
 
 
-export function getDefaultPoint(use: boolean = false): Point2 {
+export function getDefaultPoint(use: boolean = false): P2 {
   return {
     use,
     x: 0,

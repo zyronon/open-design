@@ -1,8 +1,8 @@
 import {ShapeConfig} from "../type";
 import {getPath} from "../utils";
-import {CanvasUtil} from "../utils/CanvasUtil";
+import {CanvasUtil2} from "../utils/CanvasUtil";
 
-export abstract class Shape {
+export abstract class BaseShape {
   hoverRd1: boolean = false
   enterRd1: boolean = false
   hoverL: boolean = false
@@ -12,7 +12,7 @@ export abstract class Shape {
   hoverLTR: boolean = false
   enterLTR: boolean = false
   config: ShapeConfig
-  protected children: Shape[] = []
+  protected children: BaseShape[] = []
   isHover: boolean = false
   isSelect: boolean = false
   isEdit: boolean = false
@@ -23,11 +23,11 @@ export abstract class Shape {
   original: any = null
   lastClickTime: number = 0
 
-  constructor(props: any) {
+  constructor(props: ShapeConfig) {
     this.config = getPath(props)
   }
 
-  abstract render(): void
+  abstract render(ctx: CanvasRenderingContext2D): void
 
   abstract isIn(): void
 
@@ -50,7 +50,7 @@ export abstract class Shape {
   //获取缩放平移之后的x和y值
   getXY(coordinate: { x: number, y: number }) {
     let {x, y} = coordinate
-    let cu = CanvasUtil.getInstance();
+    let cu = CanvasUtil2.getInstance();
     const {x: handX, y: handY} = cu.handMove
     x = (x - handX) / cu.handScale//上面的简写
     y = (y - handY) / cu.handScale

@@ -4,7 +4,7 @@ import './index.scss'
 import {withRouter} from "../../components/WithRouter";
 import {getBezierPointByLength, drawCp, drawRound, getBezier3ControlPoints, getDecimal} from "../canvas/utils";
 import {Colors} from "../canvas/constant";
-import {BezierPoint, BezierPointType, getDefaultPoint, LineType, Point2} from "../canvas/type";
+import {BezierPoint, BezierPointType, getDefaultPoint, LineType, P2} from "../canvas/type";
 import {getAngle2, jiaodu2hudu} from "../../utils";
 
 class T extends Component<any, any> {
@@ -336,7 +336,7 @@ class T extends Component<any, any> {
           // ctx.stroke()
           break
         case LineType.Bezier2:
-          let cp: Point2
+          let cp: P2
           if (previousPoint.cp2.use) cp = previousPoint.cp2
           if (currentPoint.cp1.use) cp = currentPoint.cp2
           // ctx.beginPath()

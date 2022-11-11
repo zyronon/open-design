@@ -1,4 +1,4 @@
-import {FontFamily, FontWeight, ShapeType} from "./type";
+import {FontFamily, FontWeight, ShapeConfig, ShapeType} from "./type";
 
 export const fontFamilies = [
   {
@@ -302,7 +302,7 @@ export const rects2 = [
   }
 ]
 
-export const rects = [
+export const rects: any[] = [
   {
     "x": 100,
     "y": 50,
@@ -326,7 +326,7 @@ export const rects = [
     "fontWeight": 500,
     "fontFamily": "SourceHanSansCN",
     "texts": [],
-    "name": "容器",
+    "name": "椭圆",
     "leftX": 855,
     "rightX": 1297.352486523967,
     "topY": 98,
@@ -334,5 +334,63 @@ export const rects = [
     "id": "cd973e70-08e8-471a-814d-61966b891d5a",
     "centerX": 1076.1762432619835,
     "centerY": 313.4802615979377
+  },
+  {
+    "x": 1248,
+    "y": 50,
+    "rx": 1248,
+    "ry": 50,
+    "w": 280,
+    "h": 580,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": ShapeType.RECTANGLE,
+    "color": "gray",
+    "radius": 40,
+    "children": [],
+    "brokenTexts": [],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "rgb(216,216,216)",
+    "fontSize": 16,
+    "fontWeight": 500,
+    "fontFamily": "SourceHanSansCN",
+    "texts": [],
+    "name": "长方形",
+    "leftX": 1248,
+    "rightX": 1528,
+    "topY": 50,
+    "bottomY": 630,
+    "id": "cd973e70-08e8-471a-814d-61966b891d5a",
+    "centerX": 1388,
+    "centerY": 340
+  },
+  {
+    "x": 300,
+    "y": 100,
+    "rx": 338,
+    "ry": 104,
+    "w": 500,
+    "h": 500,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": ShapeType.FRAME,
+    "color": "gray",
+    "radius": 10,
+    "children": [],
+    "brokenTexts": [],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "rgb(216,216,216)",
+    "fontSize": 16,
+    "fontWeight": 500,
+    "fontFamily": "SourceHanSansCN",
+    "texts": [],
+    "name": "容器",
+    "leftX": 300,
+    "rightX": 800,
+    "topY": 100,
+    "bottomY": 600,
+    "id": "8e45d15c-28ca-452d-80f5-766f870c854a",
+    "centerX": 550,
+    "centerY": 350
   }
 ]

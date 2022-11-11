@@ -1,64 +1,29 @@
-import React, {MouseEvent, RefObject} from "react";
+import React, {RefObject} from "react";
 import './index.scss'
-import {assign, clone, cloneDeep, throttle} from 'lodash'
-import getCenterPoint, {getAngle, getRotatedPoint} from "../../utils";
+import {cloneDeep} from 'lodash'
 import BaseInput from "../../components/BaseInput";
-import {
-  AlignTextLeft,
-  AutoHeightOne,
-  AutoLineWidth,
-  AutoWidthOne,
-  Down,
-  FullScreen,
-  More,
-  PreviewClose,
-  RowHeight,
-  Square,
-  Unlock,
-} from "@icon-park/react";
+import {Down, FullScreen, PreviewClose, Unlock,} from "@icon-park/react";
 import BaseIcon from "../../components/BaseIcon";
 import BaseButton from "../../components/BaseButton";
 import FlipIcon from "../../assets/icon/FlipIcon";
 import RotateIcon from "../../assets/icon/RotateIcon";
 import AngleIcon from "../../assets/icon/AngleIcon";
 import {withRouter} from "../../components/WithRouter";
-import {mat4} from 'gl-matrix'
 import Fps from "../../components/Fps";
 import {BaseOption, BaseSelect} from "../../components/BaseSelect2";
-import {Colors, fontFamilies, fontSize, fontWeight, rects} from "./constant";
-import {
-  EventTypes,
-  EventMapTypes,
-  FontFamily,
-  FontWeight,
-  IState,
-  RectColorType,
-  Shape,
-  ShapeType,
-  TextAlign,
-  TextMode
-} from "./type";
-import {BaseRadio, BaseRadioGroup} from "../../components/BaseRadio";
+import {rects} from "./constant";
+import {EventTypes, IState, RectColorType, Shape, ShapeConfig, ShapeType} from "./type";
 import BaseSlotButton from "../../components/BaseSlotButton";
-import BasePicker from "../../components/BasePicker"
 import Icon from '@icon-park/react/es/all';
-import {pushRect, removeRect, store} from "./store";
-import {clearAll, getPath, renderCanvas, renderRound} from "./utils";
+import {store} from "./store";
 import {message} from "antd";
 import Left from "./components/Left/left"
-import {CanvasUtil} from "./utils/CanvasUtil";
-// import { Frame } from "./utils/Frame";
-import Frame from "./utils/Frame";
 import EventBus from "../../utils/event-bus";
 import cx from "classnames";
-import Ellipse from "./utils/Ellipse";
+import CanvasUtil2 from "./CanvasUtil2";
+import {Frame} from "./shapes/Frame";
+import {Ellipse} from "./shapes/Ellipse";
 
-const out = new Float32Array([
-  0, 0, 0, 0,
-  0, 0, 0, 0,
-  0, 0, 0, 0,
-  0, 0, 0, 0,
-]);
 
 class Design extends React.Component<any, IState> {
   canvasRef: RefObject<HTMLCanvasElement> = React.createRef()
@@ -74,7 +39,7 @@ class Design extends React.Component<any, IState> {
     selectDrawType: 'drawType',
     drawType: ShapeType.SELECT,
     drawType2: ShapeType.FRAME,
-    drawType3: ShapeType.RECT,
+    drawType3: ShapeType.RECTANGLE,
     drawType4: ShapeType.PEN,
     drawType5: ShapeType.TEXT,
     drawType6: ShapeType.MOVE,
@@ -92,27 +57,12 @@ class Design extends React.Component<any, IState> {
 
   init() {
     let canvas: HTMLCanvasElement = this.canvasRef.current!
-    const c = CanvasUtil.getInstance(canvas)
-    c.clearChild()
-    // let c = new CanvasUtil(canvas)
-    // @ts-ignore
-    cloneDeep(rects).map((rect: Shape) => {
-      let r
-      switch (rect.type) {
-        case ShapeType.FRAME:
-          r = new Frame(rect)
-          break
-        case ShapeType.ELLIPSE:
-          r = new Ellipse(rect)
-          break
-      }
-      // @ts-ignore
-      r && c.addChild(r)
-    })
+    const c = CanvasUtil2.getInstance(canvas)
+    c.clear()
+    c.addChildren(rects)
     c.render()
-    c.initEvent()
     this.setState({cu: c})
-    EventBus.on('draw', () => {
+    EventBus.on(EventTypes.draw, () => {
       this.setState(s => {
         return {drawCount: s.drawCount + 1}
       })
@@ -237,16 +187,16 @@ class Design extends React.Component<any, IState> {
                   <BaseSelect
                     value={drawType3}
                     selectRender={(e: any) => {
-                      if (e.value === ShapeType.RECT) return <Icon type={'RectangleOne'}/>
+                      if (e.value === ShapeType.RECTANGLE) return <Icon type={'RectangleOne'}/>
                       if (e.value === ShapeType.ELLIPSE) return <Icon type={'Round'}/>
                       if (e.value === ShapeType.ARROW) return <Icon type={'ArrowRightUp'}/>
                       if (e.value === ShapeType.LINE) return <Icon type={'Minus'}/>
                       if (e.value === ShapeType.POLYGON) return <Icon type={'Triangle'}/>
                       if (e.value === ShapeType.STAR) return <Icon type={'star'}/>
-                      if (e.value === ShapeType.IMG) return <Icon type={'pic'}/>
+                      if (e.value === ShapeType.IMAGE) return <Icon type={'pic'}/>
                     }}
                     onChange={(e: any) => this.setCanvasUtilMode(e, 'drawType3')}>
-                    <BaseOption key={1} value={ShapeType.RECT} label={ShapeType.RECT}>
+                    <BaseOption key={1} value={ShapeType.RECTANGLE} label={ShapeType.RECTANGLE}>
                       <SelectItem name={'矩形'} iconName={'RectangleOne'} hotkey={'R'}/>
                     </BaseOption>
                     <BaseOption key={2} value={ShapeType.ELLIPSE} label={ShapeType.ELLIPSE}>
@@ -264,7 +214,7 @@ class Design extends React.Component<any, IState> {
                     <BaseOption key={6} value={ShapeType.STAR} label={ShapeType.STAR}>
                       <SelectItem name={'星形'} iconName={'star'} hotkey={''}/>
                     </BaseOption>
-                    <BaseOption key={7} value={ShapeType.IMG} label={ShapeType.IMG}>
+                    <BaseOption key={7} value={ShapeType.IMAGE} label={ShapeType.IMAGE}>
                       <SelectItem name={'图片'} iconName={'pic'} hotkey={'Shift Ctrl K'}/>
                     </BaseOption>
                   </BaseSelect>

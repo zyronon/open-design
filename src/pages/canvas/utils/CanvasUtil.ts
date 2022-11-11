@@ -13,7 +13,7 @@ const out: any = new Float32Array([
   0, 0, 0, 0,
 ]);
 
-export class CanvasUtil {
+export class CanvasUtil2 {
   // @ts-ignore
   private canvas: HTMLCanvasElement;
   // @ts-ignore
@@ -24,7 +24,7 @@ export class CanvasUtil {
   private dpr: number;
   // @ts-ignore
   private children: any[]
-  static instance: CanvasUtil | null
+  static instance: CanvasUtil2 | null
   //当hover时，只向hover那个图形传递事件。不用递归整个树去判断isIn
   inShape: any
   //因为当hover只向hover图形传递事件，所以无法获得父级链，这里用个变量保存起来
@@ -117,7 +117,7 @@ export class CanvasUtil {
 
   static getInstance(canvas?: any) {
     if (!this.instance) {
-      this.instance = new CanvasUtil(canvas)
+      this.instance = new CanvasUtil2(canvas)
     } else {
       if (canvas) {
         this.instance.init(canvas)
@@ -234,13 +234,13 @@ export class CanvasUtil {
           break
         case ShapeType.FRAME:
         case ShapeType.SLICE:
-        case ShapeType.RECT:
+        case ShapeType.RECTANGLE:
         case ShapeType.ELLIPSE:
         case ShapeType.ARROW:
         case ShapeType.LINE:
         case ShapeType.POLYGON:
         case ShapeType.STAR:
-        case ShapeType.IMG:
+        case ShapeType.IMAGE:
           this.cursor = 'crosshair'
           break
         case ShapeType.PEN:
@@ -333,7 +333,7 @@ export class CanvasUtil {
     // console.log('canvas画布-onMouseMove')
     if (this.isMouseDown) {
       switch (this.mode) {
-        case ShapeType.RECT:
+        case ShapeType.RECTANGLE:
           this.drawNewShape(coordinate)
           break
         case ShapeType.MOVE:
@@ -363,7 +363,7 @@ export class CanvasUtil {
     // console.log('canvas画布-onMouseDown')
     if (!this.isDesign()) {
       switch (this.mode) {
-        case ShapeType.RECT:
+        case ShapeType.RECTANGLE:
           if (this.selectedShape) {
             this.selectedShape.isSelect = false
           }
@@ -390,7 +390,7 @@ export class CanvasUtil {
     if (this.isMouseDown) {
       this.isMouseDown = false
       switch (this.mode) {
-        case ShapeType.RECT:
+        case ShapeType.RECTANGLE:
           let frame = new Frame(this.drawShapeConfig);
           frame.isSelect = true
           this.selectedShape = frame

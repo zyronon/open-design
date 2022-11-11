@@ -1,7 +1,7 @@
 import {connect} from "react-redux";
-import Canvas from "./Design";
+import Design from "./Design";
 
 const mapState = (state: any) => {
   return state.canvas
 }
-export default connect(mapState)(Canvas)
+export default connect(mapState)(Design)

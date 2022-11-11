@@ -1,6 +1,6 @@
 //获取斜边长度
 //给一个圆心点和其他点
-import {Point, Point2} from "../pages/canvas/type";
+import {P, P2} from "../pages/canvas/type";
 
 export function getHypotenuse(one: number[], two: number[]) {
   let [oneX, oneY] = one
@@ -74,7 +74,7 @@ export function getAngle(center: number[], one: number[], two: number[]) {
 }
 
 //获取两点之间角度
-export function getAngle2(center: Point2, one: Point2, two: Point2) {
+export function getAngle2(center: P2, one: P2, two: P2) {
   let {x: cx, y: cy} = center
   let {x: x1, y: y1} = one
   let {x: x2, y: y2} = two

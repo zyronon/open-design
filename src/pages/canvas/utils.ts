@@ -3,7 +3,7 @@ import {
   BezierPointType,
   getDefaultPoint,
   IState, LineType,
-  Point2,
+  P2,
   Shape,
   ShapeConfig,
   ShapeType,
@@ -13,7 +13,7 @@ import {store} from "./store";
 // @ts-ignore
 import {v4 as uuid} from 'uuid';
 import {Colors} from "./constant";
-import {CanvasUtil} from "./utils/CanvasUtil";
+import {CanvasUtil2} from "./utils/CanvasUtil";
 import {getHypotenuse2, jiaodu2hudu} from "../../utils";
 
 export function renderCanvas(
@@ -100,7 +100,7 @@ export function renderCanvas(
 
   // ctx.strokeRect(x, y, w, h)
   if (
-    type === ShapeType.RECT
+    type === ShapeType.RECTANGLE
     || type === ShapeType.HOVER
     || type === ShapeType.SELECT
   ) {
@@ -199,7 +199,7 @@ export function renderCanvas(
         text && ctx.fillText(text, lX, y + (index * rect.textLineHeight));
       })
       break
-    case ShapeType.IMG:
+    case ShapeType.IMAGE:
       let currentImg = store.images.get(rect.id)
       if (currentImg) {
         ctx.drawImage(currentImg, x, y, w, h);
@@ -241,7 +241,7 @@ export function renderCanvas(
                 w: rect.w,
                 h: rect.h,
               }, 4, ctx,
-              index !== arr.length - 1 ? undefined : ShapeType.RECT)
+              index !== arr.length - 1 ? undefined : ShapeType.RECTANGLE)
           }
           ctx.beginPath()
           ctx.moveTo(item.x, item.y)
@@ -291,18 +291,18 @@ export function drawRoundRect(ctx: CanvasRenderingContext2D, rect: any, r: numbe
   ctx.restore()
 }
 
-export function renderRound(rect: any, r: number, ctx: any, type: ShapeType = ShapeType.RECT) {
+export function renderRound(rect: any, r: number, ctx: any, type: ShapeType = ShapeType.RECTANGLE) {
   let {x, y} = rect
   ctx.save()
   ctx.lineWidth = 1.5
-  if (type === ShapeType.RECT) {
+  if (type === ShapeType.RECTANGLE) {
     ctx.fillStyle = Colors.primary
   } else {
     ctx.strokeStyle = Colors.primary
   }
   ctx.beginPath()
   ctx.arc(x, y, r, 0, 2 * Math.PI)
-  if (type === ShapeType.RECT) {
+  if (type === ShapeType.RECTANGLE) {
     ctx.fill()
   } else {
     ctx.stroke()
@@ -325,7 +325,7 @@ export function drawRound(ctx: any, rect: any, r: number = 4) {
   ctx.restore()
 }
 
-export function drawCp(ctx: CanvasRenderingContext2D, rect: any, center: Point2) {
+export function drawCp(ctx: CanvasRenderingContext2D, rect: any, center: P2) {
   let d = 3
   let {x, y, w = 2 * d, h = 2 * d, lineWidth = 1} = rect
   let ow = w / 2
@@ -1106,7 +1106,7 @@ function drawEllipse(
           // ctx.stroke()
           break
         case LineType.Bezier2:
-          let cp: Point2
+          let cp: P2
           if (previousPoint.cp2.use) cp = previousPoint.cp2
           if (currentPoint.cp1.use) cp = currentPoint.cp2
           // ctx.beginPath()

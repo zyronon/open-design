@@ -9,7 +9,8 @@ export class Rect extends Shape {
 
   }
 
-  isIn(): void {
+  isIn(): boolean {
+    return true
   }
 
 }

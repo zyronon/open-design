@@ -2,7 +2,8 @@ import {BaseShape} from "./BaseShape";
 import {draw2} from "../utils";
 
 export class Frame extends BaseShape {
-  isIn(): void {
+  isIn(): boolean {
+    return false
   }
 
   mousedown(): void {

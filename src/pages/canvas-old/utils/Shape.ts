@@ -16,7 +16,8 @@ export class Shape {
   draw(ctx: CanvasRenderingContext2D): void {
   }
 
-  isIn(): void {
+  isIn(): boolean {
+    return true
   }
 
 }

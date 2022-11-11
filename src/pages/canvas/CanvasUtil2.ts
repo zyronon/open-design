@@ -7,6 +7,7 @@ import {rects} from "./constant";
 import {Frame} from "./shapes/Frame";
 import {Ellipse} from "./shapes/Ellipse";
 import {Rectangle} from "./shapes/Rectangle";
+import {Shape} from "./utils/Shape";
 
 export default class CanvasUtil2 {
   static instance: CanvasUtil2
@@ -38,6 +39,29 @@ export default class CanvasUtil2 {
   ])
   handScale: number = 1
   handMove: P = {x: 0, y: 0,}
+  //当hover时，只向hover那个图形传递事件。不用递归整个树去判断isIn
+  inShape: any
+  //因为当hover只向hover图形传递事件，所以无法获得父级链，这里用个变量保存起来
+  //当hover时，传递这个就可以正确获得父级链
+  inShapeParent: any
+  //选中图形
+  selectedShape: any
+  //选中图形的父级链，选中新的图形时，需要把老的父级链的isCapture全部设为ture,
+  //原因：选中新图形后，hover老图形时依然能hover中，所以需要把老的低级链isCapture全部设为ture
+  //屏蔽事件向下传递
+  selectedShapeParent: any = []
+  //用于标记子组件是否选中
+  childIsIn: boolean = false
+  mode: ShapeType = ShapeType.SELECT
+  startX: number = -1
+  startY: number = -1
+  offsetX: number = -1
+  offsetY: number = -1
+  isMouseDown: boolean = false
+  drawShapeConfig: any = null
+  cursor: string = 'default'
+  _data: any = {}
+
 
   constructor(canvas: HTMLCanvasElement) {
     this.init(canvas)
@@ -60,6 +84,7 @@ export default class CanvasUtil2 {
     this.ctx = ctx
     this.dpr = dpr
     this.canvasRect = canvasRect
+    this.initEvent(true)
     this.initEvent()
   }
 
@@ -81,6 +106,32 @@ export default class CanvasUtil2 {
     })
   }
 
+
+  //设置inShape
+  setInShape(shape: BaseShape, parent?: BaseShape[]) {
+    this.inShapeParent = parent
+    if (this.inShape !== shape) {
+      // console.log('shape', shape?.config?.name)
+      if (this.inShape) {
+        this.inShape.isHover = false
+      }
+      this.inShape = shape
+      //进入改成走居部重绘了，移出还是用的全体重绘
+      this.render()
+    }
+  }
+
+  isDesign() {
+    return true
+  }
+
+  //设置inShape为null
+  setInShapeNull(target: BaseShape) {
+    if (this.inShape === target) {
+      this.inShape = null
+      this.render()
+    }
+  }
 
   render() {
     EventBus.emit(EventTypes.draw)
@@ -130,8 +181,16 @@ export default class CanvasUtil2 {
     })
   }
 
-  handleEvent() {
-
+  handleEvent = (e: any) => {
+    e.stopPropagation = () => e.capture = true
+    let x = e.x - this.canvasRect.left
+    let y = e.y - this.canvasRect.top
+    let baseEvent = {
+      e,
+      coordinate: {x, y},
+      type: e.type
+    }
+    this.children.forEach(shape => shape.event(baseEvent, []))
   }
 
   clear() {
@@ -144,7 +203,6 @@ export default class CanvasUtil2 {
       0, 0, 0, 1,
     ])
     this.children = []
-    this.initEvent(true)
   }
 
   print2() {

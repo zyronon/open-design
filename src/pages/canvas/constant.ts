@@ -45,7 +45,6 @@ export const Colors = {
   white: 'white',
 }
 
-
 export const rects2 = [
   {
     "x": 1248,

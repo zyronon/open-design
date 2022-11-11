@@ -70,7 +70,8 @@ export class C extends P {
     super(props);
   }
 
-  isIn(): void {
+  isIn(): boolean {
+    return true
   }
 
   mousedown(): void {

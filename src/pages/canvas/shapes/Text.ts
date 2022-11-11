@@ -1,7 +1,8 @@
 import {BaseShape} from "./BaseShape";
 
-export class Text extends BaseShape{
-  isIn(): void {
+export class Text {
+  isIn(): boolean {
+    return false
   }
 
   mousedown(): void {

@@ -2,7 +2,8 @@ import {BaseShape} from "./BaseShape";
 import {draw3} from "../utils";
 
 export class Ellipse extends BaseShape{
-  isIn(): void {
+  isIn(): boolean {
+    return false
   }
 
   mousedown(): void {

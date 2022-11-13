@@ -214,16 +214,18 @@ export default class CanvasUtil2 {
   }
 
   onMouseDown(e: BaseEvent2, p: P,) {
+    if (e.capture) return
     console.log('cu-onMouseDown', e)
   }
 
   onMouseMove(e: BaseEvent2, p: P,) {
+    if (e.capture) return
     // console.log('cu-onMouseMove', e)
   }
 
   onMouseUp(e: BaseEvent2, p: P,) {
-    console.log('cu-onMouseUp', e)
     if (e.capture) return
+    console.log('cu-onMouseUp', e)
     this.selectedShapeParent.map((shape: Shape) => shape.isCapture = true)
     if (this.selectedShape) {
       this.selectedShape.isSelect = false

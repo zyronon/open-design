@@ -1,7 +1,8 @@
-import {BaseEvent2, P, ShapeConfig} from "../type";
-import {getPath} from "../utils";
-import CanvasUtil2 from "../CanvasUtil2";
-import {Shape} from "../utils/Shape";
+import {BaseEvent2, P, ShapeConfig} from "../type"
+import {getPath} from "../utils"
+import CanvasUtil2 from "../CanvasUtil2"
+import {Shape} from "../utils/Shape"
+import {cloneDeep} from "lodash"
 
 export abstract class BaseShape {
   hoverRd1: boolean = false
@@ -36,7 +37,7 @@ export abstract class BaseShape {
     const {x, y} = p
     let rect = this.config
     return rect.leftX < x && x < rect.rightX
-      && rect.topY < y && y < rect.bottomY;
+      && rect.topY < y && y < rect.bottomY
   }
 
   shapeIsIn(p: P, cu: CanvasUtil2): boolean {
@@ -93,7 +94,7 @@ export abstract class BaseShape {
         return true
       }
 
-      //未命中所有点
+      //未命中 点
       document.body.style.cursor = "default"
       this.hoverL = false
       this.hoverLT = false
@@ -161,6 +162,12 @@ export abstract class BaseShape {
     console.log('mousedown', this)
     let {e, point, type} = event
     let {x, y, cu} = this.getXY(point)
+    this.original = cloneDeep(this.config)
+    cu.startX = x
+    cu.startY = y
+
+    this.enter = true
+    if (this.isSelect) return
     this.isSelect = true
     this.isCapture = true
     this.isHover = false
@@ -176,19 +183,40 @@ export abstract class BaseShape {
     cu.render()
   }
 
-  mousemove(e: BaseEvent2, p: BaseShape[] = []) {
+  mousemove(event: BaseEvent2, p: BaseShape[] = []) {
     // console.log('mousemove', this.isSelect)
+    let {e, point, type} = event
+    // console.log('mousemove', this.config.name, `isHover：${this.isHover}`)
+    if (this.enter) {
+      return this.move(point)
+    }
   }
 
   mouseup(e: BaseEvent2, p: BaseShape[] = []) {
-    if (e.capture) return
+    // if (e.capture) return
     console.log('mouseup')
+    this.enter = false
+    this.enterL = false
+    this.enterLT = false
+    this.enterLTR = false
+    this.enterRd1 = false
+  }
+
+  move(point: P) {
+    let {x, y, cu} = this.getXY(point)
+    let dx = (x - cu.startX)
+    let dy = (y - cu.startY)
+    this.config.x = this.original.x + dx
+    this.config.y = this.original.y + dy
+    this.config = getPath(this.config, this.original)
+    // cu.hoverShape = this
+    cu.render()
   }
 
   //获取缩放平移之后的x和y值
   getXY(point: P) {
     let {x, y} = point
-    let cu = CanvasUtil2.getInstance();
+    let cu = CanvasUtil2.getInstance()
     const {x: handX, y: handY} = cu.handMove
     x = (x - handX) / cu.handScale//上面的简写
     y = (y - handY) / cu.handScale

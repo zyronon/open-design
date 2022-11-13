@@ -1,5 +1,9 @@
 <component name="ProjectCodeStyleConfiguration">
   <code_scheme name="Project" version="173">
+    <TypeScriptCodeStyleSettings version="0">
+      <option name="USE_SEMICOLON_AFTER_STATEMENT" value="false" />
+      <option name="FORCE_SEMICOLON_STYLE" value="true" />
+    </TypeScriptCodeStyleSettings>
     <codeStyleSettings language="TypeScript">
       <indentOptions>
         <option name="INDENT_SIZE" value="2" />

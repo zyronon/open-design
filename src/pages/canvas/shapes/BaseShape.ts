@@ -1,9 +1,9 @@
 import {BaseEvent2, P, ShapeConfig} from "../type"
 import {getPath} from "../utils"
 import CanvasUtil2 from "../CanvasUtil2"
-import {Shape} from "../utils/Shape"
 import {cloneDeep} from "lodash"
 import getCenterPoint, {getAngle, getRotatedPoint} from "../../../utils"
+import {getShapeFromConfig} from "./common"
 
 export abstract class BaseShape {
   hoverRd1: boolean = false
@@ -30,6 +30,9 @@ export abstract class BaseShape {
 
   constructor(props: ShapeConfig) {
     this.config = getPath(props)
+    this.children = this.config.children.map((child: ShapeConfig) => {
+      return getShapeFromConfig(child)
+    })
   }
 
   abstract render(ctx: CanvasRenderingContext2D): void

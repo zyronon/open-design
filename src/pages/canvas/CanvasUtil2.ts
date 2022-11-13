@@ -1,14 +1,21 @@
-import {BaseShape} from "./shapes/BaseShape";
-import EventBus from "../../utils/event-bus";
-import {clear} from "./utils";
-import {BaseEvent, BaseEvent2, EventMapTypes, EventTypes, P, ShapeConfig, ShapeType} from "./type";
-import {cloneDeep} from "lodash";
-import {rects} from "./constant";
-import {Frame} from "./shapes/Frame";
-import {Ellipse} from "./shapes/Ellipse";
-import {Rectangle} from "./shapes/Rectangle";
-import {Shape} from "./utils/Shape";
+import {BaseShape} from "./shapes/BaseShape"
+import EventBus from "../../utils/event-bus"
+import {clear} from "./utils"
+import {BaseEvent, BaseEvent2, EventMapTypes, EventTypes, P, ShapeConfig, ShapeType} from "./type"
+import {cloneDeep} from "lodash"
+import {config, rects} from "./constant"
+import {Frame} from "./shapes/Frame"
+import {Ellipse} from "./shapes/Ellipse"
+import {Rectangle} from "./shapes/Rectangle"
+import {Shape} from "./utils/Shape"
+import {mat4} from "gl-matrix"
 
+const out: any = new Float32Array([
+  0, 0, 0, 0,
+  0, 0, 0, 0,
+  0, 0, 0, 0,
+  0, 0, 0, 0,
+])
 export default class CanvasUtil2 {
   static instance: CanvasUtil2
 
@@ -24,21 +31,16 @@ export default class CanvasUtil2 {
   }
 
   // @ts-ignore
-  private canvas: HTMLCanvasElement;
+  private canvas: HTMLCanvasElement
   // @ts-ignore
-  public ctx: CanvasRenderingContext2D;
+  public ctx: CanvasRenderingContext2D
   // @ts-ignore
-  private canvasRect: DOMRect;
+  private canvasRect: DOMRect
   private dpr: number = 0
   private children: BaseShape[] = []
-  private currentMat: any = new Float32Array([
-    1, 0, 0, 0,
-    0, 1, 0, 0,
-    0, 0, 1, 0,
-    0, 0, 0, 1,
-  ])
-  handScale: number = 1
-  handMove: P = {x: 0, y: 0,}
+  private currentMat: any = new Float32Array(config.currentMat)
+  handScale: number = config.handScale
+  handMove: P = config.handMove
   //当hover时，只向hover那个图形传递事件。不用递归整个树去判断isIn
   inShape: any
   //因为当hover只向hover图形传递事件，所以无法获得父级链，这里用个变量保存起来
@@ -72,13 +74,13 @@ export default class CanvasUtil2 {
     let ctx: CanvasRenderingContext2D = canvas.getContext('2d')!
     let canvasRect = canvas.getBoundingClientRect()
     let {width, height} = canvasRect
-    let dpr = window.devicePixelRatio;
+    let dpr = window.devicePixelRatio
     if (dpr) {
-      canvas.style.width = width + "px";
-      canvas.style.height = height + "px";
-      canvas.height = height * dpr;
-      canvas.width = width * dpr;
-      ctx.scale(dpr, dpr);
+      canvas.style.width = width + "px"
+      canvas.style.height = height + "px"
+      canvas.height = height * dpr
+      canvas.width = width * dpr
+      ctx.scale(dpr, dpr)
     }
     this.canvas = canvas
     this.ctx = ctx
@@ -133,7 +135,7 @@ export default class CanvasUtil2 {
   }
 
   render() {
-    EventBus.emit(EventTypes.draw)
+    EventBus.emit(EventTypes.onDraw)
     // if (true){
     if (false) {
       this.currentMat = new Float32Array([
@@ -155,8 +157,7 @@ export default class CanvasUtil2 {
       // console.log('平移：', currentMat[12], currentMat[13])
       // console.log('缩放：', currentMat[0], currentMat[5])
       let nv = this.currentMat
-      // console.log(nv)
-      this.ctx.transform(nv[0], nv[4], nv[1], nv[5], nv[12], nv[13]);
+      this.ctx.transform(nv[0], nv[4], nv[1], nv[5], nv[12], nv[13])
       // ctx.translate(currentMat[12], currentMat[13])
       // ctx.scale(currentMat[0], currentMat[5])
     }
@@ -167,6 +168,7 @@ export default class CanvasUtil2 {
   }
 
   initEvent(isClear: boolean = false) {
+    const fn = isClear ? 'removeEventListener' : 'addEventListener'
     Object.values([
       EventTypes.onDoubleClick,
       EventTypes.onMouseMove,
@@ -175,8 +177,9 @@ export default class CanvasUtil2 {
       EventTypes.onMouseEnter,
       EventTypes.onMouseLeave,
     ]).forEach(eventName => {
-      this.canvas[isClear ? 'removeEventListener' : 'addEventListener'](eventName, this.handleEvent, true)
+      this.canvas[fn](eventName, this.handleEvent, true)
     })
+    this.canvas[fn](EventTypes.onWheel, this.onWheel, true)
   }
 
   handleEvent = (e: any) => {
@@ -233,15 +236,43 @@ export default class CanvasUtil2 {
     }
   }
 
-  clear() {
-    this.handScale = 1
-    this.handMove = {x: 0, y: 0,}
-    this.currentMat = new Float32Array([
-      1, 0, 0, 0,
-      0, 1, 0, 0,
+  onWheel = (e: any) => {
+    // console.log('e', e)
+    let {clientX, clientY, deltaY} = e
+
+    let x = clientX - this.canvasRect.left
+    let y = clientY - this.canvasRect.top
+
+    const zoom = 1 + (deltaY < 0 ? 0.25 : -0.25)
+    //因为transform是连续变换，每次都是放大0.1倍，所以要让x和y变成0.1倍。这样缩放和平移是对等的
+    //QA：其实要平移的值，也可以直接用x，y剩以当前的总倍数，比如放在1.7倍，那么x*0.7，就是要平移的x坐标
+    //但是下次再缩放时，要加或减去上次平移的xy坐标
+    x = x * (1 - zoom)
+    y = y * (1 - zoom)
+    const transform = new Float32Array([
+      zoom, 0, 0, 0,
+      0, zoom, 0, 0,
       0, 0, 1, 0,
-      0, 0, 0, 1,
+      x, y, 0, 1,
     ])
+    const newCurrentMat = mat4.multiply(out, transform, this.currentMat)
+    this.currentMat = newCurrentMat
+    this.handMove = {
+      x: newCurrentMat[12],
+      y: newCurrentMat[13],
+    }
+    this.handScale = newCurrentMat[0]
+    console.log('this.handMove', this.handMove)
+    console.log('this.handScale', this.handScale)
+    console.log('this.currentMat', this.currentMat)
+    EventBus.emit(EventTypes.onWheel, this.handScale)
+    this.render()
+  }
+
+  clear() {
+    this.handScale = config.handScale
+    this.handMove = config.handMove
+    this.currentMat = new Float32Array(config.currentMat)
     this.children = []
   }
 

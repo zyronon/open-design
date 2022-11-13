@@ -251,6 +251,12 @@ export abstract class BaseShape {
       return
     }
 
+    //TODO 应该由子类实现
+    //按下左上，拉动圆角那个点
+    if (this.hoverRd1) {
+      this.enterRd1 = true
+      return
+    }
 
     //默认选中以及拖动
     this.enter = true
@@ -271,7 +277,7 @@ export abstract class BaseShape {
   }
 
   mousemove(event: BaseEvent2, p: BaseShape[] = []) {
-    console.log('mousemove', this.enterLTR)
+    // console.log('mousemove', this.enterLTR)
     let {e, point, type} = event
     // console.log('mousemove', this.config.name, `isHover：${this.isHover}`)
     if (this.enter) {
@@ -290,6 +296,17 @@ export abstract class BaseShape {
       return this.dragLTR(point)
     }
 
+    if (this.enterRd1) {
+      return this.dragRd1(point)
+    }
+  }
+
+  dragRd1(point: P) {
+    let {x, y, cu} = this.getXY(point)
+    let dx = (x - cu.startX)
+    this.config.radius = this.original.radius + dx
+    cu.render()
+    console.log('th.enterRd1')
   }
 
   //拖动左上旋转

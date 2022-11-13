@@ -1,4 +1,4 @@
-import {FontFamily, FontWeight, ShapeConfig, ShapeType} from "./type";
+import {FontFamily, FontWeight, ShapeConfig, ShapeType} from "./type"
 
 export const fontFamilies = [
   {
@@ -365,12 +365,12 @@ export const r = [
 ]
 export const rects: any[] = [
   {
-    "x": 51,
-    "y": 38,
-    "rx": 806,
-    "ry": 86,
-    "w": 180,
-    "h": 400,
+    "x": 193.20000000000002,
+    "y": 112.19999999999999,
+    "rx": 948.2,
+    "ry": 160.2,
+    "w": 177.79999999999998,
+    "h": 314.59999999999997,
     "rotate": 0,
     "lineWidth": 2,
     "type": 105,
@@ -388,22 +388,22 @@ export const rects: any[] = [
     "fontFamily": "SourceHanSansCN",
     "texts": [],
     "name": "椭圆",
-    "leftX": 51,
-    "rightX": 231,
-    "topY": 38,
-    "bottomY": 438,
+    "leftX": 193.20000000000002,
+    "rightX": 371,
+    "topY": 112.19999999999999,
+    "bottomY": 426.79999999999995,
     "id": "cd973e70-08e8-471a-814d-61966b891d5a",
-    "centerX": 141,
-    "centerY": 238,
+    "centerX": 282.1,
+    "centerY": 269.5,
     "points": []
   },
   {
-    "x": 329,
-    "y": 47,
-    "rx": 367,
-    "ry": 51,
-    "w": 347,
-    "h": 400,
+    "x": 419.6,
+    "y": 107.39999999999998,
+    "rx": 457.6000000000001,
+    "ry": 111.39999999999998,
+    "w": 255.59999999999985,
+    "h": 331.59999999999997,
     "rotate": 0,
     "lineWidth": 2,
     "type": 102,
@@ -418,22 +418,22 @@ export const rects: any[] = [
     "fontFamily": "SourceHanSansCN",
     "texts": [],
     "name": "容器",
-    "leftX": 329,
-    "rightX": 676,
-    "topY": 47,
-    "bottomY": 447,
+    "leftX": 419.6,
+    "rightX": 675.1999999999998,
+    "topY": 107.39999999999998,
+    "bottomY": 438.99999999999994,
     "id": "8e45d15c-28ca-452d-80f5-766f870c854a",
-    "centerX": 502.5,
-    "centerY": 247,
+    "centerX": 547.4,
+    "centerY": 273.19999999999993,
     "points": []
   },
   {
-    "x": 1283,
-    "y": 63,
-    "rx": 1283,
-    "ry": 63,
-    "w": 215,
-    "h": 380,
+    "x": 1225.2,
+    "y": 110.6,
+    "rx": 1225.2,
+    "ry": 110.6,
+    "w": 168.79999999999995,
+    "h": 295.6,
     "rotate": 0,
     "lineWidth": 2,
     "type": 104,
@@ -448,13 +448,33 @@ export const rects: any[] = [
     "fontFamily": "SourceHanSansCN",
     "texts": [],
     "name": "长方形",
-    "leftX": 1283,
-    "rightX": 1498,
-    "topY": 63,
-    "bottomY": 443,
+    "leftX": 1225.2,
+    "rightX": 1394,
+    "topY": 110.6,
+    "bottomY": 406.20000000000005,
     "id": "cd973e70-08e8-471a-814d-61966b891d5a",
-    "centerX": 1390.5,
-    "centerY": 253,
+    "centerX": 1309.6,
+    "centerY": 258.4,
     "points": []
   }
 ]
+
+const defaultCurrentMat = [
+  1, 0, 0, 0,
+  0, 1, 0, 0,
+  0, 0, 1, 0,
+  0, 0, 0, 1,
+]
+const defaultHandMove = {x: 0, y: 0}
+
+export const config = {
+  handScale: 1.25,
+  handMove: {x: -216.5, y: -93.25},
+  currentMat: [1.25, 0, 0, 0,
+    0, 1.25, 0, 0,
+    0, 0, 1, 0,
+    -216.5, -93.25, 0, 1],
+  // currentMat: defaultCurrentMat,
+  // handMove: defaultHandMove,
+  shapes: rects
+}

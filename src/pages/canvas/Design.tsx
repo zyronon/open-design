@@ -1,28 +1,24 @@
-import React, {RefObject} from "react";
+import React, {RefObject} from "react"
 import './index.scss'
-import {cloneDeep} from 'lodash'
-import BaseInput from "../../components/BaseInput";
-import {Down, FullScreen, PreviewClose, Unlock,} from "@icon-park/react";
-import BaseIcon from "../../components/BaseIcon";
-import BaseButton from "../../components/BaseButton";
-import FlipIcon from "../../assets/icon/FlipIcon";
-import RotateIcon from "../../assets/icon/RotateIcon";
-import AngleIcon from "../../assets/icon/AngleIcon";
-import {withRouter} from "../../components/WithRouter";
-import Fps from "../../components/Fps";
-import {BaseOption, BaseSelect} from "../../components/BaseSelect2";
-import {rects} from "./constant";
-import {EventTypes, IState, RectColorType, Shape, ShapeConfig, ShapeType} from "./type";
-import BaseSlotButton from "../../components/BaseSlotButton";
-import Icon from '@icon-park/react/es/all';
-import {store} from "./store";
-import {message} from "antd";
+import BaseInput from "../../components/BaseInput"
+import {Down, FullScreen, PreviewClose, Unlock,} from "@icon-park/react"
+import BaseIcon from "../../components/BaseIcon"
+import BaseButton from "../../components/BaseButton"
+import FlipIcon from "../../assets/icon/FlipIcon"
+import RotateIcon from "../../assets/icon/RotateIcon"
+import AngleIcon from "../../assets/icon/AngleIcon"
+import {withRouter} from "../../components/WithRouter"
+import Fps from "../../components/Fps"
+import {BaseOption, BaseSelect} from "../../components/BaseSelect2"
+import {config, rects} from "./constant"
+import {EventTypes, IState, RectColorType, Shape, ShapeType} from "./type"
+import BaseSlotButton from "../../components/BaseSlotButton"
+import Icon from '@icon-park/react/es/all'
+import {message} from "antd"
 import Left from "./components/Left/left"
-import EventBus from "../../utils/event-bus";
-import cx from "classnames";
-import CanvasUtil2 from "./CanvasUtil2";
-import {Frame} from "./shapes/Frame";
-import {Ellipse} from "./shapes/Ellipse";
+import EventBus from "../../utils/event-bus"
+import cx from "classnames"
+import CanvasUtil2 from "./CanvasUtil2"
 
 
 class Design extends React.Component<any, IState> {
@@ -35,6 +31,7 @@ class Design extends React.Component<any, IState> {
     rectColor: null,
     rectColorType: null,
     drawCount: 0,
+    handScale: config.handScale,
     selectShape: null,
     selectDrawType: 'drawType',
     drawType: ShapeType.SELECT,
@@ -62,7 +59,7 @@ class Design extends React.Component<any, IState> {
     c.addChildren(rects)
     c.render()
     this.setState({cu: c})
-    EventBus.on(EventTypes.draw, () => {
+    EventBus.on(EventTypes.onDraw, () => {
       this.setState(s => {
         return {drawCount: s.drawCount + 1}
       })

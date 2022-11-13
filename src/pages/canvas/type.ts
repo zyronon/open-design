@@ -1,5 +1,5 @@
-import {getBezierPointByLength} from "./utils";
-import CanvasUtil2 from "./CanvasUtil2";
+import {getBezierPointByLength} from "./utils"
+import CanvasUtil2 from "./CanvasUtil2"
 
 export type IState = {
   rectList: Shape[],
@@ -218,7 +218,7 @@ export const EventTypes = {
   onMouseUp: 'mouseup',
   onMouseEnter: 'mouseenter',
   onMouseLeave: 'mouseleave',
-  draw: 'draw'
+  onDraw: 'draw',
 }
 
 

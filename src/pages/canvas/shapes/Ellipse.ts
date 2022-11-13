@@ -1,18 +1,11 @@
 import {BaseShape} from "./BaseShape";
 import {draw3} from "../utils";
+import {P} from "../type";
+import CanvasUtil2 from "../CanvasUtil2";
 
-export class Ellipse extends BaseShape{
-  isIn(): boolean {
-    return false
-  }
-
-  mousedown(): void {
-  }
-
-  mousemove(): void {
-  }
-
-  mouseup(): void {
+export class Ellipse extends BaseShape {
+  isIn(p: P, cu: CanvasUtil2): boolean {
+    return super.isInBox(p)
   }
 
   render(ctx: CanvasRenderingContext2D, parent?: any): void {

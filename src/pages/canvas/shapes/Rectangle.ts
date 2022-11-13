@@ -1,32 +1,13 @@
 import {BaseShape} from "./BaseShape";
 import {draw2} from "../utils";
 import CanvasUtil2 from "../CanvasUtil2";
+import {P} from "../type";
 
 export class Rectangle extends BaseShape {
-  isIn(x: number, y: number, cu: CanvasUtil2): boolean {
-    let rect = this.config
-    if (rect.leftX < x && x < rect.rightX
-      && rect.topY < y && y < rect.bottomY
-    ) {
-      document.body.style.cursor = "default"
-      this.hoverL = false
-      this.hoverLT = false
-      this.hoverLTR = false
-
-      this.hoverRd1 = false
-      return true
-    }
-    return false
+  isIn(p: P, cu: CanvasUtil2): boolean {
+    return super.isInBox(p)
   }
 
-  mousedown(): void {
-  }
-
-  mousemove(): void {
-  }
-
-  mouseup(): void {
-  }
 
   render(ctx: CanvasRenderingContext2D, parent?: any): void {
     draw2(ctx, this.config, this.original, {

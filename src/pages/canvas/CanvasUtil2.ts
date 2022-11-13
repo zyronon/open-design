@@ -1,7 +1,7 @@
 import {BaseShape} from "./shapes/BaseShape";
 import EventBus from "../../utils/event-bus";
 import {clear} from "./utils";
-import {EventMapTypes, EventTypes, P, ShapeConfig, ShapeType} from "./type";
+import {BaseEvent, BaseEvent2, EventMapTypes, EventTypes, P, ShapeConfig, ShapeType} from "./type";
 import {cloneDeep} from "lodash";
 import {rects} from "./constant";
 import {Frame} from "./shapes/Frame";
@@ -30,7 +30,7 @@ export default class CanvasUtil2 {
   // @ts-ignore
   private canvasRect: DOMRect;
   private dpr: number = 0
-  private children: any[] = []
+  private children: BaseShape[] = []
   private currentMat: any = new Float32Array([
     1, 0, 0, 0,
     0, 1, 0, 0,
@@ -106,7 +106,6 @@ export default class CanvasUtil2 {
     })
   }
 
-
   //设置inShape
   setInShape(shape: BaseShape, parent?: BaseShape[]) {
     this.inShapeParent = parent
@@ -167,7 +166,6 @@ export default class CanvasUtil2 {
     this.ctx.restore()
   }
 
-
   initEvent(isClear: boolean = false) {
     Object.values([
       EventTypes.onDoubleClick,
@@ -182,15 +180,55 @@ export default class CanvasUtil2 {
   }
 
   handleEvent = (e: any) => {
-    e.stopPropagation = () => e.capture = true
     let x = e.x - this.canvasRect.left
     let y = e.y - this.canvasRect.top
-    let baseEvent = {
+    let event: BaseEvent2 = {
+      capture: false,
       e,
-      coordinate: {x, y},
-      type: e.type
+      point: {x, y},
+      type: e.type,
+      stopPropagation() {
+        this.capture = true
+      }
     }
-    this.children.forEach(shape => shape.event(baseEvent, []))
+
+    if (this.inShape) {
+      this.inShape.event(event, this.inShapeParent)
+    } else {
+      for (let i = 0; i < this.children.length; i++) {
+        let shape = this.children[i]
+        let isBreak = shape.event(event, [])
+        if (isBreak) break
+      }
+    }
+    if (event.type === EventMapTypes.onMouseMove) {
+      this.onMouseMove(event, {x, y})
+    }
+    if (event.type === EventMapTypes.onMouseDown) {
+      this.onMouseDown(event, {x, y})
+    }
+    if (event.type === EventMapTypes.onMouseUp) {
+      this.onMouseUp(event, {x, y})
+    }
+
+  }
+
+  onMouseDown(e: BaseEvent2, p: P,) {
+    console.log('cu-onMouseDown', e)
+  }
+
+  onMouseMove(e: BaseEvent2, p: P,) {
+    // console.log('cu-onMouseMove', e)
+  }
+
+  onMouseUp(e: BaseEvent2, p: P,) {
+    console.log('cu-onMouseUp', e)
+    if (e.capture) return
+    this.selectedShapeParent.map((shape: Shape) => shape.isCapture = true)
+    if (this.selectedShape) {
+      this.selectedShape.isSelect = false
+      this.render()
+    }
   }
 
   clear() {

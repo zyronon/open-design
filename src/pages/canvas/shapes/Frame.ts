@@ -1,18 +1,11 @@
 import {BaseShape} from "./BaseShape";
 import {draw2} from "../utils";
+import CanvasUtil2 from "../CanvasUtil2";
+import {P} from "../type";
 
 export class Frame extends BaseShape {
-  isIn(): boolean {
-    return false
-  }
-
-  mousedown(): void {
-  }
-
-  mousemove(): void {
-  }
-
-  mouseup(): void {
+  isIn(p: P, cu: CanvasUtil2): boolean {
+    return super.isInBox(p)
   }
 
   render(ctx: CanvasRenderingContext2D, parent?: any): void {

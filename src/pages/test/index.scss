@@ -6,3 +6,30 @@ body, html {
   display: flex;
   //justify-content: flex-end;
 }
+
+.user {
+  font-size: 20rem;
+}
+
+.mouses {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+
+  .user-mouse {
+    position: absolute;
+
+    .name {
+
+    }
+
+    .mouse {
+      display: inline-block;
+      width: 15rem;
+      height: 15rem;
+      background: #000;
+    }
+  }
+}

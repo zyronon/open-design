@@ -223,7 +223,16 @@ export const EventTypes = {
 
 
 export interface BaseEvent extends MouseEvent {
-  capture: boolean
+  capture: boolean,
+}
+
+
+export interface BaseEvent2 {
+  capture: boolean,
+  e: MouseEvent,
+  point: P,
+  type: string
+  stopPropagation: Function
 }
 
 //贝塞尔点的类型

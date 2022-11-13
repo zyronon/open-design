@@ -245,10 +245,17 @@ export default class CanvasUtil2 {
     this.children = []
   }
 
-  print2() {
+  print(list: any) {
+    return list.map((item: any) => {
+      if (item.children) {
+        item.children = this.print(item.children)
+      }
+      return item.config
+    })
   }
 
-  print() {
+  print2() {
+    return this.print(cloneDeep(this.children))
   }
 
   setMode(val: any) {

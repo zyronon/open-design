@@ -3,6 +3,7 @@ import {getPath} from "../utils"
 import CanvasUtil2 from "../CanvasUtil2"
 import {Shape} from "../utils/Shape"
 import {cloneDeep} from "lodash"
+import getCenterPoint, {getAngle, getRotatedPoint} from "../../../utils"
 
 export abstract class BaseShape {
   hoverRd1: boolean = false
@@ -24,6 +25,8 @@ export abstract class BaseShape {
   startY: number = 0
   original: any = null
   lastClickTime: number = 0
+  diagonal: P = {x: 0, y: 0}//对角
+  handlePoint: P = {x: 0, y: 0}//对角
 
   constructor(props: ShapeConfig) {
     this.config = getPath(props)
@@ -41,8 +44,39 @@ export abstract class BaseShape {
   }
 
   shapeIsIn(p: P, cu: CanvasUtil2): boolean {
+    //如果操作中，那么永远返回ture，保持事件一直直接传递到当前图形上
+    if (this.enterL ||
+      this.enterLT ||
+      this.enterLTR) {
+      return true
+    }
+
+    const {x: handX, y: handY} = cu.handMove
+    let {x, y} = p
+    x = (x - handX) / cu.handScale//上面的简写
+    y = (y - handY) / cu.handScale
+
+    let rect = this.config
+    if (rect.rotate !== 0 || rect.flipHorizontal || rect.flipVertical) {
+      let {w, h, rotate, flipHorizontal, flipVertical} = rect
+      const center = {
+        x: rect.x + (rect.w / 2),
+        y: rect.y + (rect.h / 2)
+      }
+      if (flipHorizontal) {
+        x = center.x + Math.abs(x - center.x) * (x < center.x ? 1 : -1)
+      }
+      if (flipVertical) {
+        y = center.y + Math.abs(y - center.y) * (y < center.y ? 1 : -1)
+      }
+      let p1 = {x, y}
+      let c2 = {x: rect.x + w / 2, y: rect.y + h / 2}
+      let s2 = getRotatedPoint(p1, c2, -rotate)
+      x = s2.x
+      y = s2.y
+    }
+
     if (this.isSelect) {
-      const {x, y} = p
       let rect = this.config
       let edge = 10
       let angle = 7
@@ -96,12 +130,9 @@ export abstract class BaseShape {
 
       //未命中 点
       document.body.style.cursor = "default"
-      this.hoverL = false
-      this.hoverLT = false
-      this.hoverLTR = false
-      this.hoverRd1 = false
+      this.resetHover()
     }
-    return this.isIn(p, cu)
+    return this.isIn({x, y}, cu)
   }
 
   event(event: BaseEvent2, parent?: BaseShape[], cb?: Function): boolean {
@@ -159,13 +190,69 @@ export abstract class BaseShape {
   }
 
   mousedown(event: BaseEvent2, p: BaseShape[] = []) {
-    console.log('mousedown', this)
+    // console.log('mousedown', this)
     let {e, point, type} = event
     let {x, y, cu} = this.getXY(point)
     this.original = cloneDeep(this.config)
     cu.startX = x
     cu.startY = y
+    cu.offsetX = x - this.config.x
+    cu.offsetY = y - this.config.y
 
+    let rect = this.config
+
+    //按下左边
+    if (this.hoverL) {
+      // console.log('config', cloneDeep(this.config))
+      const center = {
+        x: rect.x + (rect.w / 2),
+        y: rect.y + (rect.h / 2)
+      }
+      //不是当前点击位置，当前点击位置算对角会有偏差
+      let handlePoint = getRotatedPoint(
+        {x: this.config.x, y: this.config.y + this.config.h / 2},
+        center, rect.rotate)
+      this.handlePoint = handlePoint
+      this.diagonal = {
+        x: center.x + Math.abs(handlePoint.x - center.x) * (handlePoint.x < center.x ? 1 : -1),
+        y: center.y + Math.abs(handlePoint.y - center.y) * (handlePoint.y < center.y ? 1 : -1)
+      }
+      console.log('diagonal', this.diagonal)
+      this.enterL = true
+      return
+    }
+
+    //按下左上
+    if (this.hoverLT) {
+      // console.log('config', cloneDeep(this.config))
+      const center = {
+        x: rect.x + (rect.w / 2),
+        y: rect.y + (rect.h / 2)
+      }
+      //可以用当前位置，如果点击的不是点位上，那么会有细小的偏差
+      let handlePoint = getRotatedPoint({x: rect.x, y: rect.y}, center, rect.rotate)
+      if (rect.flipHorizontal) {
+        // handlePoint.x = center.x + Math.abs(handlePoint.x - center.x) * (handlePoint.x < center.x ? 1 : -1)
+      }
+      if (rect.flipVertical) {
+        // handlePoint.y = center.y + Math.abs(handlePoint.y - center.y) * (handlePoint.y < center.y ? 1 : -1)
+      }
+      this.diagonal = {
+        x: center.x + Math.abs(handlePoint.x - center.x) * (handlePoint.x < center.x ? 1 : -1),
+        y: center.y + Math.abs(handlePoint.y - center.y) * (handlePoint.y < center.y ? 1 : -1)
+      }
+      this.enterLT = true
+      return
+    }
+
+    //按下左上旋转
+    if (this.hoverLTR) {
+      this.enterLTR = true
+      return
+    }
+
+
+    //默认选中以及拖动
     this.enter = true
     if (this.isSelect) return
     this.isSelect = true
@@ -184,24 +271,151 @@ export abstract class BaseShape {
   }
 
   mousemove(event: BaseEvent2, p: BaseShape[] = []) {
-    // console.log('mousemove', this.isSelect)
+    console.log('mousemove', this.enterLTR)
     let {e, point, type} = event
     // console.log('mousemove', this.config.name, `isHover：${this.isHover}`)
     if (this.enter) {
       return this.move(point)
     }
+
+    if (this.enterL) {
+      return this.dragL(point)
+    }
+
+    if (this.enterLT) {
+      return this.dragLT(point)
+    }
+
+    if (this.enterLTR) {
+      return this.dragLTR(point)
+    }
+
   }
 
-  mouseup(e: BaseEvent2, p: BaseShape[] = []) {
-    // if (e.capture) return
-    console.log('mouseup')
-    this.enter = false
-    this.enterL = false
-    this.enterLT = false
-    this.enterLTR = false
-    this.enterRd1 = false
+  //拖动左上旋转
+  dragLTR(point: P) {
+    let {x, y, cu} = this.getXY(point)
+    let rect = this.original
+    let old = this.original
+    const center = {
+      x: old.x + (old.w / 2),
+      y: old.y + (old.h / 2)
+    }
+    let current = {x, y}
+    if (rect.flipHorizontal) {
+      current.x = center.x + Math.abs(current.x - center.x) * (current.x < center.x ? 1 : -1)
+    }
+    if (rect.flipVertical) {
+      current.y = center.y + Math.abs(current.y - center.y) * (current.y < center.y ? 1 : -1)
+    }
+    // console.log('x-------', x, '          y--------', y)
+    let a = getAngle([rect.x + rect.w / 2, rect.y + rect.h / 2],
+      [this.original.x, this.original.y],
+      [current.x, current.y]
+    )
+    console.log('getAngle', a)
+    this.config.rotate = a
+    cu.render()
   }
 
+  //拖动左上
+  dragLT(point: P) {
+    let {x, y, cu} = this.getXY(point)
+
+    let rect = this.config
+    let s = this.original
+    let current = {x, y}
+    const center = {
+      x: s.x + (s.w / 2),
+      y: s.y + (s.h / 2)
+    }
+
+    //水平翻转，那么要把当前的x坐标一下翻转
+    //同时，draw的时候，需要把新rect的中心点和平移（选中时rect的中心点）的2倍
+    if (rect.flipHorizontal) {
+      current.x = center.x + Math.abs(current.x - center.x) * (current.x < center.x ? 1 : -1)
+    }
+    if (rect.flipVertical) {
+      current.y = center.y + Math.abs(current.y - center.y) * (current.y < center.y ? 1 : -1)
+    }
+
+    let newCenter = getCenterPoint(current, this.diagonal)
+    let newTopLeftPoint = getRotatedPoint(current, newCenter, -s.rotate)
+    let newBottomRightPoint = getRotatedPoint(this.diagonal, newCenter, -s.rotate)
+
+    let newWidth = newBottomRightPoint.x - newTopLeftPoint.x
+    let newHeight = newBottomRightPoint.y - newTopLeftPoint.y
+    rect.x = newTopLeftPoint.x
+    rect.y = newTopLeftPoint.y
+    rect.w = newWidth
+    rect.h = newHeight
+    // console.log(rect)
+    this.config = getPath(rect, this.original)
+    cu.render()
+
+  }
+
+  //拖动左边
+  dragL(point: P) {
+    let {x, y, cu} = this.getXY(point)
+    if (this.config.rotate) {
+      // if (false) {
+      // this.moveEnterLT({ x, y })
+      let rect = this.config
+      let s = this.original
+      const center = {
+        x: s.x + (s.w / 2),
+        y: s.y + (s.h / 2)
+      }
+      let sPoint = this.diagonal
+      const current = {x, y}
+      console.log('--------------------------')
+      if (rect.flipHorizontal) {
+        current.x = center.x + Math.abs(current.x - center.x) * (current.x < center.x ? 1 : -1)
+      }
+      if (rect.flipVertical) {
+        current.y = center.y + Math.abs(current.y - center.y) * (current.y < center.y ? 1 : -1)
+      }
+      const handlePoint = this.handlePoint
+      console.log('current', current)
+      console.log('handlePoint', handlePoint)
+
+      const rotatedCurrentPosition = getRotatedPoint(current, handlePoint, -rect.rotate)
+      console.log('rotatedCurrentPosition', rotatedCurrentPosition)
+
+      console.log('test', rotatedCurrentPosition.x, handlePoint.y)
+
+      const rotatedLeftMiddlePoint = getRotatedPoint({
+        x: rotatedCurrentPosition.x,
+        y: handlePoint.y,
+      }, handlePoint, rect.rotate)
+      console.log('rotatedLeftMiddlePoint', rotatedLeftMiddlePoint)
+
+      // const newWidth = Math.sqrt(Math.pow(rotatedLeftMiddlePoint.x - sPoint.x, 2) + Math.pow(rotatedLeftMiddlePoint.y - sPoint.y, 2))
+      const newWidth = Math.hypot(rotatedLeftMiddlePoint.x - sPoint.x, rotatedLeftMiddlePoint.y - sPoint.y)
+      console.log('newWidth', newWidth)
+      console.log('sPoint', sPoint)
+      const newCenter = {
+        x: rotatedLeftMiddlePoint.x - (Math.abs(sPoint.x - rotatedLeftMiddlePoint.x) / 2) * (rotatedLeftMiddlePoint.x > sPoint.x ? 1 : -1),
+        y: rotatedLeftMiddlePoint.y + (Math.abs(sPoint.y - rotatedLeftMiddlePoint.y) / 2) * (rotatedLeftMiddlePoint.y > sPoint.y ? -1 : 1),
+      }
+      console.log('newCenter', newCenter)
+
+
+      rect.w = newWidth
+      rect.y = newCenter.y - (rect.h / 2)
+      rect.x = newCenter.x - (newWidth / 2)
+      console.log(rect)
+      this.config = getPath(rect, this.original)
+    } else {
+      this.config.x = (x - cu.offsetX)
+      this.config.w = this.original.rightX - this.config.x
+      this.config = getPath(this.config, this.original)
+    }
+    cu.render()
+  }
+
+  //移动图形
   move(point: P) {
     let {x, y, cu} = this.getXY(point)
     let dx = (x - cu.startX)
@@ -213,6 +427,12 @@ export abstract class BaseShape {
     cu.render()
   }
 
+  mouseup(e: BaseEvent2, p: BaseShape[] = []) {
+    // if (e.capture) return
+    // console.log('mouseup')
+    this.resetEnter()
+  }
+
   //获取缩放平移之后的x和y值
   getXY(point: P) {
     let {x, y} = point
@@ -221,5 +441,20 @@ export abstract class BaseShape {
     x = (x - handX) / cu.handScale//上面的简写
     y = (y - handY) / cu.handScale
     return {x, y, cu}
+  }
+
+  resetHover() {
+    this.hoverL = false
+    this.hoverLT = false
+    this.hoverLTR = false
+    this.hoverRd1 = false
+  }
+
+  resetEnter() {
+    this.enter = false
+    this.enterL = false
+    this.enterLT = false
+    this.enterLTR = false
+    this.enterRd1 = false
   }
 }

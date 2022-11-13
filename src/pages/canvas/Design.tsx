@@ -88,16 +88,7 @@ class Design extends React.Component<any, IState> {
     return false
   }
 
-  print = () => {
-    navigator.clipboard.writeText(JSON.stringify(store.rectList, null, 2))
-      .then(() => {
-        message.success('复制成功1')
-      })
-      .catch(err => {
-        message.error('复制失败')
-      })
-  }
-  printC = () => {
+  copy = () => {
     console.log(this.state.cu.print2())
     navigator.clipboard.writeText(JSON.stringify(this.state.cu.print2(), null, 2))
       .then(() => {
@@ -145,8 +136,7 @@ class Design extends React.Component<any, IState> {
           <Left
             init={() => this.init()}
             navigate={() => this.props.navigate('/test')}
-            print={this.print}
-            printC={this.printC}
+            copy={this.copy}
           />
           <div className="canvas-wrapper">
             <div className="tool-bar">
@@ -381,7 +371,6 @@ class Design extends React.Component<any, IState> {
           </div>
         </div>
       </div>
-
     </>
   }
 }

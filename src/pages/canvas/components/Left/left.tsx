@@ -1,7 +1,7 @@
 import React, {memo, useEffect, useState} from "react"
 import {store} from "../../store"
 import './index.scss'
-import Icon from "@icon-park/react/es/all";
+import Icon from "@icon-park/react/es/all"
 import cx from "classnames"
 import {useSelector} from "react-redux"
 
@@ -91,14 +91,8 @@ export default memo((props: any) => {
         <div className="component" onClick={() => props.navigate('/test')}>
           去test
         </div>
-        <div className="component" onClick={props.print}>
-          打印
-        </div>
-        <div className="component" onClick={() => console.log(store.rectList)}>
-          打印2
-        </div>
-        <div className="component" onClick={props.printC}>
-          打印3
+        <div className="component" onClick={props.copy}>
+          复制
         </div>
       </div>
       <div className="tabs">
@@ -115,42 +109,42 @@ export default memo((props: any) => {
       {
         tabIndex === 0 &&
           <div className={'layer'}>
-            <div className="page-wrapper">
-              <div className="header">
-                <div className="left">
-                  <div className="name">页面</div>
-                </div>
-                <div className="right">
-                  <Icon type={'plus'} size="20"/>
-                  <Icon type={'down'} size="20"/>
-                </div>
+              <div className="page-wrapper">
+                  <div className="header">
+                      <div className="left">
+                          <div className="name">页面</div>
+                      </div>
+                      <div className="right">
+                          <Icon type={'plus'} size="20"/>
+                          <Icon type={'down'} size="20"/>
+                      </div>
+                  </div>
+                  <div className="pages">
+                    {
+                      pageList.map((v: any, i: number) => {
+                        return <div className="page" key={i}>
+                          <Icon type={'check-small'} size="16"/>
+                          <span>Cover</span>
+                        </div>
+                      })
+                    }
+                  </div>
               </div>
-              <div className="pages">
-                {
-                  pageList.map((v: any, i: number) => {
-                    return <div className="page" key={i}>
-                      <Icon type={'check-small'} size="16"/>
-                      <span>Cover</span>
-                    </div>
-                  })
-                }
+              <div className="search">
+                  <Icon type={'search'} size="14"/>
+                  <Icon type={'down'} size="14"/>
+                  <input type="text" placeholder={'请输入'}/>
+                  <Icon type={'close-one'} className={'close'} theme="filled" size="18" fill="#8f8f8f"/>
               </div>
-            </div>
-            <div className="search">
-              <Icon type={'search'} size="14"/>
-              <Icon type={'down'} size="14"/>
-              <input type="text" placeholder={'请输入'}/>
-              <Icon type={'close-one'} className={'close'} theme="filled" size="18" fill="#8f8f8f"/>
-            </div>
-            <div className="components">
-              <div className="scroll">
-                {
-                  rectList.map((item: any, index: number) => {
-                    return <RectComponent item={item} key={index} index={-1}/>
-                  })
-                }
+              <div className="components">
+                  <div className="scroll">
+                    {
+                      rectList.map((item: any, index: number) => {
+                        return <RectComponent item={item} key={index} index={-1}/>
+                      })
+                    }
+                  </div>
               </div>
-            </div>
           </div>
       }
     </div>

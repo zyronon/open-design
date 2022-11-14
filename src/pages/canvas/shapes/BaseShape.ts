@@ -1,12 +1,9 @@
-import {BaseEvent2, P, ShapeConfig, ShapeType} from "../type"
+import {BaseEvent2, P, ShapeConfig} from "../type"
 import {getPath} from "../utils"
 import CanvasUtil2 from "../CanvasUtil2"
 import {cloneDeep} from "lodash"
 import getCenterPoint, {getAngle, getRotatedPoint} from "../../../utils"
 import {getShapeFromConfig} from "./common"
-import {Frame} from "./Frame"
-import {Rectangle} from "./Rectangle"
-import {Ellipse} from "./Ellipse"
 
 export abstract class BaseShape {
   hoverRd1: boolean = false
@@ -21,6 +18,7 @@ export abstract class BaseShape {
   protected children: BaseShape[] = []
   isHover: boolean = false
   isSelect: boolean = false
+  isSelectHover: boolean = false //是否选中之后hover
   isEdit: boolean = false
   isCapture: boolean = true//是否捕获事件，为true不会再往下传递事件
   enter: boolean = false
@@ -63,6 +61,7 @@ export abstract class BaseShape {
     y = (y - handY) / cu.handScale
 
     let rect = this.config
+    //修正当前鼠标点为变换过后的点，确保和图形同一transform
     if (rect.rotate !== 0 || rect.flipHorizontal || rect.flipVertical) {
       let {w, h, rotate, flipHorizontal, flipVertical} = rect
       const center = {
@@ -168,8 +167,10 @@ export abstract class BaseShape {
 
       if (event.capture) return true
 
-      //如果已经选中了，那就不要再加hover效果了
-      if (!this.isSelect) {
+      if (this.isSelect) {
+        this.isSelectHover = true
+      } else {
+        //如果已经选中了，那就不要再加hover效果了
         this.isHover = true
       }
 
@@ -187,7 +188,7 @@ export abstract class BaseShape {
       // console.log('冒泡', this.config.name)
     } else {
       document.body.style.cursor = "default"
-      this.isHover = false
+      this.isSelectHover = this.isHover = false
       cu.setInShapeNull(this)
       for (let i = 0; i < this.children.length; i++) {
         let shape = this.children[i]
@@ -209,6 +210,7 @@ export abstract class BaseShape {
     let {e, point, type} = event
     let {x, y, cu} = this.getXY(point)
 
+    //向下传递事件
     if (Date.now() - this.lastClickTime < 300) {
       console.log('dblclick')
       // cu.selectedShape = null
@@ -300,6 +302,7 @@ export abstract class BaseShape {
     this.enter = true
     if (this.isSelect) return
     this.isSelect = true
+    this.isSelectHover = true
     this.isCapture = true
     this.isHover = false
     //如果当前选中的图形不是自己，那么把那个图形设为未选中
@@ -509,5 +512,16 @@ export abstract class BaseShape {
     this.enterLT = false
     this.enterLTR = false
     this.enterRd1 = false
+  }
+
+  getState() {
+    return {
+      isHover: this.isHover,
+      isSelect: this.isSelect,
+      isSelectHover: this.isSelectHover,
+      isEdit: this.isEdit,
+      enterLT: this.enterLT,
+      enterL: this.enterL
+    }
   }
 }

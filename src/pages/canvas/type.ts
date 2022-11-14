@@ -288,3 +288,12 @@ export function getDefaultPoint(use: boolean = false): P2 {
     ry: 0,
   }
 }
+
+export type ShapeState = {
+  isHover: boolean,
+  isSelect: boolean,
+  isSelectHover: boolean,
+  isEdit: boolean,
+  enterLT: boolean,
+  enterL: boolean
+}

@@ -1,25 +1,11 @@
-import React, {Component} from 'react';
-import {Button} from 'antd';
+import React, {Component} from 'react'
+import {Button} from 'antd'
 import './index.scss'
-import {withRouter} from "../../components/WithRouter";
-import {
-  getBezierPointByLength,
-  drawCp,
-  drawRound,
-  getBezier3ControlPoints,
-  getDecimal,
-  solveCubic
-} from "../canvas/utils";
-import {Colors} from "../canvas/constant";
-import {BezierPoint, BezierPointType, getDefaultPoint, LineType, P2} from "../canvas/type";
-import {getAngle2, jiaodu2hudu} from "../../utils";
-import {clone, throttle} from "lodash";
+import {withRouter} from "../../components/WithRouter"
+import {clone, throttle} from "lodash"
 
 
 class T extends Component<any, any> {
-  constructor(props: any) {
-    super(props);
-  }
 
   state = {
     clientId: '',

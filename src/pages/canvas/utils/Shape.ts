@@ -1,8 +1,8 @@
-import {clear, getPath, renderRoundRect} from "../utils";
-import {CanvasUtil2} from "./CanvasUtil";
-import EventBus from "../../../utils/event-bus";
-import {EventMapTypes, ShapeConfig} from "../type";
-import {clone, cloneDeep} from "lodash";
+import {getPath} from "../utils"
+import {CanvasUtil2} from "./CanvasUtil"
+import EventBus from "../../../utils/event-bus"
+import {EventMapTypes, ShapeConfig} from "../type"
+import {clone} from "lodash"
 
 export class Shape {
   config: ShapeConfig
@@ -50,7 +50,7 @@ export class Shape {
   changeChildrenFlip(children: Shape[], type: number, conf: ShapeConfig) {
     let centerX = conf.centerX
     let centerY = conf.centerY
-    children.map((item: Shape) => {
+    children.forEach((item: Shape) => {
       let old = clone(item.config)
       if (type === 0) {
         item.config.x = centerX * 2 - (item.config.rightX!)

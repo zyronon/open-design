@@ -208,7 +208,7 @@ export default class CanvasUtil2 {
 
   onMouseDown(e: BaseEvent2, p: P,) {
     if (e.capture) return
-    console.log('cu-onMouseDown', e)
+    // console.log('cu-onMouseDown', e)
   }
 
   onMouseMove(e: BaseEvent2, p: P,) {
@@ -218,7 +218,7 @@ export default class CanvasUtil2 {
 
   onMouseUp(e: BaseEvent2, p: P,) {
     if (e.capture) return
-    console.log('cu-onMouseUp', e)
+    // console.log('cu-onMouseUp', e)
     this.selectedShapeParent.map((shape: Shape) => shape.isCapture = true)
     if (this.selectedShape) {
       this.selectedShape.isSelect = false
@@ -252,9 +252,9 @@ export default class CanvasUtil2 {
       y: newCurrentMat[13],
     }
     this.handScale = newCurrentMat[0]
-    console.log('this.handMove', this.handMove)
-    console.log('this.handScale', this.handScale)
-    console.log('this.currentMat', this.currentMat)
+    // console.log('this.handMove', this.handMove)
+    // console.log('this.handScale', this.handScale)
+    // console.log('this.currentMat', this.currentMat)
     EventBus.emit(EventTypes.onWheel, this.handScale)
     this.render()
   }

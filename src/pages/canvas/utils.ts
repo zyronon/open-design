@@ -5,16 +5,16 @@ import {
   IState, LineType,
   P2,
   Shape,
-  ShapeConfig,
+  ShapeConfig, ShapeState,
   ShapeType,
   TextAlign
-} from "./type";
-import {store} from "./store";
+} from "./type"
+import {store} from "./store"
 // @ts-ignore
-import {v4 as uuid} from 'uuid';
-import {Colors} from "./constant";
-import {CanvasUtil2} from "./utils/CanvasUtil";
-import {getHypotenuse2, jiaodu2hudu} from "../../utils";
+import {v4 as uuid} from 'uuid'
+import {Colors} from "./constant"
+import {CanvasUtil2} from "./utils/CanvasUtil"
+import {getHypotenuse2, jiaodu2hudu} from "../../utils"
 
 export function renderCanvas(
   rect: Shape,
@@ -109,10 +109,10 @@ export function renderCanvas(
     } else {
       ctx.beginPath()
       ctx.moveTo(x, y)
-      ctx.lineTo(x + w, y);
-      ctx.lineTo(x + w, y + h);
-      ctx.lineTo(x, y + h);
-      ctx.lineTo(x, y);
+      ctx.lineTo(x + w, y)
+      ctx.lineTo(x + w, y + h)
+      ctx.lineTo(x, y + h)
+      ctx.lineTo(x, y)
       ctx.closePath()
     }
   }
@@ -123,65 +123,65 @@ export function renderCanvas(
       let ox = .5 * a
       let oy = .6 * b
 
-      ctx.save();
-      ctx.translate(x + a, y + b);
-      ctx.beginPath();
-      ctx.moveTo(0, b);
-      ctx.bezierCurveTo(ox, b, a, oy, a, 0);
-      ctx.bezierCurveTo(a, -oy, ox, -b, 0, -b);
-      ctx.bezierCurveTo(-ox, -b, -a, -oy, -a, 0);
-      ctx.bezierCurveTo(-a, oy, -ox, b, 0, b);
-      ctx.closePath();
-      ctx.fill();
-      ctx.restore();
+      ctx.save()
+      ctx.translate(x + a, y + b)
+      ctx.beginPath()
+      ctx.moveTo(0, b)
+      ctx.bezierCurveTo(ox, b, a, oy, a, 0)
+      ctx.bezierCurveTo(a, -oy, ox, -b, 0, -b)
+      ctx.bezierCurveTo(-ox, -b, -a, -oy, -a, 0)
+      ctx.bezierCurveTo(-a, oy, -ox, b, 0, b)
+      ctx.closePath()
+      ctx.fill()
+      ctx.restore()
       break
     case ShapeType.STAR:
-      ctx.save();
-      let outA = w / 2;
-      let outB = h / 2;
-      let innerA = outA / 2.6;
-      let innerB = outB / 2.6;
-      let x1, x2, y1, y2;
-      ctx.translate(x + w / 2, y + h / 2);
+      ctx.save()
+      let outA = w / 2
+      let outB = h / 2
+      let innerA = outA / 2.6
+      let innerB = outB / 2.6
+      let x1, x2, y1, y2
+      ctx.translate(x + w / 2, y + h / 2)
 
-      ctx.beginPath();
+      ctx.beginPath()
       for (let i = 0; i < 5; i++) {
-        x1 = outA * Math.cos((54 + i * 72) / 180 * Math.PI);
-        y1 = outB * Math.sin((54 + i * 72) / 180 * Math.PI);
-        x2 = innerA * Math.cos((18 + i * 72) / 180 * Math.PI);
-        y2 = innerB * Math.sin((18 + i * 72) / 180 * Math.PI);
+        x1 = outA * Math.cos((54 + i * 72) / 180 * Math.PI)
+        y1 = outB * Math.sin((54 + i * 72) / 180 * Math.PI)
+        x2 = innerA * Math.cos((18 + i * 72) / 180 * Math.PI)
+        y2 = innerB * Math.sin((18 + i * 72) / 180 * Math.PI)
         //内圆
-        ctx.lineTo(x2, y2);
+        ctx.lineTo(x2, y2)
         //外圆
-        ctx.lineTo(x1, y1);
+        ctx.lineTo(x1, y1)
       }
-      ctx.closePath();
+      ctx.closePath()
 
-      ctx.stroke();
-      ctx.restore();
+      ctx.stroke()
+      ctx.restore()
 
       break
     case ShapeType.POLYGON: {
-      ctx.save();
-      let outA = w / 2;
-      let outB = h / 2;
-      let x1, x2, y1, y2;
-      ctx.translate(x + w / 2, y + h / 2);
+      ctx.save()
+      let outA = w / 2
+      let outB = h / 2
+      let x1, x2, y1, y2
+      ctx.translate(x + w / 2, y + h / 2)
 
-      ctx.beginPath();
+      ctx.beginPath()
       for (let i = 0; i < 3; i++) {
-        x1 = outA * Math.cos((30 + i * 120) / 180 * Math.PI);
-        y1 = outB * Math.sin((30 + i * 120) / 180 * Math.PI);
-        ctx.lineTo(x1, y1);
+        x1 = outA * Math.cos((30 + i * 120) / 180 * Math.PI)
+        y1 = outB * Math.sin((30 + i * 120) / 180 * Math.PI)
+        ctx.lineTo(x1, y1)
       }
-      ctx.closePath();
-      ctx.stroke();
-      ctx.restore();
+      ctx.closePath()
+      ctx.stroke()
+      ctx.restore()
       break
     }
     case ShapeType.TEXT:
       // ctx.fillStyle = 'white'
-      ctx.font = `${rect.fontWeight} ${rect.fontSize}rem "${rect.fontFamily}", sans-serif`;
+      ctx.font = `${rect.fontWeight} ${rect.fontSize}rem "${rect.fontFamily}", sans-serif`
       ctx.textBaseline = 'top'
       // ctx.textAlign = rect.textAlign
 
@@ -196,18 +196,18 @@ export function renderCanvas(
           let m = ctx.measureText(text)
           lX = x + rect.w - m.width
         }
-        text && ctx.fillText(text, lX, y + (index * rect.textLineHeight));
+        text && ctx.fillText(text, lX, y + (index * rect.textLineHeight))
       })
       break
     case ShapeType.IMAGE:
       let currentImg = store.images.get(rect.id)
       if (currentImg) {
-        ctx.drawImage(currentImg, x, y, w, h);
+        ctx.drawImage(currentImg, x, y, w, h)
       } else {
-        let img = new Image();
+        let img = new Image()
         img.onload = () => {
           store.images.set(rect.id, img)
-          ctx.drawImage(img, x, y, w, h);
+          ctx.drawImage(img, x, y, w, h)
         }
         img.src = new URL(rect.img, import.meta.url).href
       }
@@ -231,7 +231,7 @@ export function renderCanvas(
     case ShapeType.PEN:
       if (rect.points?.length) {
         ctx.strokeStyle = rect.borderColor
-        ctx.lineCap = "round";
+        ctx.lineCap = "round"
         ctx.moveTo(rect.points[0]?.x, rect.points[0]?.y)
         rect.points.map((item: any, index: number, arr: any[]) => {
           if (isEdit && isMe) {
@@ -498,10 +498,10 @@ export function hover(ctx: CanvasRenderingContext2D, config: any) {
   } else {
     ctx.beginPath()
     ctx.moveTo(hover.x, hover.y)
-    ctx.lineTo(hover.x + hover.w, hover.y);
-    ctx.lineTo(hover.x + hover.w, hover.y + hover.h);
-    ctx.lineTo(hover.x, hover.y + hover.h);
-    ctx.lineTo(hover.x, hover.y);
+    ctx.lineTo(hover.x + hover.w, hover.y)
+    ctx.lineTo(hover.x + hover.w, hover.y + hover.h)
+    ctx.lineTo(hover.x, hover.y + hover.h)
+    ctx.lineTo(hover.x, hover.y)
     ctx.closePath()
     ctx.strokeStyle = borderColor
     ctx.stroke()
@@ -523,10 +523,10 @@ export function selected(ctx: CanvasRenderingContext2D, config: any) {
   }
   ctx.beginPath()
   ctx.moveTo(x, y)
-  ctx.lineTo(x + w, y);
-  ctx.lineTo(x + w, y + h);
-  ctx.lineTo(x, y + h);
-  ctx.lineTo(x, y);
+  ctx.lineTo(x + w, y)
+  ctx.lineTo(x + w, y + h)
+  ctx.lineTo(x, y + h)
+  ctx.lineTo(x, y)
   ctx.closePath()
   ctx.stroke()
   let d = 4
@@ -585,7 +585,17 @@ export function selected(ctx: CanvasRenderingContext2D, config: any) {
     h: 2 * d,
     lineWidth
   }, r, ctx)
+}
 
+export function selectedHover(ctx: CanvasRenderingContext2D, config: any) {
+  let {
+    x, y, w, h, radius,
+    fillColor, borderColor, rotate,
+    type, flipVertical, flipHorizontal, children,
+  } = config
+  ctx.strokeStyle = 'rgb(139,80,255)'
+
+  let d = 4
   let radius2 = 200
   let min = Math.min(w, h)
   // debugger
@@ -673,17 +683,17 @@ export function draw(
   let ox = .55 * a
   let oy = .55 * b
 
-  ctx.save();
-  ctx.translate(x + a, y + b);
+  ctx.save()
+  ctx.translate(x + a, y + b)
   // ctx.beginPath();
-  ctx.moveTo(0, b);
-  ctx.bezierCurveTo(ox, b, a, oy, a, 0);
-  ctx.bezierCurveTo(a, -oy, ox, -b, 0, -b);
-  ctx.bezierCurveTo(-ox, -b, -a, -oy, -a, 0);
-  ctx.bezierCurveTo(-a, oy, -ox, b, 0, b);
+  ctx.moveTo(0, b)
+  ctx.bezierCurveTo(ox, b, a, oy, a, 0)
+  ctx.bezierCurveTo(a, -oy, ox, -b, 0, -b)
+  ctx.bezierCurveTo(-ox, -b, -a, -oy, -a, 0)
+  ctx.bezierCurveTo(-a, oy, -ox, b, 0, b)
   // ctx.closePath();
-  ctx.stroke();
-  ctx.restore();
+  ctx.stroke()
+  ctx.restore()
   if (isHover) {
     hover(ctx, {...config, x, y})
   }
@@ -727,10 +737,10 @@ export function draw2(
   } else {
     ctx.beginPath()
     ctx.moveTo(x, y)
-    ctx.lineTo(x + w, y);
-    ctx.lineTo(x + w, y + h);
-    ctx.lineTo(x, y + h);
-    ctx.lineTo(x, y);
+    ctx.lineTo(x + w, y)
+    ctx.lineTo(x + w, y + h)
+    ctx.lineTo(x, y + h)
+    ctx.lineTo(x, y)
     ctx.closePath()
     ctx.fillStyle = fillColor
     ctx.fill()
@@ -765,25 +775,20 @@ export function draw3(
   ctx: CanvasRenderingContext2D,
   config: any,
   original: any,
-  status?: {
-    isHover: boolean,
-    isSelect: boolean,
-    isEdit: boolean,
-    enterLT: boolean
-    enterL: boolean
-  },
+  status?: ShapeState,
   parent?: any
 ) {
-  // ctx.save()
+  ctx.save()
   status = Object.assign({
     isHover: false,
     isSelect: false,
+    isSelectHover: false,
     isEdit: false,
     enterLT: false,
     enterL: false
   }, status || {})
   let {x, y} = calcPosition(ctx, config, original, status, parent)
-  const {isHover, isSelect, isEdit, enterLT} = status
+  const {isHover, isSelect, isEdit, isSelectHover, enterLT} = status
   let {
     w, h, radius,
     fillColor, borderColor, rotate, lineWidth,
@@ -794,6 +799,23 @@ export function draw3(
     case ShapeType.ELLIPSE:
       drawEllipse(ctx, {x, y, ...config})
       break
+    case ShapeType.FRAME:
+    case ShapeType.RECTANGLE:
+      if (radius) {
+        renderRoundRect({x, y, w, h}, radius, ctx)
+      } else {
+        ctx.beginPath()
+        ctx.moveTo(x, y)
+        ctx.lineTo(x + w, y)
+        ctx.lineTo(x + w, y + h)
+        ctx.lineTo(x, y + h)
+        ctx.lineTo(x, y)
+        ctx.closePath()
+        ctx.fillStyle = fillColor
+        ctx.fill()
+        ctx.strokeStyle = borderColor
+        ctx.stroke()
+      }
   }
 
   if (isHover) {
@@ -802,11 +824,14 @@ export function draw3(
   if (isSelect) {
     selected(ctx, {...config, x, y})
   }
+  if (isSelectHover) {
+    selectedHover(ctx, {...config, x, y})
+  }
   if (isEdit) {
     edit(ctx, {...config, x, y})
   }
 
-  // ctx.restore()
+  ctx.restore()
 
   // ctx.save()
   // let rect = this.config
@@ -831,16 +856,16 @@ function drawEllipse(
   } = config
   let w2 = w / 2, h2 = h / 2
 
-  ctx.save();
-  ctx.translate(x + w2, y + h2);
+  ctx.save()
+  ctx.translate(x + w2, y + h2)
   if (totalLength === 4) {
     ctx.beginPath()
-    ctx.ellipse(0, 0, w2, h2, jiaodu2hudu(0), 0, 2 * Math.PI); //倾斜 45°角
+    ctx.ellipse(0, 0, w2, h2, jiaodu2hudu(0), 0, 2 * Math.PI) //倾斜 45°角
     ctx.closePath()
   } else {
     //http://www.alloyteam.com/2015/07/canvas-hua-tuo-yuan-di-fang-fa/
     //这里也可以用.5和.6来算ox和oy
-    let ox = 0.5522848 * w2, oy = .5522848 * h2;
+    let ox = 0.5522848 * w2, oy = .5522848 * h2
 
     //TODO 可以优化
     //图形为整圆时的，4个线段中间点，以及相邻两个控制点。
@@ -1122,8 +1147,8 @@ function drawEllipse(
   ctx.fillStyle = fillColor
   ctx.fill()
   ctx.strokeStyle = borderColor
-  ctx.stroke();
-  ctx.restore();
+  ctx.stroke()
+  ctx.restore()
 }
 
 export function edit(ctx: CanvasRenderingContext2D, config: any) {
@@ -1136,10 +1161,10 @@ export function edit(ctx: CanvasRenderingContext2D, config: any) {
 
   ctx.beginPath()
   ctx.moveTo(x, y)
-  ctx.lineTo(x + w, y);
-  ctx.lineTo(x + w, y + h);
-  ctx.lineTo(x, y + h);
-  ctx.lineTo(x, y);
+  ctx.lineTo(x + w, y)
+  ctx.lineTo(x + w, y + h)
+  ctx.lineTo(x, y + h)
+  ctx.lineTo(x, y)
   ctx.closePath()
   ctx.stroke()
   let d = 4
@@ -1269,7 +1294,7 @@ export function getBezier3ControlPoints(tp1: any, tp2: any, start: any, end: any
 
 //取小数部分
 export function getDecimal(num: number) {
-  return num - Math.trunc(num);
+  return num - Math.trunc(num)
 }
 
 
@@ -1285,79 +1310,79 @@ function test(xTarget: any, cp1: any, cp2: any) {
   var tolerance = 0.00001,
     t0 = 0.6,
     x = 3 * (1 - t0) * (1 - t0) * t0 * x1 + 3 * (1 - t0) * t0 * t0 * x2 + t0 * t0 * t0,
-    t;
+    t
   while (Math.abs(x - xTarget) > tolerance) {
     t = t0 - (3 * (1 - t0) * (1 - t0) * t0 * x1 + 3 * (1 - t0) * t0 * t0 * x2 + t0 * t0 * t0 - xTarget) /
-      (3 * (1 - t0) * (1 - t0) * x1 + 6 * (1 - t0) * t0 * (x2 - x1) + 3 * t0 * t0 * (1 - x2));
-    t0 = t;
-    x = 3 * (1 - t0) * (1 - t0) * t0 * x1 + 3 * (1 - t0) * t0 * t0 * x2 + t0 * t0 * t0;
+      (3 * (1 - t0) * (1 - t0) * x1 + 6 * (1 - t0) * t0 * (x2 - x1) + 3 * t0 * t0 * (1 - x2))
+    t0 = t
+    x = 3 * (1 - t0) * (1 - t0) * t0 * x1 + 3 * (1 - t0) * t0 * t0 * x2 + t0 * t0 * t0
   }
   //return 3*(1-t)*(1-t)*t*y1 + 3*(1-t)*t*t*y2 + t*t*t;//这个是返回与x对应的y值
 
-  return t;
-};
+  return t
+}
 
 function pow(v: number, v2: number) {
   return Math.pow(v, v2)
 }
 
 function cuberoot(x: any) {
-  var y = Math.pow(Math.abs(x), 1 / 3);
-  return x < 0 ? -y : y;
+  var y = Math.pow(Math.abs(x), 1 / 3)
+  return x < 0 ? -y : y
 }
 
 //网上找的，解一元三次方程
 export function solveCubic(a: number, b: number, c: number, d: number) {
   // console.log(arguments)
   if (Math.abs(a) < 1e-8) { // Quadratic case, ax^2+bx+c=0
-    a = b;
-    b = c;
-    c = d;
+    a = b
+    b = c
+    c = d
     if (Math.abs(a) < 1e-8) { // Linear case, ax+b=0
-      a = b;
-      b = c;
+      a = b
+      b = c
       if (Math.abs(a) < 1e-8) // Degenerate case
-        return [];
-      return [-b / a];
+        return []
+      return [-b / a]
     }
 
-    var D = b * b - 4 * a * c;
+    var D = b * b - 4 * a * c
     if (Math.abs(D) < 1e-8)
-      return [-b / (2 * a)];
+      return [-b / (2 * a)]
     else if (D > 0)
-      return [(-b + Math.sqrt(D)) / (2 * a), (-b - Math.sqrt(D)) / (2 * a)];
-    return [];
+      return [(-b + Math.sqrt(D)) / (2 * a), (-b - Math.sqrt(D)) / (2 * a)]
+    return []
   }
 
   // Convert to depressed cubic t^3+pt+q = 0 (subst x = t - b/3a)
-  var p = (3 * a * c - b * b) / (3 * a * a);
-  var q = (2 * b * b * b - 9 * a * b * c + 27 * a * a * d) / (27 * a * a * a);
-  var roots;
+  var p = (3 * a * c - b * b) / (3 * a * a)
+  var q = (2 * b * b * b - 9 * a * b * c + 27 * a * a * d) / (27 * a * a * a)
+  var roots
 
   if (Math.abs(p) < 1e-8) { // p = 0 -> t^3 = -q -> t = -q^1/3
-    roots = [cuberoot(-q)];
+    roots = [cuberoot(-q)]
   } else if (Math.abs(q) < 1e-8) { // q = 0 -> t^3 + pt = 0 -> t(t^2+p)=0
-    roots = [0].concat(p < 0 ? [Math.sqrt(-p), -Math.sqrt(-p)] : []);
+    roots = [0].concat(p < 0 ? [Math.sqrt(-p), -Math.sqrt(-p)] : [])
   } else {
-    var D = q * q / 4 + p * p * p / 27;
+    var D = q * q / 4 + p * p * p / 27
     if (Math.abs(D) < 1e-8) {       // D = 0 -> two roots
-      roots = [-1.5 * q / p, 3 * q / p];
+      roots = [-1.5 * q / p, 3 * q / p]
     } else if (D > 0) {             // Only one real root
-      var u = cuberoot(-q / 2 - Math.sqrt(D));
-      roots = [u - p / (3 * u)];
+      var u = cuberoot(-q / 2 - Math.sqrt(D))
+      roots = [u - p / (3 * u)]
     } else {                        // D < 0, three roots, but needs to use complex numbers/trigonometric solution
-      var u = 2 * Math.sqrt(-p / 3);
-      var t = Math.acos(3 * q / p / u) / 3;  // D < 0 implies p < 0 and acos argument in [-1..1]
-      var k = 2 * Math.PI / 3;
-      roots = [u * Math.cos(t), u * Math.cos(t - k), u * Math.cos(t - 2 * k)];
+      var u = 2 * Math.sqrt(-p / 3)
+      var t = Math.acos(3 * q / p / u) / 3  // D < 0 implies p < 0 and acos argument in [-1..1]
+      var k = 2 * Math.PI / 3
+      roots = [u * Math.cos(t), u * Math.cos(t - k), u * Math.cos(t - 2 * k)]
     }
   }
 
   // Convert back from depressed cubic
   for (var i = 0; i < roots.length; i++)
-    roots[i] -= b / (3 * a);
+    roots[i] -= b / (3 * a)
 
-  return roots;
+  return roots
 }
 
 //自己根据wiki写的，解一元三次方程.解出来是NaN。有问题，先不研究了

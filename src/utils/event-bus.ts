@@ -2,7 +2,7 @@ export default {
   eventMap: new Map(),
   on(eventTypes: any, cb: Function) {
     if (eventTypes instanceof Array) {
-      eventTypes.map(eventType => {
+      eventTypes.forEach(eventType => {
         let cbs = this.eventMap.get(eventType);
         if (cbs) {
           cbs.push(cb);
@@ -29,7 +29,7 @@ export default {
   },
   off(eventTypes: any) {
     if (eventTypes instanceof Array) {
-      eventTypes.map(eventType => {
+      eventTypes.forEach(eventType => {
         let cbs = this.eventMap.has(eventType);
         if (cbs) {
           this.eventMap.delete(eventType);
@@ -45,4 +45,4 @@ export default {
   offAll(){
     this.eventMap = new Map()
   }
-};
+}

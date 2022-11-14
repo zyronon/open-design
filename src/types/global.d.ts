@@ -1,4 +1,4 @@
-import {BezierPoint, P2} from "../pages/canvas/type";
+import {P2} from "../pages/canvas/type"
 
 export {};
 

@@ -15,6 +15,7 @@ import {v4 as uuid} from 'uuid'
 import {Colors} from "./constant"
 import {CanvasUtil2} from "./utils/CanvasUtil"
 import {getHypotenuse2, jiaodu2hudu} from "../../utils"
+import {Ellipse} from "./shapes/Ellipse"
 
 export function renderCanvas(
   rect: Shape,
@@ -825,7 +826,12 @@ export function draw3(
     selected(ctx, {...config, x, y})
   }
   if (isSelectHover) {
-    selectedHover(ctx, {...config, x, y})
+    switch (type) {
+      case ShapeType.ELLIPSE:
+        // Ellipse.selectedHover(ctx, {...config, x, y})
+      selectedHover(ctx, {...config, x, y})
+        break
+    }
   }
   if (isEdit) {
     edit(ctx, {...config, x, y})

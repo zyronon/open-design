@@ -2,7 +2,6 @@ import {ShapeConfig, ShapeType} from "../type"
 import {Frame} from "./Frame"
 import {Rectangle} from "./Rectangle"
 import {Ellipse} from "./Ellipse"
-import {BaseShape} from "./BaseShape"
 
 export const getShapeFromConfig = (conf: ShapeConfig): any => {
   let r

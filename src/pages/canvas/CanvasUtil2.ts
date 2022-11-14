@@ -9,6 +9,7 @@ import {Ellipse} from "./shapes/Ellipse"
 import {Rectangle} from "./shapes/Rectangle"
 import {Shape} from "./utils/Shape"
 import {mat4} from "gl-matrix"
+import {getShapeFromConfig} from "./shapes/common"
 
 const out: any = new Float32Array([
   0, 0, 0, 0,
@@ -92,18 +93,7 @@ export default class CanvasUtil2 {
 
   addChildren(rects: any) {
     cloneDeep(rects).map((conf: ShapeConfig) => {
-      let r
-      switch (conf.type) {
-        case ShapeType.FRAME:
-          r = new Frame(conf)
-          break
-        case ShapeType.RECTANGLE:
-          r = new Rectangle(conf)
-          break
-        case ShapeType.ELLIPSE:
-          r = new Ellipse(conf)
-          break
-      }
+      let r = getShapeFromConfig(conf)
       r && this.children.push(r)
     })
   }

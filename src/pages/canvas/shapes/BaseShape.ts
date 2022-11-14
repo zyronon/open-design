@@ -1,9 +1,12 @@
-import {BaseEvent2, P, ShapeConfig} from "../type"
+import {BaseEvent2, P, ShapeConfig, ShapeType} from "../type"
 import {getPath} from "../utils"
 import CanvasUtil2 from "../CanvasUtil2"
 import {cloneDeep} from "lodash"
 import getCenterPoint, {getAngle, getRotatedPoint} from "../../../utils"
 import {getShapeFromConfig} from "./common"
+import {Frame} from "./Frame"
+import {Rectangle} from "./Rectangle"
+import {Ellipse} from "./Ellipse"
 
 export abstract class BaseShape {
   hoverRd1: boolean = false
@@ -19,7 +22,7 @@ export abstract class BaseShape {
   isHover: boolean = false
   isSelect: boolean = false
   isEdit: boolean = false
-  isCapture: boolean = true
+  isCapture: boolean = true//是否捕获事件，为true不会再往下传递事件
   enter: boolean = false
   startX: number = 0
   startY: number = 0
@@ -30,8 +33,8 @@ export abstract class BaseShape {
 
   constructor(props: ShapeConfig) {
     this.config = getPath(props)
-    this.children = this.config.children.map((child: ShapeConfig) => {
-      return getShapeFromConfig(child)
+    this.children = this.config.children.map((conf: ShapeConfig) => {
+      return getShapeFromConfig(conf)
     })
   }
 
@@ -156,7 +159,11 @@ export abstract class BaseShape {
       cb?.()
       // console.log('捕获', this.config.name)
       if (!this.isCapture || !cu.isDesign()) {
-        this.children.map((child: any) => child.event(event, parent?.concat([this])))
+        for (let i = 0; i < this.children.length; i++) {
+          let shape = this.children[i]
+          let isBreak = shape.event(event, parent?.concat([this]))
+          if (isBreak) break
+        }
       }
 
       if (event.capture) return true
@@ -176,12 +183,17 @@ export abstract class BaseShape {
       if (this.isSelect || this.isHover) {
         event.stopPropagation()
       }
+      return true
       // console.log('冒泡', this.config.name)
     } else {
       document.body.style.cursor = "default"
       this.isHover = false
       cu.setInShapeNull(this)
-      this.children.map((child: any) => child.event(event, parent?.concat([this]), cb))
+      for (let i = 0; i < this.children.length; i++) {
+        let shape = this.children[i]
+        let isBreak = shape.event(event, parent?.concat([this]))
+        if (isBreak) break
+      }
     }
     return false
   }
@@ -196,6 +208,29 @@ export abstract class BaseShape {
     // console.log('mousedown', this)
     let {e, point, type} = event
     let {x, y, cu} = this.getXY(point)
+
+    if (Date.now() - this.lastClickTime < 300) {
+      console.log('dblclick')
+      // cu.selectedShape = null
+      // this.config.selected = false
+      // cu.draw()
+      // this.isSelect = false
+      this.isCapture = false
+      for (let i = 0; i < this.children.length; i++) {
+        let shape = this.children[i]
+        let isBreak = shape.event(event, p?.concat([this]), () => {
+          cu.childIsIn = true
+        })
+        if (isBreak) break
+      }
+      if (!cu.childIsIn) {
+        this.isCapture = true
+      }
+      cu.childIsIn = false
+      return
+    }
+    this.lastClickTime = Date.now()
+
     this.original = cloneDeep(this.config)
     cu.startX = x
     cu.startY = y
@@ -267,7 +302,6 @@ export abstract class BaseShape {
     this.isSelect = true
     this.isCapture = true
     this.isHover = false
-    cu.render()
     //如果当前选中的图形不是自己，那么把那个图形设为未选中
     if (cu.selectedShape && cu.selectedShape !== this) {
       cu.selectedShape.isSelect = false
@@ -372,7 +406,6 @@ export abstract class BaseShape {
     // console.log(rect)
     this.config = getPath(rect, this.original)
     cu.render()
-
   }
 
   //拖动左边

@@ -511,16 +511,20 @@ export const r = [
 ]
 export const rects: any[] = [
   {
-    "x": 373.99999999999994,
-    "y": 185.79999999999998,
+    "x": 273.99999999999994,
+    "y": 125.79999999999998,
     "rx": 1129.0000000000005,
     "ry": 233.79999999999998,
-    "w": 347.4,
-    "h": 250.6,
+    "w": 447.4,
+    "h": 350.6,
     "rotate": 0,
     "lineWidth": 2,
     "type": 105,
-    "totalLength": 3.6,
+    "totalLength": 2,
+    startLength: 2,
+    startPoint: {
+      x: 0, y: 0
+    },
     "color": "gray",
     "radius": 0,
     "children": [],
@@ -528,7 +532,7 @@ export const rects: any[] = [
     "flipHorizontal": false,
     "flipVertical": false,
     "borderColor": "rgb(216,216,216)",
-    "fillColor": "rgb(216,216,216)",
+    "fillColor": "#D8D8D8",
     "fontSize": 16,
     "fontWeight": 500,
     "fontFamily": "SourceHanSansCN",

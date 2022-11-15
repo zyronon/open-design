@@ -157,12 +157,12 @@ export default class CanvasUtil2 {
   initEvent(isClear: boolean = false) {
     const fn = isClear ? 'removeEventListener' : 'addEventListener'
     Object.values([
-      EventTypes.onDoubleClick,
+      // EventTypes.onDoubleClick,
       EventTypes.onMouseMove,
       EventTypes.onMouseDown,
       EventTypes.onMouseUp,
-      EventTypes.onMouseEnter,
-      EventTypes.onMouseLeave,
+      // EventTypes.onMouseEnter,
+      // EventTypes.onMouseLeave,
     ]).forEach(eventName => {
       this.canvas[fn](eventName, this.handleEvent, true)
     })

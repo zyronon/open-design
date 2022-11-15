@@ -1,7 +1,7 @@
 import {BaseShape} from "./BaseShape"
-import {draw3, renderRoundRect} from "../utils"
+import {renderRoundRect} from "../utils"
 import CanvasUtil2 from "../CanvasUtil2"
-import {P, ShapeConfig} from "../type"
+import {P} from "../type"
 import {drawEllipseSelectedHover} from "./Ellipse/draw"
 
 export class Rectangle extends BaseShape {
@@ -10,12 +10,13 @@ export class Rectangle extends BaseShape {
     return super.isInBox(p)
   }
 
-  render(ctx: CanvasRenderingContext2D, conf: ShapeConfig, parent?: any): ShapeConfig {
+  render(ctx: CanvasRenderingContext2D, p: P, parent?: any) {
     let {
-      x, y, w, h, radius,
+      w, h, radius,
       fillColor, borderColor, rotate, lineWidth,
       type, flipVertical, flipHorizontal, children,
-    } = conf
+    } = this.config
+    const {x, y} = p
     if (radius) {
       renderRoundRect({x, y, w, h}, radius, ctx)
     } else {
@@ -31,7 +32,6 @@ export class Rectangle extends BaseShape {
       ctx.strokeStyle = borderColor
       ctx.stroke()
     }
-    return conf
   }
 
   renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void {

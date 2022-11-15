@@ -1,10 +1,10 @@
-import {BaseEvent2, P, ShapeConfig, ShapeType} from "../type"
-import {calcPosition, edit, getPath, hover, renderRoundRect, selected} from "../utils"
+import {BaseEvent2, EllipseConfig, P, ShapeConfig} from "../type"
+import {calcPosition, edit, getPath, hover, selected} from "../utils"
 import CanvasUtil2 from "../CanvasUtil2"
 import {cloneDeep} from "lodash"
 import getCenterPoint, {getAngle, getRotatedPoint} from "../../../utils"
 import {getShapeFromConfig} from "./common"
-import {drawEllipse, drawEllipseSelectedHover} from "./Ellipse/draw"
+
 
 export abstract class BaseShape {
   hoverRd1: boolean = false
@@ -15,8 +15,8 @@ export abstract class BaseShape {
   enterLT: boolean = false
   hoverLTR: boolean = false
   enterLTR: boolean = false
-  config: ShapeConfig
-  protected children: BaseShape[] = []
+  public config: ShapeConfig
+  children: BaseShape[] = []
   isHover: boolean = false
   isSelect: boolean = false
   isSelectHover: boolean = false //是否选中之后hover
@@ -37,21 +37,16 @@ export abstract class BaseShape {
     })
   }
 
-  abstract render(ctx: CanvasRenderingContext2D, p: P, parent?: any): ShapeConfig
+  abstract render(ctx: CanvasRenderingContext2D, p: P, parent?: any): void
 
   abstract renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void
 
   render2(ctx: CanvasRenderingContext2D, parent?: any) {
     ctx.save()
     let {x, y} = calcPosition(ctx, this.config, this.original, this.getState(), parent)
-    const {isHover, isSelect, isEdit, isSelectHover, enterLT} = this
-    let {
-      w, h, radius,
-      fillColor, borderColor, rotate, lineWidth,
-      type, flipVertical, flipHorizontal, children,
-    } = this.config
+    const {isHover, isSelect, isEdit, isSelectHover} = this
 
-    this.config = this.render(ctx, {...this.config, x, y}, parent,)
+    this.render(ctx, {x, y}, parent,)
 
     if (isHover) {
       hover(ctx, {...this.config, x, y})
@@ -415,7 +410,7 @@ export abstract class BaseShape {
       [this.original.x, this.original.y],
       [current.x, current.y]
     )
-    console.log('getAngle', a)
+    // console.log('getAngle', a)
     this.config.rotate = a
     cu.render()
   }

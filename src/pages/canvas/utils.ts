@@ -3,7 +3,7 @@ import {
   BezierPointType,
   getDefaultPoint,
   IState,
-  LineType,
+  LineType, P,
   P2,
   Shape,
   ShapeConfig,
@@ -393,7 +393,10 @@ export function getPath(rect: ShapeConfig | any, old?: any, parent?: any) {
   }
   return rect
 }
-
+/** @desc 修改位置
+ * canvas默认起点，在左上角
+ * 翻转、旋转后，需要把起始点设置为图形的正中心，把x,y设置为图形的左上角
+* */
 export function calcPosition(
   ctx: CanvasRenderingContext2D,
   config: any,
@@ -414,8 +417,8 @@ export function calcPosition(
     y = ry + parent.y
   }
 // console.log('type,', type)
-  let oldCenter: { x: number; y: number; }
-  let currentCenter: { x: number; y: number; } = {
+  let oldCenter: P
+  let currentCenter: P = {
     x: x + (w / 2),
     y: y + (h / 2)
   }

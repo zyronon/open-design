@@ -302,6 +302,39 @@ export const rects2 = [
 ]
 export const r = [
   {
+    "x": 375.59999999999997,
+    "y": 142.6,
+    "rx": 1130.6000000000004,
+    "ry": 190.6,
+    "w": 347.4,
+    "h": 250.6,
+    "rotate": 10,
+    "lineWidth": 2,
+    "type": 105,
+    "totalLength": 3.6,
+    "color": "gray",
+    "radius": 0,
+    "children": [],
+    "brokenTexts": [],
+    "flipHorizontal": false,
+    "flipVertical": false,
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "rgb(216,216,216)",
+    "fontSize": 16,
+    "fontWeight": 500,
+    "fontFamily": "SourceHanSansCN",
+    "texts": [],
+    "name": "椭圆",
+    "leftX": 375.59999999999997,
+    "rightX": 723,
+    "topY": 142.6,
+    "bottomY": 393.2,
+    "id": "cd973e70-08e8-471a-814d-61966b891d5a",
+    "centerX": 549.3,
+    "centerY": 267.9,
+    "points": []
+  },
+  {
     "x": 986.4,
     "y": 94.80000000000015,
     "rx": 1686.3999999999996,
@@ -475,43 +508,13 @@ export const r = [
     "centerY": 284.8000000000002,
     "points": []
   },
-  {
-    "x": 1230.8,
-    "y": 93.79999999999998,
-    "rx": 1230.8,
-    "ry": 93.79999999999998,
-    "w": 168.79999999999995,
-    "h": 295.6,
-    "rotate": 0,
-    "lineWidth": 2,
-    "type": 104,
-    "color": "gray",
-    "radius": 65.59999999999991,
-    "children": [],
-    "brokenTexts": [],
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "rgb(216,216,216)",
-    "fontSize": 16,
-    "fontWeight": 500,
-    "fontFamily": "SourceHanSansCN",
-    "texts": [],
-    "name": "长方形",
-    "leftX": 1230.8,
-    "rightX": 1399.6,
-    "topY": 93.79999999999998,
-    "bottomY": 389.4,
-    "id": "cd973e70-08e8-471a-814d-61966b891d5a",
-    "centerX": 1315.1999999999998,
-    "centerY": 241.6,
-    "points": []
-  }
 ]
 export const rects: any[] = [
   {
-    "x": 375.59999999999997,
-    "y": 142.6,
-    "rx": 1130.6000000000004,
-    "ry": 190.6,
+    "x": 373.99999999999994,
+    "y": 185.79999999999998,
+    "rx": 1129.0000000000005,
+    "ry": 233.79999999999998,
     "w": 347.4,
     "h": 250.6,
     "rotate": 0,
@@ -531,14 +534,64 @@ export const rects: any[] = [
     "fontFamily": "SourceHanSansCN",
     "texts": [],
     "name": "椭圆",
-    "leftX": 375.59999999999997,
-    "rightX": 723,
-    "topY": 142.6,
-    "bottomY": 393.2,
+    "leftX": 373.99999999999994,
+    "rightX": 721.3999999999999,
+    "topY": 185.79999999999998,
+    "bottomY": 436.4,
     "id": "cd973e70-08e8-471a-814d-61966b891d5a",
-    "centerX": 549.3,
-    "centerY": 267.9,
-    "points": []
+    "centerX": 547.6999999999999,
+    "centerY": 311.09999999999997,
+    "points": [],
+    "cps": [
+      {
+        "x": 173.7,
+        "y": 0
+      },
+      {
+        "x": 173.7,
+        "y": 69.20128544
+      },
+      {
+        "x": 95.93186976,
+        "y": 125.3
+      },
+      {
+        "x": 0,
+        "y": 125.3
+      },
+      {
+        "x": -95.93186976,
+        "y": 125.3
+      },
+      {
+        "x": -173.7,
+        "y": 69.20128544
+      },
+      {
+        "x": -173.7,
+        "y": 0
+      },
+      {
+        "x": -173.7,
+        "y": -69.20128544
+      },
+      {
+        "x": -95.93186976,
+        "y": -125.3
+      },
+      {
+        "x": 0,
+        "y": -125.3
+      },
+      {
+        "x": 95.93186976,
+        "y": -125.3
+      },
+      {
+        "x": 173.7,
+        "y": -69.20128544
+      }
+    ]
   },
   {
     "x": 986.4,
@@ -757,10 +810,8 @@ const defaultHandMove = {x: 0, y: 0}
 export const config = {
   handScale: 1.25,
   handMove: {x: -216.5, y: -93.25},
-  currentMat: [1.25, 0, 0, 0,
-    0, 1.25, 0, 0,
-    0, 0, 1, 0,
-    -216.5, -93.25, 0, 1],
+  currentMat: [1.25, 0, 0, 0, 0, 1.25, 0, 0, 0, 0, 1, 0, -216.5, -93.25, 0, 1],
+  // handScale: 1,
   // currentMat: defaultCurrentMat,
   // handMove: defaultHandMove,
   shapes: rects

@@ -1,37 +1,38 @@
-import {BaseShape} from "../BaseShape"
-import {draw3, drawRound, getBezier3ControlPoints, getBezierPointByLength, getDecimal, renderRound} from "../../utils"
-import {
-  BezierPoint,
-  BezierPointType,
-  EllipseConfig,
-  getDefaultPoint,
-  LineType,
-  P,
-  P2,
-  ShapeConfig,
-  ShapeType
-} from "../../type"
-import CanvasUtil2 from "../../CanvasUtil2"
-import {jiaodu2hudu} from "../../../../utils"
-import {drawEllipse, drawEllipseSelectedHover} from "./draw"
+import {BaseShape} from "./BaseShape"
+import {drawRound, getBezier3ControlPoints, getBezierPointByLength, getDecimal, renderRound} from "../utils"
+import {BezierPoint, BezierPointType, EllipseConfig, getDefaultPoint, LineType, P, P2, ShapeType} from "../type"
+import CanvasUtil2 from "../CanvasUtil2"
+import {jiaodu2hudu} from "../../../utils"
 
 export class Ellipse extends BaseShape {
-
   isIn(p: P, cu: CanvasUtil2): boolean {
     return super.isInBox(p)
   }
 
-  render(ctx: CanvasRenderingContext2D, conf: EllipseConfig, parent?: any): ShapeConfig {
+  get _config(): EllipseConfig {
+    return this.config as EllipseConfig
+  }
+
+  set _config(val) {
+    this.config = val
+  }
+
+  render(ctx: CanvasRenderingContext2D, p: P, parent?: any) {
     let {
-      x, y, w, h, radius,
+      w, h, radius,
       fillColor, borderColor, rotate, lineWidth,
       type, flipVertical, flipHorizontal, children,
       totalLength
-    } = conf as any as EllipseConfig
+    } = this._config
+    const {x, y} = p
     let w2 = w / 2, h2 = h / 2
 
     ctx.save()
-    ctx.translate(x + w2, y + h2)
+    if (rotate || flipHorizontal || flipVertical) {
+    } else {
+      ctx.translate(x + w2, y + h2)
+    }
+
     if (totalLength === 4) {
       ctx.beginPath()
       ctx.ellipse(0, 0, w2, h2, jiaodu2hudu(0), 0, 2 * Math.PI) //倾斜 45°角
@@ -91,7 +92,7 @@ export class Ellipse extends BaseShape {
         x: start.x,
         y: start.y - oy
       }
-      conf.cps = [
+      this._config.cps = [
         start,
         cp1,
         cp2,
@@ -118,7 +119,7 @@ export class Ellipse extends BaseShape {
             return [top, cp7, cp8, start]
         }
       }
-      conf.getCps = getBezierControlPoint
+      this._config.getCps = getBezierControlPoint
 
       //渲染，整个圆时，所有的控制点
       let showCp = false
@@ -337,8 +338,6 @@ export class Ellipse extends BaseShape {
     ctx.strokeStyle = borderColor
     ctx.stroke()
     ctx.restore()
-
-    return conf
   }
 
   renderSelectedHover(ctx: CanvasRenderingContext2D, conf: EllipseConfig): void {
@@ -369,12 +368,12 @@ export class Ellipse extends BaseShape {
 
       let cps = conf.getCps(Math.trunc(totalLength))
 
-      let s = getBezierPointByLength(Math.decimal(totalLength), cps)
-      console.log('s', s)
-      sweepPoint = {
-        x: w2 - 20,
-        y: 0,
-      }
+      //长度对应的点，这个点在圆上
+      let lengthCp = getBezierPointByLength(Math.decimal(totalLength), cps)
+      //直线的方程式y= k*x
+      let k = lengthCp.y / lengthCp.x
+      let halfX = lengthCp.x / 2
+      sweepPoint = {x: halfX, y: k * halfX}
       startPoint = {
         x: w2 / 2,
         y: 0,

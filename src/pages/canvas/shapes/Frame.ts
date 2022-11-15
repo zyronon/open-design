@@ -14,36 +14,13 @@ export class Frame extends BaseShape {
     return a
   }
 
-  render(ctx: CanvasRenderingContext2D, conf: ShapeConfig, parent?: any): ShapeConfig {
+  render(ctx: CanvasRenderingContext2D, p: P, parent?: any) {
     let {
-      x, y, w, h, radius,
+      w, h, radius,
       fillColor, borderColor, rotate, lineWidth,
       type, flipVertical, flipHorizontal, children,
-    } = conf
-    if (radius) {
-      renderRoundRect({x, y, w, h}, radius, ctx)
-    } else {
-      ctx.beginPath()
-      ctx.moveTo(x, y)
-      ctx.lineTo(x + w, y)
-      ctx.lineTo(x + w, y + h)
-      ctx.lineTo(x, y + h)
-      ctx.lineTo(x, y)
-      ctx.closePath()
-      ctx.fillStyle = fillColor
-      ctx.fill()
-      ctx.strokeStyle = borderColor
-      ctx.stroke()
-    }
-    return conf
-  }
-
-  render23(ctx: CanvasRenderingContext2D, conf: any, parent?: any): void {
-    let {
-      x, y, w, h, radius,
-      fillColor, borderColor, rotate, lineWidth,
-      type, flipVertical, flipHorizontal, children,
-    } = conf
+    } = this.config
+    const {x, y} = p
     if (radius) {
       renderRoundRect({x, y, w, h}, radius, ctx)
     } else {

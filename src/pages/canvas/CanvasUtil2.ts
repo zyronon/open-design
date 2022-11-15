@@ -1,12 +1,9 @@
 import {BaseShape} from "./shapes/BaseShape"
 import EventBus from "../../utils/event-bus"
 import {clear} from "./utils"
-import {BaseEvent, BaseEvent2, EventMapTypes, EventTypes, P, ShapeConfig, ShapeType} from "./type"
+import {BaseEvent2, EventMapTypes, EventTypes, P, ShapeConfig, ShapeType} from "./type"
 import {cloneDeep} from "lodash"
-import {config, rects} from "./constant"
-import {Frame} from "./shapes/Frame"
-import {Ellipse} from "./shapes/Ellipse"
-import {Rectangle} from "./shapes/Rectangle"
+import {config} from "./constant"
 import {Shape} from "./utils/Shape"
 import {mat4} from "gl-matrix"
 import {getShapeFromConfig} from "./shapes/common"
@@ -153,7 +150,7 @@ export default class CanvasUtil2 {
     }
     this.ctx.lineCap = 'round'
     // console.log('this.children,', this.children)
-    this.children.forEach(shape => shape.render(this.ctx))
+    this.children.forEach(shape => shape.render2(this.ctx))
     this.ctx.restore()
   }
 

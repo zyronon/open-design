@@ -1,7 +1,7 @@
 import {ShapeConfig, ShapeType} from "../type"
 import {Frame} from "./Frame"
 import {Rectangle} from "./Rectangle"
-import {Ellipse} from "./Ellipse"
+import {Ellipse} from "./Ellipse/Ellipse"
 
 export const getShapeFromConfig = (conf: ShapeConfig): any => {
   let r

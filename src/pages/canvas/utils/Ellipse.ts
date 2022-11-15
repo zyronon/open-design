@@ -1,9 +1,9 @@
-import {Shape} from "./Shape";
-import {draw3, drawRound, getBezierPointByLength, getPath, solveCubic} from "../utils";
-import {CanvasUtil2} from "./CanvasUtil";
-import {cloneDeep} from "lodash";
-import getCenterPoint, {getAngle, getRotatedPoint} from "../../../utils";
-import {P} from "../type";
+import {Shape} from "./Shape"
+import {drawRound, getPath, solveCubic} from "../utils"
+import {CanvasUtil2} from "./CanvasUtil"
+import {cloneDeep} from "lodash"
+import getCenterPoint, {getAngle, getRotatedPoint} from "../../../utils"
+import {P} from "../type"
 
 class Ellipse extends Shape {
   hoverRd1: boolean = false

@@ -1,9 +1,10 @@
-import {BaseEvent2, P, ShapeConfig} from "../type"
-import {getPath} from "../utils"
+import {BaseEvent2, P, ShapeConfig, ShapeType} from "../type"
+import {calcPosition, edit, getPath, hover, renderRoundRect, selected} from "../utils"
 import CanvasUtil2 from "../CanvasUtil2"
 import {cloneDeep} from "lodash"
 import getCenterPoint, {getAngle, getRotatedPoint} from "../../../utils"
 import {getShapeFromConfig} from "./common"
+import {drawEllipse, drawEllipseSelectedHover} from "./Ellipse/draw"
 
 export abstract class BaseShape {
   hoverRd1: boolean = false
@@ -36,7 +37,50 @@ export abstract class BaseShape {
     })
   }
 
-  abstract render(ctx: CanvasRenderingContext2D): void
+  abstract render(ctx: CanvasRenderingContext2D, p: P, parent?: any): ShapeConfig
+
+  abstract renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void
+
+  render2(ctx: CanvasRenderingContext2D, parent?: any) {
+    ctx.save()
+    let {x, y} = calcPosition(ctx, this.config, this.original, this.getState(), parent)
+    const {isHover, isSelect, isEdit, isSelectHover, enterLT} = this
+    let {
+      w, h, radius,
+      fillColor, borderColor, rotate, lineWidth,
+      type, flipVertical, flipHorizontal, children,
+    } = this.config
+
+    this.config = this.render(ctx, {...this.config, x, y}, parent,)
+
+    if (isHover) {
+      hover(ctx, {...this.config, x, y})
+    }
+    if (isSelect) {
+      selected(ctx, {...this.config, x, y})
+    }
+    if (isSelectHover) {
+      this.renderSelectedHover(ctx, {...this.config, x, y})
+    }
+    if (isEdit) {
+      edit(ctx, {...this.config, x, y})
+    }
+
+    ctx.restore()
+
+    // ctx.save()
+    // let rect = this.config
+    // ctx.fillStyle = 'gray'
+    // ctx.font = `${rect.fontWeight} ${rect.fontSize}rem "${rect.fontFamily}", sans-serif`;
+    // ctx.textBaseline = 'top'
+    // ctx.fillText(rect.name, x, y - 18);
+    // ctx.restore()
+
+    this.config = getPath(this.config, null, parent)
+    if (this.children) {
+      this.children.map((item: BaseShape) => item.render2(ctx, this.config))
+    }
+  }
 
   abstract isIn(p: P, cu: CanvasUtil2): boolean
 
@@ -341,6 +385,7 @@ export abstract class BaseShape {
     }
   }
 
+  //拖动左上，改变圆角按钮
   dragRd1(point: P) {
     let {x, y, cu} = this.getXY(point)
     let dx = (x - cu.startX)

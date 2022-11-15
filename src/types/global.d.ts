@@ -1,23 +1,23 @@
-import {P2} from "../pages/canvas/type"
+import {P, P2} from "../pages/canvas/type"
+import {getDecimal} from "../pages/canvas/utils"
 
-export {};
-
-export interface Point {
-  x: number,
-  y: number,
-}
+export {}
 
 declare global {
   interface CanvasRenderingContext2D {
     //三次贝塞尔曲线
-    bezierCurveTo2(cp1: Point, cp2: Point, end: Point): void
+    bezierCurveTo2(cp1: P, cp2: P, end: P): void
 
     //二次贝塞尔曲线
-    quadraticCurveTo2(cp1: Point | P2, end: Point): void
+    quadraticCurveTo2(cp1: P | P2, end: P): void
 
-    moveTo2(cp1: Point | P2): void
+    moveTo2(cp1: P | P2): void
 
-    lineTo2(cp1: Point | P2): void
+    lineTo2(cp1: P | P2): void
+  }
+
+  interface Math {
+    decimal(val: number): number
   }
 }
 
@@ -39,13 +39,7 @@ let Context2D: CanvasRenderingContext2D = {
 for (const key in Context2D) {
   CanvasRenderingContext2D.prototype[key] = Context2D[key]
 }
-// CanvasRenderingContext2D.prototype.bezierCurveTo2 =
-//   function (cp1, cp2, end) {
-//     this.bezierCurveTo(cp1.x, cp1.y, cp2.x, cp2.y, end.x, end.y)
-//   }
 
-// CanvasRenderingContext2D.prototype.quadraticCurveTo2 =
-//   function (cp1, end) {
-//     this.quadraticCurveTo(cp1.x, cp1.y, end.x, end.y)
-//   }
-
+Math.decimal = (num: number) => {
+  return num - Math.trunc(num)
+}

@@ -144,7 +144,14 @@ export interface ShapeConfig {
   flipVertical?: boolean,
   flipHorizontal?: boolean,
   points?: any[],
-  totalLength?: number
+}
+
+export interface EllipseConfig extends ShapeConfig {
+  /** @desc 圆弧总长度*/
+  totalLength: number
+  /** @desc 所有控制点，总的12个*/
+  cps: P[]
+  getCps: Function
 }
 
 export enum TextMode {

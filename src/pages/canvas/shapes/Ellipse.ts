@@ -104,6 +104,9 @@ export class Ellipse extends BaseShape {
     //获取第几条曲线的所有控制点
     const getBezierControlPoint = (length: number) => {
       switch (length) {
+        //特殊情况，当startLength不为0时，startLength + totalLength 可能会等于4
+        //等于4，直接用第一段就行
+        case 4:
         case 0:
           return [start, cp1, cp2, bottom]
         case 1:
@@ -112,6 +115,7 @@ export class Ellipse extends BaseShape {
           return [left, cp5, cp6, top]
         case 3:
           return [top, cp7, cp8, start]
+
       }
     }
     this._config.getCps = getBezierControlPoint
@@ -142,7 +146,7 @@ export class Ellipse extends BaseShape {
     }
 
     //是否是整圆
-    let fullEllipse = (startLength + totalLength) >= 4
+    let fullEllipse = totalLength === 4
 
     if (fullEllipse) {
       ctx.beginPath()
@@ -197,7 +201,6 @@ export class Ellipse extends BaseShape {
         //曲线长度与角度间的比例
         // let k = 100 / 90
         // startLength = k * startLength / 100
-
         lastPoint = this._config.startPoint
         lastLength = startLength
         currentLength = lastLength + perPart
@@ -305,6 +308,9 @@ export class Ellipse extends BaseShape {
         lastLength = currentLength
         currentLength += perPart
       }
+
+
+      this._config.endPoint = bezierCps[bezierCps.length - 1].center
 
       bezierCps.push({
         cp1: getDefaultPoint(),
@@ -418,27 +424,27 @@ export class Ellipse extends BaseShape {
       //直线的方程式y= k*x
       let k = lengthCp.y / lengthCp.x
       let halfX = lengthCp.x / 2
-      sweepPoint = {x: halfX, y: k * halfX}
+      // sweepPoint = {x: halfX, y: k * halfX}
+      sweepPoint = this._config.endPoint
 
       let isYkx = Math.decimal(startLength) < 0.5
-      if (startLength % 1 == 0) {
-        switch (startLength) {
-          case 1:
-            isYkx = false
-            break
-          case 2:
-            isYkx = true
-            break
-          case 3:
-            isYkx = false
-        }
+      switch (Math.trunc(startLength)) {
+        case 0:
+        case 2:
+          isYkx = Math.decimal(startLength) < 0.5
+          break
+        case 1:
+        case 3:
+          isYkx = Math.decimal(startLength) > 0.5
+          break
       }
 
-      //如果超过半个区间，那么公式相反，这里要注意startLength 等于整数的特殊情况
-      if (true) {
+      let d = 30
+      //如果超过半个象限，那么公式相反，这里要注意startLength 等于整数的特殊情况
+      if (isYkx) {
         let k2 = this._config.startPoint.y / this._config.startPoint.x
         let sx = this._config.startPoint.x
-        sx = sx < 0 ? sx + 20 : sx - 20
+        sx = sx < 0 ? sx + d : sx - d
         let sy = sx * k2
         startPoint = {
           x: sx,
@@ -447,7 +453,7 @@ export class Ellipse extends BaseShape {
       } else {
         let k2 = this._config.startPoint.x / this._config.startPoint.y
         let sy = this._config.startPoint.y
-        sy = sy < 0 ? sy + 20 : sy - 20
+        sy = sy < 0 ? sy + d : sy - d
         let sx = sy * k2
         startPoint = {
           x: sx,

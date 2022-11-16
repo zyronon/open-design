@@ -153,6 +153,8 @@ export interface EllipseConfig extends ShapeConfig {
   startLength: number
   /** @desc 圆弧起点*/
   startPoint: P
+  /** @desc 圆弧终点*/
+  endPoint: P
   /** @desc 所有控制点，总的12个*/
   cps: P[]
   getCps: Function

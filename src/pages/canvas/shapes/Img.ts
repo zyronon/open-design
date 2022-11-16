@@ -1,13 +1,19 @@
 import {BaseShape} from "./BaseShape"
-import {EllipseConfig, P} from "../type"
+import {P} from "../type"
 import CanvasUtil2 from "../CanvasUtil2"
 
-export class Polygon extends BaseShape {
+export class Img extends BaseShape {
+  img: any = undefined
+
+  constructor(props: any) {
+    super(props)
+  }
+
   isIn(p: P, cu: CanvasUtil2): boolean {
     return super.isInBox(p)
   }
 
-  get _config() {
+  get _config(): any {
     return this.config
   }
 
@@ -20,25 +26,21 @@ export class Polygon extends BaseShape {
       w, h, radius,
       fillColor, borderColor, rotate, lineWidth,
       type, flipVertical, flipHorizontal, children,
+      src
     } = this._config
     const {x, y} = p
     ctx.save()
-    let outA = w / 2
-    let outB = h / 2
-    let x1, x2, y1, y2
-    ctx.translate(x + w / 2, y + h / 2)
-
-    ctx.beginPath()
-    for (let i = 0; i < 3; i++) {
-      x1 = outA * Math.cos((30 + i * 120) / 180 * Math.PI)
-      y1 = outB * Math.sin((30 + i * 120) / 180 * Math.PI)
-      ctx.lineTo(x1, y1)
+    let currentImg = this.img
+    if (currentImg) {
+      ctx.drawImage(currentImg, x, y, w, h)
+    } else {
+      let img = new Image()
+      img.onload = () => {
+        this.img = img
+        ctx.drawImage(img, x, y, w, h)
+      }
+      img.src = require('../../../assets/image/a.jpg')
     }
-    ctx.closePath()
-    ctx.fillStyle = fillColor
-    ctx.fill()
-    ctx.strokeStyle = borderColor
-    ctx.stroke()
     ctx.restore()
   }
 

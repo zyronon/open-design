@@ -251,6 +251,8 @@ class Design extends React.Component<any, IState> {
             </div>
           </div>
           <div className="right">
+            {/*<img src={require('../../assets/image/a.jpg')} alt=""/>*/}
+
             <div className="config-wrapper">
               {
                 selectRect && <>

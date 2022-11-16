@@ -41,7 +41,7 @@ export abstract class BaseShape {
 
   abstract renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void
 
-  render2(ctx: CanvasRenderingContext2D, parent?: any) {
+  shapeRender(ctx: CanvasRenderingContext2D, parent?: any) {
     ctx.save()
     let {x, y} = calcPosition(ctx, this.config, this.original, this.getState(), parent)
     const {isHover, isSelect, isEdit, isSelectHover} = this
@@ -73,7 +73,7 @@ export abstract class BaseShape {
 
     this.config = getPath(this.config, null, parent)
     if (this.children) {
-      this.children.map((item: BaseShape) => item.render2(ctx, this.config))
+      this.children.map((item: BaseShape) => item.shapeRender(ctx, this.config))
     }
   }
 

@@ -2,6 +2,9 @@ import {ShapeConfig, ShapeType} from "../type"
 import {Frame} from "./Frame"
 import {Rectangle} from "./Rectangle"
 import {Ellipse} from "./Ellipse"
+import {Polygon} from "./Polygon"
+import {Star} from "./Star"
+import {Img} from "./Img"
 
 export const getShapeFromConfig = (conf: ShapeConfig): any => {
   let r
@@ -14,6 +17,15 @@ export const getShapeFromConfig = (conf: ShapeConfig): any => {
       break
     case ShapeType.ELLIPSE:
       r = new Ellipse(conf)
+      break
+    case ShapeType.POLYGON:
+      r = new Polygon(conf)
+      break
+    case ShapeType.STAR:
+      r = new Star(conf)
+      break
+    case ShapeType.IMAGE:
+      r = new Img(conf)
       break
   }
   return r

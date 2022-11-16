@@ -420,7 +420,7 @@ export class Ellipse extends BaseShape {
       let halfX = lengthCp.x / 2
       sweepPoint = {x: halfX, y: k * halfX}
 
-      let isYkx = true
+      let isYkx = Math.decimal(startLength) < 0.5
       if (startLength % 1 == 0) {
         switch (startLength) {
           case 1:
@@ -432,14 +432,13 @@ export class Ellipse extends BaseShape {
           case 3:
             isYkx = false
         }
-      } else {
-        isYkx === Math.decimal(startLength) < 0.5
       }
 
       //如果超过半个区间，那么公式相反，这里要注意startLength 等于整数的特殊情况
-      if (isYkx) {
+      if (true) {
         let k2 = this._config.startPoint.y / this._config.startPoint.x
-        let sx = (this._config.startPoint.x - 20)
+        let sx = this._config.startPoint.x
+        sx = sx < 0 ? sx + 20 : sx - 20
         let sy = sx * k2
         startPoint = {
           x: sx,
@@ -447,7 +446,8 @@ export class Ellipse extends BaseShape {
         }
       } else {
         let k2 = this._config.startPoint.x / this._config.startPoint.y
-        let sy = (this._config.startPoint.y - 20)
+        let sy = this._config.startPoint.y
+        sy = sy < 0 ? sy + 20 : sy - 20
         let sx = sy * k2
         startPoint = {
           x: sx,

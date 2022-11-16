@@ -521,7 +521,7 @@ export const rects: any[] = [
     "lineWidth": 2,
     "type": 105,
     "totalLength": 2,
-    startLength: 2,
+    startLength: 1.9,
     startPoint: {
       x: 0, y: 0
     },

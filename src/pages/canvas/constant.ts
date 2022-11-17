@@ -400,8 +400,7 @@ export const r = [
     "centerY": 198.30000000000007,
     "points": [],
   },
-]
-export const rects: any[] = [
+
   {
     "x": 874,
     "y": 111.4,
@@ -701,6 +700,68 @@ export const rects: any[] = [
     "points": []
   }
 ]
+export const rects: any[] =[
+  {
+    "x": 29.199999999999818,
+    "y": 4.799999999999983,
+    "rx": 1029.1999999999998,
+    "ry": 4.799999999999983,
+    "w": 120,
+    "h": 295.6,
+    "rotate": 7,
+    "lineWidth": 2,
+    "type": 104,
+    "color": "gray",
+    "radius": 22.40000000000009,
+    "children": [],
+    "brokenTexts": [],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "rgb(216,216,216)",
+    "fontSize": 16,
+    "fontWeight": 500,
+    "fontFamily": "SourceHanSansCN",
+    "texts": [],
+    "name": "长方形",
+    "leftX": 29.199999999999818,
+    "rightX": 149.19999999999982,
+    "topY": 4.799999999999983,
+    "bottomY": 300.4,
+    "centerX": 89.19999999999982,
+    "centerY": 152.6,
+    "points": [],
+    "id": "400f97f0-d7e8-4546-8e6f-a5aea6437866"
+  },
+  {
+    "x": 1289.1999999999998,
+    "y": 97.79999999999998,
+    "rx": 1289.1999999999998,
+    "ry": 97.79999999999998,
+    "w": 120,
+    "h": 295.6,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": 104,
+    "color": "gray",
+    "radius": 22.40000000000009,
+    "children": [],
+    "brokenTexts": [],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "rgb(216,216,216)",
+    "fontSize": 16,
+    "fontWeight": 500,
+    "fontFamily": "SourceHanSansCN",
+    "texts": [],
+    "name": "长方形",
+    "leftX": 1289.1999999999998,
+    "rightX": 1409.1999999999998,
+    "topY": 97.79999999999998,
+    "bottomY": 393.4,
+    "centerX": 1349.1999999999998,
+    "centerY": 245.6,
+    "points": [],
+    "id": "c52c170b-09bb-47a1-92c5-52d60b513a9a"
+  }
+]
 
 const defaultCurrentMat = [
   1, 0, 0, 0,
@@ -711,11 +772,11 @@ const defaultCurrentMat = [
 const defaultHandMove = {x: 0, y: 0}
 
 export const config = {
-  handScale: 1.25,
-  handMove: {x: -216.5, y: -93.25},
-  currentMat: [1.25, 0, 0, 0, 0, 1.25, 0, 0, 0, 0, 1, 0, -216.5, -93.25, 0, 1],
-  // handScale: 1,
-  // currentMat: defaultCurrentMat,
-  // handMove: defaultHandMove,
+  // handScale: 1.25,
+  // handMove: {x: -216.5, y: -93.25},
+  // currentMat: [1.25, 0, 0, 0, 0, 1.25, 0, 0, 0, 0, 1, 0, -216.5, -93.25, 0, 1],
+  handScale: 1,
+  currentMat: defaultCurrentMat,
+  handMove: defaultHandMove,
   shapes: rects
 }

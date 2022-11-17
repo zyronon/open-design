@@ -393,10 +393,11 @@ export function getPath(rect: ShapeConfig | any, old?: any, parent?: any) {
   }
   return rect
 }
+
 /** @desc 修改位置
  * canvas默认起点，在左上角
  * 翻转、旋转后，需要把起始点设置为图形的正中心，把x,y设置为图形的左上角
-* */
+ * */
 export function calcPosition(
   ctx: CanvasRenderingContext2D,
   config: any,
@@ -1093,4 +1094,12 @@ function MySolveCubic(a: number, b: number, c: number, d: number) {
 
   // return -2 * b + (
   // )
+}
+
+export function sleep(time: number) {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      resolve(true)
+    }, time)
+  })
 }

@@ -462,8 +462,8 @@ export class Ellipse extends BaseShape {
       }
 
 
-      console.log('_configstartPoint', this._config.startPoint)
-      console.log('startPoint', startPoint)
+      // console.log('_configstartPoint', this._config.startPoint)
+      // console.log('startPoint', startPoint)
       ratioPoint = {
         x: 0,
         y: 0,

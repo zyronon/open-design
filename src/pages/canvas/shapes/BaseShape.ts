@@ -1,5 +1,5 @@
 import {BaseEvent2, EllipseConfig, P, ShapeConfig} from "../type"
-import {calcPosition, edit, getPath, hover, selected} from "../utils"
+import {calcPosition, edit, getPath, hover, selected, sleep} from "../utils"
 import CanvasUtil2 from "../CanvasUtil2"
 import {cloneDeep} from "lodash"
 import getCenterPoint, {getAngle, getRotatedPoint} from "../../../utils"
@@ -74,7 +74,7 @@ export abstract class BaseShape {
 
     this.config = getPath(this.config, null, parent)
     if (this.children) {
-      this.children.map((item: BaseShape) => item.shapeRender(ctx, this.config))
+      this.children.map(async (item: BaseShape) =>await item.shapeRender(ctx, this.config))
     }
   }
 

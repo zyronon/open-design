@@ -10,28 +10,33 @@ export class Rectangle extends BaseShape {
     return super.isInBox(p)
   }
 
-  render(ctx: CanvasRenderingContext2D, p: P, parent?: any) {
-    let {
-      w, h, radius,
-      fillColor, borderColor, rotate, lineWidth,
-      type, flipVertical, flipHorizontal, children,
-    } = this.config
-    const {x, y} = p
-    if (radius) {
-      renderRoundRect({x, y, w, h}, radius, ctx)
-    } else {
-      ctx.beginPath()
-      ctx.moveTo(x, y)
-      ctx.lineTo(x + w, y)
-      ctx.lineTo(x + w, y + h)
-      ctx.lineTo(x, y + h)
-      ctx.lineTo(x, y)
-      ctx.closePath()
-      ctx.fillStyle = fillColor
-      ctx.fill()
-      ctx.strokeStyle = borderColor
-      ctx.stroke()
-    }
+  async render(ctx: CanvasRenderingContext2D, p: P, parent?: any) {
+    return new Promise(resolve => {
+      let {
+        w, h, radius,
+        fillColor, borderColor, rotate, lineWidth,
+        type, flipVertical, flipHorizontal, children,
+      } = this.config
+      const {x, y} = p
+      ctx.save()
+      if (radius) {
+        renderRoundRect({x, y, w, h}, radius, ctx)
+      } else {
+        ctx.beginPath()
+        ctx.moveTo(x, y)
+        ctx.lineTo(x + w, y)
+        ctx.lineTo(x + w, y + h)
+        ctx.lineTo(x, y + h)
+        ctx.lineTo(x, y)
+        ctx.closePath()
+        ctx.fillStyle = fillColor
+        ctx.fill()
+        ctx.strokeStyle = borderColor
+        ctx.stroke()
+      }
+      ctx.restore()
+      resolve(true)
+    })
   }
 
   renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void {

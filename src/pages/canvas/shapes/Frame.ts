@@ -10,10 +10,6 @@ export class Frame extends BaseShape {
     return super.isInBox(p)
   }
 
-  test<T>(a: string, b: T) {
-    return a
-  }
-
   render(ctx: CanvasRenderingContext2D, p: P, parent?: any) {
     let {
       w, h, radius,

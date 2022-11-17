@@ -1,20 +1,52 @@
-import {BaseShape} from "./BaseShape";
+import {BaseShape} from "./BaseShape"
+import CanvasUtil2 from "../CanvasUtil2"
+import {P, TextAlign, TextConfig} from "../type"
 
-export class Text {
-  isIn(): boolean {
-    return false
+export class Text extends BaseShape {
+  isIn(p: P, cu: CanvasUtil2): boolean {
+    return super.isInBox(p)
   }
 
-  mousedown(): void {
+  get _config(): TextConfig {
+    return this.config as TextConfig
   }
 
-  mousemove(): void {
+  set _config(val) {
+    this.config = val
   }
 
-  mouseup(): void {
+  render(ctx: CanvasRenderingContext2D, p: P, parent?: any): any {
+    let {
+      w, h, radius,
+      fontWeight,
+      fontSize,
+      fontFamily,
+      brokenTexts,
+      textAlign,
+      textLineHeight
+    } = this._config
+    const {x, y} = p
+    // ctx.fillStyle = 'white'
+    ctx.font = `${fontWeight} ${fontSize}rem "${fontFamily}", sans-serif`
+    ctx.textBaseline = 'top'
+    // ctx.textAlign = rect.textAlign
+
+    // console.log('render', rect.texts)
+    brokenTexts?.map((text, index) => {
+      let lX = x
+      if (textAlign === TextAlign.CENTER) {
+        let m = ctx.measureText(text)
+        lX = x + w / 2 - m.width / 2
+      }
+      if (textAlign === TextAlign.RIGHT) {
+        let m = ctx.measureText(text)
+        lX = x + w - m.width
+      }
+      text && ctx.fillText(text, lX, y + (index * textLineHeight))
+    })
   }
 
-  render(): void {
+  renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void {
   }
 
 }

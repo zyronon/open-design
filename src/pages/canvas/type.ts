@@ -160,6 +160,33 @@ export interface EllipseConfig extends ShapeConfig {
   getCps: Function
 }
 
+export interface TextConfig extends ShapeConfig{
+  brokenTexts: string[],
+  texts: string[],
+  textLineHeight: number,
+  letterSpacing: number,
+  textMode: TextMode,
+  textBaseline: TextBaseline,
+  textAlign: TextAlign,
+  fontFamily: FontFamily,
+  fontWeight: FontWeight,
+  fontSize: number,
+}
+
+
+export interface RectText {
+  brokenTexts: string[],
+  texts: string[],
+  textLineHeight: number,
+  letterSpacing: number,
+  textMode: TextMode,
+  textBaseline: TextBaseline,
+  textAlign: TextAlign,
+  fontFamily: FontFamily,
+  fontWeight: FontWeight,
+  fontSize: number,
+}
+
 export enum TextMode {
   AUTO_W = 1,
   AUTO_H = 2,
@@ -195,19 +222,6 @@ export enum RectColorType {
 export enum FontFamily {
   SourceHanSerifCN = 'SourceHanSerifCN',
   SourceHanSansCN = 'SourceHanSansCN',
-}
-
-export interface RectText {
-  brokenTexts: string[],
-  texts: string[],
-  textLineHeight: number,
-  letterSpacing: number,
-  textMode: TextMode,
-  textBaseline: TextBaseline,
-  textAlign: TextAlign,
-  fontFamily: FontFamily,
-  fontWeight: FontWeight,
-  fontSize: number,
 }
 
 

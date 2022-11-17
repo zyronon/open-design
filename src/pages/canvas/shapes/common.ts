@@ -5,6 +5,9 @@ import {Ellipse} from "./Ellipse"
 import {Polygon} from "./Polygon"
 import {Star} from "./Star"
 import {Img} from "./Img"
+import {Text} from "./Text"
+import {Pen} from "./Pen"
+import {Pencil} from "./Pencil"
 
 export const getShapeFromConfig = (conf: ShapeConfig): any => {
   let r
@@ -26,6 +29,16 @@ export const getShapeFromConfig = (conf: ShapeConfig): any => {
       break
     case ShapeType.IMAGE:
       r = new Img(conf)
+      break
+    case ShapeType.TEXT:
+      r = new Text(conf)
+      break
+    case ShapeType.PEN:
+      console.log('config',conf)
+      r = new Pen(conf)
+      break
+    case ShapeType.PENCIL:
+      r = new Pencil(conf)
       break
   }
   return r

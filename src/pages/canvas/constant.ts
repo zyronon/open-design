@@ -1,4 +1,4 @@
-import {FontFamily, FontWeight, ShapeConfig, ShapeType} from "./type"
+import {FontFamily, FontWeight, ShapeType} from "./type"
 
 export const fontFamilies = [
   {
@@ -301,6 +301,42 @@ export const rects2 = [
   }
 ]
 export const r = [
+  {
+    "x": 75.8,
+    "y": 79,
+    "rx": 2373.8,
+    "ry": 197.00000000000003,
+    "w": 149.79999999999984,
+    "h": 157.80000000000007,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": ShapeType.TEXT,
+    "src": "src/assets/image/a.jpg",
+    "color": "gray",
+    "radius": 0,
+    "children": [],
+    "texts": [
+      "输入文本"
+    ],
+    "brokenTexts": [
+      "输入文本"
+    ],
+    "flipHorizontal": false,
+    "flipVertical": false,
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "#D8D8D8",
+    "fontSize": 16,
+    "fontWeight": 500,
+    "fontFamily": "SourceHanSansCN",
+    "name": "文字",
+    "leftX": 175.8,
+    "rightX": 325.59999999999985,
+    "topY": 79,
+    "bottomY": 236.80000000000007,
+    "centerX": 250.69999999999993,
+    "centerY": 157.90000000000003,
+    "points": [],
+  },
   {
     "x": 175.8,
     "y": 79,
@@ -702,13 +738,119 @@ export const r = [
 ]
 export const rects: any[] = [
   {
-    "x": 175.8,
-    "y": 79,
-    "rx": 2373.8,
-    "ry": 197.00000000000003,
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "black",
+    "fontSize": 0,
+    "texts": [],
+    "x": 0,
+    "y": 0,
+    "w": 0,
+    "h": 0,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": ShapeType.PEN,
+    "radius": 0,
+    "points": [
+      {
+        "x": 800,
+        "y": 100
+      },
+      {
+        "x": 1200,
+        "y": 300
+      },
+      {
+        "x": 1100,
+        "y": 400
+      }
+    ],
+    "children": [],
+    "name": "PEN",
+    "leftX": 0,
+    "rightX": 0,
+    "topY": 0,
+    "bottomY": 0,
+  },
+  {
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "black",
+    "fontSize": 0,
+    "texts": [],
+    "x": 0,
+    "y": 0,
+    "w": 0,
+    "h": 0,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": ShapeType.PENCIL,
+    "radius": 0,
+    "points": [
+      {
+        "x": 800,
+        "y": 200
+      },
+      {
+        "x": 1200,
+        "y": 500
+      }
+    ],
+    "children": [],
+    "name": "PENCIL",
+    "leftX": 0,
+    "rightX": 0,
+    "topY": 0,
+    "bottomY": 0,
+  },
+  {
+    "x": 185.8,
+    "y": 106,
+    "rx": 2583.8,
+    "ry": 224.00000000000003,
+    "w": 80,
+    "h": 25,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": ShapeType.TEXT,
+    "color": "gray",
+    "radius": 0,
+    "children": [],
+
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "#D8D8D8",
+    "fontSize": 16,
+    "fontWeight": 500,
+    "fontFamily": "SourceHanSansCN",
+    "texts": [
+      "输入文本"
+    ],
+    "brokenTexts": [
+      "输入文本",
+      "输入文本",
+    ],
+    "textAlign": "right",
+    "textBaseline": 1,
+    "letterSpacing": 0,
+    "textLineHeight": 20,
+    "textMode": 2,
+    "flipHorizontal": false,
+    "flipVertical": false,
+    "name": "文字",
+    "leftX": 385.8,
+    "rightX": 535.5999999999999,
+    "topY": 106,
+    "bottomY": 263.80000000000007,
+    "centerX": 460.69999999999993,
+    "centerY": 184.90000000000003,
+    "points": [],
+  },
+  {
+    "x": 385.8,
+    "y": 106,
+    "rx": 2583.8,
+    "ry": 224.00000000000003,
     "w": 149.79999999999984,
     "h": 157.80000000000007,
-    "rotate": 10,
+    "rotate": 0,
     "lineWidth": 2,
     "type": 110,
     "src": "src/assets/image/a.jpg",
@@ -725,16 +867,180 @@ export const rects: any[] = [
     "fontFamily": "SourceHanSansCN",
     "texts": [],
     "name": "图像",
-    "leftX": 175.8,
-    "rightX": 325.59999999999985,
-    "topY": 79,
-    "bottomY": 236.80000000000007,
-    "centerX": 250.69999999999993,
-    "centerY": 157.90000000000003,
+    "leftX": 385.8,
+    "rightX": 535.5999999999999,
+    "topY": 106,
+    "bottomY": 263.80000000000007,
+    "centerX": 460.69999999999993,
+    "centerY": 184.90000000000003,
     "points": [],
     "id": "e7550924-9a2c-4472-b8f4-b8a060ac365e"
   },
-
+  {
+    "x": 544.4,
+    "y": 111.39999999999998,
+    "rx": 2199.4000000000005,
+    "ry": 219.39999999999998,
+    "w": 149.79999999999984,
+    "h": 157.80000000000007,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": 109,
+    "totalLength": 2,
+    "startLength": 1.2,
+    "color": "gray",
+    "radius": 0,
+    "children": [],
+    "brokenTexts": [],
+    "flipHorizontal": false,
+    "flipVertical": false,
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "#D8D8D8",
+    "fontSize": 16,
+    "fontWeight": 500,
+    "fontFamily": "SourceHanSansCN",
+    "texts": [],
+    "name": "星形",
+    "leftX": 544.4,
+    "rightX": 694.1999999999998,
+    "topY": 111.39999999999998,
+    "bottomY": 269.20000000000005,
+    "centerX": 619.3,
+    "centerY": 190.3,
+    "points": [],
+    "id": "e1e2ed4a-c7e2-4f59-a7e3-b692bccf5399"
+  },
+  {
+    "x": 700.4,
+    "y": 107.39999999999999,
+    "rx": 2055.400000000001,
+    "ry": 215.4,
+    "w": 152.19999999999982,
+    "h": 181.80000000000013,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": 108,
+    "totalLength": 2,
+    "startLength": 1.2,
+    "color": "gray",
+    "radius": 0,
+    "children": [],
+    "brokenTexts": [],
+    "flipHorizontal": false,
+    "flipVertical": false,
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "#D8D8D8",
+    "fontSize": 16,
+    "fontWeight": 500,
+    "fontFamily": "SourceHanSansCN",
+    "texts": [],
+    "name": "多边形",
+    "leftX": 700.4,
+    "rightX": 852.5999999999998,
+    "topY": 107.39999999999999,
+    "bottomY": 289.2000000000001,
+    "centerX": 776.4999999999999,
+    "centerY": 198.30000000000007,
+    "points": [],
+    "id": "af6422d9-71bc-41fd-b9a5-ee3a596e2716"
+  },
+  {
+    "x": 874,
+    "y": 111.4,
+    "rx": 1729.0000000000007,
+    "ry": 219.40000000000003,
+    "w": 155.39999999999998,
+    "h": 185.00000000000014,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": 105,
+    "totalLength": 2,
+    "startLength": 1.2,
+    "startPoint": {
+      "x": -24.559211120639993,
+      "y": 87.78428902400009
+    },
+    "endPoint": {
+      "use": true,
+      "x": 24.55921112064002,
+      "y": -87.78428902400006,
+      "px": 0,
+      "py": 0,
+      "rx": 0,
+      "ry": 0
+    },
+    "color": "gray",
+    "radius": 0,
+    "children": [],
+    "brokenTexts": [],
+    "flipHorizontal": false,
+    "flipVertical": false,
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "#D8D8D8",
+    "fontSize": 16,
+    "fontWeight": 500,
+    "fontFamily": "SourceHanSansCN",
+    "texts": [],
+    "name": "椭圆",
+    "leftX": 874,
+    "rightX": 1029.4,
+    "topY": 111.4,
+    "bottomY": 296.40000000000015,
+    "centerX": 951.7,
+    "centerY": 203.9000000000001,
+    "points": [],
+    "cps": [
+      {
+        "x": 77.69999999999999,
+        "y": 0
+      },
+      {
+        "x": 77.69999999999999,
+        "y": 51.08634400000004
+      },
+      {
+        "x": 42.912528959999996,
+        "y": 92.50000000000007
+      },
+      {
+        "x": 0,
+        "y": 92.50000000000007
+      },
+      {
+        "x": -42.912528959999996,
+        "y": 92.50000000000007
+      },
+      {
+        "x": -77.69999999999999,
+        "y": 51.08634400000004
+      },
+      {
+        "x": -77.69999999999999,
+        "y": 0
+      },
+      {
+        "x": -77.69999999999999,
+        "y": -51.08634400000004
+      },
+      {
+        "x": -42.912528959999996,
+        "y": -92.50000000000007
+      },
+      {
+        "x": 0,
+        "y": -92.50000000000007
+      },
+      {
+        "x": 42.912528959999996,
+        "y": -92.50000000000007
+      },
+      {
+        "x": 77.69999999999999,
+        "y": -51.08634400000004
+      }
+    ],
+    "id": "3a04646c-00e3-44f4-bedc-9a7a9f8f3893"
+  },
   {
     "x": 1064.8,
     "y": 91.60000000000016,
@@ -906,8 +1212,39 @@ export const rects: any[] = [
     "bottomY": 471.60000000000014,
     "centerX": 1166,
     "centerY": 281.60000000000014,
-    "points": []
+    "points": [],
+    "id": "9eeba7de-9848-41ec-9f85-6cd2d51d1edb"
   },
+  {
+    "x": 1289.1999999999998,
+    "y": 97.79999999999998,
+    "rx": 1289.1999999999998,
+    "ry": 97.79999999999998,
+    "w": 120,
+    "h": 295.6,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": 104,
+    "color": "gray",
+    "radius": 22.40000000000009,
+    "children": [],
+    "brokenTexts": [],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "rgb(216,216,216)",
+    "fontSize": 16,
+    "fontWeight": 500,
+    "fontFamily": "SourceHanSansCN",
+    "texts": [],
+    "name": "长方形",
+    "leftX": 1289.1999999999998,
+    "rightX": 1409.1999999999998,
+    "topY": 97.79999999999998,
+    "bottomY": 393.4,
+    "centerX": 1349.1999999999998,
+    "centerY": 245.6,
+    "points": [],
+    "id": "e378e9bc-080a-46ab-b184-ce86647aca9e"
+  }
 ]
 
 const defaultCurrentMat = [

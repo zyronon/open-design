@@ -73,8 +73,9 @@ export abstract class BaseShape {
     // ctx.restore()
 
     this.config = getPath(this.config, null, parent)
-    if (this.children) {
-      this.children.map(async (item: BaseShape) =>await item.shapeRender(ctx, this.config))
+    for (let i = 0; i < this.children.length; i++) {
+      let shape = this.children[i]
+      await shape.shapeRender(ctx, this.config)
     }
   }
 

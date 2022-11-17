@@ -121,7 +121,7 @@ export default class CanvasUtil2 {
     }
   }
 
-  render() {
+  async render() {
     EventBus.emit(EventTypes.onDraw)
     // if (true){
     if (false) {
@@ -150,7 +150,11 @@ export default class CanvasUtil2 {
     }
     this.ctx.lineCap = 'round'
     // console.log('this.children,', this.children)
-    this.children.forEach(async shape => await shape.shapeRender(this.ctx))
+    //不能用map或者forEach，因为里面await 不生效
+    for (let i = 0; i < this.children.length; i++) {
+      let shape = this.children[i]
+      await shape.shapeRender(this.ctx)
+    }
     this.ctx.restore()
   }
 

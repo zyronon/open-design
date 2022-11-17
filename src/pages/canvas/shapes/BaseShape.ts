@@ -37,16 +37,17 @@ export abstract class BaseShape {
     })
   }
 
-  abstract render(ctx: CanvasRenderingContext2D, p: P, parent?: any): void
+
+  abstract render(ctx: CanvasRenderingContext2D, p: P, parent?: any): any
 
   abstract renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void
 
-  shapeRender(ctx: CanvasRenderingContext2D, parent?: any) {
+  async shapeRender(ctx: CanvasRenderingContext2D, parent?: any) {
     ctx.save()
     let {x, y} = calcPosition(ctx, this.config, this.original, this.getState(), parent)
     const {isHover, isSelect, isEdit, isSelectHover} = this
 
-    this.render(ctx, {x, y}, parent,)
+    await this.render(ctx, {x, y}, parent,)
 
     if (isHover) {
       hover(ctx, {...this.config, x, y})

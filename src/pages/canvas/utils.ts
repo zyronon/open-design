@@ -209,7 +209,7 @@ export function renderCanvas(
         let img = new Image()
         img.onload = () => {
           store.images.set(rect.id, img)
-          ctx.drawImage(img, x, y, w, h)
+          ctx.drawImage(currentImg, x, y, w, h)
         }
         img.src = new URL(rect.img, import.meta.url).href
       }

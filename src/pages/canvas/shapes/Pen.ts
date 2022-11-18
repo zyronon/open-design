@@ -3,6 +3,7 @@ import CanvasUtil2 from "../CanvasUtil2"
 import {P, TextAlign, TextConfig} from "../type"
 import {RectType} from "../../canvas-old/type"
 import {renderRound} from "../../canvas-old/utils"
+import {cloneDeep} from "lodash"
 
 export class Pen extends BaseShape {
   isIn(p: P, cu: CanvasUtil2): boolean {
@@ -24,7 +25,6 @@ export class Pen extends BaseShape {
       borderColor
     } = this._config
     const {x, y} = p
-    console.log('points', this._config)
     if (points?.length) {
       ctx.strokeStyle = borderColor
       ctx.lineCap = "round"

@@ -748,6 +748,66 @@ export const rects: any[] = [
     "h": 0,
     "rotate": 0,
     "lineWidth": 2,
+    "type": ShapeType.ARROW,
+    "radius": 0,
+    "points": [
+      {
+        "x": 150,
+        "y": 150
+      },
+      {
+        "x": 250,
+        "y": 350
+      },
+    ],
+    "children": [],
+    "name": "箭头",
+    "leftX": 0,
+    "rightX": 0,
+    "topY": 0,
+    "bottomY": 0,
+  },
+  {
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "black",
+    "fontSize": 0,
+    "texts": [],
+    "x": 0,
+    "y": 0,
+    "w": 0,
+    "h": 0,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": ShapeType.LINE,
+    "radius": 0,
+    "points": [
+      {
+        "x": 100,
+        "y": 100
+      },
+      {
+        "x": 200,
+        "y": 300
+      },
+    ],
+    "children": [],
+    "name": "直线",
+    "leftX": 0,
+    "rightX": 0,
+    "topY": 0,
+    "bottomY": 0,
+  },
+  {
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "black",
+    "fontSize": 0,
+    "texts": [],
+    "x": 0,
+    "y": 0,
+    "w": 0,
+    "h": 0,
+    "rotate": 0,
+    "lineWidth": 2,
     "type": ShapeType.PEN,
     "radius": 0,
     "points": [
@@ -1235,7 +1295,7 @@ export const rects: any[] = [
     "fontWeight": 500,
     "fontFamily": "SourceHanSansCN",
     "texts": [],
-    "name": "长方形",
+    "name": "矩形",
     "leftX": 1289.1999999999998,
     "rightX": 1409.1999999999998,
     "topY": 97.79999999999998,

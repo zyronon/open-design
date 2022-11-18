@@ -8,6 +8,8 @@ import {Img} from "./Img"
 import {Text} from "./Text"
 import {Pen} from "./Pen"
 import {Pencil} from "./Pencil"
+import {Line} from "./Line"
+import {Arrow} from "./Arrow"
 
 export const getShapeFromConfig = (conf: ShapeConfig): any => {
   let r
@@ -34,11 +36,16 @@ export const getShapeFromConfig = (conf: ShapeConfig): any => {
       r = new Text(conf)
       break
     case ShapeType.PEN:
-      console.log('config',conf)
       r = new Pen(conf)
       break
     case ShapeType.PENCIL:
       r = new Pencil(conf)
+      break
+    case ShapeType.LINE:
+      r = new Line(conf)
+      break
+    case ShapeType.ARROW:
+      r = new Arrow(conf)
       break
   }
   return r

@@ -386,7 +386,7 @@ export function getPath(rect: ShapeConfig | any, old?: any, parent?: any) {
   rect.centerX = rect.x + rect.w / 2
   rect.centerY = rect.y + rect.h / 2
 
-  rect.points = []
+  // rect.points = []
 
   if (!rect.id) {
     rect.id = uuid()

@@ -28,21 +28,64 @@ export class Arrow extends BaseShape {
     if (points.length) {
       ctx.strokeStyle = borderColor
       ctx.lineCap = "round"
+      let d = 40
       let start = points[0]
-      let d = 20
-      ctx.moveTo(start.x, start.y)
-
-      let degree = 0
       if (points.length === 2) {
         let end = points[1]
-      }
+        let dx = end.x - start.x
+        let dy = end.y - start.y
+        let degree = Math.atan(Math.abs(dy) / Math.abs(dx)) / Math.PI * 180
 
-      ctx.beginPath()
-      ctx.lineTo(start.x + d, start.y + d)
-      ctx.lineTo(start.x - d, start.y + d)
-      ctx.lineTo(start.x, start.y)
-      ctx.closePath()
-      ctx.stroke()
+        /*以终点为坐标原点。判断起点坐标在第几象限
+        *第一象限，直接使用反正切对应角度，不用减
+        *第二象限，减90
+        *第三象限，减180
+        *第四象限，减270
+        * */
+        console.log('degree1', degree)
+
+        /*象限对应要减的角度*/
+        if (end.x < start.x && end.y > start.y) degree = 90 - degree
+        else if (end.x > start.x && end.y > start.y) degree = degree - 90
+        else if (end.x > start.x && end.y < start.y) degree = 270 - degree
+        else if (end.x < start.x && end.y < start.y) degree = degree - 270
+        //水平或垂直的特殊情况
+        if (dx === 0) {
+          if (end.y > start.y) {
+            degree = 0
+          } else {
+            degree = 180
+          }
+        }
+        if (dy === 0) {
+          if (end.x < start.x) {
+            degree = 90
+          } else {
+            degree = 270
+          }
+        }
+        console.log('degree2', degree)
+        ctx.save()
+        ctx.translate(start.x, start.y)
+        ctx.rotate((degree) * Math.PI / 180)
+        ctx.beginPath()
+        /*
+        * 箭头起点Y坐标
+        * 三角箭头，Y坐标是0
+        * 圆或者方形，Y坐标是长宽的一半
+        * */
+        let arrowStartY = 0
+        ctx.moveTo(0, arrowStartY)
+        ctx.lineTo(d, d)
+        ctx.lineTo(-d, d)
+        ctx.lineTo(0, arrowStartY)
+        ctx.closePath()
+        ctx.strokeStyle = borderColor
+        ctx.stroke()
+        ctx.restore()
+      }
+      ctx.moveTo(start.x, start.y)
+
       points.map((item: any, index: number, arr: any[]) => {
         ctx.beginPath()
         ctx.moveTo(item.x, item.y)

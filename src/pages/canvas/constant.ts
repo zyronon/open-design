@@ -753,11 +753,11 @@ export const rects: any[] = [
     "points": [
       {
         "x": 150,
-        "y": 150
+        "y": 250
       },
       {
-        "x": 250,
-        "y": 350
+        "x": 50,
+        "y": 250
       },
     ],
     "children": [],

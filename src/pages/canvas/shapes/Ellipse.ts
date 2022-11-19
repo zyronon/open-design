@@ -4,6 +4,40 @@ import {BezierPoint, BezierPointType, EllipseConfig, getDefaultPoint, LineType, 
 import CanvasUtil2 from "../CanvasUtil2"
 import {jiaodu2hudu} from "../../../utils"
 
+/**
+ * @desc 获取长度对应的 鼠标控制点
+ * */
+const getMouseControlPointByLength = (length: number, p: P) => {
+  //直线的方程式y= k*x
+  //如果超过半个象限，那么公式相反，这里要注意startLength 等于整数的特殊情况
+  let isYkx = Math.decimal(length) < 0.5
+  switch (Math.trunc(length)) {
+    case 0:
+    case 2:
+      isYkx = Math.decimal(length) < 0.5
+      break
+    case 1:
+    case 3:
+      isYkx = Math.decimal(length) > 0.5
+      break
+  }
+
+  let d = 30
+  let sx, sy, k2
+  if (isYkx) {
+    k2 = p.y / p.x
+    sx = p.x
+    sx = sx < 0 ? sx + d : sx - d
+    sy = sx * k2
+  } else {
+    k2 = p.x / p.y
+    sy = p.y
+    sy = sy < 0 ? sy + d : sy - d
+    sx = sy * k2
+  }
+  return {x: sx, y: sy}
+}
+
 export class Ellipse extends BaseShape {
   isIn(p: P, cu: CanvasUtil2): boolean {
     return super.isInBox(p)
@@ -28,6 +62,7 @@ export class Ellipse extends BaseShape {
     let w2 = w / 2, h2 = h / 2
 
     ctx.save()
+    //如果旋转、翻转，那么不需要再移动中心点
     if (rotate || flipHorizontal || flipVertical) {
     } else {
       ctx.translate(x + w2, y + h2)
@@ -400,7 +435,7 @@ export class Ellipse extends BaseShape {
     ctx.strokeStyle = 'rgb(139,80,255)'
     ctx.save()
 
-    let r2 = 5
+    let r2 = 4
     //弧度
     let sweepPoint
     //起点
@@ -417,61 +452,18 @@ export class Ellipse extends BaseShape {
       let w2 = w / 2, h2 = h / 2
       ctx.translate(x + w2, y + h2)
 
-      let cps = conf.getCps(Math.trunc(totalLength))
-
-      //长度对应的点，这个点在圆上
-      let lengthCp = getBezierPointByLength(Math.decimal(totalLength), cps)
-      //直线的方程式y= k*x
-      let k = lengthCp.y / lengthCp.x
-      let halfX = lengthCp.x / 2
-      // sweepPoint = {x: halfX, y: k * halfX}
       sweepPoint = this._config.endPoint
 
-      let isYkx = Math.decimal(startLength) < 0.5
-      switch (Math.trunc(startLength)) {
-        case 0:
-        case 2:
-          isYkx = Math.decimal(startLength) < 0.5
-          break
-        case 1:
-        case 3:
-          isYkx = Math.decimal(startLength) > 0.5
-          break
-      }
-
-      let d = 30
-      //如果超过半个象限，那么公式相反，这里要注意startLength 等于整数的特殊情况
-      if (isYkx) {
-        let k2 = this._config.startPoint.y / this._config.startPoint.x
-        let sx = this._config.startPoint.x
-        sx = sx < 0 ? sx + d : sx - d
-        let sy = sx * k2
-        startPoint = {
-          x: sx,
-          y: sy,
-        }
-      } else {
-        let k2 = this._config.startPoint.x / this._config.startPoint.y
-        let sy = this._config.startPoint.y
-        sy = sy < 0 ? sy + d : sy - d
-        let sx = sy * k2
-        startPoint = {
-          x: sx,
-          y: sy,
-        }
-      }
-
+      startPoint = getMouseControlPointByLength(startLength, this._config.startPoint)
+      sweepPoint = getMouseControlPointByLength(startLength + totalLength, this._config.endPoint)
 
       // console.log('_configstartPoint', this._config.startPoint)
       // console.log('startPoint', startPoint)
-      ratioPoint = {
-        x: 0,
-        y: 0,
-      }
-      renderRound(startPoint, r2, ctx, ShapeType.SELECT)
-      renderRound(ratioPoint, r2, ctx, ShapeType.SELECT)
+      ratioPoint = {x: 0, y: 0,}
+      drawRound(ctx, startPoint, r2)
+      drawRound(ctx, ratioPoint, r2,)
     }
-    renderRound(sweepPoint, r2, ctx, ShapeType.SELECT)
+    drawRound(ctx, sweepPoint, r2,)
     ctx.restore()
   }
 }

@@ -1,6 +1,6 @@
 import {jiaodu2hudu} from "../../../../utils"
 import {drawRound, getBezier3ControlPoints, getBezierPointByLength, getDecimal, renderRound} from "../../utils"
-import {BezierPoint, BezierPointType, getDefaultPoint, LineType, P2, ShapeType} from "../../type"
+import {BezierPoint, BezierPointType, getP2, LineType, P2, ShapeType} from "../../type"
 
 export function drawEllipse(
   ctx: CanvasRenderingContext2D,
@@ -118,27 +118,27 @@ export function drawEllipse(
       // ctx.ellipse(0, 0, w2, h2, jiaodu2hudu(0), 0, 2 * Math.PI); //倾斜 45°角
       // ctx.stroke();
       bezierCps.push({
-        cp1: {...getDefaultPoint(true), ...cp8},
-        center: {...getDefaultPoint(true), ...start},
-        cp2: {...getDefaultPoint(true), ...cp1},
+        cp1: {...getP2(true), ...cp8},
+        center: {...getP2(true), ...start},
+        cp2: {...getP2(true), ...cp1},
         type: BezierPointType.MirrorAngleAndLength
       })
       bezierCps.push({
-        cp1: {...getDefaultPoint(true), ...cp2},
-        center: {...getDefaultPoint(true), ...bottom},
-        cp2: {...getDefaultPoint(true), ...cp3},
+        cp1: {...getP2(true), ...cp2},
+        center: {...getP2(true), ...bottom},
+        cp2: {...getP2(true), ...cp3},
         type: BezierPointType.MirrorAngleAndLength
       })
       bezierCps.push({
-        cp1: {...getDefaultPoint(true), ...cp4},
-        center: {...getDefaultPoint(true), ...left},
-        cp2: {...getDefaultPoint(true), ...cp5},
+        cp1: {...getP2(true), ...cp4},
+        center: {...getP2(true), ...left},
+        cp2: {...getP2(true), ...cp5},
         type: BezierPointType.MirrorAngleAndLength
       })
       bezierCps.push({
-        cp1: {...getDefaultPoint(true), ...cp6},
-        center: {...getDefaultPoint(true), ...top},
-        cp2: {...getDefaultPoint(true), ...cp7},
+        cp1: {...getP2(true), ...cp6},
+        center: {...getP2(true), ...top},
+        cp2: {...getP2(true), ...cp7},
         type: BezierPointType.MirrorAngleAndLength
       })
       // ctx.ellipse(x,y,ox,oy)
@@ -153,7 +153,7 @@ export function drawEllipse(
       // console.log('currentLength', currentLength, 'lastLength', lastLength)
       // drawRound(ctx, start)
       bezierCps.push({
-        cp1: getDefaultPoint(),
+        cp1: getP2(),
         center: {
           use: true,
           x: start.x,
@@ -163,7 +163,7 @@ export function drawEllipse(
           rx: 0,
           ry: 0,
         },
-        cp2: getDefaultPoint(),
+        cp2: getP2(),
         type: BezierPointType.NoMirror
       })
       for (let i = 1; i <= totalPart; i++) {
@@ -228,7 +228,7 @@ export function drawEllipse(
             rx: 0,
             ry: 0,
           },
-          cp2: getDefaultPoint(),
+          cp2: getP2(),
           type: BezierPointType.MirrorAngleAndLength
         })
         // ctx.beginPath()
@@ -241,9 +241,9 @@ export function drawEllipse(
       }
 
       bezierCps.push({
-        cp1: getDefaultPoint(),
-        center: getDefaultPoint(true),
-        cp2: getDefaultPoint(),
+        cp1: getP2(),
+        center: getP2(true),
+        cp2: getP2(),
         type: BezierPointType.RightAngle
       })
     }

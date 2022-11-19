@@ -1,6 +1,6 @@
 import {BaseShape} from "./BaseShape"
 import {drawCp, drawRound, getBezier3ControlPoints, getBezierPointByLength, getDecimal, renderRound} from "../utils"
-import {BezierPoint, BezierPointType, EllipseConfig, getDefaultPoint, LineType, P, P2, ShapeType} from "../type"
+import {BezierPoint, BezierPointType, EllipseConfig, getP, getP2, LineType, P, P2, ShapeType} from "../type"
 import CanvasUtil2 from "../CanvasUtil2"
 import {jiaodu2hudu} from "../../../utils"
 
@@ -189,27 +189,27 @@ export class Ellipse extends BaseShape {
       ctx.closePath()
       let bezierCps: BezierPoint[] = []
       bezierCps.push({
-        cp1: {...getDefaultPoint(true), ...cp8},
-        center: {...getDefaultPoint(true), ...start},
-        cp2: {...getDefaultPoint(true), ...cp1},
+        cp1: {...getP2(true), ...cp8},
+        center: {...getP2(true), ...start},
+        cp2: {...getP2(true), ...cp1},
         type: BezierPointType.MirrorAngleAndLength
       })
       bezierCps.push({
-        cp1: {...getDefaultPoint(true), ...cp2},
-        center: {...getDefaultPoint(true), ...bottom},
-        cp2: {...getDefaultPoint(true), ...cp3},
+        cp1: {...getP2(true), ...cp2},
+        center: {...getP2(true), ...bottom},
+        cp2: {...getP2(true), ...cp3},
         type: BezierPointType.MirrorAngleAndLength
       })
       bezierCps.push({
-        cp1: {...getDefaultPoint(true), ...cp4},
-        center: {...getDefaultPoint(true), ...left},
-        cp2: {...getDefaultPoint(true), ...cp5},
+        cp1: {...getP2(true), ...cp4},
+        center: {...getP2(true), ...left},
+        cp2: {...getP2(true), ...cp5},
         type: BezierPointType.MirrorAngleAndLength
       })
       bezierCps.push({
-        cp1: {...getDefaultPoint(true), ...cp6},
-        center: {...getDefaultPoint(true), ...top},
-        cp2: {...getDefaultPoint(true), ...cp7},
+        cp1: {...getP2(true), ...cp6},
+        center: {...getP2(true), ...top},
+        cp2: {...getP2(true), ...cp7},
         type: BezierPointType.MirrorAngleAndLength
       })
     } else {
@@ -240,7 +240,7 @@ export class Ellipse extends BaseShape {
         lastLength = startLength
         currentLength = lastLength + perPart
         bezierCps.push({
-          cp1: getDefaultPoint(),
+          cp1: getP2(),
           center: {
             use: true,
             x: this._config.startPoint.x,
@@ -250,12 +250,12 @@ export class Ellipse extends BaseShape {
             rx: 0,
             ry: 0,
           },
-          cp2: getDefaultPoint(),
+          cp2: getP2(),
           type: BezierPointType.NoMirror
         })
       } else {
         bezierCps.push({
-          cp1: getDefaultPoint(),
+          cp1: getP2(),
           center: {
             use: true,
             x: start.x,
@@ -265,7 +265,7 @@ export class Ellipse extends BaseShape {
             rx: 0,
             ry: 0,
           },
-          cp2: getDefaultPoint(),
+          cp2: getP2(),
           type: BezierPointType.NoMirror
         })
       }
@@ -332,7 +332,7 @@ export class Ellipse extends BaseShape {
             rx: 0,
             ry: 0,
           },
-          cp2: getDefaultPoint(),
+          cp2: getP2(),
           type: BezierPointType.MirrorAngleAndLength
         })
         // ctx.beginPath()
@@ -348,9 +348,9 @@ export class Ellipse extends BaseShape {
       this._config.endPoint = bezierCps[bezierCps.length - 1].center
 
       bezierCps.push({
-        cp1: getDefaultPoint(),
-        center: getDefaultPoint(true),
-        cp2: getDefaultPoint(),
+        cp1: getP2(),
+        center: getP2(true),
+        cp2: getP2(),
         type: BezierPointType.RightAngle
       })
 
@@ -436,15 +436,15 @@ export class Ellipse extends BaseShape {
     ctx.save()
 
     let r2 = 4
-    //弧度
-    let sweepPoint
-    //起点
-    let startPoint
-    //内径
-    let ratioPoint
+    //圆终点
+    let endPoint = getP()
+    //圆起点
+    let startPoint = getP()
+    //圆内径
+    let ratioPoint = getP()
 
     if (startLength === 0) {
-      sweepPoint = {
+      endPoint = {
         x: x + w - 20,
         y: y + h / 2,
       }
@@ -452,18 +452,16 @@ export class Ellipse extends BaseShape {
       let w2 = w / 2, h2 = h / 2
       ctx.translate(x + w2, y + h2)
 
-      sweepPoint = this._config.endPoint
-
       startPoint = getMouseControlPointByLength(startLength, this._config.startPoint)
-      sweepPoint = getMouseControlPointByLength(startLength + totalLength, this._config.endPoint)
+      endPoint = getMouseControlPointByLength(startLength + totalLength, this._config.endPoint)
 
-      // console.log('_configstartPoint', this._config.startPoint)
-      // console.log('startPoint', startPoint)
       ratioPoint = {x: 0, y: 0,}
       drawRound(ctx, startPoint, r2)
       drawRound(ctx, ratioPoint, r2,)
     }
-    drawRound(ctx, sweepPoint, r2,)
+    drawRound(ctx, endPoint, r2,)
+    this._config.startMouseControlPoint = startPoint
+    this._config.endMouseControlPoint = endPoint
     ctx.restore()
   }
 }

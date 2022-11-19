@@ -153,14 +153,18 @@ export interface EllipseConfig extends ShapeConfig {
   startLength: number
   /** @desc 圆弧起点*/
   startPoint: P
+  /** @desc 起点长度对应的 鼠标控制点*/
+  startMouseControlPoint: P
   /** @desc 圆弧终点*/
   endPoint: P
+  /** @desc 终点长度对应的 鼠标控制点*/
+  endMouseControlPoint: P
   /** @desc 所有控制点，总的12个*/
   cps: P[]
   getCps: Function
 }
 
-export interface TextConfig extends ShapeConfig{
+export interface TextConfig extends ShapeConfig {
   brokenTexts: string[],
   texts: string[],
   textLineHeight: number,
@@ -304,7 +308,7 @@ export interface BezierPoint {
 }
 
 
-export function getDefaultPoint(use: boolean = false): P2 {
+export function getP2(use: boolean = false): P2 {
   return {
     use,
     x: 0,
@@ -314,6 +318,10 @@ export function getDefaultPoint(use: boolean = false): P2 {
     rx: 0,
     ry: 0,
   }
+}
+
+export function getP(): P {
+  return {x: 0, y: 0}
 }
 
 export type ShapeState = {

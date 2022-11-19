@@ -1,7 +1,7 @@
 import {
   BezierPoint,
   BezierPointType,
-  getDefaultPoint,
+  getP2,
   IState,
   LineType, P,
   P2,

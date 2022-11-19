@@ -2,7 +2,7 @@ import {BaseShape} from "./shapes/BaseShape"
 import EventBus from "../../utils/event-bus"
 import {clear} from "./utils"
 import {BaseEvent2, EventMapTypes, EventTypes, P, ShapeConfig, ShapeType} from "./type"
-import {cloneDeep} from "lodash"
+import {cloneDeep, throttle} from "lodash"
 import {config} from "./constant"
 import {Shape} from "./utils/Shape"
 import {mat4} from "gl-matrix"
@@ -61,6 +61,7 @@ export default class CanvasUtil2 {
   drawShapeConfig: any = null
   cursor: string = 'default'
   _data: any = {}
+  private renderTime: any = undefined
 
 
   constructor(canvas: HTMLCanvasElement) {
@@ -104,7 +105,6 @@ export default class CanvasUtil2 {
         this.inShape.isHover = false
       }
       this.inShape = shape
-      //进入改成走居部重绘了，移出还是用的全体重绘
       this.render()
     }
   }
@@ -121,7 +121,17 @@ export default class CanvasUtil2 {
     }
   }
 
-  async render() {
+  /**
+   * @desc 下一次有空再渲染,0.3秒延迟，避免每加载完成一个文件就渲染一次
+   * */
+  nextRender() {
+    clearTimeout(this.renderTime)
+    this.renderTime = setTimeout(() => {
+      this.render()
+    }, 300)
+  }
+
+  render() {
     EventBus.emit(EventTypes.onDraw)
     // if (true){
     if (false) {
@@ -153,7 +163,7 @@ export default class CanvasUtil2 {
     //不能用map或者forEach，因为里面await 不生效
     for (let i = 0; i < this.children.length; i++) {
       let shape = this.children[i]
-      await shape.shapeRender(this.ctx)
+      shape.shapeRender(this.ctx)
     }
     this.ctx.restore()
   }
@@ -173,7 +183,10 @@ export default class CanvasUtil2 {
     this.canvas[fn](EventTypes.onWheel, this.onWheel, true)
   }
 
-  handleEvent = (e: any) => {
+  //TODO　这里过滤会导致mouseup丢失
+  handleEvent = throttle(e => this._handleEvent(e), 0)
+
+  _handleEvent = async (e: any) => {
     let x = e.x - this.canvasRect.left
     let y = e.y - this.canvasRect.top
     let event: BaseEvent2 = {
@@ -191,7 +204,7 @@ export default class CanvasUtil2 {
     } else {
       for (let i = 0; i < this.children.length; i++) {
         let shape = this.children[i]
-        let isBreak = shape.event(event, [])
+        let isBreak = await shape.event(event, [])
         if (isBreak) break
       }
     }

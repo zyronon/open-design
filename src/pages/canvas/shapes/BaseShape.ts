@@ -42,12 +42,12 @@ export abstract class BaseShape {
 
   abstract renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void
 
-  async shapeRender(ctx: CanvasRenderingContext2D, parent?: any) {
+  shapeRender(ctx: CanvasRenderingContext2D, parent?: any) {
     ctx.save()
     let {x, y} = calcPosition(ctx, this.config, this.original, this.getState(), parent)
     const {isHover, isSelect, isEdit, isSelectHover} = this
 
-    await this.render(ctx, {x, y}, parent,)
+    this.render(ctx, {x, y}, parent,)
 
     if (isHover) {
       hover(ctx, {...this.config, x, y})
@@ -75,7 +75,7 @@ export abstract class BaseShape {
     this.config = getPath(this.config, null, parent)
     for (let i = 0; i < this.children.length; i++) {
       let shape = this.children[i]
-      await shape.shapeRender(ctx, this.config)
+      shape.shapeRender(ctx, this.config)
     }
   }
 
@@ -181,8 +181,14 @@ export abstract class BaseShape {
     return this.isIn({x, y}, cu)
   }
 
-  event(event: BaseEvent2, parent?: BaseShape[], cb?: Function): boolean {
+  /** @desc 事件转发方法
+   * @param event 合成的事件
+   * @param parent 父级链
+   * @param cb 回调，用于双击时，通知上级（不一定是父级，有可能跨N级）
+   * */
+  event(event: BaseEvent2, parent?: BaseShape[], cb?: Function) {
     let {e, point, type} = event
+    // if (this.config.name === '父组件')debugger
     // console.log('event', this.config.name, `type：${type}`,)
     if (event.capture) return true
 
@@ -246,7 +252,7 @@ export abstract class BaseShape {
     this[type]?.(event, p)
   }
 
-  mousedown(event: BaseEvent2, p: BaseShape[] = []) {
+  async mousedown(event: BaseEvent2, p: BaseShape[] = []) {
     // console.log('mousedown', this)
     let {e, point, type} = event
     let {x, y, cu} = this.getXY(point)

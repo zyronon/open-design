@@ -15,7 +15,7 @@ export class Polygon extends BaseShape {
     this.config = val
   }
 
-  render(ctx: CanvasRenderingContext2D, p: P, parent?: any): void {
+  render(ctx: CanvasRenderingContext2D, p: P, parent?: any) {
     let {
       w, h, radius,
       fillColor, borderColor, rotate, lineWidth,

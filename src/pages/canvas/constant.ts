@@ -302,46 +302,188 @@ export const rects2 = [
 ]
 export const r = [
   {
-    "x": 75.8,
-    "y": 79,
-    "rx": 2373.8,
-    "ry": 197.00000000000003,
-    "w": 149.79999999999984,
-    "h": 157.80000000000007,
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "black",
+    "fontSize": 0,
+    "texts": [],
+    "x": 0,
+    "y": 0,
+    "w": 0,
+    "h": 0,
     "rotate": 0,
     "lineWidth": 2,
-    "type": ShapeType.TEXT,
-    "src": "src/assets/image/a.jpg",
+    "type": 106,
+    "radius": 0,
+    "points": [
+      {
+        "x": 150,
+        "y": 250
+      },
+      {
+        "x": 50,
+        "y": 250
+      }
+    ],
+    "children": [],
+    "name": "箭头",
+    "leftX": 0,
+    "rightX": 0,
+    "topY": 0,
+    "bottomY": 0,
+    "centerX": 0,
+    "centerY": 0,
+    "id": "16d2c332-d660-4607-9cf2-1cee5030645f"
+  },
+  {
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "black",
+    "fontSize": 0,
+    "texts": [],
+    "x": 0,
+    "y": 0,
+    "w": 0,
+    "h": 0,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": 107,
+    "radius": 0,
+    "points": [
+      {
+        "x": 100,
+        "y": 100
+      },
+      {
+        "x": 200,
+        "y": 300
+      }
+    ],
+    "children": [],
+    "name": "直线",
+    "leftX": 0,
+    "rightX": 0,
+    "topY": 0,
+    "bottomY": 0,
+    "centerX": 0,
+    "centerY": 0,
+    "id": "30411d05-f45f-4950-ba7f-f4f7d2506177"
+  },
+  {
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "black",
+    "fontSize": 0,
+    "texts": [],
+    "x": 0,
+    "y": 0,
+    "w": 0,
+    "h": 0,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": 111,
+    "radius": 0,
+    "points": [
+      {
+        "x": 800,
+        "y": 100
+      },
+      {
+        "x": 1200,
+        "y": 300
+      },
+      {
+        "x": 1100,
+        "y": 400
+      }
+    ],
+    "children": [],
+    "name": "PEN",
+    "leftX": 0,
+    "rightX": 0,
+    "topY": 0,
+    "bottomY": 0,
+    "centerX": 0,
+    "centerY": 0,
+    "id": "159e1e2d-50f9-4ba9-afa1-0c69e18748fc"
+  },
+  {
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "black",
+    "fontSize": 0,
+    "texts": [],
+    "x": 0,
+    "y": 0,
+    "w": 0,
+    "h": 0,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": 112,
+    "radius": 0,
+    "points": [
+      {
+        "x": 800,
+        "y": 200
+      },
+      {
+        "x": 1200,
+        "y": 500
+      }
+    ],
+    "children": [],
+    "name": "PENCIL",
+    "leftX": 0,
+    "rightX": 0,
+    "topY": 0,
+    "bottomY": 0,
+    "centerX": 0,
+    "centerY": 0,
+    "id": "75aee8da-7a50-40a4-98e5-f61dea469a52"
+  },
+  {
+    "x": 185.8,
+    "y": 106,
+    "rx": 2583.8,
+    "ry": 224.00000000000003,
+    "w": 80,
+    "h": 25,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": 113,
     "color": "gray",
     "radius": 0,
     "children": [],
-    "texts": [
-      "输入文本"
-    ],
-    "brokenTexts": [
-      "输入文本"
-    ],
-    "flipHorizontal": false,
-    "flipVertical": false,
     "borderColor": "rgb(216,216,216)",
     "fillColor": "#D8D8D8",
     "fontSize": 16,
     "fontWeight": 500,
     "fontFamily": "SourceHanSansCN",
+    "texts": [
+      "输入文本"
+    ],
+    "brokenTexts": [
+      "输入文本",
+      "输入文本"
+    ],
+    "textAlign": "right",
+    "textBaseline": 1,
+    "letterSpacing": 0,
+    "textLineHeight": 20,
+    "textMode": 2,
+    "flipHorizontal": false,
+    "flipVertical": false,
     "name": "文字",
-    "leftX": 175.8,
-    "rightX": 325.59999999999985,
-    "topY": 79,
-    "bottomY": 236.80000000000007,
-    "centerX": 250.69999999999993,
-    "centerY": 157.90000000000003,
+    "leftX": 185.8,
+    "rightX": 265.8,
+    "topY": 106,
+    "bottomY": 131,
+    "centerX": 225.8,
+    "centerY": 118.5,
     "points": [],
+    "id": "ed31f95c-9141-4a3b-915a-64aa9cdd6cc9"
   },
   {
-    "x": 175.8,
-    "y": 79,
-    "rx": 2373.8,
-    "ry": 197.00000000000003,
+    "x": 385.8,
+    "y": 106,
+    "rx": 2583.8,
+    "ry": 224.00000000000003,
     "w": 149.79999999999984,
     "h": 157.80000000000007,
     "rotate": 0,
@@ -361,12 +503,12 @@ export const r = [
     "fontFamily": "SourceHanSansCN",
     "texts": [],
     "name": "图像",
-    "leftX": 175.8,
-    "rightX": 325.59999999999985,
-    "topY": 79,
-    "bottomY": 236.80000000000007,
-    "centerX": 250.69999999999993,
-    "centerY": 157.90000000000003,
+    "leftX": 385.8,
+    "rightX": 535.5999999999999,
+    "topY": 106,
+    "bottomY": 263.80000000000007,
+    "centerX": 460.69999999999993,
+    "centerY": 184.90000000000003,
     "points": [],
     "id": "e7550924-9a2c-4472-b8f4-b8a060ac365e"
   },
@@ -402,6 +544,7 @@ export const r = [
     "centerX": 619.3,
     "centerY": 190.3,
     "points": [],
+    "id": "e1e2ed4a-c7e2-4f59-a7e3-b692bccf5399"
   },
   {
     "x": 700.4,
@@ -410,7 +553,7 @@ export const r = [
     "ry": 215.4,
     "w": 152.19999999999982,
     "h": 181.80000000000013,
-    "rotate": 0,
+    "rotate": 10,
     "lineWidth": 2,
     "type": 108,
     "totalLength": 2,
@@ -435,8 +578,8 @@ export const r = [
     "centerX": 776.4999999999999,
     "centerY": 198.30000000000007,
     "points": [],
+    "id": "af6422d9-71bc-41fd-b9a5-ee3a596e2716"
   },
-
   {
     "x": 874,
     "y": 111.4,
@@ -531,7 +674,8 @@ export const r = [
         "x": 77.69999999999999,
         "y": -51.08634400000004
       }
-    ]
+    ],
+    "id": "3a04646c-00e3-44f4-bedc-9a7a9f8f3893"
   },
   {
     "x": 1064.8,
@@ -704,7 +848,8 @@ export const r = [
     "bottomY": 471.60000000000014,
     "centerX": 1166,
     "centerY": 281.60000000000014,
-    "points": []
+    "points": [],
+    "id": "9eeba7de-9848-41ec-9f85-6cd2d51d1edb"
   },
   {
     "x": 1289.1999999999998,
@@ -726,14 +871,15 @@ export const r = [
     "fontWeight": 500,
     "fontFamily": "SourceHanSansCN",
     "texts": [],
-    "name": "长方形",
+    "name": "矩形",
     "leftX": 1289.1999999999998,
     "rightX": 1409.1999999999998,
     "topY": 97.79999999999998,
     "bottomY": 393.4,
     "centerX": 1349.1999999999998,
     "centerY": 245.6,
-    "points": []
+    "points": [],
+    "id": "e378e9bc-080a-46ab-b184-ce86647aca9e"
   }
 ]
 export const rects: any[] = [
@@ -748,7 +894,7 @@ export const rects: any[] = [
     "h": 0,
     "rotate": 0,
     "lineWidth": 2,
-    "type": ShapeType.ARROW,
+    "type": 106,
     "radius": 0,
     "points": [
       {
@@ -758,7 +904,7 @@ export const rects: any[] = [
       {
         "x": 50,
         "y": 250
-      },
+      }
     ],
     "children": [],
     "name": "箭头",
@@ -766,6 +912,9 @@ export const rects: any[] = [
     "rightX": 0,
     "topY": 0,
     "bottomY": 0,
+    "centerX": 0,
+    "centerY": 0,
+    "id": "16d2c332-d660-4607-9cf2-1cee5030645f"
   },
   {
     "borderColor": "rgb(216,216,216)",
@@ -778,7 +927,7 @@ export const rects: any[] = [
     "h": 0,
     "rotate": 0,
     "lineWidth": 2,
-    "type": ShapeType.LINE,
+    "type": 107,
     "radius": 0,
     "points": [
       {
@@ -788,7 +937,7 @@ export const rects: any[] = [
       {
         "x": 200,
         "y": 300
-      },
+      }
     ],
     "children": [],
     "name": "直线",
@@ -796,6 +945,9 @@ export const rects: any[] = [
     "rightX": 0,
     "topY": 0,
     "bottomY": 0,
+    "centerX": 0,
+    "centerY": 0,
+    "id": "30411d05-f45f-4950-ba7f-f4f7d2506177"
   },
   {
     "borderColor": "rgb(216,216,216)",
@@ -808,7 +960,7 @@ export const rects: any[] = [
     "h": 0,
     "rotate": 0,
     "lineWidth": 2,
-    "type": ShapeType.PEN,
+    "type": 111,
     "radius": 0,
     "points": [
       {
@@ -830,6 +982,9 @@ export const rects: any[] = [
     "rightX": 0,
     "topY": 0,
     "bottomY": 0,
+    "centerX": 0,
+    "centerY": 0,
+    "id": "159e1e2d-50f9-4ba9-afa1-0c69e18748fc"
   },
   {
     "borderColor": "rgb(216,216,216)",
@@ -842,7 +997,7 @@ export const rects: any[] = [
     "h": 0,
     "rotate": 0,
     "lineWidth": 2,
-    "type": ShapeType.PENCIL,
+    "type": 112,
     "radius": 0,
     "points": [
       {
@@ -860,6 +1015,9 @@ export const rects: any[] = [
     "rightX": 0,
     "topY": 0,
     "bottomY": 0,
+    "centerX": 0,
+    "centerY": 0,
+    "id": "75aee8da-7a50-40a4-98e5-f61dea469a52"
   },
   {
     "x": 185.8,
@@ -870,11 +1028,10 @@ export const rects: any[] = [
     "h": 25,
     "rotate": 0,
     "lineWidth": 2,
-    "type": ShapeType.TEXT,
+    "type": 113,
     "color": "gray",
     "radius": 0,
     "children": [],
-
     "borderColor": "rgb(216,216,216)",
     "fillColor": "#D8D8D8",
     "fontSize": 16,
@@ -885,7 +1042,7 @@ export const rects: any[] = [
     ],
     "brokenTexts": [
       "输入文本",
-      "输入文本",
+      "输入文本"
     ],
     "textAlign": "right",
     "textBaseline": 1,
@@ -895,13 +1052,14 @@ export const rects: any[] = [
     "flipHorizontal": false,
     "flipVertical": false,
     "name": "文字",
-    "leftX": 385.8,
-    "rightX": 535.5999999999999,
+    "leftX": 185.8,
+    "rightX": 265.8,
     "topY": 106,
-    "bottomY": 263.80000000000007,
-    "centerX": 460.69999999999993,
-    "centerY": 184.90000000000003,
+    "bottomY": 131,
+    "centerX": 225.8,
+    "centerY": 118.5,
     "points": [],
+    "id": "ed31f95c-9141-4a3b-915a-64aa9cdd6cc9"
   },
   {
     "x": 385.8,
@@ -913,19 +1071,15 @@ export const rects: any[] = [
     "rotate": 0,
     "lineWidth": 2,
     "type": 110,
-    "src": "src/assets/image/a.jpg",
+    "src": 'a.jpg',
     "color": "gray",
     "radius": 0,
     "children": [],
-    "brokenTexts": [],
     "flipHorizontal": false,
     "flipVertical": false,
     "borderColor": "rgb(216,216,216)",
     "fillColor": "#D8D8D8",
     "fontSize": 16,
-    "fontWeight": 500,
-    "fontFamily": "SourceHanSansCN",
-    "texts": [],
     "name": "图像",
     "leftX": 385.8,
     "rightX": 535.5999999999999,
@@ -935,6 +1089,33 @@ export const rects: any[] = [
     "centerY": 184.90000000000003,
     "points": [],
     "id": "e7550924-9a2c-4472-b8f4-b8a060ac365e"
+  },
+  {
+    "x": 185.8,
+    "y": 106,
+    "rx": 2583.8,
+    "ry": 224.00000000000003,
+    "w": 149.79999999999984,
+    "h": 157.80000000000007,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": 110,
+    "src": "https://images.pexels.com/photos/2246476/pexels-photo-2246476.jpeg",
+    "color": "gray",
+    "radius": 0,
+    "children": [],
+    "flipHorizontal": false,
+    "flipVertical": false,
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "#D8D8D8",
+    "name": "图像2",
+    "leftX": 385.8,
+    "rightX": 535.5999999999999,
+    "topY": 106,
+    "bottomY": 263.80000000000007,
+    "centerX": 460.69999999999993,
+    "centerY": 184.90000000000003,
+    "points": [],
   },
   {
     "x": 544.4,
@@ -977,7 +1158,7 @@ export const rects: any[] = [
     "ry": 215.4,
     "w": 152.19999999999982,
     "h": 181.80000000000013,
-    "rotate": 0,
+    "rotate": 10,
     "lineWidth": 2,
     "type": 108,
     "totalLength": 2,
@@ -1316,11 +1497,11 @@ const defaultCurrentMat = [
 const defaultHandMove = {x: 0, y: 0}
 
 export const config = {
-  // handScale: 1.25,
-  // handMove: {x: -216.5, y: -93.25},
-  // currentMat: [1.25, 0, 0, 0, 0, 1.25, 0, 0, 0, 0, 1, 0, -216.5, -93.25, 0, 1],
-  handScale: 1,
-  currentMat: defaultCurrentMat,
-  handMove: defaultHandMove,
+  handScale: 1.25,
+  handMove: {x: -216.5, y: -93.25},
+  currentMat: [1.25, 0, 0, 0, 0, 1.25, 0, 0, 0, 0, 1, 0, -216.5, -93.25, 0, 1],
+  // handScale: 1,
+  // currentMat: defaultCurrentMat,
+  // handMove: defaultHandMove,
   shapes: rects
 }

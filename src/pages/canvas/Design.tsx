@@ -53,12 +53,7 @@ class Design extends React.Component<any, IState> {
   }
 
   init() {
-    let canvas: HTMLCanvasElement = this.canvasRef.current!
-    const c = CanvasUtil2.getInstance(canvas)
-    c.clear()
-    c.addChildren(rects)
-    c.render()
-    this.setState({cu: c})
+    EventBus.offAll()
     EventBus.on(EventTypes.onDraw, () => {
       this.setState(s => {
         return {drawCount: s.drawCount + 1}
@@ -70,6 +65,13 @@ class Design extends React.Component<any, IState> {
     EventBus.on([EventTypes.onWheel], (val: any) => {
       val && this.setState({handScale: val})
     })
+    this.setState({drawCount: 0})
+    let canvas: HTMLCanvasElement = this.canvasRef.current!
+    const c = CanvasUtil2.getInstance(canvas)
+    c.clear()
+    c.addChildren(rects)
+    c.render()
+    this.setState({cu: c})
   }
 
 
@@ -234,7 +236,7 @@ class Design extends React.Component<any, IState> {
               <div className="right">
                 <div className="resize">
                   <span>{((handScale - 1) * 100).toFixed(0)}%</span>
-                  <Down theme="outline" size="14" fill="#ffffff" className='arrow'/>
+                  <Down theme="outline" size="14" fill="#ffffff" className="arrow"/>
                 </div>
               </div>
             </div>
@@ -377,7 +379,7 @@ class Design extends React.Component<any, IState> {
 function SelectItem(props: any) {
   const {name = '', hotkey = '', icon = null, iconName = ''} = props
   return (
-    <div className='tool-option'>
+    <div className="tool-option">
       <div className="left">
         {icon ? icon : <Icon type={iconName}/>}
         <span className="name">{name}</span>

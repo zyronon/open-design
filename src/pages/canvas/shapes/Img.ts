@@ -22,33 +22,30 @@ export class Img extends BaseShape {
     this.config = val
   }
 
-  render(ctx: CanvasRenderingContext2D, p: P, parent?: any): Promise<any> {
-    /*
-    * 这里需要返回一个Promise，因为第一次渲染图像的时候，是异步的。当onload执行时，父类已经
-    * 执行ctx.restore()了。所以画出来的位置不对
-    * */
-    return new Promise(resolve => {
-      let {
-        w, h,
-        fillColor, borderColor, rotate, lineWidth,
-      } = this._config
-      const {x, y} = p
-      // ctx.save()
-      if (this.img) {
-        ctx.drawImage(this.img, x, y, w, h)
-        resolve(true)
+  render(ctx: CanvasRenderingContext2D, p: P, parent?: any) {
+    let {
+      w, h,
+      fillColor, borderColor, rotate, lineWidth,
+      src,
+    } = this._config
+    const {x, y} = p
+    // ctx.save()
+    if (this.img) {
+      ctx.drawImage(this.img, x, y, w, h)
+    } else {
+      ctx.fillStyle = 'white'
+      ctx.fillRect(x, y, w, h)
+      let img = new Image()
+      if (src.includes('http')) {
+        img.src = src
       } else {
-        let img = new Image()
-        img.onload = () => {
-          this.img = img
-          ctx.drawImage(img, x, y, w, h)
-          resolve(true)
-        }
-        img.src = require('../../../assets/image/a.jpg')
+        img.src = require('../../../assets/image/' + src)
       }
-      ctx.strokeRect(x, y, w, h)
-      // ctx.restore()
-    })
+      img.onload = () => {
+        this.img = img
+        CanvasUtil2.getInstance().nextRender()
+      }
+    }
   }
 
   renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void {

@@ -35,19 +35,15 @@ export class Arrow extends BaseShape {
         let dx = end.x - start.x
         let dy = end.y - start.y
         let degree = Math.atan(Math.abs(dy) / Math.abs(dx)) / Math.PI * 180
-
-        /*以终点为坐标原点。判断起点坐标在第几象限
-        *第一象限，直接使用反正切对应角度，不用减
-        *第二象限，减90
-        *第三象限，减180
-        *第四象限，减270
-        * */
-        console.log('degree1', degree)
-
-        /*象限对应要减的角度*/
+        // console.log('degree1', degree)
+        //以终点为坐标原点。判断起点坐标在第几象限，进行相应的加减角度
+        /*第一象限*/
         if (end.x < start.x && end.y > start.y) degree = 90 - degree
+        /*第二象限*/
         else if (end.x > start.x && end.y > start.y) degree = degree - 90
+        /*第三象限*/
         else if (end.x > start.x && end.y < start.y) degree = 270 - degree
+        /*第四象限*/
         else if (end.x < start.x && end.y < start.y) degree = degree - 270
         //水平或垂直的特殊情况
         if (dx === 0) {
@@ -64,7 +60,7 @@ export class Arrow extends BaseShape {
             degree = 270
           }
         }
-        console.log('degree2', degree)
+        // console.log('degree2', degree)
         ctx.save()
         ctx.translate(start.x, start.y)
         ctx.rotate((degree) * Math.PI / 180)

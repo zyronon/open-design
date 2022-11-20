@@ -6,11 +6,24 @@ import {calcPosition} from "../utils"
 export class Img extends BaseShape {
   img: any = undefined
 
-  constructor(props: any) {
-    super(props)
+  childMouseDown() {
+    return false
+  }
+  childMouseMove() {
+    return false
+  }
+  childMouseUp() {
+    return false
   }
 
-  isIn(p: P, cu: CanvasUtil2): boolean {
+  beforeShapeIsIn() {
+    return false
+  }
+  isInOnSelect(p: P, cu: CanvasUtil2): boolean {
+    return false
+  }
+
+  isHoverIn(p: P, cu: CanvasUtil2): boolean {
     return super.isInBox(p)
   }
 

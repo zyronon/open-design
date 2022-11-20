@@ -1159,17 +1159,17 @@ export const rects: any[] =[
     "id": "af6422d9-71bc-41fd-b9a5-ee3a596e2716"
   },
   {
-    "x": 605.2,
-    "y": 265.80000000000007,
-    "rx": 1460.2000000000007,
-    "ry": 373.80000000000007,
+    "x": 486,
+    "y": 203.39999999999998,
+    "rx": 1341.0000000000005,
+    "ry": 311.4,
     "w": 155.39999999999998,
     "h": 185.00000000000014,
     "rotate": 0,
     "lineWidth": 2,
     "type": 105,
-    "totalLength": 2,
-    "startLength": 1.2,
+    "totalLength": 3.5,
+    "startLength": 0,
     "startPoint": {
       "x": -24.559211120639993,
       "y": 87.78428902400009
@@ -1196,12 +1196,12 @@ export const rects: any[] =[
     "fontFamily": "SourceHanSansCN",
     "texts": [],
     "name": "椭圆",
-    "leftX": 605.2,
-    "rightX": 760.6,
-    "topY": 265.80000000000007,
-    "bottomY": 450.8000000000002,
-    "centerX": 682.9000000000001,
-    "centerY": 358.3000000000001,
+    "leftX": 486,
+    "rightX": 641.4,
+    "topY": 203.39999999999998,
+    "bottomY": 388.4000000000001,
+    "centerX": 563.7,
+    "centerY": 295.90000000000003,
     "points": [],
     "cps": [
       {
@@ -1253,7 +1253,15 @@ export const rects: any[] =[
         "y": -51.08634400000004
       }
     ],
-    "id": "3a04646c-00e3-44f4-bedc-9a7a9f8f3893"
+    "id": "3a04646c-00e3-44f4-bedc-9a7a9f8f3893",
+    "startMouseControlPoint": {
+      "x": -16.166179271652,
+      "y": 57.78428902400009
+    },
+    "endMouseControlPoint": {
+      "x": 16.166179271652013,
+      "y": -57.78428902400006
+    }
   },
   {
     "x": 1107.1999999999998,
@@ -1468,7 +1476,6 @@ const defaultCurrentMat = [
   0, 0, 0, 1,
 ]
 const defaultHandMove = {x: 0, y: 0}
-
 export const config = {
   handScale: 1.25,
   handMove: {x: -216.5, y: -93.25},

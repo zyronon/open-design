@@ -93,6 +93,7 @@ export function getAngle2(center: P2, one: P2, two: P2) {
 }
 
 /**
+ * @desc 点绕坐标点旋转一定角度后点的坐标
  * 参考：https://blog.csdn.net/sinat_32560085/article/details/106389000，这个易理解
  * 参考：https://blog.csdn.net/qq_27278957/article/details/120080648
  * 旋转公式：

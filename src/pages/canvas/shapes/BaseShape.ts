@@ -28,7 +28,7 @@ export abstract class BaseShape {
   original: any = null
   lastClickTime: number = 0
   diagonal: P = {x: 0, y: 0}//对角
-  handlePoint: P = {x: 0, y: 0}//对角
+  handlePoint: P = {x: 0, y: 0}
 
   constructor(props: ShapeConfig) {
     this.config = getPath(props)
@@ -36,7 +36,6 @@ export abstract class BaseShape {
       return getShapeFromConfig(conf)
     })
   }
-
 
   abstract render(ctx: CanvasRenderingContext2D, p: P, parent?: any): any
 
@@ -79,7 +78,29 @@ export abstract class BaseShape {
     }
   }
 
-  abstract isIn(p: P, cu: CanvasUtil2): boolean
+  //判断是否hover在图形上
+  abstract isHoverIn(p: P, cu: CanvasUtil2): boolean
+
+  //当select时，判断是否在图形上
+  abstract isInOnSelect(p: P, cu: CanvasUtil2): boolean
+
+  /**
+   * @desc 判断是否在图形上，之前
+   * 用于子类的enter之类的变量判断
+   * 如果变量为ture，那么方法直接返回true，不用再走后续判断是否在图形上
+   * */
+  abstract beforeShapeIsIn(): boolean
+
+  /**
+   * @desc 判断鼠标m是否在p点内
+   * @param m 鼠标坐标
+   * @param p 判断点坐标
+   * @param r 半径
+   * */
+  isInPoint(m: P, p: P, r: number) {
+    return (p.x - r < m.x && m.x < p.x + r) &&
+      (p.y - r < m.y && m.y < p.y + r)
+  }
 
   isInBox(p: P): boolean {
     const {x, y} = p
@@ -88,16 +109,19 @@ export abstract class BaseShape {
       && rect.topY < y && y < rect.bottomY
   }
 
-  shapeIsIn(p: P, cu: CanvasUtil2): boolean {
+  shapeIsIn(mousePoint: P, cu: CanvasUtil2): boolean {
     //如果操作中，那么永远返回ture，保持事件一直直接传递到当前图形上
     if (this.enterL ||
       this.enterLT ||
       this.enterLTR) {
       return true
     }
+    if (this.beforeShapeIsIn()) {
+      return true
+    }
 
     const {x: handX, y: handY} = cu.handMove
-    let {x, y} = p
+    let {x, y} = mousePoint
     x = (x - handX) / cu.handScale//上面的简写
     y = (y - handY) / cu.handScale
 
@@ -174,11 +198,15 @@ export abstract class BaseShape {
         return true
       }
 
+      if (this.isInOnSelect({x, y}, cu)) {
+        return true
+      }
+
       //未命中 点
       document.body.style.cursor = "default"
       this.resetHover()
     }
-    return this.isIn({x, y}, cu)
+    return this.isHoverIn({x, y}, cu)
   }
 
   /** @desc 事件转发方法
@@ -252,7 +280,13 @@ export abstract class BaseShape {
     this[type]?.(event, p)
   }
 
-  async mousedown(event: BaseEvent2, p: BaseShape[] = []) {
+  abstract childMouseDown(): boolean
+
+  abstract childMouseMove(mousePoint: P): boolean
+
+  abstract childMouseUp(): boolean
+
+  mousedown(event: BaseEvent2, p: BaseShape[] = []) {
     // console.log('mousedown', this)
     let {e, point, type} = event
     let {x, y, cu} = this.getXY(point)
@@ -345,6 +379,10 @@ export abstract class BaseShape {
       return
     }
 
+    if (this.childMouseDown()) {
+      return
+    }
+
     //默认选中以及拖动
     this.enter = true
     if (this.isSelect) return
@@ -386,6 +424,8 @@ export abstract class BaseShape {
     if (this.enterRd1) {
       return this.dragRd1(point)
     }
+
+    this.childMouseMove(point)
   }
 
   //拖动左上，改变圆角按钮
@@ -534,6 +574,7 @@ export abstract class BaseShape {
   mouseup(e: BaseEvent2, p: BaseShape[] = []) {
     // if (e.capture) return
     // console.log('mouseup')
+    this.childMouseUp()
     this.resetEnter()
   }
 

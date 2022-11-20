@@ -1,12 +1,27 @@
 import {BaseShape} from "./BaseShape"
 import CanvasUtil2 from "../CanvasUtil2"
-import {P, TextAlign, TextConfig} from "../type"
-import {RectType} from "../../canvas-old/type"
-import {renderRound} from "../../canvas-old/utils"
-import {cloneDeep} from "lodash"
+import {P} from "../type"
 
 export class Line extends BaseShape {
-  isIn(p: P, cu: CanvasUtil2): boolean {
+
+  childMouseDown() {
+    return false
+  }
+  childMouseMove() {
+    return false
+  }
+  childMouseUp() {
+    return false
+  }
+
+  beforeShapeIsIn() {
+    return false
+  }
+  isInOnSelect(p: P, cu: CanvasUtil2): boolean {
+    return false
+  }
+
+  isHoverIn(p: P, cu: CanvasUtil2): boolean {
     return super.isInBox(p)
   }
 

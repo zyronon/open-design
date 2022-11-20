@@ -1,8 +1,17 @@
 import {BaseShape} from "./BaseShape"
-import {drawCp, drawRound, getBezier3ControlPoints, getBezierPointByLength, getDecimal, renderRound} from "../utils"
+import {
+  drawCp,
+  drawRound,
+  getBezier3ControlPoints,
+  getBezierPointByLength,
+  getDecimal,
+  getPath,
+  renderRound
+} from "../utils"
 import {BezierPoint, BezierPointType, EllipseConfig, getP, getP2, LineType, P, P2, ShapeType} from "../type"
 import CanvasUtil2 from "../CanvasUtil2"
 import {jiaodu2hudu} from "../../../utils"
+import {solveCubic} from "../../canvas20221111/utils"
 
 /**
  * @desc 获取长度对应的 鼠标控制点
@@ -39,9 +48,8 @@ const getMouseControlPointByLength = (length: number, p: P) => {
 }
 
 export class Ellipse extends BaseShape {
-  isIn(p: P, cu: CanvasUtil2): boolean {
-    return super.isInBox(p)
-  }
+  hoverEndMouseControlPoint: boolean = false
+  enterEndMouseControlPoint: boolean = false
 
   get _config(): EllipseConfig {
     return this.config as EllipseConfig
@@ -49,6 +57,105 @@ export class Ellipse extends BaseShape {
 
   set _config(val) {
     this.config = val
+  }
+
+  childMouseDown() {
+    if (this.hoverEndMouseControlPoint) {
+      this.enterEndMouseControlPoint = true
+      return true
+    }
+    return false
+  }
+
+  childMouseMove(mousePoint: P) {
+    let {x, y, cu} = this.getXY(mousePoint)
+    let cx = x
+    let cy = y
+    if (this.enterEndMouseControlPoint) {
+
+      const {x, y, w, h} = this.config
+      let w2 = w / 2, h2 = h / 2
+      let ox = 0.5522848 * w2, oy = .5522848 * h2;
+      let bs: any = this._config.getCps(3)
+
+      let a, b, c, d = 0
+      let p0, p1, p2, p3, p = null
+      p3 = bs[3]
+      p2 = bs[2]
+      p1 = bs[1]
+      p0 = bs[0]
+
+      let mousePoint2 = {x: cx, y: cy}
+      let k = mousePoint2.y / mousePoint2.x
+      console.log('k', k, mousePoint2)
+      k = (mousePoint2.y - y - h2) / (mousePoint2.x - x - w2)
+      console.log('k2', k)
+      drawRound(cu.ctx, mousePoint2)
+
+      let ps = [p0, p1, p2, p3]
+
+      let XA = p3.x - 3 * p2.x + 3 * p1.x - p0.x,
+        XB = 3 * (p2.x - 2 * p1.x + p0.x),
+        XC = 3 * (p1.x - p0.x),
+        XD = p0.x
+      let YA = p3.y - 3 * p2.y + 3 * p1.y - p0.y,
+        YB = 3 * (p2.y - 2 * p1.y + p0.y),
+        YC = 3 * (p1.y - p0.y),
+        YD = p0.y
+      let A = k * XA - YA
+      let B = k * XB - YB
+      let C = k * XC - YC
+      let D = k * XD - YD
+
+      let t: any[] = solveCubic(A, B, C, D)
+      t = t.filter(v => 0 <= v && v <= 1.01)
+      console.log('t', t)
+      if (t.length){
+        // @ts-ignore
+        this.config.totalLength = 3 + t[0] ?? 0.5
+        cu.render()
+      }
+      // let mousePoint2 = getBezierPointByLength(t[0], ps)
+      // console.log('mousePoint2', mousePoint2)
+      // drawRound(cu.ctx, mousePoint2)
+
+      return true;
+    }
+    return false
+  }
+
+  childMouseUp() {
+    this.enterEndMouseControlPoint = false
+    return false
+  }
+
+  beforeShapeIsIn() {
+    if (this.enterEndMouseControlPoint) {
+      return true
+    }
+    return false
+  }
+
+  isInOnSelect(mousePoint: P, cu: CanvasUtil2): boolean {
+    let {
+      x, y, w, h
+    } = this._config
+    //绝对点
+    let absoluteEndMouseControlPoint = {
+      x: this._config.endMouseControlPoint.x + x + w / 2,
+      y: this._config.endMouseControlPoint.y + y + h / 2,
+    }
+    if (super.isInPoint(mousePoint, absoluteEndMouseControlPoint, 4)) {
+      document.body.style.cursor = "pointer"
+      this.hoverEndMouseControlPoint = true
+      return true
+    }
+    this.hoverEndMouseControlPoint = false
+    return false
+  }
+
+  isHoverIn(mousePoint: P, cu: CanvasUtil2): boolean {
+    return super.isInBox(mousePoint)
   }
 
   render(ctx: CanvasRenderingContext2D, p: P, parent?: any) {
@@ -443,22 +550,15 @@ export class Ellipse extends BaseShape {
     //圆内径
     let ratioPoint = getP()
 
-    if (startLength === 0) {
-      endPoint = {
-        x: x + w - 20,
-        y: y + h / 2,
-      }
-    } else {
-      let w2 = w / 2, h2 = h / 2
-      ctx.translate(x + w2, y + h2)
+    let w2 = w / 2, h2 = h / 2
+    ctx.translate(x + w2, y + h2)
 
-      startPoint = getMouseControlPointByLength(startLength, this._config.startPoint)
-      endPoint = getMouseControlPointByLength(startLength + totalLength, this._config.endPoint)
+    startPoint = getMouseControlPointByLength(startLength, this._config.startPoint)
+    endPoint = getMouseControlPointByLength(startLength + totalLength, this._config.endPoint)
 
-      ratioPoint = {x: 0, y: 0,}
-      drawRound(ctx, startPoint, r2)
-      drawRound(ctx, ratioPoint, r2,)
-    }
+    ratioPoint = {x: 0, y: 0,}
+    drawRound(ctx, startPoint, r2)
+    drawRound(ctx, ratioPoint, r2,)
     drawRound(ctx, endPoint, r2,)
     this._config.startMouseControlPoint = startPoint
     this._config.endMouseControlPoint = endPoint

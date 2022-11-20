@@ -6,7 +6,23 @@ import {drawEllipseSelectedHover} from "./Ellipse/draw"
 
 export class Rectangle extends BaseShape {
 
-  isIn(p: P, cu: CanvasUtil2): boolean {
+  childMouseDown() {
+    return false
+  }
+  childMouseMove() {
+    return false
+  }
+  childMouseUp() {
+    return false
+  }
+  beforeShapeIsIn() {
+    return false
+  }
+  isInOnSelect(p: P, cu: CanvasUtil2): boolean {
+    return false
+  }
+
+  isHoverIn(p: P, cu: CanvasUtil2): boolean {
     return super.isInBox(p)
   }
 

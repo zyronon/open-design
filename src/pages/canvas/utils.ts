@@ -1,22 +1,10 @@
-import {
-  BezierPoint,
-  BezierPointType,
-  getP2,
-  IState,
-  LineType, P,
-  P2,
-  Shape,
-  ShapeConfig,
-  ShapeState,
-  ShapeType,
-  TextAlign
-} from "./type"
+import {IState, P, P2, Shape, ShapeConfig, ShapeState, ShapeType, TextAlign} from "./type"
 import {store} from "./store"
 // @ts-ignore
 import {v4 as uuid} from 'uuid'
 import {Colors} from "./constant"
 import {jiaodu2hudu} from "../../utils"
-import {drawEllipse, drawEllipseSelectedHover} from "./shapes/Ellipse/draw"
+import {drawSelectedHover} from "./shapes/Ellipse/draw"
 
 export function renderCanvas(
   rect: Shape,
@@ -367,7 +355,7 @@ export function clear(x: any, ctx: any) {
   ctx.clearRect(x.x, x.y, x.w, x.h)
 }
 
-export function getPath(rect: ShapeConfig | any, old?: any, parent?: any) {
+export function getPath(rect: ShapeConfig | any, old?: any, parent?: ShapeConfig) {
   //根据老的config，计算出最新的rx,ry
   if (old) {
     // debugger
@@ -403,7 +391,7 @@ export function calcPosition(
   config: any,
   original: any,
   status: any,
-  parent?: any) {
+  parent?: ShapeConfig) {
   const {isHover, isSelect, enterL, enterLT} = status
   let {
     x, y, w, h, radius,
@@ -605,7 +593,7 @@ export function draw(
     enterLT: boolean
     enterL: boolean
   },
-  parent?: any
+  parent?: ShapeConfig
 ) {
   ctx.save()
   status = Object.assign({
@@ -659,7 +647,7 @@ export function draw2(
     enterLT: boolean
     enterL: boolean
   },
-  parent?: any
+  parent?: ShapeConfig
 ) {
   ctx.save()
   status = Object.assign({
@@ -721,7 +709,7 @@ export function draw3(
   config: any,
   original: any,
   status?: ShapeState,
-  parent?: any
+  parent?: ShapeConfig
 ) {
   ctx.save()
   status = Object.assign({
@@ -741,9 +729,6 @@ export function draw3(
   } = config
 
   switch (type) {
-    case ShapeType.ELLIPSE:
-      drawEllipse(ctx, {x, y, ...config})
-      break
     case ShapeType.FRAME:
     case ShapeType.RECTANGLE:
       if (radius) {
@@ -772,7 +757,7 @@ export function draw3(
   if (isSelectHover) {
     switch (type) {
       case ShapeType.ELLIPSE:
-        drawEllipseSelectedHover(ctx, {...config, x, y})
+        drawSelectedHover(ctx, {...config, x, y})
         break
     }
   }

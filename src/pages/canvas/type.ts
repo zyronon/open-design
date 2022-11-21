@@ -84,7 +84,8 @@ export enum ShapeType {
   MOVE = 114,
 
   COMPONENT = 115,
-  HOVER = 102,
+  HOVER = 116,
+  EDIT = 117,
 }
 
 

@@ -1,5 +1,5 @@
-import {BaseEvent2, EllipseConfig, P, ShapeConfig} from "../type"
-import {calcPosition, edit, getPath, hover, selected, sleep} from "../utils"
+import {BaseEvent2, P, ShapeConfig, ShapeType} from "../type"
+import {calcPosition, getPath, hover, selected} from "../utils"
 import CanvasUtil2 from "../CanvasUtil2"
 import {cloneDeep} from "lodash"
 import getCenterPoint, {getAngle, getRotatedPoint} from "../../../utils"
@@ -37,28 +37,35 @@ export abstract class BaseShape {
     })
   }
 
-  abstract render(ctx: CanvasRenderingContext2D, p: P, parent?: any): any
+  abstract render(ctx: CanvasRenderingContext2D, xy: P, parent?: ShapeConfig): any
+
+  abstract renderHover(ctx: CanvasRenderingContext2D, xy: P, parent?: ShapeConfig): any
+
+  abstract renderSelected(ctx: CanvasRenderingContext2D, xy: P, parent?: ShapeConfig): any
 
   abstract renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void
 
-  shapeRender(ctx: CanvasRenderingContext2D, parent?: any) {
+  abstract renderEdit(ctx: CanvasRenderingContext2D, xy: P, parent?: ShapeConfig): any
+
+  shapeRender(ctx: CanvasRenderingContext2D, parent?: ShapeConfig) {
     ctx.save()
     let {x, y} = calcPosition(ctx, this.config, this.original, this.getState(), parent)
     const {isHover, isSelect, isEdit, isSelectHover} = this
 
-    this.render(ctx, {x, y}, parent,)
-
     if (isHover) {
+      this.render(ctx, {x, y}, parent,)
       hover(ctx, {...this.config, x, y})
-    }
-    if (isSelect) {
+    } else if (isSelect) {
+      this.render(ctx, {x, y}, parent,)
       selected(ctx, {...this.config, x, y})
-    }
-    if (isSelectHover) {
-      this.renderSelectedHover(ctx, {...this.config, x, y})
-    }
-    if (isEdit) {
-      edit(ctx, {...this.config, x, y})
+      if (isSelectHover) {
+        this.renderSelectedHover(ctx, {...this.config, x, y})
+      }
+    } else if (isEdit) {
+      this.renderEdit(ctx, {...this.config, x, y})
+      // edit(ctx, {...this.config, x, y})
+    } else {
+      this.render(ctx, {x, y}, parent,)
     }
 
     ctx.restore()
@@ -220,9 +227,10 @@ export abstract class BaseShape {
     // console.log('event', this.config.name, `type：${type}`,)
     if (event.capture) return true
 
+
     //mouseup事件，会直接走到这里
     //这里需要禁止传播，不然canvas的onMouseUp会触发
-    if (this.enter) {
+    if (this.enter || this.isEdit) {
       event.stopPropagation()
       this.emit(event, parent)
       return true
@@ -242,11 +250,14 @@ export abstract class BaseShape {
 
       if (event.capture) return true
 
-      if (this.isSelect) {
-        this.isSelectHover = true
-      } else {
-        //如果已经选中了，那就不要再加hover效果了
-        this.isHover = true
+      //编辑模式下，不用添加hover样式
+      if (!this.isEdit) {
+        if (this.isSelect) {
+          this.isSelectHover = true
+        } else {
+          //如果已经选中了，那就不要再加hover效果了
+          this.isHover = true
+        }
       }
 
       //设置当前的inShape为自己，这位的位置很重要，当前的inShape是唯一的
@@ -256,7 +267,7 @@ export abstract class BaseShape {
       cu.setInShape(this, parent)
 
       this.emit(event, parent)
-      if (this.isSelect || this.isHover) {
+      if (this.isSelect || this.isHover || this.isEdit) {
         event.stopPropagation()
       }
       return true
@@ -280,7 +291,9 @@ export abstract class BaseShape {
     this[type]?.(event, p)
   }
 
-  abstract childMouseDown(): boolean
+  abstract childMouseDown(event: BaseEvent2, p: BaseShape[]): boolean
+
+  abstract childDbClick(event: BaseEvent2, p: BaseShape[]): boolean
 
   abstract childMouseMove(mousePoint: P): boolean
 
@@ -294,22 +307,16 @@ export abstract class BaseShape {
     //向下传递事件
     if (Date.now() - this.lastClickTime < 300) {
       console.log('dblclick')
-      // cu.selectedShape = null
-      // this.config.selected = false
-      // cu.draw()
-      // this.isSelect = false
-      this.isCapture = false
-      for (let i = 0; i < this.children.length; i++) {
-        let shape = this.children[i]
-        let isBreak = shape.event(event, p?.concat([this]), () => {
-          cu.childIsIn = true
-        })
-        if (isBreak) break
+      if (this.isEdit) {
+        this.isSelect = this.isSelectHover = true
+      } else {
+        this.isHover = this.isSelect = this.isSelectHover = false
       }
-      if (!cu.childIsIn) {
-        this.isCapture = true
-      }
-      cu.childIsIn = false
+      if (this.childDbClick(event, p)) return
+      this.isEdit = !this.isEdit
+      cu.editShape = this
+      //节省一次刷新，放上面也可以
+      cu.render()
       return
     }
     this.lastClickTime = Date.now()
@@ -320,7 +327,14 @@ export abstract class BaseShape {
     cu.offsetX = x - this.config.x
     cu.offsetY = y - this.config.y
 
+    if (this.childMouseDown(event, p)) return
+
     let rect = this.config
+
+    if (this.isEdit) {
+      event.stopPropagation()
+      return
+    }
 
     //按下左边
     if (this.hoverL) {
@@ -379,10 +393,6 @@ export abstract class BaseShape {
       return
     }
 
-    if (this.childMouseDown()) {
-      return
-    }
-
     //默认选中以及拖动
     this.enter = true
     if (this.isSelect) return
@@ -392,7 +402,7 @@ export abstract class BaseShape {
     this.isHover = false
     //如果当前选中的图形不是自己，那么把那个图形设为未选中
     if (cu.selectedShape && cu.selectedShape !== this) {
-      cu.selectedShape.isSelect = false
+      cu.selectedShape.isSelect = cu.selectedShape.isEdit = false
     }
     cu.selectedShapeParent.map((shape: BaseShape) => shape.isCapture = true)
     cu.selectedShapeParent = p

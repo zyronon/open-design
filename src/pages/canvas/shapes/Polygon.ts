@@ -1,9 +1,12 @@
 import {BaseShape} from "./BaseShape"
-import {EllipseConfig, P} from "../type"
+import {BaseEvent2, EllipseConfig, P, ShapeConfig} from "../type"
 import CanvasUtil2 from "../CanvasUtil2"
 
 export class Polygon extends BaseShape {
 
+  childDbClick(event: BaseEvent2, p: BaseShape[]): boolean {
+    return false
+  }
   childMouseDown() {
     return false
   }
@@ -33,7 +36,7 @@ export class Polygon extends BaseShape {
     this.config = val
   }
 
-  render(ctx: CanvasRenderingContext2D, p: P, parent?: any) {
+  render(ctx: CanvasRenderingContext2D, p: P, parent?: ShapeConfig) {
     let {
       w, h, radius,
       fillColor, borderColor, rotate, lineWidth,
@@ -59,7 +62,10 @@ export class Polygon extends BaseShape {
     ctx.stroke()
     ctx.restore()
   }
-
+  renderHover(ctx: CanvasRenderingContext2D,xy: P, parent?: ShapeConfig): void {}
+  renderSelected(ctx: CanvasRenderingContext2D,xy: P, parent?: ShapeConfig): void {}
+  renderEdit(ctx: CanvasRenderingContext2D, p: P, parent?: ShapeConfig): void {
+  }
   renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void {
   }
 

@@ -1,11 +1,14 @@
 import {BaseShape} from "./BaseShape"
-import {P} from "../type"
+import {BaseEvent2, P, ShapeConfig} from "../type"
 import CanvasUtil2 from "../CanvasUtil2"
 import {calcPosition} from "../utils"
 
 export class Img extends BaseShape {
   img: any = undefined
 
+  childDbClick(event: BaseEvent2, p: BaseShape[]): boolean {
+    return false
+  }
   childMouseDown() {
     return false
   }
@@ -35,7 +38,7 @@ export class Img extends BaseShape {
     this.config = val
   }
 
-  render(ctx: CanvasRenderingContext2D, p: P, parent?: any) {
+  render(ctx: CanvasRenderingContext2D, p: P, parent?: ShapeConfig) {
     let {
       w, h,
       fillColor, borderColor, rotate, lineWidth,
@@ -60,8 +63,12 @@ export class Img extends BaseShape {
       }
     }
   }
-
+  renderHover(ctx: CanvasRenderingContext2D,xy: P, parent?: ShapeConfig): void {}
+  renderSelected(ctx: CanvasRenderingContext2D,xy: P, parent?: ShapeConfig): void {}
+ 
   renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void {
   }
 
+  renderEdit(ctx: CanvasRenderingContext2D, p: P, parent?: ShapeConfig): void {
+  }
 }

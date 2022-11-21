@@ -1,17 +1,37 @@
 import {BaseShape} from "./BaseShape"
 import {draw2, draw3, getPath, renderRoundRect} from "../utils"
 import CanvasUtil2 from "../CanvasUtil2"
-import {P, ShapeConfig} from "../type"
-import {drawEllipseSelectedHover} from "./Ellipse/draw"
+import {BaseEvent2, P, ShapeConfig} from "../type"
+import {drawSelectedHover} from "./Ellipse/draw"
 
 export class Frame extends BaseShape {
 
-  childMouseDown() {
+  childDbClick(event: BaseEvent2, p: BaseShape[]): boolean {
+    let cu = CanvasUtil2.getInstance()
+    console.log('dblclick')
+    this.isCapture = false
+    for (let i = 0; i < this.children.length; i++) {
+      let shape = this.children[i]
+      let isBreak = shape.event(event, p?.concat([this]), () => {
+        cu.childIsIn = true
+      })
+      if (isBreak) break
+    }
+    if (!cu.childIsIn) {
+      this.isCapture = true
+    }
+    cu.childIsIn = false
+    return true
+  }
+
+  childMouseDown(event: BaseEvent2, p: any[]) {
     return false
   }
+
   childMouseMove() {
     return false
   }
+
   childMouseUp() {
     return false
   }
@@ -19,6 +39,7 @@ export class Frame extends BaseShape {
   beforeShapeIsIn() {
     return false
   }
+
   isInOnSelect(p: P, cu: CanvasUtil2): boolean {
     return false
   }
@@ -27,7 +48,7 @@ export class Frame extends BaseShape {
     return super.isInBox(p)
   }
 
-  render(ctx: CanvasRenderingContext2D, p: P, parent?: any) {
+  render(ctx: CanvasRenderingContext2D, p: P, parent?: ShapeConfig) {
     let {
       w, h, radius,
       fillColor, borderColor, rotate, lineWidth,
@@ -50,8 +71,13 @@ export class Frame extends BaseShape {
       ctx.stroke()
     }
   }
+  renderHover(ctx: CanvasRenderingContext2D,xy: P, parent?: ShapeConfig): void {}
+  renderSelected(ctx: CanvasRenderingContext2D,xy: P, parent?: ShapeConfig): void {}
 
   renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void {
-    drawEllipseSelectedHover(ctx, conf)
+    drawSelectedHover(ctx, conf)
+  }
+
+  renderEdit(ctx: CanvasRenderingContext2D, p: P, parent?: ShapeConfig): void {
   }
 }

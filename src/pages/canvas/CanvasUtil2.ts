@@ -50,6 +50,7 @@ export default class CanvasUtil2 {
   //原因：选中新图形后，hover老图形时依然能hover中，所以需要把老的低级链isCapture全部设为ture
   //屏蔽事件向下传递
   selectedShapeParent: any = []
+  editShape: any
   //用于标记子组件是否选中
   childIsIn: boolean = false
   mode: ShapeType = ShapeType.SELECT
@@ -198,16 +199,20 @@ export default class CanvasUtil2 {
         this.capture = true
       }
     }
-
-    if (this.inShape) {
-      this.inShape.event(event, this.inShapeParent)
+    if (this.editShape) {
+      this.editShape.event(event, [])
     } else {
-      for (let i = 0; i < this.children.length; i++) {
-        let shape = this.children[i]
-        let isBreak = await shape.event(event, [])
-        if (isBreak) break
+      if (this.inShape) {
+        this.inShape.event(event, this.inShapeParent)
+      } else {
+        for (let i = 0; i < this.children.length; i++) {
+          let shape = this.children[i]
+          let isBreak = await shape.event(event, [])
+          if (isBreak) break
+        }
       }
     }
+
     if (event.type === EventMapTypes.onMouseMove) {
       this.onMouseMove(event, {x, y})
     }
@@ -222,7 +227,19 @@ export default class CanvasUtil2 {
 
   onMouseDown(e: BaseEvent2, p: P,) {
     if (e.capture) return
-    // console.log('cu-onMouseDown', e)
+    console.log('cu-onMouseDown', e)
+
+    if (this.editShape) {
+      this.editShape.isEdit = false
+      this.editShape.isSelect = true
+      this.editShape = null
+    } else {
+      this.selectedShapeParent.map((shape: Shape) => shape.isCapture = true)
+      if (this.selectedShape) {
+        this.selectedShape.isEdit = this.selectedShape.isSelect = false
+        this.render()
+      }
+    }
   }
 
   onMouseMove(e: BaseEvent2, p: P,) {
@@ -233,11 +250,7 @@ export default class CanvasUtil2 {
   onMouseUp(e: BaseEvent2, p: P,) {
     if (e.capture) return
     // console.log('cu-onMouseUp', e)
-    this.selectedShapeParent.map((shape: Shape) => shape.isCapture = true)
-    if (this.selectedShape) {
-      this.selectedShape.isSelect = false
-      this.render()
-    }
+
   }
 
   onWheel = (e: any) => {

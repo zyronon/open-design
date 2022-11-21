@@ -1,6 +1,6 @@
 import {BaseShape} from "./BaseShape"
 import CanvasUtil2 from "../CanvasUtil2"
-import {P, TextAlign, TextConfig} from "../type"
+import {BaseEvent2, P, ShapeConfig, TextAlign, TextConfig} from "../type"
 import {RectType} from "../../canvas-old/type"
 import {renderRound} from "../../canvas-old/utils"
 import {cloneDeep} from "lodash"
@@ -16,6 +16,10 @@ export class Arrow extends BaseShape {
   }
 
   isInOnSelect(p: P, cu: CanvasUtil2): boolean {
+    return false
+  }
+
+  childDbClick(event: BaseEvent2, p: BaseShape[]): boolean {
     return false
   }
 
@@ -39,13 +43,13 @@ export class Arrow extends BaseShape {
     this.config = val
   }
 
-  render(ctx: CanvasRenderingContext2D, p: P, parent?: any): any {
+  render(ctx: CanvasRenderingContext2D, xy: P, parent?: ShapeConfig): any {
     let {
       w, h, radius,
       points,
       borderColor
     } = this._config
-    const {x, y} = p
+    const {x, y} = xy
     if (points.length) {
       ctx.strokeStyle = borderColor
       ctx.lineCap = "round"
@@ -114,7 +118,15 @@ export class Arrow extends BaseShape {
     }
   }
 
+  renderHover(ctx: CanvasRenderingContext2D, xy: P, parent?: ShapeConfig): void {
+  }
+
+  renderSelected(ctx: CanvasRenderingContext2D, xy: P, parent?: ShapeConfig): void {
+  }
+
   renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void {
   }
 
+  renderEdit(ctx: CanvasRenderingContext2D, xy: P, parent?: ShapeConfig): void {
+  }
 }

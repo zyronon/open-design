@@ -8,7 +8,19 @@ import {
   getPath,
   renderRound
 } from "../utils"
-import {BezierPoint, BezierPointType, EllipseConfig, getP, getP2, LineType, P, P2, ShapeType} from "../type"
+import {
+  BaseEvent2,
+  BezierPoint,
+  BezierPointType,
+  EllipseConfig,
+  getP,
+  getP2,
+  LineType,
+  P,
+  P2,
+  ShapeConfig,
+  ShapeType
+} from "../type"
 import CanvasUtil2 from "../CanvasUtil2"
 import {jiaodu2hudu} from "../../../utils"
 import {solveCubic} from "../../canvas20221111/utils"
@@ -59,6 +71,9 @@ export class Ellipse extends BaseShape {
     this.config = val
   }
 
+  childDbClick(event: BaseEvent2, p: BaseShape[]): boolean {
+    return false
+  }
   childMouseDown() {
     if (this.hoverEndMouseControlPoint) {
       this.enterEndMouseControlPoint = true
@@ -158,7 +173,7 @@ export class Ellipse extends BaseShape {
     return super.isInBox(mousePoint)
   }
 
-  render(ctx: CanvasRenderingContext2D, p: P, parent?: any) {
+  render(ctx: CanvasRenderingContext2D, p: P, parent?: ShapeConfig) {
     let {
       w, h, radius,
       fillColor, borderColor, rotate, lineWidth,
@@ -530,6 +545,8 @@ export class Ellipse extends BaseShape {
 
     ctx.restore()
   }
+  renderHover(ctx: CanvasRenderingContext2D,xy: P, parent?: ShapeConfig): void {}
+  renderSelected(ctx: CanvasRenderingContext2D,xy: P, parent?: ShapeConfig): void {}
 
   renderSelectedHover(ctx: CanvasRenderingContext2D, conf: EllipseConfig): void {
     let {
@@ -563,5 +580,8 @@ export class Ellipse extends BaseShape {
     this._config.startMouseControlPoint = startPoint
     this._config.endMouseControlPoint = endPoint
     ctx.restore()
+  }
+
+  renderEdit(ctx: CanvasRenderingContext2D, p: P, parent?: ShapeConfig): void {
   }
 }

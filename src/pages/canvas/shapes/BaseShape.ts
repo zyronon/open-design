@@ -232,7 +232,17 @@ export abstract class BaseShape {
     //这里需要禁止传播，不然canvas的onMouseUp会触发
     if (this.enter || this.isEdit) {
       event.stopPropagation()
-      this.emit(event, parent)
+      let cu = CanvasUtil2.getInstance()
+      if (this.shapeIsIn(point, cu)) {
+        this.emit(event, parent)
+      } else {
+        //向下传递事件
+        if (Date.now() - this.lastClickTime < 300) {
+          console.log('在选中图形外边，dblclick')
+          event.cancelStopPropagation()
+        }
+        this.lastClickTime = Date.now()
+      }
       return true
     }
 

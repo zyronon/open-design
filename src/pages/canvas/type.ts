@@ -265,6 +265,7 @@ export interface BaseEvent2 {
   point: P,
   type: string
   stopPropagation: Function
+  cancelStopPropagation: Function
 }
 
 //贝塞尔点的类型

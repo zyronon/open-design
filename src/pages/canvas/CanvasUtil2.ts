@@ -197,6 +197,9 @@ export default class CanvasUtil2 {
       type: e.type,
       stopPropagation() {
         this.capture = true
+      },
+      cancelStopPropagation() {
+        this.capture = false
       }
     }
     if (this.editShape) {

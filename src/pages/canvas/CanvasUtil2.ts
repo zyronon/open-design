@@ -97,9 +97,15 @@ export default class CanvasUtil2 {
     })
   }
 
+  isDesign() {
+    return true
+  }
+
   //设置inShape
   setInShape(shape: BaseShape, parent?: BaseShape[]) {
-    this.inShapeParent = parent
+    if (this.inShapeParent !== parent) {
+      this.inShapeParent = parent
+    }
     if (this.inShape !== shape) {
       // console.log('shape', shape?.config?.name)
       if (this.inShape) {
@@ -108,10 +114,6 @@ export default class CanvasUtil2 {
       this.inShape = shape
       this.render()
     }
-  }
-
-  isDesign() {
-    return true
   }
 
   //设置inShape为null
@@ -179,9 +181,11 @@ export default class CanvasUtil2 {
       // EventTypes.onMouseEnter,
       // EventTypes.onMouseLeave,
     ]).forEach(eventName => {
+      //忘记为啥与true了
       this.canvas[fn](eventName, this.handleEvent, true)
     })
-    this.canvas[fn](EventTypes.onWheel, this.onWheel, true)
+    this.canvas[fn](EventTypes.onWheel, this.onWheel)
+    this.canvas[fn](EventTypes.onDbClick, this.handleEvent)
   }
 
   //TODO　这里过滤会导致mouseup丢失
@@ -216,32 +220,39 @@ export default class CanvasUtil2 {
       }
     }
 
-    if (event.type === EventMapTypes.onMouseMove) {
+    if (event.type === EventTypes.onMouseMove) {
       this.onMouseMove(event, {x, y})
     }
-    if (event.type === EventMapTypes.onMouseDown) {
+    if (event.type === EventTypes.onMouseDown) {
       this.onMouseDown(event, {x, y})
     }
-    if (event.type === EventMapTypes.onMouseUp) {
+    if (event.type === EventTypes.onMouseUp) {
       this.onMouseUp(event, {x, y})
     }
-
+    if (event.type === EventTypes.onDbClick) {
+      this.onDbClick(event)
+    }
   }
 
-  onMouseDown(e: BaseEvent2, p: P,) {
+  onDbClick(e: any) {
     if (e.capture) return
-    console.log('cu-onMouseDown', e)
-
+    console.log('cu-onDbClick', e)
     if (this.editShape) {
       this.editShape.isEdit = false
       this.editShape.isSelect = true
       this.editShape = null
-    } else {
-      this.selectedShapeParent.map((shape: Shape) => shape.isCapture = true)
-      if (this.selectedShape) {
-        this.selectedShape.isEdit = this.selectedShape.isSelect = false
-        this.render()
-      }
+      this.render()
+    }
+  }
+
+  onMouseDown(e: BaseEvent2, p: P,) {
+    if (e.capture) return
+    if (this.editShape) return
+    console.log('cu-onMouseDown', e)
+    this.selectedShapeParent.map((shape: Shape) => shape.isCapture = true)
+    if (this.selectedShape) {
+      this.selectedShape.isEdit = this.selectedShape.isSelect = false
+      this.render()
     }
   }
 
@@ -252,8 +263,7 @@ export default class CanvasUtil2 {
 
   onMouseUp(e: BaseEvent2, p: P,) {
     if (e.capture) return
-    // console.log('cu-onMouseUp', e)
-
+    console.log('cu-onMouseUp', e)
   }
 
   onWheel = (e: any) => {

@@ -219,36 +219,16 @@ export abstract class BaseShape {
   /** @desc 事件转发方法
    * @param event 合成的事件
    * @param parent 父级链
-   * @param cb 回调，用于双击时，通知上级（不一定是父级，有可能跨N级）
+   * @param isParentDbClick 是否是来自父级双击，是的话，不用转发事件
    * */
-  event(event: BaseEvent2, parent?: BaseShape[], cb?: Function) {
+  event(event: BaseEvent2, parent?: BaseShape[], isParentDbClick?: boolean) {
     let {e, point, type} = event
     // if (this.config.name === '父组件')debugger
     // console.log('event', this.config.name, `type：${type}`,)
     if (event.capture) return true
 
-
-    //mouseup事件，会直接走到这里
-    //这里需要禁止传播，不然canvas的onMouseUp会触发
-    if (this.enter || this.isEdit) {
-      event.stopPropagation()
-      let cu = CanvasUtil2.getInstance()
-      if (this.shapeIsIn(point, cu)) {
-        this.emit(event, parent)
-      } else {
-        //向下传递事件
-        if (Date.now() - this.lastClickTime < 300) {
-          console.log('在选中图形外边，dblclick')
-          event.cancelStopPropagation()
-        }
-        this.lastClickTime = Date.now()
-      }
-      return true
-    }
-
     let cu = CanvasUtil2.getInstance()
     if (this.shapeIsIn(point, cu)) {
-      cb?.()
       // console.log('捕获', this.config.name)
       if (!this.isCapture || !cu.isDesign()) {
         for (let i = 0; i < this.children.length; i++) {
@@ -260,26 +240,16 @@ export abstract class BaseShape {
 
       if (event.capture) return true
 
-      //编辑模式下，不用添加hover样式
-      if (!this.isEdit) {
-        if (this.isSelect) {
-          this.isSelectHover = true
-        } else {
-          //如果已经选中了，那就不要再加hover效果了
-          this.isHover = true
-        }
+      if (isParentDbClick) {
+        //这需要mousedown把图形选中，和链设置好
+        this.mousedown(event, parent)
+        //手动重置一个enter，不然会跟手
+        this.mouseup(event, parent)
+      } else {
+        this.emit(event, parent)
       }
+      event.stopPropagation()
 
-      //设置当前的inShape为自己，这位的位置很重要，当前的inShape是唯一的
-      //如果放在e.capture前面，那么会被子组件给覆盖。所以放在e.capture后面
-      //子组件isSelect或者isHover之后会stopPropagation，那么父组件就不会往
-      //下执行了
-      cu.setInShape(this, parent)
-
-      this.emit(event, parent)
-      if (this.isSelect || this.isHover || this.isEdit) {
-        event.stopPropagation()
-      }
       return true
       // console.log('冒泡', this.config.name)
     } else {
@@ -309,27 +279,25 @@ export abstract class BaseShape {
 
   abstract childMouseUp(): boolean
 
+  dblclick(event: BaseEvent2, p: BaseShape[] = []) {
+    console.log('on-dblclick',)
+    if (this.childDbClick(event, p)) return
+    if (this.isEdit) {
+      this.isSelect = this.isSelectHover = true
+    } else {
+      this.isHover = this.isSelect = this.isSelectHover = false
+    }
+    let cu = CanvasUtil2.getInstance()
+    this.isEdit = !this.isEdit
+    cu.editShape = this
+    //节省一次刷新，放上面也可以
+    cu.render()
+  }
+
   mousedown(event: BaseEvent2, p: BaseShape[] = []) {
-    // console.log('mousedown', this)
+    console.log('mousedown',)
     let {e, point, type} = event
     let {x, y, cu} = this.getXY(point)
-
-    //向下传递事件
-    if (Date.now() - this.lastClickTime < 300) {
-      console.log('dblclick')
-      if (this.isEdit) {
-        this.isSelect = this.isSelectHover = true
-      } else {
-        this.isHover = this.isSelect = this.isSelectHover = false
-      }
-      if (this.childDbClick(event, p)) return
-      this.isEdit = !this.isEdit
-      cu.editShape = this
-      //节省一次刷新，放上面也可以
-      cu.render()
-      return
-    }
-    this.lastClickTime = Date.now()
 
     this.original = cloneDeep(this.config)
     cu.startX = x
@@ -342,7 +310,6 @@ export abstract class BaseShape {
     let rect = this.config
 
     if (this.isEdit) {
-      event.stopPropagation()
       return
     }
 
@@ -421,10 +388,29 @@ export abstract class BaseShape {
     cu.render()
   }
 
-  mousemove(event: BaseEvent2, p: BaseShape[] = []) {
+  mousemove(event: BaseEvent2, parent: BaseShape[] = []) {
     // console.log('mousemove', this.enterLTR)
     let {e, point, type} = event
     // console.log('mousemove', this.config.name, `isHover：${this.isHover}`)
+    //编辑模式下，不用添加hover样式
+
+    if (!this.isEdit) {
+      if (this.isSelect) {
+        this.isSelectHover = true
+      } else {
+        //如果已经选中了，那就不要再加hover效果了
+        this.isHover = true
+      }
+    }
+    //设置当前的inShape为自己，这位的位置很重要，当前的inShape是唯一的
+    //如果放在e.capture前面，那么会被子组件给覆盖。所以放在e.capture后面
+    //子组件isSelect或者isHover之后会stopPropagation，那么父组件就不会往
+    //下执行了
+    // cu.setInShape(this, parent)
+    let cu = CanvasUtil2.getInstance()
+    cu.setInShape(this, parent)
+
+
     if (this.enter) {
       return this.move(point)
     }
@@ -593,7 +579,7 @@ export abstract class BaseShape {
 
   mouseup(e: BaseEvent2, p: BaseShape[] = []) {
     // if (e.capture) return
-    // console.log('mouseup')
+    console.log('mouseup')
     this.childMouseUp()
     this.resetEnter()
   }

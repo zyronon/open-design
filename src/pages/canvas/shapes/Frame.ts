@@ -1,26 +1,19 @@
 import {BaseShape} from "./BaseShape"
 import {draw2, draw3, getPath, renderRoundRect} from "../utils"
 import CanvasUtil2 from "../CanvasUtil2"
-import {BaseEvent2, P, ShapeConfig} from "../type"
+import {BaseEvent2, EventTypes, P, ShapeConfig} from "../type"
 import {drawSelectedHover} from "./Ellipse/draw"
 
 export class Frame extends BaseShape {
 
   childDbClick(event: BaseEvent2, p: BaseShape[]): boolean {
     let cu = CanvasUtil2.getInstance()
-    console.log('dblclick')
-    this.isCapture = false
+    console.log('childDbClick')
     for (let i = 0; i < this.children.length; i++) {
       let shape = this.children[i]
-      let isBreak = shape.event(event, p?.concat([this]), () => {
-        cu.childIsIn = true
-      })
+      let isBreak = shape.event(event, p?.concat([this]),true)
       if (isBreak) break
     }
-    if (!cu.childIsIn) {
-      this.isCapture = true
-    }
-    cu.childIsIn = false
     return true
   }
 
@@ -71,8 +64,12 @@ export class Frame extends BaseShape {
       ctx.stroke()
     }
   }
-  renderHover(ctx: CanvasRenderingContext2D,xy: P, parent?: ShapeConfig): void {}
-  renderSelected(ctx: CanvasRenderingContext2D,xy: P, parent?: ShapeConfig): void {}
+
+  renderHover(ctx: CanvasRenderingContext2D, xy: P, parent?: ShapeConfig): void {
+  }
+
+  renderSelected(ctx: CanvasRenderingContext2D, xy: P, parent?: ShapeConfig): void {
+  }
 
   renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void {
     drawSelectedHover(ctx, conf)

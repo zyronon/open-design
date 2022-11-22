@@ -244,7 +244,7 @@ export const EventTypes = {
   onClick: 'click',
   onWheel: 'wheel',
   ...EventMapTypes,//TODO 当老的删除CanvasUtil.ts删除掉这行
-  onDoubleClick: 'dblclick',
+  onDbClick: 'dblclick',
   onMouseMove: 'mousemove',
   onMouseDown: 'mousedown',
   onMouseUp: 'mouseup',

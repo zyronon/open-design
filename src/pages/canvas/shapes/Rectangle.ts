@@ -1,24 +1,79 @@
 import {BaseShape} from "./BaseShape"
-import {clear, renderRound, renderRoundRect} from "../utils"
+import {clear, drawCp, drawRound, getPath, renderRound, renderRoundRect} from "../utils"
 import CanvasUtil2 from "../CanvasUtil2"
-import {BaseEvent2, P, ShapeConfig, ShapeType} from "../type"
+import {
+  BaseEvent2,
+  BezierPoint,
+  BezierPointType,
+  EllipseConfig,
+  getP2,
+  LineType,
+  P,
+  P2,
+  ShapeConfig,
+  ShapeType
+} from "../type"
 import {drawSelectedHover} from "./Ellipse/draw"
 import {jiaodu2hudu} from "../../../utils"
+import {Colors} from "../constant"
 
 export class Rectangle extends BaseShape {
+
+  constructor(props: any) {
+    super(props)
+    if (props.id === 'e378e9bc-080a-46ab-b184-ce86647aca9e') {
+      let event: BaseEvent2 = {
+        capture: false,
+        e: {} as any,
+        point: {x: 0, y: 0},
+        type: '',
+        stopPropagation() {
+          this.capture = true
+        },
+        cancelStopPropagation() {
+          this.capture = false
+        }
+      }
+      this.dblclick(event)
+    }
+  }
+
+  get _config(): ShapeConfig {
+    return this.config as any
+  }
+
+  set _config(val) {
+    this.config = val
+  }
 
   childDbClick(event: BaseEvent2, p: BaseShape[]): boolean {
     return false
   }
-  childMouseDown() {
+
+  hoverPointIndex: number = -1
+
+  childMouseDown(event: BaseEvent2, p: BaseShape[] = []) {
+    console.log('childMouseDown', this.hoverPointIndex)
+    this._config.isCustom = true
+    this.enter = true
     return false
   }
 
-  childMouseMove() {
+  childMouseMove(mousePoint: P) {
+    console.log('childMouseMove', this.hoverPointIndex)
+    if (this.isEdit) {
+      if (this.hoverPointIndex < 0 || !this.enter) return false
+      let {x, y, cu} = this.getXY(mousePoint)
+      this._config.points[this.hoverPointIndex].center = {x, y}
+      cu.render()
+      return true
+    }
     return false
   }
 
   childMouseUp() {
+    console.log('childMouseUp', this.hoverPointIndex)
+
     return false
   }
 
@@ -26,12 +81,33 @@ export class Rectangle extends BaseShape {
     return false
   }
 
-  isInOnSelect(p: P, cu: CanvasUtil2): boolean {
+  isInOnSelect(mousePoint: P, cu: CanvasUtil2): boolean {
     return false
   }
 
-  isHoverIn(p: P, cu: CanvasUtil2): boolean {
-    return super.isInBox(p)
+
+  isHoverIn(mousePoint: P, cu: CanvasUtil2): boolean {
+    if (this.isEdit) {
+      let {
+        x, y, w, h, points
+      } = this._config
+      let res = false
+      this.hoverPointIndex = -1
+      for (let i = 0; i < points.length; i++) {
+        let p = points[i]
+        if (super.isInPoint(mousePoint, p.center, 4)) {
+          document.body.style.cursor = "pointer"
+          this.hoverPointIndex = i
+          res = true
+          break
+        }
+      }
+      if (res) {
+        return true
+      }
+      document.body.style.cursor = "default"
+    }
+    return super.isInBox(mousePoint)
   }
 
   render(ctx: CanvasRenderingContext2D, p: P, parent?: ShapeConfig) {
@@ -59,8 +135,13 @@ export class Rectangle extends BaseShape {
     }
     ctx.restore()
   }
-  renderHover(ctx: CanvasRenderingContext2D,xy: P, parent?: ShapeConfig): void {}
-  renderSelected(ctx: CanvasRenderingContext2D,xy: P, parent?: ShapeConfig): void {}
+
+  renderHover(ctx: CanvasRenderingContext2D, xy: P, parent?: ShapeConfig): void {
+  }
+
+  renderSelected(ctx: CanvasRenderingContext2D, xy: P, parent?: ShapeConfig): void {
+  }
+
   renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void {
     let {
       x, y, w, h, radius,
@@ -123,7 +204,8 @@ export class Rectangle extends BaseShape {
     renderRound(bottomRight, r2, ctx, ShapeType.SELECT)
     ctx.restore()
   }
-  renderEdit(ctx: CanvasRenderingContext2D, conf: any): void {
+
+  renderEdit1(ctx: CanvasRenderingContext2D, conf: any): void {
     let {
       x, y, w, h, radius,
       fillColor, borderColor, rotate,
@@ -205,5 +287,113 @@ export class Rectangle extends BaseShape {
       y: t.y + d,
     }
     renderRound(topLeft, r2, ctx, ShapeType.SELECT)
+  }
+
+  renderEdit(ctx: CanvasRenderingContext2D, conf: any): void {
+    let {
+      x, y, w, h, radius,
+      fillColor, borderColor, rotate,
+      type, flipVertical, flipHorizontal, children, points,
+      isCustom
+    } = conf
+    let bezierCps: BezierPoint[] = []
+    if (isCustom) {
+      bezierCps = points
+    } else {
+      bezierCps.push({
+        cp1: getP2(),
+        center: {...getP2(true), x: x, y: y},
+        cp2: getP2(),
+        type: BezierPointType.RightAngle
+      })
+      bezierCps.push({
+        cp1: getP2(),
+        center: {...getP2(true), x: x + w, y: y},
+        cp2: getP2(),
+        type: BezierPointType.RightAngle
+      })
+      bezierCps.push({
+        cp1: getP2(),
+        center: {...getP2(true), x: x + w, y: y + h},
+        cp2: getP2(),
+        type: BezierPointType.RightAngle
+      })
+      bezierCps.push({
+        cp1: getP2(),
+        center: {...getP2(true), x: x, y: y + h},
+        cp2: getP2(),
+        type: BezierPointType.RightAngle
+      })
+      this.config.points = bezierCps
+    }
+
+    ctx.save()
+
+    ctx.strokeStyle = Colors.line2
+    ctx.fillStyle = fillColor
+    ctx.beginPath()
+
+    bezierCps.map((currentPoint: BezierPoint, index: number, array) => {
+      let previousPoint: BezierPoint
+      if (index === 0) {
+        previousPoint = array[array.length - 1]
+      } else {
+        previousPoint = array[index - 1]
+      }
+      let lineType: LineType = LineType.Line
+      if (
+        currentPoint.type === BezierPointType.RightAngle &&
+        previousPoint.type === BezierPointType.RightAngle
+      ) {
+        lineType = LineType.Line
+      } else if (
+        currentPoint.type !== BezierPointType.RightAngle &&
+        previousPoint.type !== BezierPointType.RightAngle) {
+        lineType = LineType.Bezier3
+      } else {
+        if (previousPoint.cp2.use || currentPoint.cp1.use) {
+          lineType = LineType.Bezier2
+        } else {
+          lineType = LineType.Line
+        }
+      }
+      switch (lineType) {
+        case LineType.Line:
+          // ctx.beginPath()
+          ctx.lineTo2(previousPoint.center)
+          ctx.lineTo2(currentPoint.center)
+          // ctx.stroke()
+          break
+        case LineType.Bezier3:
+          // ctx.beginPath()
+          ctx.lineTo2(previousPoint.center)
+          ctx.bezierCurveTo2(
+            previousPoint.cp2,
+            currentPoint.cp1,
+            currentPoint.center)
+          // ctx.stroke()
+          break
+        case LineType.Bezier2:
+          let cp: P2
+          if (previousPoint.cp2.use) cp = previousPoint.cp2
+          if (currentPoint.cp1.use) cp = currentPoint.cp2
+          // ctx.beginPath()
+          ctx.lineTo2(previousPoint.center)
+          ctx.quadraticCurveTo2(cp!, currentPoint.center)
+          // ctx.stroke()
+          break
+      }
+    })
+
+    ctx.closePath()
+    ctx.stroke()
+
+    bezierCps.map((currentPoint: BezierPoint) => {
+      drawRound(ctx, currentPoint.center)
+      if (currentPoint.cp1.use) drawCp(ctx, currentPoint.cp1, currentPoint.center)
+      if (currentPoint.cp2.use) drawCp(ctx, currentPoint.cp2, currentPoint.center)
+    })
+    ctx.restore()
+
   }
 }

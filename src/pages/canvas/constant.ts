@@ -887,7 +887,6 @@ export const r = [
   }
 ]
 export const rects: any[] =[
-
   {
     "borderColor": "rgb(216,216,216)",
     "fillColor": "black",

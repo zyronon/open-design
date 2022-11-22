@@ -144,7 +144,8 @@ export interface ShapeConfig {
   children: any[],
   flipVertical?: boolean,
   flipHorizontal?: boolean,
-  points?: any[],
+  points: any[],
+  isCustom: boolean
 }
 
 export interface EllipseConfig extends ShapeConfig {

@@ -26,7 +26,6 @@ export abstract class BaseShape {
   startX: number = 0
   startY: number = 0
   original: any = null
-  lastClickTime: number = 0
   diagonal: P = {x: 0, y: 0}//对角
   handlePoint: P = {x: 0, y: 0}
 
@@ -109,8 +108,8 @@ export abstract class BaseShape {
       (p.y - r < m.y && m.y < p.y + r)
   }
 
-  isInBox(p: P): boolean {
-    const {x, y} = p
+  isInBox(mousePoint: P): boolean {
+    const {x, y} = mousePoint
     let rect = this.config
     return rect.leftX < x && x < rect.rightX
       && rect.topY < y && y < rect.bottomY
@@ -118,7 +117,8 @@ export abstract class BaseShape {
 
   shapeIsIn(mousePoint: P, cu: CanvasUtil2): boolean {
     //如果操作中，那么永远返回ture，保持事件一直直接传递到当前图形上
-    if (this.enterL ||
+    if (this.enter ||
+      this.enterL ||
       this.enterLT ||
       this.enterLTR) {
       return true
@@ -295,7 +295,7 @@ export abstract class BaseShape {
   }
 
   mousedown(event: BaseEvent2, p: BaseShape[] = []) {
-    console.log('mousedown',)
+    console.log('mousedown', this.config)
     let {e, point, type} = event
     let {x, y, cu} = this.getXY(point)
 
@@ -392,8 +392,10 @@ export abstract class BaseShape {
     // console.log('mousemove', this.enterLTR)
     let {e, point, type} = event
     // console.log('mousemove', this.config.name, `isHover：${this.isHover}`)
-    //编辑模式下，不用添加hover样式
 
+    if (this.childMouseMove(point)) return
+
+    //编辑模式下，不用添加hover样式
     if (!this.isEdit) {
       if (this.isSelect) {
         this.isSelectHover = true
@@ -430,8 +432,6 @@ export abstract class BaseShape {
     if (this.enterRd1) {
       return this.dragRd1(point)
     }
-
-    this.childMouseMove(point)
   }
 
   //拖动左上，改变圆角按钮

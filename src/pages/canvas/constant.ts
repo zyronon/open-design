@@ -1448,7 +1448,7 @@ export const rects: any[] =[
     "ry": 244.2,
     "w": 145.5999999999998,
     "h": 141.19999999999987,
-    "rotate": 0,
+    "rotate": 10,
     "lineWidth": 2,
     "type": 104,
     "color": "gray",

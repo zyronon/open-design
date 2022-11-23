@@ -54,16 +54,22 @@ export class Rectangle extends BaseShape {
 
   childMouseDown(event: BaseEvent2, p: BaseShape[] = []) {
     console.log('childMouseDown', this.hoverPointIndex)
-    this._config.isCustom = true
-    this.enter = true
+    if (this.isEdit) {
+      this._config.isCustom = true
+      this.enter = true
+      return true
+    }
     return false
   }
 
   childMouseMove(mousePoint: P) {
-    console.log('childMouseMove', this.hoverPointIndex)
+    // console.log('childMouseMove', this.hoverPointIndex)
     if (this.isEdit) {
       if (this.hoverPointIndex < 0 || !this.enter) return false
       let {x, y, cu} = this.getXY(mousePoint)
+      // let {x, y, w, h, points} = this._config
+      // mousePoint.x = mousePoint.x - x - w / 2
+      // mousePoint.y = mousePoint.y - y - h / 2
       this._config.points[this.hoverPointIndex].center = {x, y}
       cu.render()
       return true
@@ -88,22 +94,17 @@ export class Rectangle extends BaseShape {
 
   isHoverIn(mousePoint: P, cu: CanvasUtil2): boolean {
     if (this.isEdit) {
-      let {
-        x, y, w, h, points
-      } = this._config
-      let res = false
+      let {x, y, w, h, points} = this._config
       this.hoverPointIndex = -1
+      mousePoint.x = mousePoint.x - x - w / 2
+      mousePoint.y = mousePoint.y - y - h / 2
       for (let i = 0; i < points.length; i++) {
         let p = points[i]
         if (super.isInPoint(mousePoint, p.center, 4)) {
           document.body.style.cursor = "pointer"
           this.hoverPointIndex = i
-          res = true
-          break
+          return true
         }
-      }
-      if (res) {
-        return true
       }
       document.body.style.cursor = "default"
     }
@@ -203,90 +204,6 @@ export class Rectangle extends BaseShape {
     renderRound(bottomLeft, r2, ctx, ShapeType.SELECT)
     renderRound(bottomRight, r2, ctx, ShapeType.SELECT)
     ctx.restore()
-  }
-
-  renderEdit1(ctx: CanvasRenderingContext2D, conf: any): void {
-    let {
-      x, y, w, h, radius,
-      fillColor, borderColor, rotate,
-      type, flipVertical, flipHorizontal, children,
-    } = conf
-    ctx.strokeStyle = 'rgb(139,80,255)'
-
-    ctx.beginPath()
-    ctx.moveTo(x, y)
-    ctx.lineTo(x + w, y)
-    ctx.lineTo(x + w, y + h)
-    ctx.lineTo(x, y + h)
-    ctx.lineTo(x, y)
-    ctx.closePath()
-    ctx.stroke()
-    let d = 4
-    clear({
-      x: x - d,
-      y: y - d,
-      w: 2 * d,
-      h: 2 * d
-    }, ctx)
-    clear({
-      x: x + w - d,
-      y: y - d,
-      w: 2 * d,
-      h: 2 * d
-    }, ctx)
-    clear({
-      x: x + w - d,
-      y: y + h - d,
-      w: 2 * d,
-      h: 2 * d
-    }, ctx)
-    clear({
-      x: x - d,
-      y: y + h - d,
-      w: 2 * d,
-      h: 2 * d
-    }, ctx)
-
-    let r = 3
-    let lineWidth = 1.5
-    renderRoundRect({
-      x: x - d,
-      y: y - d,
-      w: 2 * d,
-      h: 2 * d,
-      lineWidth
-    }, r, ctx)
-    renderRoundRect({
-      x: x + w - d,
-      y: y - d,
-      w: 2 * d,
-      h: 2 * d,
-      lineWidth
-    }, r, ctx)
-    renderRoundRect({
-      x: x + w - d,
-      y: y + h - d,
-      w: 2 * d,
-      h: 2 * d,
-      lineWidth
-    }, r, ctx)
-    renderRoundRect({
-      x: x - d,
-      y: y + h - d,
-      w: 2 * d,
-      h: 2 * d,
-      lineWidth
-    }, r, ctx)
-
-
-    d = 40
-    let r2 = 5
-    let t = conf
-    let topLeft = {
-      x: t.x + d,
-      y: t.y + d,
-    }
-    renderRound(topLeft, r2, ctx, ShapeType.SELECT)
   }
 
   renderEdit(ctx: CanvasRenderingContext2D, conf: any): void {

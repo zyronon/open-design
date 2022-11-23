@@ -127,18 +127,17 @@ export abstract class BaseShape {
       return true
     }
 
+    //修正当前鼠标点为变换过后的点，确保和图形同一transform
     const {x: handX, y: handY} = cu.handMove
     let {x, y} = mousePoint
     x = (x - handX) / cu.handScale//上面的简写
     y = (y - handY) / cu.handScale
 
-    let rect = this.config
-    //修正当前鼠标点为变换过后的点，确保和图形同一transform
-    if (rect.rotate !== 0 || rect.flipHorizontal || rect.flipVertical) {
-      let {w, h, rotate, flipHorizontal, flipVertical} = rect
+    let {w, h, rotate, flipHorizontal, flipVertical} =  this.config
+    if (rotate !== 0 || flipHorizontal || flipVertical) {
       const center = {
-        x: rect.x + (rect.w / 2),
-        y: rect.y + (rect.h / 2)
+        x: this.config.x + (w / 2),
+        y: this.config.y + (h / 2)
       }
       if (flipHorizontal) {
         x = center.x + Math.abs(x - center.x) * (x < center.x ? 1 : -1)
@@ -146,9 +145,7 @@ export abstract class BaseShape {
       if (flipVertical) {
         y = center.y + Math.abs(y - center.y) * (y < center.y ? 1 : -1)
       }
-      let p1 = {x, y}
-      let c2 = {x: rect.x + w / 2, y: rect.y + h / 2}
-      let s2 = getRotatedPoint(p1, c2, -rotate)
+      let s2 = getRotatedPoint({x, y}, center, -rotate)
       x = s2.x
       y = s2.y
     }
@@ -588,9 +585,12 @@ export abstract class BaseShape {
   getXY(point: P) {
     let {x, y} = point
     let cu = CanvasUtil2.getInstance()
+    //修正当前鼠标点为变换过后的点，确保和图形同一transform
     const {x: handX, y: handY} = cu.handMove
-    x = (x - handX) / cu.handScale//上面的简写
+    x = (x - handX) / cu.handScale
     y = (y - handY) / cu.handScale
+
+
     return {x, y, cu}
   }
 

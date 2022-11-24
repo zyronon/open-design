@@ -355,7 +355,8 @@ export function clear(x: any, ctx: any) {
   ctx.clearRect(x.x, x.y, x.w, x.h)
 }
 
-export function getPath(rect: ShapeConfig | any, old?: any, parent?: ShapeConfig) {
+export function getPath(rect: ShapeConfig, old?: any, parent?: ShapeConfig) {
+  console.log('getPath')
   //根据老的config，计算出最新的rx,ry
   if (old) {
     // debugger
@@ -367,18 +368,81 @@ export function getPath(rect: ShapeConfig | any, old?: any, parent?: ShapeConfig
     rect.x = rect.rx + parent.x
     rect.y = rect.ry + parent.y
   }
-  rect.leftX = rect.x
-  rect.rightX = rect.leftX + rect.w
-  rect.topY = rect.y
-  rect.bottomY = rect.topY + rect.h
-  rect.centerX = rect.x + rect.w / 2
-  rect.centerY = rect.y + rect.h / 2
 
-  // rect.points = []
+  let {
+    x, y, w, h, rotate
+  } = rect
+  let isFirst = !rect.id
+  if (isFirst) {
+    rect.leftX = rect.x
+    rect.rightX = rect.leftX + rect.w
+    rect.topY = rect.y
+    rect.bottomY = rect.topY + rect.h
 
-  if (!rect.id) {
     rect.id = uuid()
+
+    rect.center = {
+      x: x + (w / 2),
+      y: y + (h / 2)
+    }
+    rect.topLeft = {
+      x,
+      y
+    }
+    rect.topRight = {
+      x: x + w,
+      y: y
+    }
+    rect.bottomLeft = {
+      x: x,
+      y: y + h
+    }
+    rect.bottomRight = {
+      x: x + w,
+      y: y + h
+    }
+    if (rotate) {
+      rect.topLeft = getRotatedPoint(rect.topLeft, rect.center, rotate)
+      rect.x = rect.topLeft.x
+      rect.y = rect.topLeft.y
+      rect.topRight = getRotatedPoint(rect.topRight, rect.center, rotate)
+      rect.bottomLeft = getRotatedPoint(rect.bottomLeft, rect.center, rotate)
+      rect.bottomRight = getRotatedPoint(rect.bottomRight, rect.center, rotate)
+
+      let xs = [
+        rect.topLeft.x,
+        rect.topRight.x,
+        rect.bottomLeft.x,
+        rect.bottomRight.x,
+      ]
+      let ys = [
+        rect.topLeft.y,
+        rect.topRight.y,
+        rect.bottomLeft.y,
+        rect.bottomRight.y,
+      ]
+      let maxX = Math.max(...xs)
+      let minX = Math.min(...xs)
+      let maxY = Math.max(...ys)
+      let minY = Math.min(...ys)
+      rect.center = {
+        x: minX + (maxX - minX) / 2,
+        y: minY + (maxY - minY) / 2
+      }
+    }
+  } else {
+    if (rotate) {
+      let reverseTopLeft = getRotatedPoint(rect.topLeft, rect.center, -rotate)
+      // rect.x = rect.topLeft.x
+      // rect.y = rect.topLeft.y
+      rect.leftX = reverseTopLeft.x
+      rect.rightX = rect.leftX + rect.w
+      rect.topY = reverseTopLeft.y
+      rect.bottomY = rect.topY + rect.h
+    }
   }
+
+
   return rect
 }
 
@@ -388,7 +452,7 @@ export function getPath(rect: ShapeConfig | any, old?: any, parent?: ShapeConfig
  * */
 export function calcPosition(
   ctx: CanvasRenderingContext2D,
-  config: any,
+  config: ShapeConfig,
   original: any,
   status: any,
   parent?: ShapeConfig) {
@@ -397,7 +461,8 @@ export function calcPosition(
     x, y, w, h, radius,
     fillColor, borderColor, rotate, lineWidth,
     type, flipVertical, flipHorizontal, children,
-    selected,
+    center,
+    topLeft,
     rx, ry
   }
     = config
@@ -406,19 +471,16 @@ export function calcPosition(
     y = ry + parent.y
   }
 // console.log('type,', type)
-  let oldCenter: P
 
-  let currentCenter: P = {
-    x: x + (w / 2),
-    y: y + (h / 2)
-  }
-
-  let handlePoint = getRotatedPoint({x, y}, currentCenter, rotate)
-  // console.log('old', {x, y})
-  // console.log('handlePoint', handlePoint)
+  ctx.lineWidth = lineWidth
+  ctx.fillStyle = fillColor
+  ctx.strokeStyle = borderColor
+  ctx.translate(x, y)
   ctx.rotate(rotate * Math.PI / 180)
-  return handlePoint
+  return {x: 0, y: 0}
 
+  let oldCenter: P
+  let currentCenter: P
 
   if (enterLT || enterL) {
     let s = original

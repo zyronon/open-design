@@ -1,18 +1,17 @@
-import React, {Component} from 'react';
-import {Button} from 'antd';
+import React, {Component} from 'react'
+import {Button} from 'antd'
 import './index.scss'
-import {withRouter} from "../../components/WithRouter";
+import {withRouter} from "../../components/WithRouter"
 import {
-  getBezierPointByLength,
   drawCp,
   drawRound,
   getBezier3ControlPoints,
+  getBezierPointByLength,
   getDecimal,
   solveCubic
-} from "../canvas/utils";
-import {Colors} from "../canvas/constant";
-import {BezierPoint, BezierPointType, getP2, LineType, P2} from "../canvas/type";
-import {getAngle2, jiaodu2hudu} from "../../utils";
+} from "../canvas/utils"
+import {Colors} from "../canvas/constant"
+import {BezierPoint, BezierPointType, getP2, LineType, P2} from "../canvas/type"
 
 
 class T extends Component<any, any> {

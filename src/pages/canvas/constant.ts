@@ -888,8 +888,8 @@ export const r = [
 ]
 export const rects: any[] = [
   {
-    "x": 10,
-    "y": 10,
+    "x": 850,
+    "y": 100,
     "rx": 10,
     "ry": 10,
     "w": 150,
@@ -915,7 +915,6 @@ export const rects: any[] = [
     "centerX": 627.5999999999999,
     "centerY": 314.79999999999995,
     "points": [],
-    "id": "e378e9bc-080a-46ab-b184-ce86647aca9e"
   }
 ]
 

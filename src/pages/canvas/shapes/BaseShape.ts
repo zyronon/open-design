@@ -1,8 +1,8 @@
 import {BaseEvent2, P, ShapeConfig, ShapeType} from "../type"
 import {calcPosition, getPath, hover, selected} from "../utils"
 import CanvasUtil2 from "../CanvasUtil2"
-import {cloneDeep} from "lodash"
-import getCenterPoint, {getAngle, getRotatedPoint} from "../../../utils"
+import {clone, cloneDeep} from "lodash"
+import getCenterPoint, {getAngle, getAngle2, getRotatedPoint} from "../../../utils"
 import {getShapeFromConfig} from "./common"
 
 
@@ -25,12 +25,15 @@ export abstract class BaseShape {
   enter: boolean = false
   startX: number = 0
   startY: number = 0
-  original: any = null
+  original: ShapeConfig
   diagonal: P = {x: 0, y: 0}//对角
   handlePoint: P = {x: 0, y: 0}
 
   constructor(props: ShapeConfig) {
+    console.log('props', clone(props))
     this.config = getPath(props)
+    this.original = cloneDeep(this.config)
+    console.log('config', clone(this.config))
     this.children = this.config.children.map((conf: ShapeConfig) => {
       return getShapeFromConfig(conf)
     })
@@ -77,7 +80,9 @@ export abstract class BaseShape {
     // ctx.fillText(rect.name, x, y - 18);
     // ctx.restore()
 
-    this.config = getPath(this.config, null, parent)
+    // this.config.x = x
+    // this.config.y = y
+    // this.config = getPath(this.config, null, parent)
     for (let i = 0; i < this.children.length; i++) {
       let shape = this.children[i]
       shape.shapeRender(ctx, this.config)
@@ -133,12 +138,9 @@ export abstract class BaseShape {
     x = (x - handX) / cu.handScale//上面的简写
     y = (y - handY) / cu.handScale
 
-    let {w, h, rotate, flipHorizontal, flipVertical} =  this.config
+    let {w, h, rotate, flipHorizontal, flipVertical} = this.config
     if (rotate !== 0 || flipHorizontal || flipVertical) {
-      const center = {
-        x: this.config.x + (w / 2),
-        y: this.config.y + (h / 2)
-      }
+      let center = this.config.center
       if (flipHorizontal) {
         x = center.x + Math.abs(x - center.x) * (x < center.x ? 1 : -1)
       }
@@ -226,6 +228,9 @@ export abstract class BaseShape {
 
     let cu = CanvasUtil2.getInstance()
     if (this.shapeIsIn(point, cu)) {
+      // console.log('in')
+      // return true
+
       // console.log('捕获', this.config.name)
       if (!this.isCapture || !cu.isDesign()) {
         for (let i = 0; i < this.children.length; i++) {
@@ -250,6 +255,7 @@ export abstract class BaseShape {
       return true
       // console.log('冒泡', this.config.name)
     } else {
+      // console.log('out')
       document.body.style.cursor = "default"
       this.isSelectHover = this.isHover = false
       cu.setInShapeNull(this)
@@ -445,7 +451,7 @@ export abstract class BaseShape {
     let {x, y, cu} = this.getXY(point)
     let rect = this.original
     let old = this.original
-    const center = {
+    let center = {
       x: old.x + (old.w / 2),
       y: old.y + (old.h / 2)
     }
@@ -457,12 +463,19 @@ export abstract class BaseShape {
       current.y = center.y + Math.abs(current.y - center.y) * (current.y < center.y ? 1 : -1)
     }
     // console.log('x-------', x, '          y--------', y)
-    let a = getAngle([rect.x + rect.w / 2, rect.y + rect.h / 2],
-      [this.original.x, this.original.y],
-      [current.x, current.y]
-    )
+    let a = getAngle2(
+      this.original.center,
+      this.original.topLeft,
+      current)
     // console.log('getAngle', a)
+
+    let reverseTopLeft = getRotatedPoint(this.original.topLeft, this.original.center, -this.original.rotate)
+    let topLeft = getRotatedPoint(reverseTopLeft, this.original.center, a)
+    this.config.topLeft = topLeft
+    this.config.x = topLeft.x
+    this.config.y = topLeft.y
     this.config.rotate = a
+
     cu.render()
   }
 

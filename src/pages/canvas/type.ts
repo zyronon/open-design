@@ -145,7 +145,12 @@ export interface ShapeConfig {
   flipVertical?: boolean,
   flipHorizontal?: boolean,
   points: any[],
-  isCustom: boolean
+  isCustom: boolean,
+  topLeft: P,
+  topRight: P,
+  bottomLeft: P,
+  bottomRight: P,
+  center: P,
 }
 
 export interface EllipseConfig extends ShapeConfig {

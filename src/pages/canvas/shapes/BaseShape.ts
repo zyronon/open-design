@@ -4,6 +4,8 @@ import CanvasUtil2 from "../CanvasUtil2"
 import {clone, cloneDeep} from "lodash"
 import getCenterPoint, {getAngle, getAngle2, getRotatedPoint} from "../../../utils"
 import {getShapeFromConfig} from "./common"
+import EventBus from "../../../utils/event-bus"
+import {EventMapTypes} from "../../canvas20221111/type"
 
 
 export abstract class BaseShape {
@@ -376,6 +378,7 @@ export abstract class BaseShape {
     //默认选中以及拖动
     this.enter = true
     if (this.isSelect) return
+    EventBus.emit(EventMapTypes.onMouseDown, this)
     this.isSelect = true
     this.isSelectHover = true
     this.isCapture = true
@@ -602,8 +605,6 @@ export abstract class BaseShape {
     const {x: handX, y: handY} = cu.handMove
     x = (x - handX) / cu.handScale
     y = (y - handY) / cu.handScale
-
-
     return {x, y, cu}
   }
 
@@ -630,6 +631,21 @@ export abstract class BaseShape {
       isEdit: this.isEdit,
       enterLT: this.enterLT,
       enterL: this.enterL
+    }
+  }
+
+  flip(type: number) {
+    const conf = this.config
+    let {
+      x, y, center, rotate
+    } = conf
+    if (type === 0) {
+      conf.x = center.x + Math.abs(x - center.x) * (x < center.x ? 1 : -1)
+      // conf.y = center.y + Math.abs(y - center.y) * (y < center.y ? 1 : -1)
+      conf.rotate = 180 - conf.rotate
+      conf.flipHorizontal = !conf.flipHorizontal
+    } else {
+      conf.flipVertical = !conf.flipVertical
     }
   }
 }

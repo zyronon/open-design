@@ -263,6 +263,7 @@ export default class CanvasUtil2 {
 
   onMouseUp(e: BaseEvent2, p: P,) {
     if (e.capture) return
+    EventBus.emit(EventMapTypes.onMouseUp, null)
     console.log('cu-onMouseUp', e)
   }
 

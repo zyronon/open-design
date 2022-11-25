@@ -888,11 +888,11 @@ export const r = [
 ]
 export const rects: any[] = [
   {
-    "x": 850,
-    "y": 100,
+    "x": 10,
+    "y": 200,
     "rx": 10,
     "ry": 10,
-    "w": 150,
+    "w": 250,
     "h": 150,
     "rotate": 10,
     "lineWidth": 2,

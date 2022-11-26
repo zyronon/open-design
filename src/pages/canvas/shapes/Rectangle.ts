@@ -39,7 +39,7 @@ export class Rectangle extends BaseShape {
     }
   }
 
-  get _config(): ShapeConfig {
+  get _config(): any {
     return this.config as any
   }
 
@@ -92,7 +92,6 @@ export class Rectangle extends BaseShape {
     return false
   }
 
-
   isHoverIn(mousePoint: P, cu: CanvasUtil2): boolean {
     if (this.isEdit) {
       let {x, y, w, h, points} = this._config
@@ -117,7 +116,8 @@ export class Rectangle extends BaseShape {
       w, h, radius,
       fillColor, borderColor, rotate, lineWidth,
       type, flipVertical, flipHorizontal, children,
-    } = this.config
+      fontWeight, fontSize, fontFamily
+    } = this._config
     const {x, y} = p
     ctx.save()
     if (radius) {
@@ -130,8 +130,13 @@ export class Rectangle extends BaseShape {
       ctx.lineTo(x, y + h)
       ctx.lineTo(x, y)
       ctx.closePath()
-      ctx.fillStyle = fillColor
-      ctx.fill()
+      ctx.font = `${fontWeight} ${26}rem "${fontFamily}", sans-serif`
+      let text = `${w.toFixed(2)} x ${h.toFixed(2)}`
+      let m = ctx.measureText(text)
+      let lX = x + w / 2 - m.width / 2
+      ctx.fillText(text, lX, y + h + 26)
+      // ctx.fillStyle = fillColor
+      // ctx.fill()
       ctx.strokeStyle = borderColor
       ctx.stroke()
     }

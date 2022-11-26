@@ -356,7 +356,7 @@ export function clear(x: any, ctx: any) {
 }
 
 export function getPath(rect: ShapeConfig, old?: any, parent?: ShapeConfig) {
-  console.log('getPath')
+  // console.log('getPath')
   //根据老的config，计算出最新的rx,ry
   if (old) {
     // debugger
@@ -370,21 +370,22 @@ export function getPath(rect: ShapeConfig, old?: any, parent?: ShapeConfig) {
   }
 
   let {
-    x, y, w, h, rotate
+    x, y, w, h, rotate,
+    center, flipHorizontal, flipVertical
   } = rect
   let isFirst = !rect.id
   if (isFirst) {
-    rect.leftX = rect.x
-    rect.rightX = rect.leftX + rect.w
-    rect.topY = rect.y
-    rect.bottomY = rect.topY + rect.h
-
-    rect.id = uuid()
-
     rect.center = {
       x: x + (w / 2),
       y: y + (h / 2)
     }
+    rect.leftX = rect.center.x - w / 2
+    rect.rightX = rect.center.x + w / 2
+    rect.topY = rect.center.y - h / 2
+    rect.bottomY = rect.center.y + h / 2
+
+    rect.id = uuid()
+
     rect.topLeft = {
       x,
       y
@@ -431,15 +432,27 @@ export function getPath(rect: ShapeConfig, old?: any, parent?: ShapeConfig) {
       }
     }
   } else {
-    if (rotate) {
-      let reverseTopLeft = getRotatedPoint(rect.topLeft, rect.center, -rotate)
-      // rect.x = rect.topLeft.x
-      // rect.y = rect.topLeft.y
-      rect.leftX = reverseTopLeft.x
-      rect.rightX = rect.leftX + rect.w
-      rect.topY = reverseTopLeft.y
-      rect.bottomY = rect.topY + rect.h
-    }
+    // if (flipHorizontal) {
+    //   x = getReversePoint(x, center.x)
+    // }
+    // if (flipVertical) {
+    //   y = getReversePoint(y, center.y)
+    // }
+    // let r = rotate
+    // if (flipHorizontal && flipVertical) {
+    //   r = (180 + rotate)
+    // } else {
+    //   if (flipHorizontal) {
+    //     r = (rotate - 180)
+    //   }
+    // }
+    // let reverseXy = getRotatedPoint({x, y}, center, -r)
+    //
+
+    rect.leftX = rect.center.x - w / 2
+    rect.rightX = rect.center.x + w / 2
+    rect.topY = rect.center.y - h / 2
+    rect.bottomY = rect.center.y + h / 2
   }
 
 
@@ -471,77 +484,40 @@ export function calcPosition(
     y = ry + parent.y
   }
 // console.log('type,', type)
-
   ctx.lineWidth = lineWidth
   ctx.fillStyle = fillColor
   ctx.strokeStyle = borderColor
-  ctx.translate(x, y)
-  ctx.rotate(rotate * Math.PI / 180)
-  return {x: 0, y: 0}
-
-  let oldCenter: P
-  let currentCenter: P
-
-  if (enterLT || enterL) {
-    let s = original
-    oldCenter = {
-      x: s.x + (s.w / 2),
-      y: s.y + (s.h / 2)
+  if (flipHorizontal || flipVertical) {
+    /*
+    * 渲染翻转后的图形，把canvas的起点移到中心点（要保证图形中心点的正确）
+    * 返回x为-w/2，y同理 ，直接从左上角开始渲染就行了
+    * */
+    let scaleX = 1
+    let scaleY = 1
+    if (flipHorizontal) {
+      scaleX = -1
     }
-    // console.log('oldCenter', oldCenter)
-    // console.log('newCenter', newCenter)
-  }
-
-  ctx.lineWidth = lineWidth
-  ctx.fillStyle = fillColor
-  ctx.strokeStyle = borderColor
-
-  let tranX = 0
-  let tranY = 0
-  let scaleX = 1
-  let scaleY = 1
-  if (rotate || flipHorizontal || flipVertical) {
-    tranX = x + w / 2
-    tranY = y + h / 2
-    x = -w / 2
-    y = -h / 2
-  }
-
-  if (flipHorizontal) {
-    scaleX = -1
-    // tranX = -tranX
-    //如果在翻转情况下，拉伸要将tranX加上两个中心点偏移量
-    if ((enterLT || enterL)) {
-      // console.log('tranX1', tranX)
-      let d = oldCenter!.x - currentCenter!.x
-      tranX += d * 2
-      // console.log('tranX2', tranX)
+    if (flipVertical) {
+      scaleY = -1
     }
-  }
-  if (flipVertical) {
-    // console.log('flipVertical', flipVertical)
-    scaleY = -1
-    if ((enterLT || enterL)) {
-      // console.log('tranX1', tranX)
-      let d = oldCenter!.y - currentCenter!.y
-      tranY += d * 2
-      // console.log('tranX2', tranX)
+
+    ctx.translate(center.x, center.y)
+    if (flipHorizontal && flipVertical) {
+      ctx.rotate((180 + rotate) * Math.PI / 180)
+    } else {
+      if (flipHorizontal) {
+        ctx.rotate((rotate - 180) * Math.PI / 180)
+      } else {
+        ctx.rotate(rotate * Math.PI / 180)
+      }
     }
-    // tranY = -tranY
+    ctx.scale(scaleX, scaleY)
+    return {x: -w / 2, y: -h / 2}
+  } else {
+    ctx.translate(x, y)
+    ctx.rotate(rotate * Math.PI / 180)
+    return {x: 0, y: 0}
   }
-
-  // if (true) {
-  if (false) {
-    console.log('x, y', x, y)
-    console.log('tranX, tranY', tranX, tranY)
-    console.log('tranX, tranY', scaleX, scaleY)
-    console.log('rotate', rotate)
-  }
-
-  ctx.translate(tranX, tranY)
-  ctx.scale(scaleX, scaleY)
-  ctx.rotate(rotate * Math.PI / 180)
-  return {x, y}
 }
 
 export function calcPosition2(
@@ -1245,4 +1221,8 @@ export function sleep(time: number) {
       resolve(true)
     }, time)
   })
+}
+
+export function getReversePoint(val: number, centerVal: number) {
+  return centerVal + Math.abs(val - centerVal) * (val < centerVal ? 1 : -1)
 }

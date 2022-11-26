@@ -888,10 +888,10 @@ export const r = [
 ]
 export const rects: any[] = [
   {
-    "x": 10,
+    "x": 600,
     "y": 200,
-    "rx": 10,
-    "ry": 10,
+    "rx": 646,
+    "ry": 46,
     "w": 250,
     "h": 150,
     "rotate": 10,
@@ -908,13 +908,35 @@ export const rects: any[] = [
     "fontFamily": "SourceHanSansCN",
     "texts": [],
     "name": "矩形",
-    "leftX": 554.8,
-    "rightX": 700.3999999999997,
-    "topY": 244.2,
-    "bottomY": 385.39999999999986,
+    "leftX": 646,
+    "rightX": 896,
+    "topY": 236.00000000000006,
+    "bottomY": 386.00000000000006,
     "centerX": 627.5999999999999,
     "centerY": 314.79999999999995,
     "points": [],
+    "center": {
+      "x": 771,
+      "y": 311
+    },
+    "topLeft": {
+      "x": 24.922644198493785,
+      "y": 179.4333963157181
+    },
+    "topRight": {
+      "x": 271.12458245154573,
+      "y": 222.8454407324507
+    },
+    "bottomLeft": {
+      "x": -1.1245824515457628,
+      "y": 327.1545592675493
+    },
+    "bottomRight": {
+      "x": 245.0773558015062,
+      "y": 370.56660368428186
+    },
+    "flipHorizontal": false,
+    "flipVertical": false
   }
 ]
 

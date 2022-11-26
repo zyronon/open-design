@@ -32,10 +32,10 @@ export abstract class BaseShape {
   handlePoint: P = {x: 0, y: 0}
 
   constructor(props: ShapeConfig) {
-    console.log('props', clone(props))
+    // console.log('props', clone(props))
     this.config = getPath(props)
     this.original = cloneDeep(this.config)
-    console.log('config', clone(this.config))
+    // console.log('config', clone(this.config))
     this.children = this.config.children.map((conf: ShapeConfig) => {
       return getShapeFromConfig(conf)
     })
@@ -141,15 +141,17 @@ export abstract class BaseShape {
     y = (y - handY) / cu.handScale
 
     let {w, h, rotate, flipHorizontal, flipVertical} = this.config
-    if (rotate !== 0 || flipHorizontal || flipVertical) {
-      let center = this.config.center
+    let r = rotate
+    if (flipHorizontal && flipVertical) {
+      r = (180 + rotate)
+    } else {
       if (flipHorizontal) {
-        x = center.x + Math.abs(x - center.x) * (x < center.x ? 1 : -1)
+        r = (rotate - 180)
       }
-      if (flipVertical) {
-        y = center.y + Math.abs(y - center.y) * (y < center.y ? 1 : -1)
-      }
-      let s2 = getRotatedPoint({x, y}, center, -rotate)
+    }
+    if (r) {
+      let center = this.config.center
+      let s2 = getRotatedPoint({x, y}, center, -r)
       x = s2.x
       y = s2.y
     }
@@ -573,6 +575,7 @@ export abstract class BaseShape {
     } else {
       this.config.x = (x - cu.offsetX)
       this.config.w = this.original.rightX - this.config.x
+      this.config.center.x = this.config.x + this.config.w / 2
       this.config = getPath(this.config, this.original)
     }
     cu.render()
@@ -585,8 +588,9 @@ export abstract class BaseShape {
     let dy = (y - cu.startY)
     this.config.x = this.original.x + dx
     this.config.y = this.original.y + dy
+    this.config.center.x = this.original.center.x + dx
+    this.config.center.y = this.original.center.y + dy
     this.config = getPath(this.config, this.original)
-    // cu.hoverShape = this
     cu.render()
   }
 
@@ -641,10 +645,15 @@ export abstract class BaseShape {
     } = conf
     if (type === 0) {
       conf.x = center.x + Math.abs(x - center.x) * (x < center.x ? 1 : -1)
-      // conf.y = center.y + Math.abs(y - center.y) * (y < center.y ? 1 : -1)
-      conf.rotate = 180 - conf.rotate
+      if (conf.rotate < 0) {
+        conf.rotate = -(180 + rotate)
+      } else {
+        conf.rotate = 180 - conf.rotate
+      }
       conf.flipHorizontal = !conf.flipHorizontal
     } else {
+      conf.y = center.y + Math.abs(y - center.y) * (y < center.y ? 1 : -1)
+      conf.rotate = -conf.rotate
       conf.flipVertical = !conf.flipVertical
     }
   }

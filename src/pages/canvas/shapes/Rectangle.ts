@@ -54,7 +54,7 @@ export class Rectangle extends BaseShape {
   hoverPointIndex: number = -1
 
   childMouseDown(event: BaseEvent2, p: BaseShape[] = []) {
-    console.log('childMouseDown', this.hoverPointIndex)
+    // console.log('childMouseDown', this.hoverPointIndex)
     if (this.isEdit) {
       this._config.isCustom = true
       this.enter = true
@@ -79,7 +79,7 @@ export class Rectangle extends BaseShape {
   }
 
   childMouseUp() {
-    console.log('childMouseUp', this.hoverPointIndex)
+    // console.log('childMouseUp', this.hoverPointIndex)
 
     return false
   }

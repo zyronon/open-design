@@ -1,5 +1,5 @@
 import {BaseEvent2, P, ShapeConfig, ShapeType} from "../type"
-import {calcPosition, getPath, hover, selected} from "../utils"
+import {calcPosition, getPath, getReversePoint, hover, selected} from "../utils"
 import CanvasUtil2 from "../CanvasUtil2"
 import {clone, cloneDeep} from "lodash"
 import getCenterPoint, {getAngle, getAngle2, getRotatedPoint} from "../../../utils"
@@ -29,7 +29,7 @@ export abstract class BaseShape {
   startY: number = 0
   original: ShapeConfig
   diagonal: P = {x: 0, y: 0}//对角
-  handlePoint: P = {x: 0, y: 0}
+  handlePoint: P = {x: 0, y: 0}//鼠标拖动那条的中间点，非鼠标点
 
   constructor(props: ShapeConfig) {
     // console.log('props', clone(props))
@@ -140,30 +140,34 @@ export abstract class BaseShape {
     x = (x - handX) / cu.handScale//上面的简写
     y = (y - handY) / cu.handScale
 
-    let {w, h, rotate, flipHorizontal, flipVertical} = this.config
-    let r = rotate
-    if (flipHorizontal && flipVertical) {
-      r = (180 + rotate)
-    } else {
-      if (flipHorizontal) {
-        r = (rotate - 180)
-      }
-    }
+    let {
+      w, h, rotate, radius,
+      leftX, rightX, topY, bottomY,
+      flipHorizontal, flipVertical, center
+    } = this.config
+    let r = this.getRotate()
     if (r) {
-      let center = this.config.center
+      /*
+     * 翻转之后的角度与正常图形的角度并不匹配，但是不知道为什么masterGo和figma都是这样子设计的
+     * 所以这里只需要负角度旋转回默认点就行了
+     * */
       let s2 = getRotatedPoint({x, y}, center, -r)
       x = s2.x
       y = s2.y
     }
 
     if (this.isSelect) {
-      let rect = this.config
+      /*
+      * 同上原因，判断是否在图形内，不需要翻转点。
+      * */
+      if (flipHorizontal) x = getReversePoint(x, center.x)
+      if (flipVertical) y = getReversePoint(y, center.y)
       let edge = 10
       let angle = 7
       let rotate = 27
       //左边
-      if ((rect.leftX! - edge < x && x < rect.leftX! + edge) &&
-        (rect.topY! + edge < y && y < rect.bottomY! - edge)
+      if ((leftX! - edge < x && x < leftX! + edge) &&
+        (topY! + edge < y && y < bottomY! - edge)
       ) {
         // console.log('hoverLeft')
         document.body.style.cursor = "col-resize"
@@ -174,10 +178,10 @@ export abstract class BaseShape {
       }
 
       //左上
-      if ((rect.leftX! - angle < x && x < rect.leftX! + angle) &&
-        (rect.topY! - angle < y && y < rect.topY! + angle)
+      if ((leftX! - angle < x && x < leftX! + angle) &&
+        (topY! - angle < y && y < topY! + angle)
       ) {
-        // console.log('1', rect.flipHorizontal)
+        // console.log('1', flipHorizontal)
         this.hoverLT = true
 
         this.hoverL = false
@@ -186,8 +190,8 @@ export abstract class BaseShape {
       }
 
       //左上旋转
-      if ((rect.leftX! - rotate < x && x < rect.leftX! - angle) &&
-        (rect.topY! - rotate < y && y < rect.topY! - angle)
+      if ((leftX! - rotate < x && x < leftX! - angle) &&
+        (topY! - rotate < y && y < topY! - angle)
       ) {
         this.hoverLTR = true
 
@@ -197,11 +201,11 @@ export abstract class BaseShape {
         return true
       }
 
-      let r = rect.radius
+      let r = radius
       let rr = 5
       //左上，拉动圆角那个点
-      if ((rect.leftX! + r - rr < x && x < rect.leftX! + r + rr / 2) &&
-        (rect.topY! + r - rr < y && y < rect.topY! + r + rr / 2)
+      if ((leftX! + r - rr < x && x < leftX! + r + rr / 2) &&
+        (topY! + r - rr < y && y < topY! + r + rr / 2)
       ) {
         this.hoverRd1 = true
         document.body.style.cursor = "pointer"
@@ -302,7 +306,7 @@ export abstract class BaseShape {
   }
 
   mousedown(event: BaseEvent2, p: BaseShape[] = []) {
-    console.log('mousedown', this.config)
+    // console.log('mousedown', this.config)
     let {e, point, type} = event
     let {x, y, cu} = this.getXY(point)
 
@@ -323,20 +327,25 @@ export abstract class BaseShape {
     //按下左边
     if (this.hoverL) {
       // console.log('config', cloneDeep(this.config))
-      const center = {
-        x: rect.x + (rect.w / 2),
-        y: rect.y + (rect.h / 2)
-      }
+      let {w, h, rotate, center, flipHorizontal, flipVertical} = this.config
+
+      let lx = this.config.x
+      let ly = this.config.y
+      if (flipHorizontal) lx = getReversePoint(lx, center.x)
+      if (flipVertical) ly = getReversePoint(ly, center.y)
+      let reverseXy = getRotatedPoint({x: lx, y: ly}, center, -this.getRotate())
+
       //不是当前点击位置，当前点击位置算对角会有偏差
       let handlePoint = getRotatedPoint(
-        {x: this.config.x, y: this.config.y + this.config.h / 2},
-        center, rect.rotate)
+        {x: reverseXy.x, y: reverseXy.y + h / 2},
+        center, this.getRotate())
       this.handlePoint = handlePoint
       this.diagonal = {
-        x: center.x + Math.abs(handlePoint.x - center.x) * (handlePoint.x < center.x ? 1 : -1),
-        y: center.y + Math.abs(handlePoint.y - center.y) * (handlePoint.y < center.y ? 1 : -1)
+        x: getReversePoint(handlePoint.x, center.x),
+        y: getReversePoint(handlePoint.y, center.y),
       }
       console.log('diagonal', this.diagonal)
+      console.log('handlePoint', this.handlePoint)
       this.enterL = true
       return
     }
@@ -522,30 +531,28 @@ export abstract class BaseShape {
 
   //拖动左边
   dragL(point: P) {
-    let {x, y, cu} = this.getXY(point)
+    let {x, y, cu,} = this.getXY(point)
+    const {flipHorizontal, flipVertical} = this.config
     if (this.config.rotate) {
-      // if (false) {
-      // this.moveEnterLT({ x, y })
       let rect = this.config
       let s = this.original
-      const center = {
-        x: s.x + (s.w / 2),
-        y: s.y + (s.h / 2)
-      }
       let sPoint = this.diagonal
       const current = {x, y}
       console.log('--------------------------')
-      if (rect.flipHorizontal) {
-        current.x = center.x + Math.abs(current.x - center.x) * (current.x < center.x ? 1 : -1)
+      console.log('current-start', {x, y})
+      console.log('center', s.center)
+      if (flipHorizontal) {
+        current.x = getReversePoint(current.x, s.center.x)
       }
-      if (rect.flipVertical) {
-        current.y = center.y + Math.abs(current.y - center.y) * (current.y < center.y ? 1 : -1)
+      if (flipVertical) {
+        current.y = getReversePoint(current.y, s.center.y)
       }
+
       const handlePoint = this.handlePoint
-      console.log('current', current)
+      console.log('current-end', current)
       console.log('handlePoint', handlePoint)
 
-      const rotatedCurrentPosition = getRotatedPoint(current, handlePoint, -rect.rotate)
+      const rotatedCurrentPosition = getRotatedPoint(current, handlePoint, -this.getRotate())
       console.log('rotatedCurrentPosition', rotatedCurrentPosition)
 
       console.log('test', rotatedCurrentPosition.x, handlePoint.y)
@@ -553,7 +560,7 @@ export abstract class BaseShape {
       const rotatedLeftMiddlePoint = getRotatedPoint({
         x: rotatedCurrentPosition.x,
         y: handlePoint.y,
-      }, handlePoint, rect.rotate)
+      }, handlePoint, this.getRotate())
       console.log('rotatedLeftMiddlePoint', rotatedLeftMiddlePoint)
 
       // const newWidth = Math.sqrt(Math.pow(rotatedLeftMiddlePoint.x - sPoint.x, 2) + Math.pow(rotatedLeftMiddlePoint.y - sPoint.y, 2))
@@ -566,10 +573,20 @@ export abstract class BaseShape {
       }
       console.log('newCenter', newCenter)
 
-
       rect.w = newWidth
       rect.y = newCenter.y - (rect.h / 2)
       rect.x = newCenter.x - (newWidth / 2)
+
+      let ss = getRotatedPoint({x: rect.x, y: rect.y}, newCenter, this.getRotate())
+      if (flipHorizontal) {
+        ss.x = getReversePoint(ss.x, newCenter.x)
+      }
+      if (flipVertical) {
+        ss.y = getReversePoint(ss.y, newCenter.y)
+      }
+      rect.x = ss.x
+      rect.y = ss.y
+      rect.center = newCenter
       console.log(rect)
       this.config = getPath(rect, this.original)
     } else {
@@ -596,7 +613,7 @@ export abstract class BaseShape {
 
   mouseup(e: BaseEvent2, p: BaseShape[] = []) {
     // if (e.capture) return
-    console.log('mouseup')
+    // console.log('mouseup')
     this.childMouseUp()
     this.resetEnter()
   }
@@ -656,5 +673,18 @@ export abstract class BaseShape {
       conf.rotate = -conf.rotate
       conf.flipVertical = !conf.flipVertical
     }
+  }
+
+  getRotate() {
+    let {rotate, flipHorizontal, flipVertical} = this.config
+    let r = rotate
+    if (flipHorizontal && flipVertical) {
+      r = (180 + rotate)
+    } else {
+      if (flipHorizontal) {
+        r = (rotate - 180)
+      }
+    }
+    return r
   }
 }

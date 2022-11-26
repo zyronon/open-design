@@ -888,13 +888,13 @@ export const r = [
 ]
 export const rects: any[] = [
   {
-    "x": 600,
-    "y": 200,
+    "x": 835.0773558015062,
+    "y": 179.4333963157181,
     "rx": 646,
     "ry": 46,
     "w": 250,
     "h": 150,
-    "rotate": 10,
+    "rotate": 170,
     "lineWidth": 2,
     "type": 104,
     "color": "gray",
@@ -908,35 +908,36 @@ export const rects: any[] = [
     "fontFamily": "SourceHanSansCN",
     "texts": [],
     "name": "矩形",
-    "leftX": 646,
-    "rightX": 896,
-    "topY": 236.00000000000006,
-    "bottomY": 386.00000000000006,
+    "leftX": 600,
+    "rightX": 850,
+    "topY": 200,
+    "bottomY": 350,
     "centerX": 627.5999999999999,
     "centerY": 314.79999999999995,
     "points": [],
     "center": {
-      "x": 771,
-      "y": 311
+      "x": 725,
+      "y": 275
     },
     "topLeft": {
-      "x": 24.922644198493785,
+      "x": 614.9226441984938,
       "y": 179.4333963157181
     },
     "topRight": {
-      "x": 271.12458245154573,
+      "x": 861.1245824515457,
       "y": 222.8454407324507
     },
     "bottomLeft": {
-      "x": -1.1245824515457628,
+      "x": 588.8754175484543,
       "y": 327.1545592675493
     },
     "bottomRight": {
-      "x": 245.0773558015062,
+      "x": 835.0773558015062,
       "y": 370.56660368428186
     },
-    "flipHorizontal": false,
-    "flipVertical": false
+    "flipHorizontal": true,
+    "flipVertical": false,
+    "id": "3a47be7b-0642-4d3a-a4b3-79c2d8201af5"
   }
 ]
 

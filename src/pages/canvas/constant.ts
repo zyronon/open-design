@@ -888,13 +888,13 @@ export const r = [
 ]
 export const rects: any[] = [
   {
-    "x": 835.0773558015062,
-    "y": 179.4333963157181,
+    "x": 614.9226441984938,
+    "y": 370.56660368428186,
     "rx": 646,
     "ry": 46,
     "w": 250,
     "h": 150,
-    "rotate": 170,
+    "rotate": -10,
     "lineWidth": 2,
     "type": 104,
     "color": "gray",
@@ -935,8 +935,8 @@ export const rects: any[] = [
       "x": 835.0773558015062,
       "y": 370.56660368428186
     },
-    "flipHorizontal": true,
-    "flipVertical": false,
+    "flipHorizontal": false,
+    "flipVertical": true,
     "id": "3a47be7b-0642-4d3a-a4b3-79c2d8201af5"
   }
 ]

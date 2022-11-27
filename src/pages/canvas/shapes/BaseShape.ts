@@ -17,6 +17,8 @@ export abstract class BaseShape {
   enterLT: boolean = false
   hoverLTR: boolean = false
   enterLTR: boolean = false
+  hoverR: boolean = false
+  enterR: boolean = false
   public config: ShapeConfig
   children: BaseShape[] = []
   isHover: boolean = false
@@ -28,8 +30,8 @@ export abstract class BaseShape {
   startX: number = 0
   startY: number = 0
   original: ShapeConfig
-  diagonal: P = {x: 0, y: 0}//对角
-  handlePoint: P = {x: 0, y: 0}//鼠标拖动那条的中间点，非鼠标点
+  diagonal: P = {x: 0, y: 0}//对面的点（和handlePoint相反的点），如果handlePoint是中间点，那么这个也是中间点
+  handlePoint: P = {x: 0, y: 0}//鼠标按住那条边的中间点（当前角度），非鼠标点
 
   constructor(props: ShapeConfig) {
     // console.log('props', clone(props))
@@ -39,6 +41,23 @@ export abstract class BaseShape {
     this.children = this.config.children.map((conf: ShapeConfig) => {
       return getShapeFromConfig(conf)
     })
+  }
+
+  resetHover() {
+    this.hoverL = false
+    this.hoverLT = false
+    this.hoverLTR = false
+    this.hoverRd1 = false
+    this.hoverR = false
+  }
+
+  resetEnter() {
+    this.enter = false
+    this.enterL = false
+    this.enterLT = false
+    this.enterLTR = false
+    this.enterRd1 = false
+    this.enterR = false
   }
 
   abstract render(ctx: CanvasRenderingContext2D, xy: P, parent?: ShapeConfig): any
@@ -126,6 +145,7 @@ export abstract class BaseShape {
     //如果操作中，那么永远返回ture，保持事件一直直接传递到当前图形上
     if (this.enter ||
       this.enterL ||
+      this.enterR ||
       this.enterLT ||
       this.enterLTR) {
       return true
@@ -160,8 +180,8 @@ export abstract class BaseShape {
       /*
       * 同上原因，判断是否在图形内，不需要翻转点。
       * */
-      if (flipHorizontal) x = getReversePoint(x, center.x)
-      if (flipVertical) y = getReversePoint(y, center.y)
+      // if (flipHorizontal) x = getReversePoint(x, center.x)
+      // if (flipVertical) y = getReversePoint(y, center.y)
       let edge = 10
       let angle = 7
       let rotate = 27
@@ -177,13 +197,22 @@ export abstract class BaseShape {
         return true
       }
 
+      //右边
+      if ((rightX! - edge < x && x < rightX! + edge) &&
+        (topY! + edge < y && y < bottomY! - edge)
+      ) {
+        // console.log('hoverR')
+        document.body.style.cursor = "col-resize"
+        this.hoverR = true
+        return true
+      }
+
       //左上
       if ((leftX! - angle < x && x < leftX! + angle) &&
         (topY! - angle < y && y < topY! + angle)
       ) {
         // console.log('1', flipHorizontal)
         this.hoverLT = true
-
         this.hoverL = false
         document.body.style.cursor = "nwse-resize"
         return true
@@ -350,6 +379,37 @@ export abstract class BaseShape {
       return
     }
 
+    //按下左边
+    if (this.hoverR) {
+      // console.log('config', cloneDeep(this.config))
+      let {w, h, rotate, center, flipHorizontal, flipVertical} = this.config
+      let lx = this.config.x
+      let ly = this.config.y
+      //反转当前xy到0度
+      let reverseXy = getRotatedPoint({x: lx, y: ly}, center, -this.getRotate())
+      /**
+       * 根据flipHorizontal、flipVertical计算出当前按的那条边的中间点
+       * 如果水平翻转：x在左边，直接使用。未翻转：x加上宽度
+       * 如果垂直翻转：y在下边，要减去高度的一半。未翻转：y加上高度的一半
+       * */
+      let currentHandLineCenterPoint = {
+        x: reverseXy.x + (flipHorizontal ? 0 : w),
+        y: reverseXy.y + (flipVertical ? (-h / 2) : (h / 2))
+      }
+      //根据当前角度，转回来。得到的点就是当前鼠标按住那条边的中间点（当前角度），非鼠标点
+      let handlePoint = getRotatedPoint(
+        currentHandLineCenterPoint,
+        center, this.getRotate())
+      this.handlePoint = handlePoint
+      //翻转得到对面的点
+      this.diagonal = {
+        x: getReversePoint(handlePoint.x, center.x),
+        y: getReversePoint(handlePoint.y, center.y),
+      }
+      this.enterR = true
+      return
+    }
+
     //按下左上
     if (this.hoverLT) {
       // console.log('config', cloneDeep(this.config))
@@ -436,6 +496,9 @@ export abstract class BaseShape {
 
     if (this.enterL) {
       return this.dragL(point)
+    }
+    if (this.enterR) {
+      return this.dragR(point)
     }
 
     if (this.enterLT) {
@@ -598,6 +661,52 @@ export abstract class BaseShape {
     cu.render()
   }
 
+  //拖动左边
+  dragR(point: P) {
+    let {x, y, cu,} = this.getXY(point)
+    const {flipHorizontal, flipVertical} = this.config
+    let rotate = this.getRotate()
+    if (rotate) {
+      let rect = this.config
+      let sPoint = this.diagonal
+      const current = {x, y}
+      const handlePoint = this.handlePoint
+      //0度的当前点：以当前边中间点为圆心，负角度偏转当前点，得到0度的当前点
+      const zeroAngleCurrentPoint = getRotatedPoint(current, handlePoint, -rotate)
+      //0度的移动点：x取其0度的当前点的，y取当前边中间点的（保证在一条直线上，因为只能拖动x，y不需要变动）
+      const zeroAngleMovePoint = {x: zeroAngleCurrentPoint.x, y: handlePoint.y}
+      // 当前角度的移动点：以当前边中间点为圆心，正角度偏转
+      const currentAngleMovePoint = getRotatedPoint(zeroAngleMovePoint, handlePoint, rotate)
+      //最新宽度：利用勾股定理求出斜边(不能直接zeroAngleMovePoint.x - this.diagonal.x相减，会有细微的差别)
+      const newWidth = Math.hypot(currentAngleMovePoint.x - this.diagonal.x, currentAngleMovePoint.y - this.diagonal.y)
+      //最新中心点：
+      const newCenter = {
+        x: this.diagonal.x + (currentAngleMovePoint.x - this.diagonal.x) / 2,
+        y: this.diagonal.y + (currentAngleMovePoint.y - this.diagonal.y) / 2
+      }
+      rect.w = newWidth
+      rect.center = newCenter
+      //如果水平了翻转，那么xy值在左边，但是拖动的也是左边，所以要重新计算xy值
+      if (flipHorizontal) {
+        //0度的xy
+        let zeroAngleXy = getRotatedPoint(this.original, newCenter, -rotate)
+        //0度的x，加上当前移动的距离（新宽度减去原始宽度）
+        zeroAngleXy.x += (newWidth - this.original.w)
+        //再偏转回去
+        let angleXy = getRotatedPoint(zeroAngleXy, newCenter, rotate)
+        rect.x = angleXy.x
+        rect.y = angleXy.y
+      }
+      this.config = getPath(rect, this.original)
+    } else {
+      this.config.x = (x - cu.offsetX)
+      this.config.w = this.original.rightX - this.config.x
+      this.config.center.x = this.config.x + this.config.w / 2
+      this.config = getPath(this.config, this.original)
+    }
+    cu.render()
+  }
+
   //移动图形
   move(point: P) {
     let {x, y, cu} = this.getXY(point)
@@ -627,21 +736,6 @@ export abstract class BaseShape {
     x = (x - handX) / cu.handScale
     y = (y - handY) / cu.handScale
     return {x, y, cu}
-  }
-
-  resetHover() {
-    this.hoverL = false
-    this.hoverLT = false
-    this.hoverLTR = false
-    this.hoverRd1 = false
-  }
-
-  resetEnter() {
-    this.enter = false
-    this.enterL = false
-    this.enterLT = false
-    this.enterLTR = false
-    this.enterRd1 = false
   }
 
   getState() {

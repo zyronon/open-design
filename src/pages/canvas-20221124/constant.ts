@@ -39,10 +39,10 @@ export const fontSize = [
 ]
 
 export const Colors = {
-  primary: '#4B75F6FF',
-  line: 'rgb(217,217,217)',
-  line2: 'rgb(140,140,140)',
-  white: 'white',
+  Primary: '#4B75F6FF',
+  Line: 'rgb(217,217,217)',
+  Line2: 'rgb(140,140,140)',
+  White: 'white',
 }
 
 export const rects2 = [

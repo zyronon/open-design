@@ -247,7 +247,7 @@ export class Rectangle extends BaseShape {
 
     ctx.save()
 
-    ctx.strokeStyle = Colors.line2
+    ctx.strokeStyle = Colors.Line2
     ctx.fillStyle = fillColor
     ctx.beginPath()
 

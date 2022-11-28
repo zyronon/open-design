@@ -291,7 +291,7 @@ class T extends Component<any, any> {
     // ctx.lineTo(start.x, start.y)
     // ctx.stroke()
     // drawRound(ctx, center)
-    ctx.strokeStyle = Colors.line2
+    ctx.strokeStyle = Colors.Line2
     bezierCps.map((currentPoint: BezierPoint, index: number, array) => {
       let previousPoint: BezierPoint
       if (index === 0) {
@@ -345,7 +345,7 @@ class T extends Component<any, any> {
     })
     ctx.closePath()
     ctx.stroke()
-    ctx.fillStyle = Colors.line
+    ctx.fillStyle = Colors.Line
     ctx.fill()
 
     // console.log('bezierCps', bezierCps)

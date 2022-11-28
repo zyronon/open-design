@@ -286,9 +286,9 @@ export function renderRound(rect: any, r: number, ctx: any, type: ShapeType = Sh
   ctx.save()
   ctx.lineWidth = 1.5
   if (type === ShapeType.RECTANGLE) {
-    ctx.fillStyle = Colors.primary
+    ctx.fillStyle = Colors.Primary
   } else {
-    ctx.strokeStyle = Colors.primary
+    ctx.strokeStyle = Colors.Primary
   }
   ctx.beginPath()
   ctx.arc(x, y, r, 0, 2 * Math.PI)
@@ -306,8 +306,8 @@ export function drawRound(ctx: any, rect: any, r: number = 4) {
   ctx.save()
   ctx.beginPath()
   ctx.lineWidth = lineWidth
-  ctx.fillStyle = Colors.white
-  ctx.strokeStyle = Colors.primary
+  ctx.fillStyle = Colors.White
+  ctx.strokeStyle = Colors.Primary
   ctx.arc(x, y, r, 0, 2 * Math.PI)
   ctx.fill()
   ctx.stroke()
@@ -323,13 +323,13 @@ export function drawCp(ctx: CanvasRenderingContext2D, rect: any, center: P2) {
   ctx.beginPath()
   ctx.moveTo2(rect)
   ctx.lineTo2(center)
-  ctx.strokeStyle = Colors.line2
+  ctx.strokeStyle = Colors.Line2
   ctx.stroke()
 
   ctx.save()
   ctx.lineWidth = lineWidth
-  ctx.fillStyle = Colors.white
-  ctx.strokeStyle = Colors.primary
+  ctx.fillStyle = Colors.White
+  ctx.strokeStyle = Colors.Primary
   ctx.translate(x, y)
   ctx.rotate(jiaodu2hudu(45))
   ctx.beginPath()

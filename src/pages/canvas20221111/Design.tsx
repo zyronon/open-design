@@ -257,7 +257,7 @@ class Design extends React.Component<any, IState> {
       if (usePencil) {
         ctx.moveTo(x, y)
         let newPencil: any = {
-          borderColor: Colors.line,
+          borderColor: Colors.Line,
           fillColor: "black",
           fontSize: 0,
           texts: [],
@@ -288,7 +288,7 @@ class Design extends React.Component<any, IState> {
           this.draw()
         } else {
           let newPen: any = {
-            borderColor: Colors.line,
+            borderColor: Colors.Line,
             fillColor: "black",
             fontSize: 0,
             texts: [],
@@ -688,7 +688,7 @@ class Design extends React.Component<any, IState> {
         // ctx.beginPath()
         // ctx.moveTo(x, y)
         ctx.lineWidth = select.lineWidth
-        ctx.strokeStyle = Colors.primary
+        ctx.strokeStyle = Colors.Primary
         ctx.lineTo(x, y)
         ctx.stroke()
         renderRound({

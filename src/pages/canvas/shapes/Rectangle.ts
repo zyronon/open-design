@@ -130,7 +130,7 @@ export class Rectangle extends BaseShape {
       ctx.lineTo(x, y + h)
       ctx.lineTo(x, y)
       ctx.closePath()
-      ctx.font = `${fontWeight} ${26}rem "${fontFamily}", sans-serif`
+      ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
       let text = `${w.toFixed(2)} x ${h.toFixed(2)}`
       let m = ctx.measureText(text)
       let lX = x + w / 2 - m.width / 2
@@ -252,7 +252,7 @@ export class Rectangle extends BaseShape {
 
     ctx.save()
 
-    ctx.strokeStyle = Colors.line2
+    ctx.strokeStyle = Colors.Line2
     ctx.fillStyle = fillColor
     ctx.beginPath()
 

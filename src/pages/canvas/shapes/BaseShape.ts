@@ -319,9 +319,9 @@ export abstract class BaseShape {
 
   abstract childMouseUp(): boolean
 
-  dblclick(event: BaseEvent2, p: BaseShape[] = []) {
+  dblclick(event: BaseEvent2, parents: BaseShape[] = []) {
     console.log('on-dblclick',)
-    if (this.childDbClick(event, p)) return
+    if (this.childDbClick(event, parents)) return
     if (this.isEdit) {
       this.isSelect = this.isSelectHover = true
     } else {
@@ -334,7 +334,7 @@ export abstract class BaseShape {
     cu.render()
   }
 
-  mousedown(event: BaseEvent2, p: BaseShape[] = []) {
+  mousedown(event: BaseEvent2, parents: BaseShape[] = []) {
     // console.log('mousedown', this.config)
     let {e, point, type} = event
     let {x, y, cu} = this.getXY(point)
@@ -345,7 +345,7 @@ export abstract class BaseShape {
     cu.offsetX = x - this.config.x
     cu.offsetY = y - this.config.y
 
-    if (this.childMouseDown(event, p)) return
+    if (this.childMouseDown(event, parents)) return
 
     let rect = this.config
 
@@ -460,17 +460,10 @@ export abstract class BaseShape {
     this.isCapture = true
     this.isHover = false
     //如果当前选中的图形不是自己，那么把那个图形设为未选中
-    if (cu.selectedShape && cu.selectedShape !== this) {
-      cu.selectedShape.isSelect = cu.selectedShape.isEdit = false
-    }
-    cu.selectedShapeParent.map((shape: BaseShape) => shape.isCapture = true)
-    cu.selectedShapeParent = p
-    cu.selectedShapeParent.map((shape: BaseShape) => shape.isCapture = false)
-    cu.selectedShape = this
-    cu.render()
+    cu.setSelectShape(this, parents)
   }
 
-  mousemove(event: BaseEvent2, parent: BaseShape[] = []) {
+  mousemove(event: BaseEvent2, parents: BaseShape[] = []) {
     // console.log('mousemove', this.enterLTR)
     let {e, point, type} = event
     // console.log('mousemove', this.config.name, `isHover：${this.isHover}`)
@@ -490,9 +483,9 @@ export abstract class BaseShape {
     //如果放在e.capture前面，那么会被子组件给覆盖。所以放在e.capture后面
     //子组件isSelect或者isHover之后会stopPropagation，那么父组件就不会往
     //下执行了
-    // cu.setInShape(this, parent)
+    // cu.setInShape(this, parents)
     let cu = CanvasUtil2.getInstance()
-    cu.setInShape(this, parent)
+    cu.setInShape(this, parents)
 
 
     if (this.enter) {

@@ -340,9 +340,9 @@ export function renderRound(rect: any, r: number, ctx: any, type: RectType = Rec
   ctx.save()
   ctx.lineWidth = 2
   if (type === RectType.RECT) {
-    ctx.fillStyle = Colors.primary
+    ctx.fillStyle = Colors.Primary
   } else {
-    ctx.strokeStyle = Colors.primary
+    ctx.strokeStyle = Colors.Primary
   }
   ctx.beginPath()
   ctx.arc(x, y, r, 0, 2 * Math.PI)

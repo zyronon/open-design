@@ -39,10 +39,10 @@ export const fontSize = [
 ]
 
 export const Colors = {
-  primary: '#4B75F6FF',
-  line: 'rgb(217,217,217)',
-  line2: 'rgb(140,140,140)',
-  white: 'white',
+  Primary: '#4B75F6FF',
+  Line: 'rgb(217,217,217)',
+  Line2: 'rgb(140,140,140)',
+  White: 'white',
 }
 
 export const rects2 = [
@@ -888,56 +888,100 @@ export const r = [
 ]
 export const rects: any[] = [
   {
-    "x": 584.0044356796541,
-    "y": 373.1332073685638,
-    "rx": 600.1591472826665,
-    "ry": -133.08053782479274,
-    "w": 313.810274162773,
-    "h": 150,
-    "rotate": -10,
+    "name": "容器",
+    "x": 486,
+    "y": 72,
+    "abX": 0,
+    "abY": 0,
+    "w": 412,
+    "h": 444,
+    "rotate": 0,
     "lineWidth": 2,
-    "type": 104,
+    "type": ShapeType.FRAME,
     "color": "gray",
     "radius": 0,
-    "children": [],
-    "brokenTexts": [],
+    "children": [
+      {
+        "x": 10,
+        "y": 10,
+        "rx": 10,
+        "ry": 10,
+        "w": 100,
+        "h": 150,
+        "rotate": 10,
+        "lineWidth": 2,
+        "type": 104,
+        "color": "gray",
+        "radius": 0,
+        "children": [],
+        "brokenTexts": [],
+        "borderColor": "rgb(216,216,216)",
+        "fillColor": "rgb(216,216,216)",
+        "fontSize": 16,
+        "fontWeight": 500,
+        "fontFamily": "SourceHanSansCN",
+        "texts": [],
+        "name": "矩形",
+        "leftX": 1396.6517760479487,
+        "rightX": 1523.9908970134784,
+        "topY": 107.21652274196168,
+        "bottomY": 257.2165227419617,
+        "centerX": 627.5999999999999,
+        "centerY": 314.79999999999995,
+        "points": [],
+        "center": {
+          "x": 1460.3213365307136,
+          "y": 182.21652274196168
+        },
+        "topLeft": {
+          "x": 646.8452883969876,
+          "y": 182.99999999999997
+        },
+        "topRight": {
+          "x": 893.0472266500395,
+          "y": 226.41204441673256
+        },
+        "bottomLeft": {
+          "x": 620.7980617469481,
+          "y": 330.72116295183116
+        },
+        "bottomRight": {
+          "x": 867,
+          "y": 374.1332073685637
+        },
+        "flipHorizontal": false,
+        "flipVertical": false,
+      },
+    ],
     "borderColor": "rgb(216,216,216)",
-    "fillColor": "rgb(216,216,216)",
-    "fontSize": 16,
-    "fontWeight": 500,
-    "fontFamily": "SourceHanSansCN",
-    "texts": [],
-    "name": "矩形",
-    "leftX": 568.5970807584406,
-    "rightX": 882.4073549212137,
-    "topY": 197.0263347718855,
-    "bottomY": 347.0263347718855,
-    "centerX": 627.5999999999999,
-    "centerY": 314.79999999999995,
-    "points": [],
+    "fillColor": Colors.White,
     "center": {
-      "x": 725.5022178398272,
-      "y": 272.0263347718855
+      "x": 692,
+      "y": 294
     },
+    "leftX": 486,
+    "rightX": 898,
+    "topY": 72,
+    "bottomY": 516,
+    "id": "cdd7c9a6-87f3-4a75-96a8-cff6e7c368e1",
     "topLeft": {
-      "x": 646.8452883969876,
-      "y": 182.99999999999997
+      "x": 356,
+      "y": 71
     },
     "topRight": {
-      "x": 893.0472266500395,
-      "y": 226.41204441673256
+      "x": 356,
+      "y": 71
     },
     "bottomLeft": {
-      "x": 620.7980617469481,
-      "y": 330.72116295183116
+      "x": 356,
+      "y": 71
     },
     "bottomRight": {
-      "x": 867,
-      "y": 374.1332073685637
+      "x": 356,
+      "y": 71
     },
-    "flipHorizontal": false,
-    "flipVertical": true,
-    "id": "c53acee6-7844-48d9-9245-e084ec9e6dfb"
+    "rx": null,
+    "ry": null
   }
 ]
 

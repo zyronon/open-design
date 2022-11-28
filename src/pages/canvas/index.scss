@@ -89,14 +89,15 @@
             justify-content: center;
             color: white;
 
-            &.select{
+            &.select {
               padding: 0 6rem;
             }
 
             .b-select {
               padding: 0;
               background: unset;
-              .b-select-right{
+
+              .b-select-right {
                 margin-left: 5rem;
               }
             }
@@ -136,6 +137,7 @@
         width: 100%;
         height: calc(100% - #{$header-height});
         position: relative;
+        background: rgb(229, 229, 229);
 
         #canvas {
           position: absolute;

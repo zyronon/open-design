@@ -1,12 +1,13 @@
 import {BaseShape} from "./shapes/BaseShape"
 import EventBus from "../../utils/event-bus"
-import {clear} from "./utils"
+import {clear, getPath} from "./utils"
 import {BaseEvent2, EventMapTypes, EventTypes, P, ShapeConfig, ShapeType} from "./type"
 import {cloneDeep, throttle} from "lodash"
 import {config} from "./constant"
 import {Shape} from "./utils/Shape"
 import {mat4} from "gl-matrix"
 import {getShapeFromConfig} from "./shapes/common"
+import {Rectangle} from "./shapes/Rectangle"
 
 const out: any = new Float32Array([
   0, 0, 0, 0,
@@ -60,10 +61,10 @@ export default class CanvasUtil2 {
   offsetY: number = -1
   isMouseDown: boolean = false
   drawShapeConfig: any = null
+  newShape: BaseShape | undefined
   cursor: string = 'default'
   _data: any = {}
   private renderTime: any = undefined
-
 
   constructor(canvas: HTMLCanvasElement) {
     this.init(canvas)
@@ -98,7 +99,7 @@ export default class CanvasUtil2 {
   }
 
   isDesign() {
-    return true
+    return this.mode === ShapeType.SELECT
   }
 
   //设置inShape
@@ -114,6 +115,18 @@ export default class CanvasUtil2 {
       this.inShape = shape
       this.render()
     }
+  }
+
+  //设置选中的Shape
+  setSelectShape(shape: BaseShape, parent?: BaseShape[]) {
+    if (this.selectedShape && this.selectedShape !== shape) {
+      this.selectedShape.isSelect = this.selectedShape.isEdit = false
+    }
+    this.selectedShapeParent.map((shape: BaseShape) => shape.isCapture = true)
+    this.selectedShapeParent = parent
+    this.selectedShapeParent.map((shape: BaseShape) => shape.isCapture = false)
+    this.selectedShape = shape
+    this.render()
   }
 
   //设置inShape为null
@@ -206,16 +219,18 @@ export default class CanvasUtil2 {
         this.capture = false
       }
     }
-    if (this.editShape) {
-      this.editShape.event(event, [])
-    } else {
-      if (this.inShape) {
-        this.inShape.event(event, this.inShapeParent)
+    if (this.isDesign()) {
+      if (this.editShape) {
+        this.editShape.event(event, [])
       } else {
-        for (let i = 0; i < this.children.length; i++) {
-          let shape = this.children[i]
-          let isBreak = await shape.event(event, [])
-          if (isBreak) break
+        if (this.inShape) {
+          this.inShape.event(event, this.inShapeParent)
+        } else {
+          for (let i = 0; i < this.children.length; i++) {
+            let shape = this.children[i]
+            let isBreak = await shape.event(event, [])
+            if (isBreak) break
+          }
         }
       }
     }
@@ -254,17 +269,93 @@ export default class CanvasUtil2 {
       this.selectedShape.isEdit = this.selectedShape.isSelect = false
       this.render()
     }
+    if (!this.isDesign()) {
+      this.startX = p.x
+      this.startY = p.y
+      this.isMouseDown = true
+    }
   }
 
   onMouseMove(e: BaseEvent2, p: P,) {
     if (e.capture) return
     // console.log('cu-onMouseMove', e)
+    if (this.isMouseDown) {
+      let w = p.x - this.startX
+      let h = p.y - this.startY
+      switch (this.mode) {
+        case ShapeType.RECTANGLE:
+          if (this.newShape) {
+            this.newShape.config.w = w
+            this.newShape.config.h = h
+            this.newShape.config.center = {
+              x: this.newShape.config.x + (w / 2),
+              y: this.newShape.config.y + (h / 2)
+            }
+            //太小了select都看不见
+            if (w > 10) {
+              this.newShape.isSelect = true
+            }
+            // EventBus.emit(EventMapTypes.onMouseMove, this.newShape)
+            this.newShape.config = getPath(this.newShape.config)
+            this.render()
+          } else {
+            let x = this.startX
+            let y = this.startY
+            this.newShape = new Rectangle({
+              "x": x,
+              "y": y,
+              "abX": 0,
+              "abY": 0,
+              "w": 0,
+              "h": 0,
+              "rotate": 0,
+              "lineWidth": 2,
+              "type": ShapeType.RECTANGLE,
+              "color": "gray",
+              "radius": 0,
+              "children": [],
+              "borderColor": "rgb(216,216,216)",
+              "fillColor": "rgb(216,216,216)",
+            })
+            EventBus.emit(EventMapTypes.onMouseDown, this.newShape)
+            this.children.push(this.newShape)
+          }
+          // this.drawNewShape(coordinate)
+          break
+        case ShapeType.MOVE:
+          const transform = new Float32Array([
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            // x - startX, y - startY, 0, 1,
+            //因为transform是连续的，所以用当前偏移量，而不是从x-startX
+            e.e.movementX, e.e.movementY, 0, 1,
+          ])
+          const newCurrentMat = mat4.multiply(out, transform, this.currentMat)
+          this.currentMat = newCurrentMat
+          this.handMove = {
+            x: newCurrentMat[12],
+            y: newCurrentMat[13],
+          }
+          this.render()
+          break
+      }
+    }
   }
 
   onMouseUp(e: BaseEvent2, p: P,) {
     if (e.capture) return
-    EventBus.emit(EventMapTypes.onMouseUp, null)
     console.log('cu-onMouseUp', e)
+    if (this.isMouseDown) {
+      this.isMouseDown = false
+      this.setSelectShape(this.newShape!, [])
+      this.newShape = undefined
+      if (this.mode !== ShapeType.MOVE) {
+        this.setMode(ShapeType.SELECT)
+      }
+      return
+    }
+    EventBus.emit(EventMapTypes.onMouseUp, null)
   }
 
   onWheel = (e: any) => {
@@ -320,7 +411,9 @@ export default class CanvasUtil2 {
     return this.print(cloneDeep(this.children))
   }
 
-  setMode(val: any) {
+  setMode(mode: ShapeType) {
+    console.log('mode', mode)
+    this.mode = mode
   }
 }
 

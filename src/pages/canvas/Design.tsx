@@ -54,6 +54,7 @@ class Design extends React.Component<any, IState> {
 
   init() {
     EventBus.offAll()
+    //这个绘制会刷新整个render...,从而获取到最新的selectShape，凑合着用吧
     EventBus.on(EventTypes.onDraw, () => {
       this.setState(s => {
         return {drawCount: s.drawCount + 1}

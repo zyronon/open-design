@@ -357,24 +357,29 @@ export abstract class BaseShape {
     if (this.hoverL) {
       // console.log('config', cloneDeep(this.config))
       let {w, h, rotate, center, flipHorizontal, flipVertical} = this.config
-
       let lx = this.config.x
       let ly = this.config.y
-      if (flipHorizontal) lx = getReversePoint(lx, center.x)
-      if (flipVertical) ly = getReversePoint(ly, center.y)
+      //反转当前xy到0度
       let reverseXy = getRotatedPoint({x: lx, y: ly}, center, -this.getRotate())
-
-      //不是当前点击位置，当前点击位置算对角会有偏差
+      /**
+       * 根据flipHorizontal、flipVertical计算出当前按的那条边的中间点
+       * 如果水平翻转：x在左边，直接使用。未翻转：x加上宽度
+       * 如果垂直翻转：y在下边，要减去高度的一半。未翻转：y加上高度的一半
+       * */
+      let currentHandLineCenterPoint = {
+        x: reverseXy.x + (flipHorizontal ? -w : 0),
+        y: reverseXy.y + (flipVertical ? -(h / 2) : (h / 2))
+      }
+      //根据当前角度，转回来。得到的点就是当前鼠标按住那条边的中间点（当前角度），非鼠标点
       let handlePoint = getRotatedPoint(
-        {x: reverseXy.x, y: reverseXy.y + h / 2},
+        currentHandLineCenterPoint,
         center, this.getRotate())
       this.handlePoint = handlePoint
+      //翻转得到对面的点
       this.diagonal = {
         x: getReversePoint(handlePoint.x, center.x),
         y: getReversePoint(handlePoint.y, center.y),
       }
-      console.log('diagonal', this.diagonal)
-      console.log('handlePoint', this.handlePoint)
       this.enterL = true
       return
     }
@@ -394,7 +399,7 @@ export abstract class BaseShape {
        * */
       let currentHandLineCenterPoint = {
         x: reverseXy.x + (flipHorizontal ? 0 : w),
-        y: reverseXy.y + (flipVertical ? (-h / 2) : (h / 2))
+        y: reverseXy.y + (flipVertical ? -(h / 2) : (h / 2))
       }
       //根据当前角度，转回来。得到的点就是当前鼠标按住那条边的中间点（当前角度），非鼠标点
       let handlePoint = getRotatedPoint(
@@ -596,61 +601,31 @@ export abstract class BaseShape {
   dragL(point: P) {
     let {x, y, cu,} = this.getXY(point)
     const {flipHorizontal, flipVertical} = this.config
-    if (this.config.rotate) {
+    let rotate = this.getRotate()
+    if (rotate || flipHorizontal || flipVertical) {
       let rect = this.config
-      let s = this.original
-      let sPoint = this.diagonal
       const current = {x, y}
-      console.log('--------------------------')
-      console.log('current-start', {x, y})
-      console.log('center', s.center)
-      if (flipHorizontal) {
-        current.x = getReversePoint(current.x, s.center.x)
-      }
-      if (flipVertical) {
-        current.y = getReversePoint(current.y, s.center.y)
-      }
-
       const handlePoint = this.handlePoint
-      console.log('current-end', current)
-      console.log('handlePoint', handlePoint)
-
-      const rotatedCurrentPosition = getRotatedPoint(current, handlePoint, -this.getRotate())
-      console.log('rotatedCurrentPosition', rotatedCurrentPosition)
-
-      console.log('test', rotatedCurrentPosition.x, handlePoint.y)
-
-      const rotatedLeftMiddlePoint = getRotatedPoint({
-        x: rotatedCurrentPosition.x,
-        y: handlePoint.y,
-      }, handlePoint, this.getRotate())
-      console.log('rotatedLeftMiddlePoint', rotatedLeftMiddlePoint)
-
-      // const newWidth = Math.sqrt(Math.pow(rotatedLeftMiddlePoint.x - sPoint.x, 2) + Math.pow(rotatedLeftMiddlePoint.y - sPoint.y, 2))
-      const newWidth = Math.hypot(rotatedLeftMiddlePoint.x - sPoint.x, rotatedLeftMiddlePoint.y - sPoint.y)
-      console.log('newWidth', newWidth)
-      console.log('sPoint', sPoint)
+      const zeroAngleCurrentPoint = getRotatedPoint(current, handlePoint, -rotate)
+      const zeroAngleMovePoint = {x: zeroAngleCurrentPoint.x, y: handlePoint.y}
+      const currentAngleMovePoint = getRotatedPoint(zeroAngleMovePoint, handlePoint, rotate)
+      const newWidth = Math.hypot(currentAngleMovePoint.x - this.diagonal.x, currentAngleMovePoint.y - this.diagonal.y)
       const newCenter = {
-        x: rotatedLeftMiddlePoint.x - (Math.abs(sPoint.x - rotatedLeftMiddlePoint.x) / 2) * (rotatedLeftMiddlePoint.x > sPoint.x ? 1 : -1),
-        y: rotatedLeftMiddlePoint.y + (Math.abs(sPoint.y - rotatedLeftMiddlePoint.y) / 2) * (rotatedLeftMiddlePoint.y > sPoint.y ? -1 : 1),
+        x: this.diagonal.x + (currentAngleMovePoint.x - this.diagonal.x) / 2,
+        y: this.diagonal.y + (currentAngleMovePoint.y - this.diagonal.y) / 2
       }
-      console.log('newCenter', newCenter)
-
       rect.w = newWidth
-      rect.y = newCenter.y - (rect.h / 2)
-      rect.x = newCenter.x - (newWidth / 2)
-
-      let ss = getRotatedPoint({x: rect.x, y: rect.y}, newCenter, this.getRotate())
-      if (flipHorizontal) {
-        ss.x = getReversePoint(ss.x, newCenter.x)
-      }
-      if (flipVertical) {
-        ss.y = getReversePoint(ss.y, newCenter.y)
-      }
-      rect.x = ss.x
-      rect.y = ss.y
       rect.center = newCenter
-      console.log(rect)
+
+      /*变化：非水平翻转时需要处理*/
+      if (!flipHorizontal) {
+        let zeroAngleXy = getRotatedPoint(this.original, newCenter, -rotate)
+        /*变化：x减去多的宽度*/
+        zeroAngleXy.x -= (newWidth - this.original.w)
+        let angleXy = getRotatedPoint(zeroAngleXy, newCenter, rotate)
+        rect.x = angleXy.x
+        rect.y = angleXy.y
+      }
       this.config = getPath(rect, this.original)
     } else {
       this.config.x = (x - cu.offsetX)
@@ -666,9 +641,8 @@ export abstract class BaseShape {
     let {x, y, cu,} = this.getXY(point)
     const {flipHorizontal, flipVertical} = this.config
     let rotate = this.getRotate()
-    if (rotate) {
+    if (rotate || flipHorizontal || flipVertical) {
       let rect = this.config
-      let sPoint = this.diagonal
       const current = {x, y}
       const handlePoint = this.handlePoint
       //0度的当前点：以当前边中间点为圆心，负角度偏转当前点，得到0度的当前点
@@ -699,8 +673,8 @@ export abstract class BaseShape {
       }
       this.config = getPath(rect, this.original)
     } else {
-      this.config.x = (x - cu.offsetX)
-      this.config.w = this.original.rightX - this.config.x
+      let dx = (x - cu.startX)
+      this.config.w = this.original.w + dx
       this.config.center.x = this.config.x + this.config.w / 2
       this.config = getPath(this.config, this.original)
     }

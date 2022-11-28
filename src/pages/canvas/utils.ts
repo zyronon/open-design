@@ -365,8 +365,8 @@ export function getPath(rect: ShapeConfig, old?: any, parent?: ShapeConfig) {
   }
   //根据父级，计算出自己的x,y
   if (parent) {
-    rect.x = rect.rx + parent.x
-    rect.y = rect.ry + parent.y
+    // rect.x = rect.rx + parent.x
+    // rect.y = rect.ry + parent.y
   }
 
   let {
@@ -480,8 +480,10 @@ export function calcPosition(
   }
     = config
   if (parent) {
-    x = rx + parent.x
-    y = ry + parent.y
+    x += parent.x
+    y += parent.y
+    // center.x += parent.x
+    // center.y += parent.y
   }
 // console.log('type,', type)
   ctx.lineWidth = lineWidth

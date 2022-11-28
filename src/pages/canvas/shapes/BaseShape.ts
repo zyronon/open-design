@@ -1,4 +1,4 @@
-import {BaseEvent2, P, ShapeConfig, ShapeType} from "../type"
+import {BaseEvent2, P, ShapeConfig, ShapeProps, ShapeType} from "../type"
 import {calcPosition, getPath, getReversePoint, hover, selected} from "../utils"
 import CanvasUtil2 from "../CanvasUtil2"
 import {clone, cloneDeep} from "lodash"
@@ -33,13 +33,13 @@ export abstract class BaseShape {
   diagonal: P = {x: 0, y: 0}//对面的点（和handlePoint相反的点），如果handlePoint是中间点，那么这个也是中间点
   handlePoint: P = {x: 0, y: 0}//鼠标按住那条边的中间点（当前角度），非鼠标点
 
-  constructor(props: ShapeConfig) {
+  constructor(props: ShapeProps) {
     // console.log('props', clone(props))
-    this.config = getPath(props)
+    this.config = getPath(props.conf, null, props.parent)
     this.original = cloneDeep(this.config)
     // console.log('config', clone(this.config))
     this.children = this.config.children.map((conf: ShapeConfig) => {
-      return getShapeFromConfig(conf)
+      return getShapeFromConfig({conf, old: null, parent: this.config})
     })
   }
 
@@ -101,8 +101,6 @@ export abstract class BaseShape {
     // ctx.fillText(rect.name, x, y - 18);
     // ctx.restore()
 
-    // this.config.x = x
-    // this.config.y = y
     // this.config = getPath(this.config, null, parent)
     for (let i = 0; i < this.children.length; i++) {
       let shape = this.children[i]

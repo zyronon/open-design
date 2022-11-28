@@ -118,6 +118,12 @@ export interface Shape extends RectText, RectImg {
   points?: any[]
 }
 
+export interface ShapeProps {
+  conf: ShapeConfig,
+  old?: null,
+  parent?: ShapeConfig
+}
+
 export interface ShapeConfig {
   id: number | string,
   name?: number | string,

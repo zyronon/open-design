@@ -93,7 +93,7 @@ export default class CanvasUtil2 {
 
   addChildren(rects: any) {
     cloneDeep(rects).map((conf: ShapeConfig) => {
-      let r = getShapeFromConfig(conf)
+      let r = getShapeFromConfig({conf})
       r && this.children.push(r)
     })
   }

@@ -1,4 +1,4 @@
-import {ShapeConfig, ShapeType} from "../type"
+import {ShapeConfig, ShapeProps, ShapeType} from "../type"
 import {Frame} from "./Frame"
 import {Rectangle} from "./Rectangle"
 import {Ellipse} from "./Ellipse"
@@ -11,41 +11,42 @@ import {Pencil} from "./Pencil"
 import {Line} from "./Line"
 import {Arrow} from "./Arrow"
 
-export const getShapeFromConfig = (conf: ShapeConfig): any => {
+export const getShapeFromConfig = (props: ShapeProps): any => {
+  const {conf} = props
   let r
   switch (conf.type) {
     case ShapeType.FRAME:
-      r = new Frame(conf)
+      r = new Frame(props)
       break
     case ShapeType.RECTANGLE:
-      r = new Rectangle(conf)
+      r = new Rectangle(props)
       break
     case ShapeType.ELLIPSE:
-      r = new Ellipse(conf)
+      r = new Ellipse(props)
       break
     case ShapeType.POLYGON:
-      r = new Polygon(conf)
+      r = new Polygon(props)
       break
     case ShapeType.STAR:
-      r = new Star(conf)
+      r = new Star(props)
       break
     case ShapeType.IMAGE:
-      r = new Img(conf)
+      r = new Img(props)
       break
     case ShapeType.TEXT:
-      r = new Text(conf)
+      r = new Text(props)
       break
     case ShapeType.PEN:
-      r = new Pen(conf)
+      r = new Pen(props)
       break
     case ShapeType.PENCIL:
-      r = new Pencil(conf)
+      r = new Pencil(props)
       break
     case ShapeType.LINE:
-      r = new Line(conf)
+      r = new Line(props)
       break
     case ShapeType.ARROW:
-      r = new Arrow(conf)
+      r = new Arrow(props)
       break
   }
   return r

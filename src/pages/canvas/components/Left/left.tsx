@@ -1,5 +1,4 @@
 import React, {memo, useEffect, useState} from "react"
-import {store} from "../../store"
 import './index.scss'
 import Icon from "@icon-park/react/es/all"
 import cx from "classnames"

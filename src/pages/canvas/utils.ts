@@ -1,254 +1,10 @@
-import {IState, P, P2, Shape, ShapeConfig, ShapeState, ShapeType, TextAlign} from "./type"
-import {store} from "./store"
+import {IState, P, P2, ShapeState, ShapeType} from "./type"
 // @ts-ignore
 import {v4 as uuid} from 'uuid'
 import {Colors} from "./constant"
 import {getRotatedPoint, jiaodu2hudu} from "../../utils"
 import {drawSelectedHover} from "./shapes/Ellipse/draw"
-
-export function renderCanvas(
-  rect: Shape,
-  state: IState,
-  parent?: Shape,
-) {
-  let {
-    ctx, enterLT, enterRT, selectRect, activeHand, enter, offsetX, offsetY,
-    handMove, handScale,
-    currentPoint,
-    isEdit
-  } = state
-  // console.log('renderCanvas', enterLT)
-  ctx.save()
-  let {
-    x, y, w, h, radius,
-    fillColor, borderColor, rotate, lineWidth,
-    type, flipVertical, flipHorizontal,
-  }
-    = parent ? parent : rect
-  if (parent) {
-    type = rect.type
-
-    let outside = .5
-    x = x - outside
-    y = y - outside
-    w = w + 2 * outside
-    h = h + 2 * outside
-  }
-
-  let oldCenter: { x: number; y: number; }
-  let currentCenter: { x: number; y: number; } = {
-    x: x + (w / 2),
-    y: y + (h / 2)
-  }
-  let isMe = selectRect?.id === (parent ? parent.id : rect.id)
-  if ((enterLT || enterRT) && isMe) {
-    let s = selectRect!
-    oldCenter = {
-      x: s.x + (s.w / 2),
-      y: s.y + (s.h / 2)
-    }
-    // console.log('oldCenter', oldCenter)
-    // console.log('newCenter', newCenter)
-  }
-
-  ctx.lineWidth = lineWidth
-  ctx.fillStyle = fillColor
-  ctx.strokeStyle = borderColor
-  // let tranX = 0
-  // let tranY = 0
-  let tranX = 0
-  let tranY = 0
-  let scaleX = 1
-  let scaleY = 1
-  if (rotate || flipHorizontal) {
-    tranX = x + w / 2
-    tranY = y + h / 2
-    x = -w / 2
-    y = -h / 2
-  }
-
-  if (flipHorizontal) {
-    scaleX = -1
-    // tranX = -tranX
-    //如果在翻转情况下，自由拉伸要将tranX减去两个中心点偏移量
-    if ((enterRT || enterLT) && isMe) {
-      // console.log('tranX1', tranX)
-      let d = oldCenter!.x - currentCenter!.x
-      tranX += d * 2
-      // console.log('tranX2', tranX)
-    }
-  }
-  if (flipVertical) {
-    // console.log('flipVertical', flipVertical)
-    scaleY = -1
-    // tranY = -tranY
-  }
-
-  ctx.translate(tranX, tranY)
-  ctx.scale(scaleX, scaleY)
-  ctx.rotate(rotate * Math.PI / 180)
-
-  // ctx.strokeRect(x, y, w, h)
-  if (
-    type === ShapeType.RECTANGLE
-    || type === ShapeType.HOVER
-    || type === ShapeType.SELECT
-  ) {
-    if (radius && type !== ShapeType.SELECT) {
-      renderRoundRect({x, y, w, h}, radius, ctx)
-    } else {
-      ctx.beginPath()
-      ctx.moveTo(x, y)
-      ctx.lineTo(x + w, y)
-      ctx.lineTo(x + w, y + h)
-      ctx.lineTo(x, y + h)
-      ctx.lineTo(x, y)
-      ctx.closePath()
-    }
-  }
-
-  switch (type) {
-    case ShapeType.ELLIPSE:
-      let a = w / 2, b = h / 2
-      let ox = .5 * a
-      let oy = .6 * b
-
-      ctx.save()
-      ctx.translate(x + a, y + b)
-      ctx.beginPath()
-      ctx.moveTo(0, b)
-      ctx.bezierCurveTo(ox, b, a, oy, a, 0)
-      ctx.bezierCurveTo(a, -oy, ox, -b, 0, -b)
-      ctx.bezierCurveTo(-ox, -b, -a, -oy, -a, 0)
-      ctx.bezierCurveTo(-a, oy, -ox, b, 0, b)
-      ctx.closePath()
-      ctx.fill()
-      ctx.restore()
-      break
-    case ShapeType.STAR:
-      ctx.save()
-      let outA = w / 2
-      let outB = h / 2
-      let innerA = outA / 2.6
-      let innerB = outB / 2.6
-      let x1, x2, y1, y2
-      ctx.translate(x + w / 2, y + h / 2)
-
-      ctx.beginPath()
-      for (let i = 0; i < 5; i++) {
-        x1 = outA * Math.cos((54 + i * 72) / 180 * Math.PI)
-        y1 = outB * Math.sin((54 + i * 72) / 180 * Math.PI)
-        x2 = innerA * Math.cos((18 + i * 72) / 180 * Math.PI)
-        y2 = innerB * Math.sin((18 + i * 72) / 180 * Math.PI)
-        //内圆
-        ctx.lineTo(x2, y2)
-        //外圆
-        ctx.lineTo(x1, y1)
-      }
-      ctx.closePath()
-
-      ctx.stroke()
-      ctx.restore()
-
-      break
-    case ShapeType.POLYGON: {
-      ctx.save()
-      let outA = w / 2
-      let outB = h / 2
-      let x1, x2, y1, y2
-      ctx.translate(x + w / 2, y + h / 2)
-
-      ctx.beginPath()
-      for (let i = 0; i < 3; i++) {
-        x1 = outA * Math.cos((30 + i * 120) / 180 * Math.PI)
-        y1 = outB * Math.sin((30 + i * 120) / 180 * Math.PI)
-        ctx.lineTo(x1, y1)
-      }
-      ctx.closePath()
-      ctx.stroke()
-      ctx.restore()
-      break
-    }
-    case ShapeType.TEXT:
-      // ctx.fillStyle = 'white'
-      ctx.font = `${rect.fontWeight} ${rect.fontSize}rem "${rect.fontFamily}", sans-serif`
-      ctx.textBaseline = 'top'
-      // ctx.textAlign = rect.textAlign
-
-      // console.log('render', rect.texts)
-      rect.brokenTexts?.map((text, index) => {
-        let lX = x
-        if (rect.textAlign === TextAlign.CENTER) {
-          let m = ctx.measureText(text)
-          lX = x + rect.w / 2 - m.width / 2
-        }
-        if (rect.textAlign === TextAlign.RIGHT) {
-          let m = ctx.measureText(text)
-          lX = x + rect.w - m.width
-        }
-        text && ctx.fillText(text, lX, y + (index * rect.textLineHeight))
-      })
-      break
-    case ShapeType.IMAGE:
-      let currentImg = store.images.get(rect.id)
-      if (currentImg) {
-        ctx.drawImage(currentImg, x, y, w, h)
-      } else {
-        let img = new Image()
-        img.onload = () => {
-          store.images.set(rect.id, img)
-          ctx.drawImage(currentImg, x, y, w, h)
-        }
-        img.src = new URL(rect.img, import.meta.url).href
-      }
-
-      // ctx.fillStyle = fillColor
-      // ctx.fill()
-      // ctx.strokeStyle = borderColor
-      // ctx.stroke()
-      break
-    case ShapeType.PENCIL:
-      if (rect.points?.length) {
-        ctx.strokeStyle = rect.borderColor
-        // ctx.lineCap = "round";
-        ctx.moveTo(rect.points[0]?.x, rect.points[0]?.y)
-        rect.points.map((item: any) => {
-          ctx.lineTo(item.x, item.y)
-        })
-        ctx.stroke()
-      }
-      break
-    case ShapeType.PEN:
-      if (rect.points?.length) {
-        ctx.strokeStyle = rect.borderColor
-        ctx.lineCap = "round"
-        ctx.moveTo(rect.points[0]?.x, rect.points[0]?.y)
-        rect.points.map((item: any, index: number, arr: any[]) => {
-          if (isEdit && isMe) {
-            renderRound({
-                x: item.x,
-                y: item.y,
-                w: rect.w,
-                h: rect.h,
-              }, 4, ctx,
-              index !== arr.length - 1 ? undefined : ShapeType.RECTANGLE)
-          }
-          ctx.beginPath()
-          ctx.moveTo(item.x, item.y)
-          if (index !== arr.length - 1) {
-            ctx.lineTo(arr[index + 1].x, arr[index + 1].y)
-            ctx.stroke()
-          }
-        })
-      }
-      break
-  }
-
-  ctx.restore()
-  if (rect.children) {
-    rect.children.map(v => renderCanvas(v, state, rect))
-  }
-}
+import {BaseConfig} from "./config/BaseConfig"
 
 export function renderRoundRect(rect: any, r: number, ctx: any,) {
   ctx.lineWidth = rect.lineWidth
@@ -355,7 +111,7 @@ export function clear(x: any, ctx: any) {
   ctx.clearRect(x.x, x.y, x.w, x.h)
 }
 
-export function getPath(rect: ShapeConfig, old?: any, parent?: ShapeConfig) {
+export function getPath(rect: BaseConfig, old?: any, parent?: BaseConfig) {
   // console.log('getPath')
   //根据老的config，计算出最新的rx,ry
   if (old) {
@@ -465,10 +221,10 @@ export function getPath(rect: ShapeConfig, old?: any, parent?: ShapeConfig) {
  * */
 export function calcPosition(
   ctx: CanvasRenderingContext2D,
-  config: ShapeConfig,
+  config: BaseConfig,
   original: any,
   status: any,
-  parent?: ShapeConfig) {
+  parent?: BaseConfig) {
   const {isHover, isSelect, enterL, enterLT} = status
   let {
     x, y, w, h, radius,
@@ -527,7 +283,7 @@ export function calcPosition2(
   config: any,
   original: any,
   status: any,
-  parent?: ShapeConfig) {
+  parent?: BaseConfig) {
   const {isHover, isSelect, enterL, enterLT} = status
   let {
     x, y, w, h, radius,
@@ -729,7 +485,7 @@ export function draw(
     enterLT: boolean
     enterL: boolean
   },
-  parent?: ShapeConfig
+  parent?: BaseConfig
 ) {
   ctx.save()
   status = Object.assign({
@@ -783,7 +539,7 @@ export function draw2(
     enterLT: boolean
     enterL: boolean
   },
-  parent?: ShapeConfig
+  parent?: BaseConfig
 ) {
   ctx.save()
   status = Object.assign({
@@ -845,7 +601,7 @@ export function draw3(
   config: any,
   original: any,
   status?: ShapeState,
-  parent?: ShapeConfig
+  parent?: BaseConfig
 ) {
   ctx.save()
   status = Object.assign({

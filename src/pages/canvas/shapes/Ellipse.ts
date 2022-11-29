@@ -12,18 +12,18 @@ import {
   BaseEvent2,
   BezierPoint,
   BezierPointType,
-  EllipseConfig,
   getP,
   getP2,
   LineType,
   P,
   P2,
-  ShapeConfig,
   ShapeType
 } from "../type"
 import CanvasUtil2 from "../CanvasUtil2"
 import {jiaodu2hudu} from "../../../utils"
 import {solveCubic} from "../../canvas20221111/utils"
+import {EllipseConfig} from "../config/EllipseConfig"
+import {BaseConfig} from "../config/BaseConfig"
 
 /**
  * @desc 获取长度对应的 鼠标控制点
@@ -173,7 +173,7 @@ export class Ellipse extends BaseShape {
     return super.isInBox(mousePoint)
   }
 
-  render(ctx: CanvasRenderingContext2D, p: P, parent?: ShapeConfig) {
+  render(ctx: CanvasRenderingContext2D, p: P, parent?: BaseConfig) {
     let {
       w, h, radius,
       fillColor, borderColor, rotate, lineWidth,
@@ -545,8 +545,8 @@ export class Ellipse extends BaseShape {
 
     ctx.restore()
   }
-  renderHover(ctx: CanvasRenderingContext2D,xy: P, parent?: ShapeConfig): void {}
-  renderSelected(ctx: CanvasRenderingContext2D,xy: P, parent?: ShapeConfig): void {}
+  renderHover(ctx: CanvasRenderingContext2D,xy: P, parent?: BaseConfig): void {}
+  renderSelected(ctx: CanvasRenderingContext2D,xy: P, parent?: BaseConfig): void {}
 
   renderSelectedHover(ctx: CanvasRenderingContext2D, conf: EllipseConfig): void {
     let {
@@ -582,6 +582,6 @@ export class Ellipse extends BaseShape {
     ctx.restore()
   }
 
-  renderEdit(ctx: CanvasRenderingContext2D, p: P, parent?: ShapeConfig): void {
+  renderEdit(ctx: CanvasRenderingContext2D, p: P, parent?: BaseConfig): void {
   }
 }

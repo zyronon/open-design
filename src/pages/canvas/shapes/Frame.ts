@@ -1,8 +1,9 @@
 import {BaseShape} from "./BaseShape"
 import {draw2, draw3, getPath, renderRoundRect} from "../utils"
 import CanvasUtil2 from "../CanvasUtil2"
-import {BaseEvent2, EventTypes, P, ShapeConfig} from "../type"
+import {BaseEvent2, EventTypes, P} from "../type"
 import {drawSelectedHover} from "./Ellipse/draw"
+import {BaseConfig} from "../config/BaseConfig"
 
 export class Frame extends BaseShape {
 
@@ -41,7 +42,7 @@ export class Frame extends BaseShape {
     return super.isInBox(p)
   }
 
-  render(ctx: CanvasRenderingContext2D, p: P, parent?: ShapeConfig) {
+  render(ctx: CanvasRenderingContext2D, p: P, parent?: BaseConfig) {
     let {
       w, h, radius,
       fillColor, borderColor, rotate, lineWidth,
@@ -65,16 +66,16 @@ export class Frame extends BaseShape {
     }
   }
 
-  renderHover(ctx: CanvasRenderingContext2D, xy: P, parent?: ShapeConfig): void {
+  renderHover(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): void {
   }
 
-  renderSelected(ctx: CanvasRenderingContext2D, xy: P, parent?: ShapeConfig): void {
+  renderSelected(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): void {
   }
 
   renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void {
     drawSelectedHover(ctx, conf)
   }
 
-  renderEdit(ctx: CanvasRenderingContext2D, p: P, parent?: ShapeConfig): void {
+  renderEdit(ctx: CanvasRenderingContext2D, p: P, parent?: BaseConfig): void {
   }
 }

@@ -5,17 +5,17 @@ import {
   BaseEvent2,
   BezierPoint,
   BezierPointType,
-  EllipseConfig,
   getP2,
   LineType,
   P,
   P2,
-  ShapeConfig,
   ShapeType
 } from "../type"
 import {drawSelectedHover} from "./Ellipse/draw"
 import {jiaodu2hudu} from "../../../utils"
 import {Colors} from "../constant"
+import {EllipseConfig} from "../config/EllipseConfig"
+import {BaseConfig} from "../config/BaseConfig"
 
 export class Rectangle extends BaseShape {
 
@@ -111,7 +111,7 @@ export class Rectangle extends BaseShape {
     return super.isInBox(mousePoint)
   }
 
-  render(ctx: CanvasRenderingContext2D, p: P, parent?: ShapeConfig) {
+  render(ctx: CanvasRenderingContext2D, p: P, parent?: BaseConfig) {
     let {
       w, h, radius,
       fillColor, borderColor, rotate, lineWidth,
@@ -143,10 +143,10 @@ export class Rectangle extends BaseShape {
     ctx.restore()
   }
 
-  renderHover(ctx: CanvasRenderingContext2D, xy: P, parent?: ShapeConfig): void {
+  renderHover(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): void {
   }
 
-  renderSelected(ctx: CanvasRenderingContext2D, xy: P, parent?: ShapeConfig): void {
+  renderSelected(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): void {
   }
 
   renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void {

@@ -1,6 +1,7 @@
 import {BaseShape} from "./BaseShape"
-import {BaseEvent2, P, ShapeConfig} from "../type"
+import {BaseEvent2, P} from "../type"
 import CanvasUtil2 from "../CanvasUtil2"
+import {BaseConfig} from "../config/BaseConfig"
 
 export class Star extends BaseShape {
 
@@ -39,11 +40,11 @@ export class Star extends BaseShape {
     this.config = val
   }
 
-  renderHover(ctx: CanvasRenderingContext2D,xy: P, parent?: ShapeConfig): void {}
-  renderSelected(ctx: CanvasRenderingContext2D,xy: P, parent?: ShapeConfig): void {}
-  renderEdit(ctx: CanvasRenderingContext2D,xy: P, parent?: ShapeConfig): void {}
+  renderHover(ctx: CanvasRenderingContext2D,xy: P, parent?: BaseConfig): void {}
+  renderSelected(ctx: CanvasRenderingContext2D,xy: P, parent?: BaseConfig): void {}
+  renderEdit(ctx: CanvasRenderingContext2D,xy: P, parent?: BaseConfig): void {}
 
-  render(ctx: CanvasRenderingContext2D, p: P, parent?: ShapeConfig): void {
+  render(ctx: CanvasRenderingContext2D, p: P, parent?: BaseConfig): void {
     let {
       w, h, radius,
       fillColor, borderColor, rotate, lineWidth,

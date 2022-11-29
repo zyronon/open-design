@@ -11,7 +11,7 @@ import {withRouter} from "../../components/WithRouter"
 import Fps from "../../components/Fps"
 import {BaseOption, BaseSelect} from "../../components/BaseSelect2"
 import {config, rects} from "./constant"
-import {EventTypes, IState, RectColorType, Shape, ShapeType} from "./type"
+import {EventTypes, IState, RectColorType, ShapeType} from "./type"
 import BaseSlotButton from "../../components/BaseSlotButton"
 import Icon from '@icon-park/react/es/all'
 import {message} from "antd"
@@ -19,6 +19,7 @@ import Left from "./components/Left/left"
 import EventBus from "../../utils/event-bus"
 import cx from "classnames"
 import CanvasUtil2 from "./CanvasUtil2"
+import {BaseConfig} from "./config/BaseConfig"
 
 
 class Design extends React.Component<any, IState> {
@@ -122,8 +123,7 @@ class Design extends React.Component<any, IState> {
     } = this.state
     // console.log('selectRect', selectRect?.fontFamily)
     // @ts-ignore
-    const selectRect: Shape = selectShape?.config
-    const type = selectRect?.type
+    const selectRect: BaseConfig = selectShape?.config
     return <>
       <div className={'design'}>
         <div className="header">

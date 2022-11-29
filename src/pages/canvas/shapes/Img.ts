@@ -1,7 +1,8 @@
 import {BaseShape} from "./BaseShape"
-import {BaseEvent2, P, ShapeConfig} from "../type"
+import {BaseEvent2, P} from "../type"
 import CanvasUtil2 from "../CanvasUtil2"
 import {calcPosition} from "../utils"
+import {BaseConfig} from "../config/BaseConfig"
 
 export class Img extends BaseShape {
   img: any = undefined
@@ -38,7 +39,7 @@ export class Img extends BaseShape {
     this.config = val
   }
 
-  render(ctx: CanvasRenderingContext2D, p: P, parent?: ShapeConfig) {
+  render(ctx: CanvasRenderingContext2D, p: P, parent?: BaseConfig) {
     let {
       w, h,
       fillColor, borderColor, rotate, lineWidth,
@@ -63,12 +64,12 @@ export class Img extends BaseShape {
       }
     }
   }
-  renderHover(ctx: CanvasRenderingContext2D,xy: P, parent?: ShapeConfig): void {}
-  renderSelected(ctx: CanvasRenderingContext2D,xy: P, parent?: ShapeConfig): void {}
+  renderHover(ctx: CanvasRenderingContext2D,xy: P, parent?: BaseConfig): void {}
+  renderSelected(ctx: CanvasRenderingContext2D,xy: P, parent?: BaseConfig): void {}
  
   renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void {
   }
 
-  renderEdit(ctx: CanvasRenderingContext2D, p: P, parent?: ShapeConfig): void {
+  renderEdit(ctx: CanvasRenderingContext2D, p: P, parent?: BaseConfig): void {
   }
 }

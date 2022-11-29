@@ -1,4 +1,5 @@
-import {FontFamily, FontWeight, ShapeType} from "./type"
+import { FontWeight, ShapeType} from "./type"
+import {FontFamily} from "./config/TextConfig"
 
 export const fontFamilies = [
   {
@@ -908,7 +909,7 @@ export const rects: any[] = [
         "ry": 10,
         "w": 100,
         "h": 150,
-        "rotate": 10,
+        "rotate": 0,
         "lineWidth": 2,
         "type": ShapeType.RECTANGLE,
         "color": "gray",

@@ -1,13 +1,13 @@
 import {BaseShape} from "./shapes/BaseShape"
 import EventBus from "../../utils/event-bus"
 import {clear, getPath} from "./utils"
-import {BaseEvent2, EventMapTypes, EventTypes, P, ShapeConfig, ShapeType} from "./type"
+import {BaseEvent2, EventTypes, P, ShapeType} from "./type"
 import {cloneDeep, throttle} from "lodash"
 import {config} from "./constant"
-import {Shape} from "./utils/Shape"
 import {mat4} from "gl-matrix"
 import {getShapeFromConfig} from "./shapes/common"
 import {Rectangle} from "./shapes/Rectangle"
+import {BaseConfig} from "./config/BaseConfig"
 
 const out: any = new Float32Array([
   0, 0, 0, 0,
@@ -92,7 +92,7 @@ export default class CanvasUtil2 {
   }
 
   addChildren(rects: any) {
-    cloneDeep(rects).map((conf: ShapeConfig) => {
+    cloneDeep(rects).map((conf: BaseConfig) => {
       let r = getShapeFromConfig({conf})
       r && this.children.push(r)
     })
@@ -264,7 +264,7 @@ export default class CanvasUtil2 {
     if (e.capture) return
     if (this.editShape) return
     console.log('cu-onMouseDown', e)
-    this.selectedShapeParent.map((shape: Shape) => shape.isCapture = true)
+    this.selectedShapeParent.map((shape: BaseShape) => shape.isCapture = true)
     if (this.selectedShape) {
       this.selectedShape.isEdit = this.selectedShape.isSelect = false
       this.render()
@@ -317,7 +317,7 @@ export default class CanvasUtil2 {
               "borderColor": "rgb(216,216,216)",
               "fillColor": "rgb(216,216,216)",
             })
-            EventBus.emit(EventMapTypes.onMouseDown, this.newShape)
+            EventBus.emit(EventTypes.onMouseDown, this.newShape)
             this.children.push(this.newShape)
           }
           // this.drawNewShape(coordinate)
@@ -355,7 +355,7 @@ export default class CanvasUtil2 {
       }
       return
     }
-    EventBus.emit(EventMapTypes.onMouseUp, null)
+    EventBus.emit(EventTypes.onMouseUp, null)
   }
 
   onWheel = (e: any) => {

@@ -1,9 +1,7 @@
 import {BaseShape} from "./BaseShape"
 import CanvasUtil2 from "../CanvasUtil2"
-import {BaseEvent2, P, ShapeConfig, TextAlign, TextConfig} from "../type"
-import {RectType} from "../../canvas-old/type"
-import {renderRound} from "../../canvas-old/utils"
-import {cloneDeep} from "lodash"
+import {BaseEvent2, P} from "../type"
+import {BaseConfig} from "../config/BaseConfig"
 
 export class Pen extends BaseShape {
 
@@ -39,7 +37,7 @@ export class Pen extends BaseShape {
     this.config = val
   }
 
-  render(ctx: CanvasRenderingContext2D, p: P, parent?: ShapeConfig): any {
+  render(ctx: CanvasRenderingContext2D, p: P, parent?: BaseConfig): any {
     let {
       w, h, radius,
       points,
@@ -69,12 +67,12 @@ export class Pen extends BaseShape {
       })
     }
   }
-  renderHover(ctx: CanvasRenderingContext2D,xy: P, parent?: ShapeConfig): void {}
-  renderSelected(ctx: CanvasRenderingContext2D,xy: P, parent?: ShapeConfig): void {}
+  renderHover(ctx: CanvasRenderingContext2D,xy: P, parent?: BaseConfig): void {}
+  renderSelected(ctx: CanvasRenderingContext2D,xy: P, parent?: BaseConfig): void {}
  
   renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void {
   }
 
-  renderEdit(ctx: CanvasRenderingContext2D, xy: P, parent?: ShapeConfig): void {
+  renderEdit(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): void {
   }
 }

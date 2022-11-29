@@ -1,4 +1,4 @@
-import {ShapeConfig, ShapeProps, ShapeType} from "../type"
+import {ShapeProps, ShapeType} from "../type"
 import {Frame} from "./Frame"
 import {Rectangle} from "./Rectangle"
 import {Ellipse} from "./Ellipse"
@@ -10,6 +10,7 @@ import {Pen} from "./Pen"
 import {Pencil} from "./Pencil"
 import {Line} from "./Line"
 import {Arrow} from "./Arrow"
+import {BaseConfig} from "../config/BaseConfig"
 
 export const getShapeFromConfig = (props: ShapeProps): any => {
   const {conf} = props

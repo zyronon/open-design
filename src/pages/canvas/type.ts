@@ -1,8 +1,7 @@
-import {getBezierPointByLength} from "./utils"
 import CanvasUtil2 from "./CanvasUtil2"
+import {BaseConfig} from "./config/BaseConfig"
 
 export type IState = {
-  rectList: Shape[],
   canvas: HTMLCanvasElement,
   ctx: CanvasRenderingContext2D,
   canvasRect: DOMRect,
@@ -15,7 +14,6 @@ export type IState = {
   enterRT: boolean,
   hoverLTR: boolean,//左上角 旋转
   enterLTR: boolean,
-  selectRect?: Shape,
   startX: number,
   startY: number,
   offsetX: number,
@@ -89,220 +87,10 @@ export enum ShapeType {
 }
 
 
-export interface RectImg {
-  img: any,
-}
-
-
-export interface Shape extends RectText, RectImg {
-  id: number | string,
-  name?: number | string,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  rotate: number,
-  lineWidth: number,
-  type: ShapeType,
-  color: string,
-  fillColor: string,
-  borderColor: string,
-  leftX?: number,
-  topY?: number,
-  rightX?: number,
-  bottomY?: number,
-  radius: number,
-  children: Shape[],
-  flipVertical?: boolean,
-  flipHorizontal?: boolean,
-  points?: any[]
-}
-
 export interface ShapeProps {
-  conf: ShapeConfig,
+  conf: BaseConfig,
   old?: null,
-  parent?: ShapeConfig
-}
-
-//属性参考：https://developers.mastergo.com/apis/node-frame.html
-export interface ShapeConfig {
-  id: number | string,
-  name?: number | string,
-
-  w: number,
-  h: number,
-  rx: number,
-  ry: number,
-  leftX: number,
-  topY: number,
-  rightX: number,
-  bottomY: number,
-  centerX: number,
-  centerY: number,
-  location: P2,
-  rotate: number,
-  lineWidth: number,
-  type: ShapeType,
-  color: string,
-  fillColor: string,
-  borderColor: string,
-  radius: number,
-  children: any[],
-  flipVertical?: boolean,
-  flipHorizontal?: boolean,
-  points: any[],
-  isCustom: boolean,
-  topLeft: P,
-  topRight: P,
-  bottomLeft: P,
-  bottomRight: P,
-  center: P,
-  isVisible: boolean,//节点是否可见
-  isLocked: boolean,//节点是否被锁定
-  /**
-   * @desc Geometry-related properties
-   * */
-  fills: any[]//图层的填充。
-  strokes: any[]//图层的描边。
-  /** @desc 描边类型。
-   * 'SOLID': 实线。
-   'DASH': 虚线。
-   'CUSTOM': 自定义。
-   * */
-  strokeStyle: 'SOLID' | 'DASH' | 'CUSTOM'
-  strokeWeight: number,//四个方向描边的粗细
-  strokeTopWeight: number,
-  strokeLeftWeight: number,
-  strokeRightWeight: number,
-  strokeBottomWeight: number,
-  /** @desc 描边相对于图层边界的对齐方式。
-   * 'CENTER': 居中。
-   * 'INSIDE': 内部。
-   * 'OUTSIDE': 外部。
-   * */
-  strokeAlign: 'CENTER' | 'INSIDE' | 'OUTSIDE'
-  /** @desc 端点的装饰。
-   * 'NONE': 正常。
-   * 'ROUND': 圆角。
-   * 'SQUARE': 方型。
-   * 'LINE_ARROW': 普通箭头。
-   * 'TRIANGLE_ARROW': 三角箭头。
-   * 'ROUND_ARROW' 圆箭头。
-   * 'RING' 圆环。
-   * 'DIAMOND' 方块。
-   * 'LINE' 直线。
-   * */
-  strokeCap: 'NONE' | 'ROUND' | 'SQUARE' | 'LINE_ARROW' | 'TRIANGLE_ARROW' | 'ROUND_ARROW' | 'RING' | 'DIAMOND' | 'LINE'
-  /** @desc 边角的装饰。
-   * 'MITER': 直角。
-   * 'BEVEL': 斜切。
-   * 'ROUND': 圆角。
-   * */
-  strokeJoin: 'MITER' | 'BEVEL' | 'ROUND'
-  strokeDashes: [number, number]//包含数字的数组。数组偶数下标元素代表虚线的长度，奇数下标元素代表虚线的间距。
-  dashCap: 'NONE' | 'ROUND' | 'SQUARE' //虚线端点装饰。
-  /**
-   *  @desc Corner-related properties
-   * */
-  cornerSmooth: number,//控制角的平滑程度，值域为 [0, 1]。
-  cornerRadius: number,//圆角。
-  topLeftRadius: number,
-  topRightRadius: number,
-  bottomLeftRadius: number,
-  bottomRightRadius: number,
-  /**
-   * @desc Blend-related properties
-   * */
-  opacity: number,//读取或设置图层的透明度，其值必须在 [0, 1] 区间。
-  blendMode: number//图层的混合模式。
-  isMask: boolean//图层是否是蒙版。
-  effects: any[]//返回一个特效数组，具体数据结构可以查看 Effect。
-  /**
-   * @desc Layout-related properties
-   * */
-  absoluteTransform: Transform//图层节点相对于包含它的页面的位置，以变换矩阵的方式呈现。
-  relativeTransform: Transform//图层节点相对于它的父级节点的位置，作为变换矩阵呈现。
-  x: number,//图层节点的位置，等价于 relativeTransform[0][2]。
-  y: number,//图层节点的位置，等价于 relativeTransform[1][2]。
-  bound: Rect//图层节点的 rect。
-  /** @desc 图层节点的旋转角度.值域为 [-180, 180]。
-   * 其值等价于：Math.atan2(-relativeTransform[1][0], relativeTransform[0][0])
-   * */
-  rotation: number,
-  width: number,
-  height: number
-}
-
-interface Rect {
-  x: number
-  y: number
-  width: number
-  height: number
-}
-
-type Transform = [[number, number, number], [number, number, number]]
-
-export interface EllipseConfig extends ShapeConfig {
-  /** @desc 圆弧总长度*/
-  totalLength: number
-  /** @desc 圆弧起点长度*/
-  startLength: number
-  /** @desc 圆弧起点*/
-  startPoint: P
-  /** @desc 起点长度对应的 鼠标控制点*/
-  startMouseControlPoint: P
-  /** @desc 圆弧终点*/
-  endPoint: P
-  /** @desc 终点长度对应的 鼠标控制点*/
-  endMouseControlPoint: P
-  /** @desc 所有控制点，总的12个*/
-  cps: P[]
-  getCps: Function
-}
-
-export interface TextConfig extends ShapeConfig {
-  brokenTexts: string[],
-  texts: string[],
-  textLineHeight: number,
-  letterSpacing: number,
-  textMode: TextMode,
-  textBaseline: TextBaseline,
-  textAlign: TextAlign,
-  fontFamily: FontFamily,
-  fontWeight: FontWeight,
-  fontSize: number,
-}
-
-
-export interface RectText {
-  brokenTexts: string[],
-  texts: string[],
-  textLineHeight: number,
-  letterSpacing: number,
-  textMode: TextMode,
-  textBaseline: TextBaseline,
-  textAlign: TextAlign,
-  fontFamily: FontFamily,
-  fontWeight: FontWeight,
-  fontSize: number,
-}
-
-export enum TextMode {
-  AUTO_W = 1,
-  AUTO_H = 2,
-  FIXED = 3,
-}
-
-export enum TextBaseline {
-  LEFT = 1,
-  RIGHT = 2,
-  CENTER = 3,
-}
-
-export enum TextAlign {
-  LEFT = 'left',
-  RIGHT = 'right',
-  CENTER = 'center',
+  parent?: BaseConfig
 }
 
 export enum FontWeight {
@@ -319,26 +107,9 @@ export enum RectColorType {
   BorderColor = 'borderColor',
 }
 
-export enum FontFamily {
-  SourceHanSerifCN = 'SourceHanSerifCN',
-  SourceHanSansCN = 'SourceHanSansCN',
-}
-
-
-export const EventMapTypes = {
-  // onClick = 'click',
-  onDoubleClick: 'dblclick',
-  onMouseMove: 'mousemove',
-  onMouseDown: 'mousedown',
-  onMouseUp: 'mouseup',
-  onMouseEnter: 'mouseenter',
-  onMouseLeave: 'mouseleave',
-}
-
 export const EventTypes = {
   onClick: 'click',
   onWheel: 'wheel',
-  ...EventMapTypes,//TODO 当老的删除CanvasUtil.ts删除掉这行
   onDbClick: 'dblclick',
   onMouseMove: 'mousemove',
   onMouseDown: 'mousedown',
@@ -346,11 +117,6 @@ export const EventTypes = {
   onMouseEnter: 'mouseenter',
   onMouseLeave: 'mouseleave',
   onDraw: 'draw',
-}
-
-
-export interface BaseEvent extends MouseEvent {
-  capture: boolean,
 }
 
 

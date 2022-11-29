@@ -1,6 +1,8 @@
 import {BaseShape} from "./BaseShape"
 import CanvasUtil2 from "../CanvasUtil2"
-import {BaseEvent2, P, ShapeConfig, TextAlign, TextConfig} from "../type"
+import {BaseEvent2, P,} from "../type"
+import {TextAlign, TextConfig} from "../config/TextConfig"
+import {BaseConfig} from "../config/BaseConfig"
 
 export class Text extends BaseShape {
   childDbClick(event: BaseEvent2, p: BaseShape[]): boolean {
@@ -38,7 +40,7 @@ export class Text extends BaseShape {
   set _config(val) {
     this.config = val
   }
-  render(ctx: CanvasRenderingContext2D, xy: P, parent?: ShapeConfig): any {
+  render(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {
     let {
       w, h, radius,
       fontWeight,
@@ -69,9 +71,9 @@ export class Text extends BaseShape {
     })
   }
 
-  renderHover(ctx: CanvasRenderingContext2D,xy: P, parent?: ShapeConfig): void {}
-  renderSelected(ctx: CanvasRenderingContext2D,xy: P, parent?: ShapeConfig): void {}
-  renderEdit(ctx: CanvasRenderingContext2D,xy: P, parent?: ShapeConfig): void {}
+  renderHover(ctx: CanvasRenderingContext2D,xy: P, parent?: BaseConfig): void {}
+  renderSelected(ctx: CanvasRenderingContext2D,xy: P, parent?: BaseConfig): void {}
+  renderEdit(ctx: CanvasRenderingContext2D,xy: P, parent?: BaseConfig): void {}
   renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void {
   }
 

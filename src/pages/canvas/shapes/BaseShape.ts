@@ -1,4 +1,4 @@
-import {BaseEvent2, P, ShapeConfig, ShapeProps, ShapeType} from "../type"
+import {BaseEvent2, P, ShapeProps, ShapeType} from "../type"
 import {calcPosition, getPath, getReversePoint, hover, selected} from "../utils"
 import CanvasUtil2 from "../CanvasUtil2"
 import {clone, cloneDeep} from "lodash"
@@ -6,6 +6,7 @@ import getCenterPoint, {getAngle, getAngle2, getRotatedPoint} from "../../../uti
 import {getShapeFromConfig} from "./common"
 import EventBus from "../../../utils/event-bus"
 import {EventMapTypes} from "../../canvas20221111/type"
+import {BaseConfig} from "../config/BaseConfig"
 
 
 export abstract class BaseShape {
@@ -19,7 +20,7 @@ export abstract class BaseShape {
   enterLTR: boolean = false
   hoverR: boolean = false
   enterR: boolean = false
-  public config: ShapeConfig
+  public config: BaseConfig
   children: BaseShape[] = []
   isHover: boolean = false
   isSelect: boolean = false
@@ -29,7 +30,7 @@ export abstract class BaseShape {
   enter: boolean = false
   startX: number = 0
   startY: number = 0
-  original: ShapeConfig
+  original: BaseConfig
   diagonal: P = {x: 0, y: 0}//对面的点（和handlePoint相反的点），如果handlePoint是中间点，那么这个也是中间点
   handlePoint: P = {x: 0, y: 0}//鼠标按住那条边的中间点（当前角度），非鼠标点
 
@@ -38,7 +39,7 @@ export abstract class BaseShape {
     this.config = getPath(props.conf, null, props.parent)
     this.original = cloneDeep(this.config)
     // console.log('config', clone(this.config))
-    this.children = this.config.children.map((conf: ShapeConfig) => {
+    this.children = this.config.children.map((conf: BaseConfig) => {
       return getShapeFromConfig({conf, old: null, parent: this.config})
     })
   }
@@ -60,17 +61,17 @@ export abstract class BaseShape {
     this.enterR = false
   }
 
-  abstract render(ctx: CanvasRenderingContext2D, xy: P, parent?: ShapeConfig): any
+  abstract render(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any
 
-  abstract renderHover(ctx: CanvasRenderingContext2D, xy: P, parent?: ShapeConfig): any
+  abstract renderHover(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any
 
-  abstract renderSelected(ctx: CanvasRenderingContext2D, xy: P, parent?: ShapeConfig): any
+  abstract renderSelected(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any
 
   abstract renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void
 
-  abstract renderEdit(ctx: CanvasRenderingContext2D, xy: P, parent?: ShapeConfig): any
+  abstract renderEdit(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any
 
-  shapeRender(ctx: CanvasRenderingContext2D, parent?: ShapeConfig) {
+  shapeRender(ctx: CanvasRenderingContext2D, parent?: BaseConfig) {
     ctx.save()
     let {x, y} = calcPosition(ctx, this.config, this.original, this.getState(), parent)
     const {isHover, isSelect, isEdit, isSelectHover} = this

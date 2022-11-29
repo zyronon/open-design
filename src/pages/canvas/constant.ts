@@ -312,7 +312,7 @@ export const r = [
     "h": 0,
     "rotate": 0,
     "lineWidth": 2,
-    "type": 106,
+    "type": ShapeType.ARROW,
     "radius": 0,
     "points": [
       {
@@ -345,7 +345,7 @@ export const r = [
     "h": 0,
     "rotate": 0,
     "lineWidth": 2,
-    "type": 107,
+    "type": ShapeType.LINE,
     "radius": 0,
     "points": [
       {
@@ -378,7 +378,7 @@ export const r = [
     "h": 0,
     "rotate": 0,
     "lineWidth": 2,
-    "type": 111,
+    "type": ShapeType.PEN,
     "radius": 0,
     "points": [
       {
@@ -415,7 +415,7 @@ export const r = [
     "h": 0,
     "rotate": 0,
     "lineWidth": 2,
-    "type": 112,
+    "type": ShapeType.PENCIL,
     "radius": 0,
     "points": [
       {
@@ -446,7 +446,7 @@ export const r = [
     "h": 25,
     "rotate": 0,
     "lineWidth": 2,
-    "type": 113,
+    "type": ShapeType.TEXT,
     "color": "gray",
     "radius": 0,
     "children": [],
@@ -488,7 +488,7 @@ export const r = [
     "h": 157.80000000000007,
     "rotate": 0,
     "lineWidth": 2,
-    "type": 110,
+    "type": ShapeType.IMAGE,
     "src": "a.jpg",
     "color": "gray",
     "radius": 0,
@@ -517,7 +517,7 @@ export const r = [
     "h": 157.80000000000007,
     "rotate": 0,
     "lineWidth": 2,
-    "type": 109,
+    "type": ShapeType.STAR,
     "totalLength": 2,
     "startLength": 1.2,
     "color": "gray",
@@ -551,7 +551,7 @@ export const r = [
     "h": 181.80000000000013,
     "rotate": 10,
     "lineWidth": 2,
-    "type": 108,
+    "type": ShapeType.POLYGON,
     "totalLength": 2,
     "startLength": 1.2,
     "color": "gray",
@@ -585,7 +585,7 @@ export const r = [
     "h": 185.00000000000014,
     "rotate": 0,
     "lineWidth": 2,
-    "type": 105,
+    "type": ShapeType.ELLIPSE,
     "totalLength": 3.5,
     "startLength": 0,
     "startPoint": {
@@ -690,7 +690,7 @@ export const r = [
     "h": 380,
     "rotate": 0,
     "lineWidth": 2,
-    "type": 102,
+    "type": ShapeType.FRAME,
     "color": "gray",
     "radius": 23.199999999999932,
     "children": [
@@ -703,7 +703,7 @@ export const r = [
         "h": 400,
         "rotate": 0,
         "lineWidth": 2,
-        "type": 102,
+        "type": ShapeType.FRAME,
         "color": "gray",
         "radius": 40,
         "children": [
@@ -716,7 +716,7 @@ export const r = [
             "h": 200,
             "rotate": 0,
             "lineWidth": 2,
-            "type": 102,
+            "type": ShapeType.FRAME,
             "color": "gray",
             "radius": 40,
             "children": [
@@ -729,7 +729,7 @@ export const r = [
                 "h": 100,
                 "rotate": 0,
                 "lineWidth": 2,
-                "type": 104,
+                "type": ShapeType.RECTANGLE,
                 "color": "gray",
                 "radius": 20,
                 "children": [],
@@ -773,7 +773,7 @@ export const r = [
             "h": 200,
             "rotate": 0,
             "lineWidth": 2,
-            "type": 102,
+            "type": ShapeType.FRAME,
             "color": "gray",
             "radius": 40,
             "children": [
@@ -786,7 +786,7 @@ export const r = [
                 "h": 100,
                 "rotate": 10,
                 "lineWidth": 2,
-                "type": 104,
+                "type": ShapeType.RECTANGLE,
                 "color": "gray",
                 "radius": 20,
                 "children": [],
@@ -864,7 +864,7 @@ export const r = [
     "h": 141.19999999999987,
     "rotate": 0,
     "lineWidth": 2,
-    "type": 104,
+    "type": ShapeType.RECTANGLE,
     "color": "gray",
     "radius": 22.40000000000009,
     "children": [],
@@ -910,7 +910,7 @@ export const rects: any[] = [
         "h": 150,
         "rotate": 10,
         "lineWidth": 2,
-        "type": 104,
+        "type": ShapeType.RECTANGLE,
         "color": "gray",
         "radius": 0,
         "children": [],

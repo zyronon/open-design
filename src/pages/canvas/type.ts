@@ -63,29 +63,29 @@ export type IState = {
 
 //图形类型
 export enum ShapeType {
-  SELECT = 100,
-  SCALE = 101,
+  SELECT = 'SELECT',
+  SCALE = 'SCALE',
 
-  FRAME = 102,
-  SLICE = 103,
+  FRAME = 'FRAME',
+  SLICE = 'SLICE',
 
-  RECTANGLE = 104,
-  ELLIPSE = 105,
-  ARROW = 106,
-  LINE = 107,
-  POLYGON = 108,
-  STAR = 109,
-  IMAGE = 110,
+  RECTANGLE = 'RECTANGLE',
+  ELLIPSE = 'ELLIPSE',
+  ARROW = 'ARROW',
+  LINE = 'LINE',
+  POLYGON = 'POLYGON',
+  STAR = 'STAR',
+  IMAGE = 'IMAGE',
 
-  PEN = 111,
-  PENCIL = 112,
+  PEN = 'PEN',
+  PENCIL = 'PENCIL',
 
-  TEXT = 113,
-  MOVE = 114,
+  TEXT = 'TEXT',
+  MOVE = 'MOVE',
 
-  COMPONENT = 115,
-  HOVER = 116,
-  EDIT = 117,
+  COMPONENT = 'COMPONENT',
+  HOVER = 'HOVER',
+  EDIT = 'EDIT',
 }
 
 

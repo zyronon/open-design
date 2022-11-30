@@ -1,5 +1,5 @@
 import { FontWeight, ShapeType} from "./type"
-import {FontFamily} from "./config/TextConfig"
+import {FontFamily} from "../config/TextConfig"
 
 export const fontFamilies = [
   {

@@ -1,5 +1,5 @@
 //属性参考：https://developers.mastergo.com/apis/node-frame.html
-import {P, P2, ShapeType} from "../type"
+import {P, P2, ShapeType} from "../utils/type"
 
 export interface BaseConfig {
   id: number | string,

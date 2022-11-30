@@ -1,8 +1,8 @@
-import React, {Component} from 'react';
-import {Button} from 'antd';
+import React, {Component} from 'react'
+import {Button} from 'antd'
 import './index.scss'
-import {withRouter} from "../../components/WithRouter";
-import {renderRoundRect} from "../canvas/utils";
+import {withRouter} from "../../components/WithRouter"
+import draw from "../canvas/utils/draw"
 
 function bezier(pots: any, amount: any) {
   let pot;
@@ -178,14 +178,14 @@ class T extends Component<any, any> {
     let d = 4
     let lineWidth = 2
     let r = 2
-    renderRoundRect({
+    draw.renderRoundRect({
       x: cp1.x,
       y: cp1.y,
       w: 2 * d,
       h: 2 * d,
       lineWidth
     }, r, ctx)
-    renderRoundRect({
+    draw.renderRoundRect({
       x: cp2.x,
       y: cp2.y,
       w: 2 * d,
@@ -194,7 +194,7 @@ class T extends Component<any, any> {
     }, r, ctx)
 
     let item: any = bezier3(0.5, left, cp1, cp2, right)
-    renderRoundRect({
+    draw.renderRoundRect({
       x: item.x,
       y: item.y,
       w: 2 * d,
@@ -217,7 +217,7 @@ class T extends Component<any, any> {
     // console.log(s)
     //
     // s.map(item => {
-    //   renderRoundRect({
+    //   draw.renderRoundRect({
     //     x: item.x,
     //     y: item.y,
     //     w: 2 * d,
@@ -247,7 +247,7 @@ class T extends Component<any, any> {
     console.log(s)
 
     s.map(item => {
-      renderRoundRect({
+      draw.renderRoundRect({
         x: item.x,
         y: item.y,
         w: 2 * d,

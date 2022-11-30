@@ -1,4 +1,4 @@
-import {FontWeight,} from "../type"
+import {FontWeight,} from "../utils/type"
 import {BaseConfig} from "./BaseConfig"
 
 

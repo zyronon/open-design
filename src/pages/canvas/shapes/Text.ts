@@ -1,6 +1,6 @@
 import {BaseShape} from "./BaseShape"
 import CanvasUtil2 from "../CanvasUtil2"
-import {BaseEvent2, P,} from "../type"
+import {BaseEvent2, P,} from "../utils/type"
 import {TextAlign, TextConfig} from "../config/TextConfig"
 import {BaseConfig} from "../config/BaseConfig"
 

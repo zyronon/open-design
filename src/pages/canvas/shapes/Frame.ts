@@ -1,9 +1,9 @@
 import {BaseShape} from "./BaseShape"
-import {draw2, draw3, getPath, renderRoundRect} from "../utils"
 import CanvasUtil2 from "../CanvasUtil2"
-import {BaseEvent2, EventTypes, P} from "../type"
+import {BaseEvent2, P} from "../utils/type"
 import {drawSelectedHover} from "./Ellipse/draw"
 import {BaseConfig} from "../config/BaseConfig"
+import draw from "../utils/draw"
 
 export class Frame extends BaseShape {
 
@@ -50,7 +50,7 @@ export class Frame extends BaseShape {
     } = this.config
     const {x, y} = p
     if (radius) {
-      renderRoundRect({x, y, w, h}, radius, ctx)
+      draw.renderRoundRect({x, y, w, h}, radius, ctx)
     } else {
       ctx.beginPath()
       ctx.moveTo(x, y)

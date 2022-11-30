@@ -1,13 +1,14 @@
 import {BaseShape} from "./shapes/BaseShape"
 import EventBus from "../../utils/event-bus"
-import {clear, getPath} from "./utils"
-import {BaseEvent2, EventTypes, P, ShapeType} from "./type"
+import {BaseEvent2, EventTypes, P, ShapeType} from "./utils/type"
 import {cloneDeep, throttle} from "lodash"
-import {config} from "./constant"
+import {config} from "./utils/constant"
 import {mat4} from "gl-matrix"
 import {getShapeFromConfig} from "./shapes/common"
 import {Rectangle} from "./shapes/Rectangle"
 import {BaseConfig} from "./config/BaseConfig"
+import helper from "./utils/helper"
+import draw from "./utils/draw"
 
 const out: any = new Float32Array([
   0, 0, 0, 0,
@@ -164,7 +165,7 @@ export default class CanvasUtil2 {
       }
     }
     // console.log('重绘所有图形')
-    clear({x: 0, y: 0, w: this.canvas.width, h: this.canvas.height}, this.ctx)
+    draw.clear({x: 0, y: 0, w: this.canvas.width, h: this.canvas.height}, this.ctx)
     this.ctx.save()
     if (this.currentMat) {
       // console.log('平移：', currentMat[12], currentMat[13])
@@ -296,7 +297,7 @@ export default class CanvasUtil2 {
               this.newShape.isSelect = true
             }
             // EventBus.emit(EventMapTypes.onMouseMove, this.newShape)
-            this.newShape.config = getPath(this.newShape.config)
+            this.newShape.config = helper.getPath(this.newShape.config)
             this.render()
           } else {
             let x = this.startX

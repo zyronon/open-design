@@ -1,7 +1,6 @@
 import {jiaodu2hudu} from "../../../../utils"
-import {drawRound, getBezier3ControlPoints, getBezierPointByLength, getDecimal, renderRound} from "../../utils"
-import {BezierPoint, BezierPointType, getP2, LineType, P2, ShapeType} from "../../type"
-
+import {ShapeType} from "../../utils/type"
+import draw from "../../utils/draw"
 
 export function drawSelectedHover(ctx: CanvasRenderingContext2D, config: any) {
   let {
@@ -59,9 +58,9 @@ export function drawSelectedHover(ctx: CanvasRenderingContext2D, config: any) {
   // renderRound(endTop, r, ctx, ShapeType.SELECT)
   // renderRound(endBottom, r, ctx, ShapeType.SELECT)
 
-  renderRound(topLeft, r2, ctx, ShapeType.SELECT)
-  renderRound(topRight, r2, ctx, ShapeType.SELECT)
-  renderRound(bottomLeft, r2, ctx, ShapeType.SELECT)
-  renderRound(bottomRight, r2, ctx, ShapeType.SELECT)
+  draw.renderRound(topLeft, r2, ctx, ShapeType.SELECT)
+  draw.renderRound(topRight, r2, ctx, ShapeType.SELECT)
+  draw.renderRound(bottomLeft, r2, ctx, ShapeType.SELECT)
+  draw.renderRound(bottomRight, r2, ctx, ShapeType.SELECT)
   ctx.restore()
 }

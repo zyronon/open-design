@@ -1,4 +1,4 @@
-import {ShapeProps, ShapeType} from "../type"
+import {ShapeProps, ShapeType} from "../utils/type"
 import {Frame} from "./Frame"
 import {Rectangle} from "./Rectangle"
 import {Ellipse} from "./Ellipse"

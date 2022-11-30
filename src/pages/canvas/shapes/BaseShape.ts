@@ -1,13 +1,13 @@
-import {BaseEvent2, P, ShapeProps, ShapeType} from "../type"
-import {calcPosition, getPath, getReversePoint, hover, selected} from "../utils"
+import {BaseEvent2, P, ShapeProps} from "../utils/type"
 import CanvasUtil2 from "../CanvasUtil2"
-import {clone, cloneDeep} from "lodash"
-import getCenterPoint, {getAngle, getAngle2, getRotatedPoint} from "../../../utils"
+import {cloneDeep} from "lodash"
+import getCenterPoint, {getAngle2, getRotatedPoint} from "../../../utils"
 import {getShapeFromConfig} from "./common"
 import EventBus from "../../../utils/event-bus"
 import {EventMapTypes} from "../../canvas20221111/type"
 import {BaseConfig} from "../config/BaseConfig"
-
+import helper from "../utils/helper"
+import draw from "../utils/draw"
 
 export abstract class BaseShape {
   hoverRd1: boolean = false
@@ -36,7 +36,7 @@ export abstract class BaseShape {
 
   constructor(props: ShapeProps) {
     // console.log('props', clone(props))
-    this.config = getPath(props.conf, null, props.parent)
+    this.config = helper.getPath(props.conf, null, props.parent)
     this.original = cloneDeep(this.config)
     // console.log('config', clone(this.config))
     this.children = this.config.children.map((conf: BaseConfig) => {
@@ -73,15 +73,15 @@ export abstract class BaseShape {
 
   shapeRender(ctx: CanvasRenderingContext2D, parent?: BaseConfig) {
     ctx.save()
-    let {x, y} = calcPosition(ctx, this.config, this.original, this.getState(), parent)
+    let {x, y} = draw.calcPosition(ctx, this.config, this.original, this.getState(), parent)
     const {isHover, isSelect, isEdit, isSelectHover} = this
 
     if (isHover) {
       this.render(ctx, {x, y}, parent,)
-      hover(ctx, {...this.config, x, y})
+      draw.hover(ctx, {...this.config, x, y})
     } else if (isSelect) {
       this.render(ctx, {x, y}, parent,)
-      selected(ctx, {...this.config, x, y})
+      draw.selected(ctx, {...this.config, x, y})
       if (isSelectHover) {
         this.renderSelectedHover(ctx, {...this.config, x, y})
       }
@@ -102,7 +102,7 @@ export abstract class BaseShape {
     // ctx.fillText(rect.name, x, y - 18);
     // ctx.restore()
 
-    // this.config = getPath(this.config, null, parent)
+    // this.config = helper.getPath(this.config, null, parent)
     for (let i = 0; i < this.children.length; i++) {
       let shape = this.children[i]
       shape.shapeRender(ctx, this.config)
@@ -179,8 +179,8 @@ export abstract class BaseShape {
       /*
       * 同上原因，判断是否在图形内，不需要翻转点。
       * */
-      // if (flipHorizontal) x = getReversePoint(x, center.x)
-      // if (flipVertical) y = getReversePoint(y, center.y)
+      // if (flipHorizontal) x = helper.getReversePoint(x, center.x)
+      // if (flipVertical) y = helper.getReversePoint(y, center.y)
       let edge = 10
       let angle = 7
       let rotate = 27
@@ -376,8 +376,8 @@ export abstract class BaseShape {
       this.handlePoint = handlePoint
       //翻转得到对面的点
       this.diagonal = {
-        x: getReversePoint(handlePoint.x, center.x),
-        y: getReversePoint(handlePoint.y, center.y),
+        x: helper.getReversePoint(handlePoint.x, center.x),
+        y: helper.getReversePoint(handlePoint.y, center.y),
       }
       this.enterL = true
       return
@@ -407,8 +407,8 @@ export abstract class BaseShape {
       this.handlePoint = handlePoint
       //翻转得到对面的点
       this.diagonal = {
-        x: getReversePoint(handlePoint.x, center.x),
-        y: getReversePoint(handlePoint.y, center.y),
+        x: helper.getReversePoint(handlePoint.x, center.x),
+        y: helper.getReversePoint(handlePoint.y, center.y),
       }
       this.enterR = true
       return
@@ -585,7 +585,7 @@ export abstract class BaseShape {
     rect.w = newWidth
     rect.h = newHeight
     // console.log(rect)
-    this.config = getPath(rect, this.original)
+    this.config = helper.getPath(rect, this.original)
     cu.render()
   }
 
@@ -618,12 +618,12 @@ export abstract class BaseShape {
         rect.x = angleXy.x
         rect.y = angleXy.y
       }
-      this.config = getPath(rect, this.original)
+      this.config = helper.getPath(rect, this.original)
     } else {
       this.config.x = (x - cu.offsetX)
       this.config.w = this.original.rightX - this.config.x
       this.config.center.x = this.config.x + this.config.w / 2
-      this.config = getPath(this.config, this.original)
+      this.config = helper.getPath(this.config, this.original)
     }
     cu.render()
   }
@@ -663,12 +663,12 @@ export abstract class BaseShape {
         rect.x = angleXy.x
         rect.y = angleXy.y
       }
-      this.config = getPath(rect, this.original)
+      this.config = helper.getPath(rect, this.original)
     } else {
       let dx = (x - cu.startX)
       this.config.w = this.original.w + dx
       this.config.center.x = this.config.x + this.config.w / 2
-      this.config = getPath(this.config, this.original)
+      this.config = helper.getPath(this.config, this.original)
     }
     cu.render()
   }
@@ -682,7 +682,7 @@ export abstract class BaseShape {
     this.config.y = this.original.y + dy
     this.config.center.x = this.original.center.x + dx
     this.config.center.y = this.original.center.y + dy
-    this.config = getPath(this.config, this.original)
+    this.config = helper.getPath(this.config, this.original)
     cu.render()
   }
 

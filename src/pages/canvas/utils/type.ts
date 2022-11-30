@@ -1,5 +1,5 @@
-import CanvasUtil2 from "./CanvasUtil2"
-import {BaseConfig} from "./config/BaseConfig"
+import CanvasUtil2 from "../CanvasUtil2"
+import {BaseConfig} from "../config/BaseConfig"
 
 export type IState = {
   canvas: HTMLCanvasElement,

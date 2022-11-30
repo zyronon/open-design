@@ -1,5 +1,4 @@
-import {P, P2} from "../pages/canvas/type"
-import {getDecimal} from "../pages/canvas/utils"
+import {P, P2} from "../pages/canvas/utils/type"
 
 export {}
 

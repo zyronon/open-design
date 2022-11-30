@@ -3,7 +3,7 @@ import {Button} from 'antd'
 import './index.scss'
 import {withRouter} from "../../components/WithRouter"
 import {clone, throttle} from "lodash"
-import {sleep} from "../canvas/utils"
+import helper from "../canvas/utils/helper"
 
 
 class T extends Component<any, any> {
@@ -33,7 +33,7 @@ class T extends Component<any, any> {
 
   async test() {
     console.log('start', Date.now())
-    await sleep(1000)
+    await helper.sleep(1000)
     console.log('end', Date.now())
     return
   }

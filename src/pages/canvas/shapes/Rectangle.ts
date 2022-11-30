@@ -1,21 +1,10 @@
 import {BaseShape} from "./BaseShape"
-import {clear, drawCp, drawRound, getPath, renderRound, renderRoundRect} from "../utils"
 import CanvasUtil2 from "../CanvasUtil2"
-import {
-  BaseEvent2,
-  BezierPoint,
-  BezierPointType,
-  getP2,
-  LineType,
-  P,
-  P2,
-  ShapeType
-} from "../type"
-import {drawSelectedHover} from "./Ellipse/draw"
+import {BaseEvent2, BezierPoint, BezierPointType, getP2, LineType, P, P2, ShapeType} from "../utils/type"
 import {jiaodu2hudu} from "../../../utils"
-import {Colors} from "../constant"
-import {EllipseConfig} from "../config/EllipseConfig"
+import {Colors} from "../utils/constant"
 import {BaseConfig} from "../config/BaseConfig"
+import draw from "../utils/draw"
 
 export class Rectangle extends BaseShape {
 
@@ -121,7 +110,7 @@ export class Rectangle extends BaseShape {
     const {x, y} = p
     ctx.save()
     if (radius) {
-      renderRoundRect({x, y, w, h}, radius, ctx)
+      draw.renderRoundRect({x, y, w, h}, radius, ctx)
     } else {
       ctx.beginPath()
       ctx.moveTo(x, y)
@@ -202,13 +191,13 @@ export class Rectangle extends BaseShape {
     ctx.save()
     // let nv = currentMat
     // ctx.transform(nv[0], nv[4], nv[1], nv[5], nv[12], nv[13]);
-    // renderRound(endTop, r, ctx, ShapeType.SELECT)
-    // renderRound(endBottom, r, ctx, ShapeType.SELECT)
+    // draw.renderRound(endTop, r, ctx, ShapeType.SELECT)
+    // draw.renderRound(endBottom, r, ctx, ShapeType.SELECT)
 
-    renderRound(topLeft, r2, ctx, ShapeType.SELECT)
-    renderRound(topRight, r2, ctx, ShapeType.SELECT)
-    renderRound(bottomLeft, r2, ctx, ShapeType.SELECT)
-    renderRound(bottomRight, r2, ctx, ShapeType.SELECT)
+    draw.renderRound(topLeft, r2, ctx, ShapeType.SELECT)
+    draw.renderRound(topRight, r2, ctx, ShapeType.SELECT)
+    draw.renderRound(bottomLeft, r2, ctx, ShapeType.SELECT)
+    draw.renderRound(bottomRight, r2, ctx, ShapeType.SELECT)
     ctx.restore()
   }
 
@@ -312,9 +301,9 @@ export class Rectangle extends BaseShape {
     ctx.stroke()
 
     bezierCps.map((currentPoint: BezierPoint) => {
-      drawRound(ctx, currentPoint.center)
-      if (currentPoint.cp1.use) drawCp(ctx, currentPoint.cp1, currentPoint.center)
-      if (currentPoint.cp2.use) drawCp(ctx, currentPoint.cp2, currentPoint.center)
+      draw.drawRound(ctx, currentPoint.center)
+      if (currentPoint.cp1.use) draw.drawCp(ctx, currentPoint.cp1, currentPoint.center)
+      if (currentPoint.cp2.use) draw.drawCp(ctx, currentPoint.cp2, currentPoint.center)
     })
     ctx.restore()
 

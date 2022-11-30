@@ -1,5 +1,5 @@
 import {BaseShape} from "./BaseShape"
-import {BaseEvent2, P} from "../type"
+import {BaseEvent2, P} from "../utils/type"
 import CanvasUtil2 from "../CanvasUtil2"
 import {BaseConfig} from "../config/BaseConfig"
 

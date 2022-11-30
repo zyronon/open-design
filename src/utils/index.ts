@@ -1,6 +1,6 @@
 //获取斜边长度
 //给一个圆心点和其他点
-import {P, P2} from "../pages/canvas/type"
+import {P, P2} from "../pages/canvas/utils/type"
 
 export function getHypotenuse(one: number[], two: number[]) {
   let [oneX, oneY] = one

@@ -1,29 +1,12 @@
 import {BaseShape} from "./BaseShape"
-import {
-  drawCp,
-  drawRound,
-  getBezier3ControlPoints,
-  getBezierPointByLength,
-  getDecimal,
-  getPath,
-  renderRound
-} from "../utils"
-import {
-  BaseEvent2,
-  BezierPoint,
-  BezierPointType,
-  getP,
-  getP2,
-  LineType,
-  P,
-  P2,
-  ShapeType
-} from "../type"
+import {BaseEvent2, BezierPoint, BezierPointType, getP, getP2, LineType, P, P2} from "../utils/type"
 import CanvasUtil2 from "../CanvasUtil2"
 import {jiaodu2hudu} from "../../../utils"
 import {solveCubic} from "../../canvas20221111/utils"
 import {EllipseConfig} from "../config/EllipseConfig"
 import {BaseConfig} from "../config/BaseConfig"
+import draw from "../utils/draw"
+import helper from "../utils/helper"
 
 /**
  * @desc 获取长度对应的 鼠标控制点
@@ -105,7 +88,7 @@ export class Ellipse extends BaseShape {
       console.log('k', k, mousePoint2)
       k = (mousePoint2.y - y - h2) / (mousePoint2.x - x - w2)
       console.log('k2', k)
-      drawRound(cu.ctx, mousePoint2)
+      draw.drawRound(cu.ctx, mousePoint2)
 
       let ps = [p0, p1, p2, p3]
 
@@ -130,9 +113,9 @@ export class Ellipse extends BaseShape {
         this.config.totalLength = 3 + t[0] ?? 0.5
         cu.render()
       }
-      // let mousePoint2 = getBezierPointByLength(t[0], ps)
+      // let mousePoint2 = helper.getBezierPointByLength(t[0], ps)
       // console.log('mousePoint2', mousePoint2)
-      // drawRound(cu.ctx, mousePoint2)
+      // draw.drawRound(cu.ctx, mousePoint2)
 
       return true;
     }
@@ -282,24 +265,24 @@ export class Ellipse extends BaseShape {
     //渲染，整个圆时，所有的控制点
     let showNormalCp = false
     if (showNormalCp) {
-      drawRound(ctx, start)
-      drawRound(ctx, cp1)
-      drawRound(ctx, bottom)
-      drawRound(ctx, cp2)
-      drawRound(ctx, cp3)
-      drawRound(ctx, left)
-      drawRound(ctx, cp4)
-      drawRound(ctx, cp5)
-      drawRound(ctx, top)
-      drawRound(ctx, cp6)
-      drawRound(ctx, cp7)
-      drawRound(ctx, cp8)
+      draw.drawRound(ctx, start)
+      draw.drawRound(ctx, cp1)
+      draw.drawRound(ctx, bottom)
+      draw.drawRound(ctx, cp2)
+      draw.drawRound(ctx, cp3)
+      draw.drawRound(ctx, left)
+      draw.drawRound(ctx, cp4)
+      draw.drawRound(ctx, cp5)
+      draw.drawRound(ctx, top)
+      draw.drawRound(ctx, cp6)
+      draw.drawRound(ctx, cp7)
+      draw.drawRound(ctx, cp8)
     }
 
     if (startLength) {
       let intStartLength = Math.trunc(startLength)
       let startLengthCps = getBezierControlPoint(intStartLength)
-      this._config.startPoint = getBezierPointByLength(Math.decimal(startLength), startLengthCps)
+      this._config.startPoint = helper.getBezierPointByLength(Math.decimal(startLength), startLengthCps)
     }
 
     //是否是整圆
@@ -352,7 +335,7 @@ export class Ellipse extends BaseShape {
       let intLastLength, intCurrentLength, lastLength = 0
       let currentLength = perPart
       // console.log('currentLength', currentLength, 'lastLength', lastLength)
-      // drawRound(ctx, start)
+      // draw.drawRound(ctx, start)
 
       if (startLength) {
         //曲线长度与角度间的比例
@@ -403,7 +386,7 @@ export class Ellipse extends BaseShape {
         //默认情况下，用于计算1/4点，3/4点，可以共用一条对应的线段
         bezierCurrent = bezierPrevious = getBezierControlPoint(intCurrentLength)
         //计算当前点必须用当前长度线段的4个控制点来算
-        currentPoint = getBezierPointByLength(getDecimal(currentLength), bezierCurrent)
+        currentPoint = helper.getBezierPointByLength(Math.decimal(currentLength), bezierCurrent)
 
         //特殊情况
         //如果，1/4的长度，不在当前线段内，那么肯定在上一个线段内
@@ -416,11 +399,11 @@ export class Ellipse extends BaseShape {
         }
 
         //计算1/4长度，3/4长度对应的点
-        length14Point = getBezierPointByLength(getDecimal(length14), bezierPrevious)
-        length34Point = getBezierPointByLength(getDecimal(length34), bezierCurrent)
+        length14Point = helper.getBezierPointByLength(Math.decimal(length14), bezierPrevious)
+        length34Point = helper.getBezierPointByLength(Math.decimal(length34), bezierCurrent)
 
         //利用1/4点、3/4点、起始点、终点，反推控制点
-        let cps = getBezier3ControlPoints(length14Point, length34Point, lastPoint, currentPoint)
+        let cps = helper.getBezier3ControlPoints(length14Point, length34Point, lastPoint, currentPoint)
 
         // 因为最后一个控制点（非数组的最后一个点）默认只需center和cp1与前一个点的center和cp2的4个点，组成贝塞尔曲线
         //所以cp2是无用的，所以添加当前点时，需要把上一个点的cp2为正确的值并启用
@@ -531,9 +514,9 @@ export class Ellipse extends BaseShape {
 
       if (showNotNormalCp) {
         bezierCps.map((currentPoint: BezierPoint) => {
-          drawRound(ctx, currentPoint.center)
-          if (currentPoint.cp1.use) drawCp(ctx, currentPoint.cp1, currentPoint.center)
-          if (currentPoint.cp2.use) drawCp(ctx, currentPoint.cp2, currentPoint.center)
+          draw.drawRound(ctx, currentPoint.center)
+          if (currentPoint.cp1.use) draw.drawCp(ctx, currentPoint.cp1, currentPoint.center)
+          if (currentPoint.cp2.use) draw.drawCp(ctx, currentPoint.cp2, currentPoint.center)
         })
       }
     }
@@ -574,9 +557,9 @@ export class Ellipse extends BaseShape {
     endPoint = getMouseControlPointByLength(startLength + totalLength, this._config.endPoint)
 
     ratioPoint = {x: 0, y: 0,}
-    drawRound(ctx, startPoint, r2)
-    drawRound(ctx, ratioPoint, r2,)
-    drawRound(ctx, endPoint, r2,)
+    draw.drawRound(ctx, startPoint, r2)
+    draw.drawRound(ctx, ratioPoint, r2,)
+    draw.drawRound(ctx, endPoint, r2,)
     this._config.startMouseControlPoint = startPoint
     this._config.endMouseControlPoint = endPoint
     ctx.restore()

@@ -1,4 +1,4 @@
-import {P} from "../type"
+import {P} from "../utils/type"
 import {BaseConfig} from "./BaseConfig"
 
 export interface EllipseConfig extends BaseConfig {

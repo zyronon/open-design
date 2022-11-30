@@ -4,22 +4,32 @@ import {P, P2, ShapeType} from "../utils/type"
 export interface BaseConfig {
   id: number | string,
   name?: number | string,
-
   w: number,
   h: number,
-  rx: number,
-  ry: number,
-  leftX: number,
-  topY: number,
-  rightX: number,
-  bottomY: number,
-  centerX: number,
-  centerY: number,
-  location: P2,
+  percent: P,//相对于父级的百分比坐标
+  absolute: P,//坐标绝对值
+  center: P,//中心点坐标
+  box: {
+    topLeft: P,
+    topRight: P,
+    bottomLeft: P,
+    bottomRight: P,
+    leftX: number,
+    topY: number,
+    rightX: number,
+    bottomY: number,
+  }
+  rx: number,//废弃
+  ry: number,//废弃
+  leftX: number,//废弃
+  topY: number,//废弃
+  rightX: number,//废弃
+  bottomY: number,//废弃
+  centerX: number,//废弃
+  centerY: number,//废弃
   rotate: number,
   lineWidth: number,
   type: ShapeType,
-  color: string,
   fillColor: string,
   borderColor: string,
   radius: number,
@@ -27,12 +37,16 @@ export interface BaseConfig {
   flipVertical?: boolean,
   flipHorizontal?: boolean,
   points: any[],
+  /**
+   * @desc 是否是自定义图形
+   * 默认的图形，都是固定的渲染方式
+   * 当进行过编辑之后，就需要根据点来渲染
+   * */
   isCustom: boolean,
-  topLeft: P,
-  topRight: P,
-  bottomLeft: P,
-  bottomRight: P,
-  center: P,
+  topLeft: P,//废弃
+  topRight: P,//废弃
+  bottomLeft: P,//废弃
+  bottomRight: P,//废弃
   isVisible: boolean,//节点是否可见
   isLocked: boolean,//节点是否被锁定
   /**

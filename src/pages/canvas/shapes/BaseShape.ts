@@ -36,7 +36,7 @@ export abstract class BaseShape {
 
   constructor(props: ShapeProps) {
     // console.log('props', clone(props))
-    this.config = helper.getPath(props.conf, null, props.parent)
+    this.config = helper.getPath(props.conf, undefined, props.parent)
     this.original = cloneDeep(this.config)
     // console.log('config', clone(this.config))
     this.children = this.config.children.map((conf: BaseConfig) => {
@@ -102,7 +102,7 @@ export abstract class BaseShape {
     // ctx.fillText(rect.name, x, y - 18);
     // ctx.restore()
 
-    // this.config = helper.getPath(this.config, null, parent)
+    this.config = helper.getPath(this.config, undefined, parent)
     for (let i = 0; i < this.children.length; i++) {
       let shape = this.children[i]
       shape.shapeRender(ctx, this.config)

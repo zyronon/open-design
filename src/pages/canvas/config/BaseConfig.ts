@@ -1,9 +1,16 @@
 //属性参考：https://developers.mastergo.com/apis/node-frame.html
 import {P, P2, ShapeType} from "../utils/type"
 
-export interface BaseConfig {
-  id: number | string,
-  name?: number | string,
+interface Layout {
+  absoluteTransform: Transform//图层节点相对于包含它的页面的位置，以变换矩阵的方式呈现。
+  relativeTransform: Transform//图层节点相对于它的父级节点的位置，作为变换矩阵呈现。
+  x: number,//图层节点的位置，等价于 relativeTransform[0][2]。
+  y: number,//图层节点的位置，等价于 relativeTransform[1][2]。
+  bound: Rect//图层节点的 rect。
+  /** @desc 图层节点的旋转角度.值域为 [-180, 180]。
+   * 其值等价于：Math.atan2(-relativeTransform[1][0], relativeTransform[0][0])
+   * */
+  rotation: number,
   w: number,
   h: number,
   percent: P,//相对于父级的百分比坐标
@@ -19,39 +26,19 @@ export interface BaseConfig {
     rightX: number,
     bottomY: number,
   }
-  rx: number,//废弃
-  ry: number,//废弃
   leftX: number,//废弃
   topY: number,//废弃
   rightX: number,//废弃
   bottomY: number,//废弃
-  centerX: number,//废弃
-  centerY: number,//废弃
   rotate: number,
-  lineWidth: number,
-  type: ShapeType,
-  fillColor: string,
-  borderColor: string,
   radius: number,
-  children: any[],
-  flipVertical?: boolean,
-  flipHorizontal?: boolean,
-  points: any[],
-  /**
-   * @desc 是否是自定义图形
-   * 默认的图形，都是固定的渲染方式
-   * 当进行过编辑之后，就需要根据点来渲染
-   * */
-  isCustom: boolean,
   topLeft: P,//废弃
   topRight: P,//废弃
   bottomLeft: P,//废弃
   bottomRight: P,//废弃
-  isVisible: boolean,//节点是否可见
-  isLocked: boolean,//节点是否被锁定
-  /**
-   * @desc Geometry-related properties
-   * */
+}
+
+interface Geometry {
   fills: any[]//图层的填充。
   strokes: any[]//图层的描边。
   /** @desc 描边类型。
@@ -91,6 +78,29 @@ export interface BaseConfig {
   strokeJoin: 'MITER' | 'BEVEL' | 'ROUND'
   strokeDashes: [number, number]//包含数字的数组。数组偶数下标元素代表虚线的长度，奇数下标元素代表虚线的间距。
   dashCap: 'NONE' | 'ROUND' | 'SQUARE' //虚线端点装饰。
+}
+
+export interface BaseConfig extends Layout, Geometry {
+  id: number | string,
+  name?: number | string,
+  lineWidth: number,
+  type: ShapeType,
+  fillColor: string,
+  borderColor: string,
+  children: any[],
+  flipVertical?: boolean,
+  flipHorizontal?: boolean,
+  points: any[],
+  /**
+   * @desc 是否是自定义图形
+   * 默认的图形，都是固定的渲染方式
+   * 当进行过编辑之后，就需要根据点来渲染
+   * */
+  isCustom: boolean,
+
+  isVisible: boolean,//节点是否可见
+  isLocked: boolean,//节点是否被锁定
+
   /**
    *  @desc Corner-related properties
    * */
@@ -107,20 +117,6 @@ export interface BaseConfig {
   blendMode: number//图层的混合模式。
   isMask: boolean//图层是否是蒙版。
   effects: any[]//返回一个特效数组，具体数据结构可以查看 Effect。
-  /**
-   * @desc Layout-related properties
-   * */
-  absoluteTransform: Transform//图层节点相对于包含它的页面的位置，以变换矩阵的方式呈现。
-  relativeTransform: Transform//图层节点相对于它的父级节点的位置，作为变换矩阵呈现。
-  x: number,//图层节点的位置，等价于 relativeTransform[0][2]。
-  y: number,//图层节点的位置，等价于 relativeTransform[1][2]。
-  bound: Rect//图层节点的 rect。
-  /** @desc 图层节点的旋转角度.值域为 [-180, 180]。
-   * 其值等价于：Math.atan2(-relativeTransform[1][0], relativeTransform[0][0])
-   * */
-  rotation: number,
-  width: number,
-  height: number
 }
 
 interface Rect {

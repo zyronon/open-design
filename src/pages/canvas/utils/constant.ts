@@ -890,13 +890,11 @@ export const r = [
 export const rects: any[] = [
   {
     "name": "容器",
-    "x": 486,
-    "y": 72,
-    "abX": 0,
-    "abY": 0,
-    "w": 412,
-    "h": 444,
-    "rotate": 0,
+    "x": 500,
+    "y": 70,
+    "w": 400,
+    "h": 350,
+    "rotate": 10,
     "lineWidth": 2,
     "type": ShapeType.FRAME,
     "color": "gray",
@@ -905,8 +903,6 @@ export const rects: any[] = [
       {
         "x": 10,
         "y": 10,
-        "rx": 10,
-        "ry": 10,
         "w": 100,
         "h": 150,
         "rotate": 0,
@@ -927,8 +923,6 @@ export const rects: any[] = [
         "rightX": 1523.9908970134784,
         "topY": 107.21652274196168,
         "bottomY": 257.2165227419617,
-        "centerX": 627.5999999999999,
-        "centerY": 314.79999999999995,
         "points": [],
         "center": {
           "x": 1460.3213365307136,
@@ -964,7 +958,6 @@ export const rects: any[] = [
     "rightX": 898,
     "topY": 72,
     "bottomY": 516,
-    "id": "cdd7c9a6-87f3-4a75-96a8-cff6e7c368e1",
     "topLeft": {
       "x": 356,
       "y": 71

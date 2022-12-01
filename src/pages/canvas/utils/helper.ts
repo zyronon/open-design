@@ -12,82 +12,45 @@ export default {
   getReversePoint(val: number, centerVal: number) {
     return centerVal + Math.abs(val - centerVal) * (val < centerVal ? 1 : -1)
   },
-  getPath(rect: BaseConfig, old?: any, parent?: BaseConfig) {
+  getPath(conf: BaseConfig, old?: BaseConfig, pConf?: BaseConfig) {
     // console.log('getPath')
     //根据老的config，计算出最新的rx,ry
-    if (old) {
-      // debugger
-      rect.rx = old.rx - (old.x - rect.x)
-      rect.ry = old.ry - (old.y - rect.y)
-    }
-    //根据父级，计算出自己的x,y
-    if (parent) {
-      // rect.x = rect.rx + parent.x
-      // rect.y = rect.ry + parent.y
-    }
-
     let {
       x, y, w, h, rotate,
       center, flipHorizontal, flipVertical
-    } = rect
-    let isFirst = !rect.id
+    } = conf
+    if (old) {
+      // debugger
+      // conf.rx = old.rx - (old.x - conf.x)
+      // conf.ry = old.ry - (old.y - conf.y)
+    }
+    //根据父级，计算出自己的绝对值x,y
+    if (pConf) {
+      conf.absolute = {x: x + pConf.absolute.x, y: y + pConf.absolute.y,}
+      conf.percent = {
+        x: x / pConf.w,
+        y: y / pConf.h,
+      }
+    } else {
+      conf.percent = {
+        x: 0,
+        y: 0,
+      }
+      conf.absolute = {x, y,}
+    }
+
+    const {x: ax, y: ay} = conf.absolute
+    conf.center = {
+      x: ax + (w / 2),
+      y: ay + (h / 2)
+    }
+    conf.leftX = conf.center.x - w / 2
+    conf.rightX = conf.center.x + w / 2
+    conf.topY = conf.center.y - h / 2
+    conf.bottomY = conf.center.y + h / 2
+    let isFirst = !conf.id
     if (isFirst) {
-      rect.center = {
-        x: x + (w / 2),
-        y: y + (h / 2)
-      }
-      rect.leftX = rect.center.x - w / 2
-      rect.rightX = rect.center.x + w / 2
-      rect.topY = rect.center.y - h / 2
-      rect.bottomY = rect.center.y + h / 2
-
-      rect.id = uuid()
-
-      rect.topLeft = {
-        x,
-        y
-      }
-      rect.topRight = {
-        x: x + w,
-        y: y
-      }
-      rect.bottomLeft = {
-        x: x,
-        y: y + h
-      }
-      rect.bottomRight = {
-        x: x + w,
-        y: y + h
-      }
-      if (rotate) {
-        rect.topLeft = getRotatedPoint(rect.topLeft, rect.center, rotate)
-        rect.x = rect.topLeft.x
-        rect.y = rect.topLeft.y
-        rect.topRight = getRotatedPoint(rect.topRight, rect.center, rotate)
-        rect.bottomLeft = getRotatedPoint(rect.bottomLeft, rect.center, rotate)
-        rect.bottomRight = getRotatedPoint(rect.bottomRight, rect.center, rotate)
-
-        let xs = [
-          rect.topLeft.x,
-          rect.topRight.x,
-          rect.bottomLeft.x,
-          rect.bottomRight.x,
-        ]
-        let ys = [
-          rect.topLeft.y,
-          rect.topRight.y,
-          rect.bottomLeft.y,
-          rect.bottomRight.y,
-        ]
-        let maxX = Math.max(...xs)
-        let minX = Math.min(...xs)
-        let maxY = Math.max(...ys)
-        let minY = Math.min(...ys)
-        rect.center = {
-          x: minX + (maxX - minX) / 2,
-          y: minY + (maxY - minY) / 2
-        }
-      }
+      conf.id = uuid()
     } else {
       // if (flipHorizontal) {
       //   x = getReversePoint(x, center.x)
@@ -105,15 +68,54 @@ export default {
       // }
       // let reverseXy = getRotatedPoint({x, y}, center, -r)
       //
-
-      rect.leftX = rect.center.x - w / 2
-      rect.rightX = rect.center.x + w / 2
-      rect.topY = rect.center.y - h / 2
-      rect.bottomY = rect.center.y + h / 2
     }
+    conf.topLeft = {
+      x: ax,
+      y: ay
+    }
+    conf.topRight = {
+      x: ax + w,
+      y: ay
+    }
+    conf.bottomLeft = {
+      x: ax,
+      y: ay + h
+    }
+    conf.bottomRight = {
+      x: ax + w,
+      y: ay + h
+    }
+    if (rotate) {
+      conf.topLeft = getRotatedPoint(conf.topLeft, conf.center, rotate)
+      conf.absolute = conf.topLeft
+      conf.x = x + (conf.absolute.x - ax)
+      conf.y = y + (conf.absolute.y - ay)
+      conf.topRight = getRotatedPoint(conf.topRight, conf.center, rotate)
+      conf.bottomLeft = getRotatedPoint(conf.bottomLeft, conf.center, rotate)
+      conf.bottomRight = getRotatedPoint(conf.bottomRight, conf.center, rotate)
 
-
-    return rect
+      let xs = [
+        conf.topLeft.x,
+        conf.topRight.x,
+        conf.bottomLeft.x,
+        conf.bottomRight.x,
+      ]
+      let ys = [
+        conf.topLeft.y,
+        conf.topRight.y,
+        conf.bottomLeft.y,
+        conf.bottomRight.y,
+      ]
+      let maxX = Math.max(...xs)
+      let minX = Math.min(...xs)
+      let maxY = Math.max(...ys)
+      let minY = Math.min(...ys)
+      conf.center = {
+        x: minX + (maxX - minX) / 2,
+        y: minY + (maxY - minY) / 2
+      }
+    }
+    return conf
   },
 
   /**

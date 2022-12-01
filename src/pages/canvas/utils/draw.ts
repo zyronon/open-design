@@ -299,7 +299,7 @@ export default {
    * */
   calcPosition(
     ctx: CanvasRenderingContext2D,
-    config: BaseConfig,
+    conf: BaseConfig,
     original: any,
     status: any,
     parent?: BaseConfig) {
@@ -310,14 +310,11 @@ export default {
       type, flipVertical, flipHorizontal, children,
       center,
       topLeft,
-      rx, ry
     }
-      = config
+      = conf
     if (parent) {
       x += parent.x
       y += parent.y
-      // center.x += parent.x
-      // center.y += parent.y
     }
 // console.log('type,', type)
     ctx.lineWidth = lineWidth

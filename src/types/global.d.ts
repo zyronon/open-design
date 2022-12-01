@@ -13,6 +13,8 @@ declare global {
     moveTo2(cp1: P | P2): void
 
     lineTo2(cp1: P | P2): void
+
+    translate2(p: P): void
   }
 
   interface Math {
@@ -32,6 +34,9 @@ let Context2D: CanvasRenderingContext2D = {
   },
   lineTo2: function (cp1) {
     this.lineTo(cp1.x, cp1.y)
+  },
+  translate2: function (p) {
+    this.translate(p.x, p.y)
   }
 }
 

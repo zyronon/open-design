@@ -1,4 +1,4 @@
-import { FontWeight, ShapeType} from "./type"
+import {FontWeight, ShapeType} from "./type"
 import {FontFamily} from "../config/TextConfig"
 
 export const fontFamilies = [
@@ -890,22 +890,22 @@ export const r = [
 export const rects: any[] = [
   {
     "name": "容器",
-    "x": 500,
-    "y": 70,
-    "w": 400,
-    "h": 350,
-    "rotate": 10,
+    "x": 100,
+    "y": 100,
+    "w": 200,
+    "h": 200,
+    "rotate": 45,
     "lineWidth": 2,
     "type": ShapeType.FRAME,
     "color": "gray",
     "radius": 0,
     "children": [
       {
-        "x": 10,
-        "y": 10,
+        "x": 0,
+        "y": 0,
         "w": 100,
-        "h": 150,
-        "rotate": 0,
+        "h": 100,
+        "rotate": 45,
         "lineWidth": 2,
         "type": ShapeType.RECTANGLE,
         "color": "gray",

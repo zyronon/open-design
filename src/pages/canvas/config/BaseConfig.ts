@@ -15,6 +15,7 @@ interface Layout {
   h: number,
   percent: P,//相对于父级的百分比坐标
   absolute: P,//坐标绝对值
+  original: P,//坐标未翻转、旋转的值
   center: P,//中心点坐标
   box: {
     topLeft: P,

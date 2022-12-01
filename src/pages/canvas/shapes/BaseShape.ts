@@ -102,7 +102,7 @@ export abstract class BaseShape {
     // ctx.fillText(rect.name, x, y - 18);
     // ctx.restore()
 
-    this.config = helper.getPath(this.config, undefined, parent)
+    // this.config = helper.getPath(this.config, undefined, parent)
     for (let i = 0; i < this.children.length; i++) {
       let shape = this.children[i]
       shape.shapeRender(ctx, this.config)

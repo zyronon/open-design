@@ -2,6 +2,7 @@ import {BaseConfig} from "../config/BaseConfig"
 import {getRotatedPoint} from "../../../utils"
 // @ts-ignore
 import {v4 as uuid} from 'uuid'
+import {clone} from "lodash"
 
 export default {
   /**
@@ -24,33 +25,78 @@ export default {
       // conf.rx = old.rx - (old.x - conf.x)
       // conf.ry = old.ry - (old.y - conf.y)
     }
-    //根据父级，计算出自己的绝对值x,y
-    if (pConf) {
-      conf.absolute = {x: x + pConf.absolute.x, y: y + pConf.absolute.y,}
-      conf.percent = {
-        x: x / pConf.w,
-        y: y / pConf.h,
-      }
-    } else {
-      conf.percent = {
-        x: 0,
-        y: 0,
-      }
-      conf.absolute = {x, y,}
-    }
 
-    const {x: ax, y: ay} = conf.absolute
-    conf.center = {
-      x: ax + (w / 2),
-      y: ay + (h / 2)
-    }
-    conf.leftX = conf.center.x - w / 2
-    conf.rightX = conf.center.x + w / 2
-    conf.topY = conf.center.y - h / 2
-    conf.bottomY = conf.center.y + h / 2
     let isFirst = !conf.id
     if (isFirst) {
+      //根据父级，计算出自己的绝对值x,y
+      if (pConf) {
+        conf.percent = {x: x / pConf.w, y: y / pConf.h,}
+        conf.absolute = {x: x + pConf.original.x, y: y + pConf.original.y,}
+        conf.original = clone(conf.absolute)
+      } else {
+        conf.percent = {x: 0, y: 0,}
+        conf.absolute = {x, y,}
+        conf.original = clone(conf.absolute)
+      }
+      const {x: ax, y: ay} = conf.absolute
+      conf.center = {
+        x: ax + (w / 2),
+        y: ay + (h / 2)
+      }
       conf.id = uuid()
+      conf.topLeft = {
+        x: ax,
+        y: ay
+      }
+      conf.topRight = {
+        x: ax + w,
+        y: ay
+      }
+      conf.bottomLeft = {
+        x: ax,
+        y: ay + h
+      }
+      conf.bottomRight = {
+        x: ax + w,
+        y: ay + h
+      }
+      if (rotate) {
+        conf.topLeft = getRotatedPoint(conf.absolute, conf.center, rotate)
+        conf.absolute = conf.topLeft
+        conf.x = x + (conf.absolute.x - ax)
+        conf.y = y + (conf.absolute.y - ay)
+        /**
+         *如果父组件旋转了,那么子组件的ab值也要旋转
+        * */
+        if (pConf?.rotate) {
+          conf.topLeft = getRotatedPoint(conf.absolute, pConf.center, pConf.rotate)
+          conf.absolute = conf.topLeft
+        }
+        conf.topRight = getRotatedPoint(conf.topRight, conf.center, rotate)
+        conf.bottomLeft = getRotatedPoint(conf.bottomLeft, conf.center, rotate)
+        conf.bottomRight = getRotatedPoint(conf.bottomRight, conf.center, rotate)
+
+        let xs = [
+          conf.topLeft.x,
+          conf.topRight.x,
+          conf.bottomLeft.x,
+          conf.bottomRight.x,
+        ]
+        let ys = [
+          conf.topLeft.y,
+          conf.topRight.y,
+          conf.bottomLeft.y,
+          conf.bottomRight.y,
+        ]
+        let maxX = Math.max(...xs)
+        let minX = Math.min(...xs)
+        let maxY = Math.max(...ys)
+        let minY = Math.min(...ys)
+        conf.center = {
+          x: minX + (maxX - minX) / 2,
+          y: minY + (maxY - minY) / 2
+        }
+      }
     } else {
       // if (flipHorizontal) {
       //   x = getReversePoint(x, center.x)
@@ -69,52 +115,10 @@ export default {
       // let reverseXy = getRotatedPoint({x, y}, center, -r)
       //
     }
-    conf.topLeft = {
-      x: ax,
-      y: ay
-    }
-    conf.topRight = {
-      x: ax + w,
-      y: ay
-    }
-    conf.bottomLeft = {
-      x: ax,
-      y: ay + h
-    }
-    conf.bottomRight = {
-      x: ax + w,
-      y: ay + h
-    }
-    if (rotate) {
-      conf.topLeft = getRotatedPoint(conf.topLeft, conf.center, rotate)
-      conf.absolute = conf.topLeft
-      conf.x = x + (conf.absolute.x - ax)
-      conf.y = y + (conf.absolute.y - ay)
-      conf.topRight = getRotatedPoint(conf.topRight, conf.center, rotate)
-      conf.bottomLeft = getRotatedPoint(conf.bottomLeft, conf.center, rotate)
-      conf.bottomRight = getRotatedPoint(conf.bottomRight, conf.center, rotate)
-
-      let xs = [
-        conf.topLeft.x,
-        conf.topRight.x,
-        conf.bottomLeft.x,
-        conf.bottomRight.x,
-      ]
-      let ys = [
-        conf.topLeft.y,
-        conf.topRight.y,
-        conf.bottomLeft.y,
-        conf.bottomRight.y,
-      ]
-      let maxX = Math.max(...xs)
-      let minX = Math.min(...xs)
-      let maxY = Math.max(...ys)
-      let minY = Math.min(...ys)
-      conf.center = {
-        x: minX + (maxX - minX) / 2,
-        y: minY + (maxY - minY) / 2
-      }
-    }
+    conf.leftX = conf.center.x - w / 2
+    conf.rightX = conf.center.x + w / 2
+    conf.topY = conf.center.y - h / 2
+    conf.bottomY = conf.center.y + h / 2
     return conf
   },
 

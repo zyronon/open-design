@@ -18,10 +18,6 @@ interface Layout {
   original: P,//坐标未翻转、旋转的值
   center: P,//中心点坐标
   box: {
-    topLeft: P,
-    topRight: P,
-    bottomLeft: P,
-    bottomRight: P,
     leftX: number,
     topY: number,
     rightX: number,

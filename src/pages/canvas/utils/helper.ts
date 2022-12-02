@@ -26,8 +26,8 @@ export default {
       // conf.ry = old.ry - (old.y - conf.y)
     }
 
-    let isFirst = !conf.id
-    if (isFirst) {
+    if (!conf.id) {
+      conf.id = uuid()
       //根据父级，计算出自己的绝对值x,y
       if (pConf) {
         conf.percent = {x: x / pConf.w, y: y / pConf.h,}
@@ -43,7 +43,6 @@ export default {
         x: ax + (w / 2),
         y: ay + (h / 2)
       }
-      conf.id = uuid()
       conf.topLeft = {
         x: ax,
         y: ay
@@ -62,63 +61,53 @@ export default {
       }
       if (rotate) {
         conf.topLeft = getRotatedPoint(conf.absolute, conf.center, rotate)
-        conf.absolute = conf.topLeft
-        conf.x = x + (conf.absolute.x - ax)
-        conf.y = y + (conf.absolute.y - ay)
-        /**
-         *如果父组件旋转了,那么子组件的ab值也要旋转
-        * */
-        if (pConf?.rotate) {
-          conf.topLeft = getRotatedPoint(conf.absolute, pConf.center, pConf.rotate)
-          conf.absolute = conf.topLeft
-        }
         conf.topRight = getRotatedPoint(conf.topRight, conf.center, rotate)
         conf.bottomLeft = getRotatedPoint(conf.bottomLeft, conf.center, rotate)
         conf.bottomRight = getRotatedPoint(conf.bottomRight, conf.center, rotate)
-
-        let xs = [
-          conf.topLeft.x,
-          conf.topRight.x,
-          conf.bottomLeft.x,
-          conf.bottomRight.x,
-        ]
-        let ys = [
-          conf.topLeft.y,
-          conf.topRight.y,
-          conf.bottomLeft.y,
-          conf.bottomRight.y,
-        ]
-        let maxX = Math.max(...xs)
-        let minX = Math.min(...xs)
-        let maxY = Math.max(...ys)
-        let minY = Math.min(...ys)
-        conf.center = {
-          x: minX + (maxX - minX) / 2,
-          y: minY + (maxY - minY) / 2
-        }
+        conf.absolute = conf.topLeft
+        conf.x = x + (conf.absolute.x - ax)
+        conf.y = y + (conf.absolute.y - ay)
       }
-    } else {
-      // if (flipHorizontal) {
-      //   x = getReversePoint(x, center.x)
-      // }
-      // if (flipVertical) {
-      //   y = getReversePoint(y, center.y)
-      // }
-      // let r = rotate
-      // if (flipHorizontal && flipVertical) {
-      //   r = (180 + rotate)
-      // } else {
-      //   if (flipHorizontal) {
-      //     r = (rotate - 180)
-      //   }
-      // }
-      // let reverseXy = getRotatedPoint({x, y}, center, -r)
-      //
+
+      /**
+       *如果父组件旋转了,那么子组件的ab值也要旋转
+       * */
+      if (pConf?.rotate) {
+        conf.topLeft = getRotatedPoint(conf.topLeft, pConf.center, pConf.rotate)
+        conf.topRight = getRotatedPoint(conf.topRight, pConf.center, pConf.rotate)
+        conf.bottomLeft = getRotatedPoint(conf.bottomLeft, pConf.center, pConf.rotate)
+        conf.bottomRight = getRotatedPoint(conf.bottomRight, pConf.center, pConf.rotate)
+        conf.absolute = conf.topLeft
+      }
+
+      let xs = [
+        conf.topLeft.x,
+        conf.topRight.x,
+        conf.bottomLeft.x,
+        conf.bottomRight.x,
+      ]
+      let ys = [
+        conf.topLeft.y,
+        conf.topRight.y,
+        conf.bottomLeft.y,
+        conf.bottomRight.y,
+      ]
+      let maxX = Math.max(...xs)
+      let minX = Math.min(...xs)
+      let maxY = Math.max(...ys)
+      let minY = Math.min(...ys)
+      conf.center = {
+        x: minX + (maxX - minX) / 2,
+        y: minY + (maxY - minY) / 2
+      }
+
+      conf.box = {
+        leftX: conf.center.x - w / 2,
+        rightX: conf.center.x + w / 2,
+        topY: conf.center.y - h / 2,
+        bottomY: conf.center.y + h / 2,
+      }
     }
-    conf.leftX = conf.center.x - w / 2
-    conf.rightX = conf.center.x + w / 2
-    conf.topY = conf.center.y - h / 2
-    conf.bottomY = conf.center.y + h / 2
     return conf
   },
 

@@ -12,7 +12,7 @@ export class Frame extends BaseShape {
     console.log('childDbClick')
     for (let i = 0; i < this.children.length; i++) {
       let shape = this.children[i]
-      let isBreak = shape.event(event, p?.concat([this]),true)
+      let isBreak = shape.event(event, p?.concat([this]), true)
       if (isBreak) break
     }
     return true
@@ -63,6 +63,8 @@ export class Frame extends BaseShape {
       ctx.fill()
       ctx.strokeStyle = borderColor
       ctx.stroke()
+
+
     }
   }
 

@@ -1,4 +1,4 @@
-import {BaseEvent2, P, ShapeProps} from "../utils/type"
+import {BaseEvent2, P, ShapeProps, ShapeType} from "../utils/type"
 import CanvasUtil2 from "../CanvasUtil2"
 import {cloneDeep} from "lodash"
 import getCenterPoint, {getAngle2, getRotatedPoint} from "../../../utils"
@@ -93,7 +93,11 @@ export abstract class BaseShape {
     }
 
     ctx.restore()
-
+    draw.drawRound(ctx, this.config.topLeft)
+    draw.drawRound(ctx, this.config.topRight)
+    draw.drawRound(ctx, this.config.bottomLeft)
+    draw.drawRound(ctx, this.config.bottomRight)
+    draw.drawRound(ctx, this.config.center)
     // ctx.save()
     // let rect = this.config
     // ctx.fillStyle = 'gray'
@@ -136,11 +140,11 @@ export abstract class BaseShape {
   isInBox(mousePoint: P): boolean {
     const {x, y} = mousePoint
     let rect = this.config
-    return rect.leftX < x && x < rect.rightX
-      && rect.topY < y && y < rect.bottomY
+    return rect.box.leftX < x && x < rect.box.rightX
+      && rect.box.topY < y && y < rect.box.bottomY
   }
 
-  shapeIsIn(mousePoint: P, cu: CanvasUtil2): boolean {
+  shapeIsIn(mousePoint: P, cu: CanvasUtil2, parent?: BaseShape): boolean {
     //如果操作中，那么永远返回ture，保持事件一直直接传递到当前图形上
     if (this.enter ||
       this.enterL ||
@@ -170,6 +174,10 @@ export abstract class BaseShape {
      * 翻转之后的角度与正常图形的角度并不匹配，但是不知道为什么masterGo和figma都是这样子设计的
      * 所以这里只需要负角度旋转回默认点就行了
      * */
+
+      if (parent?.config.rotate) {
+        r += parent?.config.rotate
+      }
       let s2 = getRotatedPoint({x, y}, center, -r)
       x = s2.x
       y = s2.y
@@ -263,12 +271,13 @@ export abstract class BaseShape {
     if (event.capture) return true
 
     let cu = CanvasUtil2.getInstance()
-    if (this.shapeIsIn(point, cu)) {
+    if (this.shapeIsIn(point, cu, parent?.[parent?.length - 1])) {
       // console.log('in')
       // return true
 
       // console.log('捕获', this.config.name)
-      if (!this.isCapture || !cu.isDesign()) {
+      // if ((!this.isCapture || !cu.isDesign())) {
+      if (true) {
         for (let i = 0; i < this.children.length; i++) {
           let shape = this.children[i]
           let isBreak = shape.event(event, parent?.concat([this]))
@@ -284,7 +293,9 @@ export abstract class BaseShape {
         //手动重置一个enter，不然会跟手
         this.mouseup(event, parent)
       } else {
-        this.emit(event, parent)
+        if (this.config.type !== ShapeType.FRAME) {
+          this.emit(event, parent)
+        }
       }
       event.stopPropagation()
 

@@ -974,8 +974,6 @@ export const rects: any[] = [
       "x": 356,
       "y": 71
     },
-    "rx": null,
-    "ry": null
   }
 ]
 

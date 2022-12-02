@@ -27,7 +27,6 @@ export default {
       // x += parent.x
       // y += parent.y
     }
-    console.log('rotate,', rotate)
     ctx.lineWidth = lineWidth
     ctx.fillStyle = fillColor
     ctx.strokeStyle = borderColor

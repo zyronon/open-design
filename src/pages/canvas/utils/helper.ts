@@ -110,6 +110,48 @@ export default {
     }
     return conf
   },
+  calcPath(conf: BaseConfig, rotate = conf.rotate, pConf?: BaseConfig) {
+    let {
+      x, y, w, h,
+      center, flipHorizontal, flipVertical
+    } = conf
+    conf.box = {
+      leftX: center.x - w / 2,
+      rightX: center.x + w / 2,
+      topY: center.y - h / 2,
+      bottomY: center.y + h / 2,
+    }
+
+    // conf.absolute = {x, y}
+    let reverseXy = getRotatedPoint(conf.absolute, center, -rotate)
+    const {x: ax, y: ay} = reverseXy
+    conf.topLeft = {
+      x: ax,
+      y: ay
+    }
+    conf.topRight = {
+      x: ax + w,
+      y: ay
+    }
+    conf.bottomLeft = {
+      x: ax,
+      y: ay + h
+    }
+    conf.bottomRight = {
+      x: ax + w,
+      y: ay + h
+    }
+    if (rotate) {
+      conf.topLeft = getRotatedPoint(conf.topLeft, center, rotate)
+      conf.topRight = getRotatedPoint(conf.topRight, center, rotate)
+      conf.bottomLeft = getRotatedPoint(conf.bottomLeft, center, rotate)
+      conf.bottomRight = getRotatedPoint(conf.bottomRight, center, rotate)
+      // conf.absolute = conf.topLeft
+      // conf.x = x + (conf.absolute.x - ax)
+      // conf.y = y + (conf.absolute.y - ay)
+    }
+    return conf
+  },
 
   /**
    * @description 根据长度（即T）获取对应的点

@@ -33,11 +33,11 @@ export class Star extends BaseShape {
   }
 
   get _config() {
-    return this.config
+    return this.conf
   }
 
   set _config(val) {
-    this.config = val
+    this.conf = val
   }
 
   renderHover(ctx: CanvasRenderingContext2D,xy: P, parent?: BaseConfig): void {}

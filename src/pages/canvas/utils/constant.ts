@@ -887,6 +887,55 @@ export const r = [
     "id": "e378e9bc-080a-46ab-b184-ce86647aca9e"
   }
 ]
+const children = [
+  {
+    "x": 0,
+    "y": 0,
+    "w": 100,
+    "h": 100,
+    "rotate": 15,
+    "lineWidth": 2,
+    "type": ShapeType.RECTANGLE,
+    "color": "gray",
+    "radius": 0,
+    "children": [],
+    "brokenTexts": [],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "rgb(216,216,216)",
+    "fontSize": 16,
+    "fontWeight": 500,
+    "fontFamily": "SourceHanSansCN",
+    "texts": [],
+    "name": "矩形",
+    "leftX": 1396.6517760479487,
+    "rightX": 1523.9908970134784,
+    "topY": 107.21652274196168,
+    "bottomY": 257.2165227419617,
+    "points": [],
+    "center": {
+      "x": 1460.3213365307136,
+      "y": 182.21652274196168
+    },
+    "topLeft": {
+      "x": 646.8452883969876,
+      "y": 182.99999999999997
+    },
+    "topRight": {
+      "x": 893.0472266500395,
+      "y": 226.41204441673256
+    },
+    "bottomLeft": {
+      "x": 620.7980617469481,
+      "y": 330.72116295183116
+    },
+    "bottomRight": {
+      "x": 867,
+      "y": 374.1332073685637
+    },
+    "flipHorizontal": false,
+    "flipVertical": false,
+  },
+]
 export const rects: any[] = [
   {
     "name": "容器",
@@ -894,7 +943,7 @@ export const rects: any[] = [
     "y": 100,
     "w": 200,
     "h": 200,
-    "rotate": 45,
+    "rotate": 65,
     "lineWidth": 2,
     "type": ShapeType.FRAME,
     "color": "gray",
@@ -905,7 +954,7 @@ export const rects: any[] = [
         "y": 0,
         "w": 100,
         "h": 100,
-        "rotate": 45,
+        "rotate": 15,
         "lineWidth": 2,
         "type": ShapeType.RECTANGLE,
         "color": "gray",

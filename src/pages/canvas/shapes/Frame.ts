@@ -47,7 +47,7 @@ export class Frame extends BaseShape {
       w, h, radius,
       fillColor, borderColor, rotate, lineWidth,
       type, flipVertical, flipHorizontal, children,
-    } = this.config
+    } = this.conf
     const {x, y} = p
     if (radius) {
       draw.renderRoundRect({x, y, w, h}, radius, ctx)

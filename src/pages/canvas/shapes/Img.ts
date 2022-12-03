@@ -31,11 +31,11 @@ export class Img extends BaseShape {
   }
 
   get _config(): any {
-    return this.config
+    return this.conf
   }
 
   set _config(val) {
-    this.config = val
+    this.conf = val
   }
 
   render(ctx: CanvasRenderingContext2D, p: P, parent?: BaseConfig) {

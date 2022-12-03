@@ -1,5 +1,6 @@
 import CanvasUtil2 from "../CanvasUtil2"
 import {BaseConfig} from "../config/BaseConfig"
+import {BaseShape} from "../shapes/BaseShape"
 
 export type IState = {
   canvas: HTMLCanvasElement,
@@ -90,7 +91,7 @@ export enum ShapeType {
 export interface ShapeProps {
   conf: BaseConfig,
   old?: null,
-  parent?: BaseConfig
+  parent?: BaseShape
 }
 
 export enum FontWeight {

@@ -286,18 +286,18 @@ export default class CanvasUtil2 {
       switch (this.mode) {
         case ShapeType.RECTANGLE:
           if (this.newShape) {
-            this.newShape.config.w = w
-            this.newShape.config.h = h
-            this.newShape.config.center = {
-              x: this.newShape.config.x + (w / 2),
-              y: this.newShape.config.y + (h / 2)
+            this.newShape.conf.w = w
+            this.newShape.conf.h = h
+            this.newShape.conf.center = {
+              x: this.newShape.conf.x + (w / 2),
+              y: this.newShape.conf.y + (h / 2)
             }
             //太小了select都看不见
             if (w > 10) {
               this.newShape.isSelect = true
             }
             // EventBus.emit(EventMapTypes.onMouseMove, this.newShape)
-            this.newShape.config = helper.getPath(this.newShape.config)
+            this.newShape.conf = helper.getPath(this.newShape.conf)
             this.render()
           } else {
             let x = this.startX

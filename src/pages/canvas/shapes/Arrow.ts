@@ -34,11 +34,11 @@ export class Arrow extends BaseShape {
   }
 
   get _config(): any {
-    return this.config
+    return this.conf
   }
 
   set _config(val) {
-    this.config = val
+    this.conf = val
   }
 
   render(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {

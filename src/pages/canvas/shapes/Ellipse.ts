@@ -47,11 +47,11 @@ export class Ellipse extends BaseShape {
   enterEndMouseControlPoint: boolean = false
 
   get _config(): EllipseConfig {
-    return this.config as EllipseConfig
+    return this.conf as EllipseConfig
   }
 
   set _config(val) {
-    this.config = val
+    this.conf = val
   }
 
   childDbClick(event: BaseEvent2, p: BaseShape[]): boolean {
@@ -71,7 +71,7 @@ export class Ellipse extends BaseShape {
     let cy = y
     if (this.enterEndMouseControlPoint) {
 
-      const {x, y, w, h} = this.config
+      const {x, y, w, h} = this.conf
       let w2 = w / 2, h2 = h / 2
       let ox = 0.5522848 * w2, oy = .5522848 * h2;
       let bs: any = this._config.getCps(3)
@@ -110,7 +110,7 @@ export class Ellipse extends BaseShape {
       console.log('t', t)
       if (t.length){
         // @ts-ignore
-        this.config.totalLength = 3 + t[0] ?? 0.5
+        this.conf.totalLength = 3 + t[0] ?? 0.5
         cu.render()
       }
       // let mousePoint2 = helper.getBezierPointByLength(t[0], ps)

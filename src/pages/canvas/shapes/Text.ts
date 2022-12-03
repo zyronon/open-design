@@ -34,11 +34,11 @@ export class Text extends BaseShape {
   }
 
   get _config(): TextConfig {
-    return this.config as TextConfig
+    return this.conf as TextConfig
   }
 
   set _config(val) {
-    this.config = val
+    this.conf = val
   }
   render(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {
     let {

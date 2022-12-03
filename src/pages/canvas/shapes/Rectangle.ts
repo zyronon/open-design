@@ -29,11 +29,11 @@ export class Rectangle extends BaseShape {
   }
 
   get _config(): any {
-    return this.config as any
+    return this.conf as any
   }
 
   set _config(val) {
-    this.config = val
+    this.conf = val
   }
 
   childDbClick(event: BaseEvent2, p: BaseShape[]): boolean {
@@ -236,7 +236,7 @@ export class Rectangle extends BaseShape {
         cp2: getP2(),
         type: BezierPointType.RightAngle
       })
-      this.config.points = bezierCps
+      this.conf.points = bezierCps
     }
 
     ctx.save()

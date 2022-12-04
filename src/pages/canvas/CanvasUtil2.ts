@@ -94,12 +94,12 @@ export default class CanvasUtil2 {
 
   addChildren(rects: any) {
     cloneDeep(rects).map((conf: BaseConfig) => {
-      let r = getShapeFromConfig({conf})
+      let r = getShapeFromConfig({conf, ctx: this.ctx})
       r && this.children.push(r)
     })
   }
 
-  isDesign() {
+  isDesignMode() {
     return this.mode === ShapeType.SELECT
   }
 
@@ -220,7 +220,7 @@ export default class CanvasUtil2 {
         this.capture = false
       }
     }
-    if (this.isDesign()) {
+    if (this.isDesignMode()) {
       if (this.editShape) {
         this.editShape.event(event, [])
       } else {
@@ -270,7 +270,7 @@ export default class CanvasUtil2 {
       this.selectedShape.isEdit = this.selectedShape.isSelect = false
       this.render()
     }
-    if (!this.isDesign()) {
+    if (!this.isDesignMode()) {
       this.startX = p.x
       this.startY = p.y
       this.isMouseDown = true

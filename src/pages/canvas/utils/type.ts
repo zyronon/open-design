@@ -56,7 +56,7 @@ export type IState = {
   drawType5: ShapeType,
   drawType6: ShapeType,
 
-  selectShape: any
+  selectShape?: BaseShape
 }
 
 
@@ -90,8 +90,8 @@ export enum ShapeType {
 
 export interface ShapeProps {
   conf: BaseConfig,
-  old?: null,
-  parent?: BaseShape
+  parent?: BaseShape,
+  ctx: any
 }
 
 export enum FontWeight {

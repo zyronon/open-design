@@ -13,21 +13,113 @@ export default {
   getReversePoint(val: number, centerVal: number) {
     return centerVal + Math.abs(val - centerVal) * (val < centerVal ? 1 : -1)
   },
-  getPath(conf: BaseConfig, old?: BaseConfig, pConf?: BaseConfig) {
+  getPath(conf: BaseConfig, ctx?: any, pConf?: BaseConfig) {
     // console.log('getPath')
     //根据老的config，计算出最新的rx,ry
     let {
       x, y, w, h, rotate,
       center, flipHorizontal, flipVertical
     } = conf
-    if (old) {
-      // debugger
-      // conf.rx = old.rx - (old.x - conf.x)
-      // conf.ry = old.ry - (old.y - conf.y)
-    }
 
     if (!conf.id) {
       conf.id = uuid()
+
+      //根据父级，计算出自己的绝对值x,y
+      if (pConf) {
+        conf.percent = {x: x / pConf.w, y: y / pConf.h,}
+        conf.absolute = {x: x + pConf.original.x, y: y + pConf.original.y,}
+        conf.original = clone(conf.absolute)
+      } else {
+        conf.percent = {x: 0, y: 0,}
+        conf.absolute = {x, y,}
+        conf.original = clone(conf.absolute)
+      }
+      const {x: ax, y: ay} = conf.absolute
+      conf.center = {
+        x: ax + (w / 2),
+        y: ay + (h / 2)
+      }
+      conf.topLeft = {
+        x: ax,
+        y: ay
+      }
+      conf.topRight = {
+        x: ax + w,
+        y: ay
+      }
+      conf.bottomLeft = {
+        x: ax,
+        y: ay + h
+      }
+      conf.bottomRight = {
+        x: ax + w,
+        y: ay + h
+      }
+      if (rotate) {
+        conf.topLeft = getRotatedPoint(conf.absolute, conf.center, rotate)
+        conf.topRight = getRotatedPoint(conf.topRight, conf.center, rotate)
+        conf.bottomLeft = getRotatedPoint(conf.bottomLeft, conf.center, rotate)
+        conf.bottomRight = getRotatedPoint(conf.bottomRight, conf.center, rotate)
+        conf.absolute = conf.topLeft
+        conf.x = x + (conf.absolute.x - ax)
+        conf.y = y + (conf.absolute.y - ay)
+      }
+
+      /**
+       *如果父组件旋转了,那么子组件的ab值也要旋转
+       * */
+      if (pConf?.rotate) {
+        conf.topLeft = getRotatedPoint(conf.topLeft, pConf.center, pConf.rotate)
+        conf.topRight = getRotatedPoint(conf.topRight, pConf.center, pConf.rotate)
+        conf.bottomLeft = getRotatedPoint(conf.bottomLeft, pConf.center, pConf.rotate)
+        conf.bottomRight = getRotatedPoint(conf.bottomRight, pConf.center, pConf.rotate)
+        conf.absolute = conf.topLeft
+      }
+
+      let xs = [
+        conf.topLeft.x,
+        conf.topRight.x,
+        conf.bottomLeft.x,
+        conf.bottomRight.x,
+      ]
+      let ys = [
+        conf.topLeft.y,
+        conf.topRight.y,
+        conf.bottomLeft.y,
+        conf.bottomRight.y,
+      ]
+      let maxX = Math.max(...xs)
+      let minX = Math.min(...xs)
+      let maxY = Math.max(...ys)
+      let minY = Math.min(...ys)
+      conf.center = {
+        x: minX + (maxX - minX) / 2,
+        y: minY + (maxY - minY) / 2
+      }
+
+      conf.box = {
+        leftX: conf.center.x - w / 2,
+        rightX: conf.center.x + w / 2,
+        topY: conf.center.y - h / 2,
+        bottomY: conf.center.y + h / 2,
+      }
+    }
+    return conf
+  },
+  initConf(conf: BaseConfig, ctx: CanvasRenderingContext2D, pConf?: BaseConfig) {
+    // console.log('getPath')
+    //根据老的config，计算出最新的rx,ry
+    let {
+      x, y, w, h, rotate,
+      center, flipHorizontal, flipVertical
+    } = conf
+
+    if (!conf.id) {
+      ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
+      let m = ctx.measureText(conf.name)
+      conf.nameWidth = m.width
+      conf.id = uuid()
+
       //根据父级，计算出自己的绝对值x,y
       if (pConf) {
         conf.percent = {x: x / pConf.w, y: y / pConf.h,}
@@ -115,6 +207,9 @@ export default {
       x, y, w, h,
       center, flipHorizontal, flipVertical
     } = conf
+
+    //todo 计算original
+
     conf.box = {
       leftX: center.x - w / 2,
       rightX: center.x + w / 2,

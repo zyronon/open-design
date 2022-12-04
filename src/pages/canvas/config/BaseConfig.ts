@@ -79,7 +79,8 @@ interface Geometry {
 
 export interface BaseConfig extends Layout, Geometry {
   id: number | string,
-  name?: number | string,
+  name: string,
+  nameWidth: number,
   lineWidth: number,
   type: ShapeType,
   fillColor: string,

@@ -38,8 +38,17 @@ export class Frame extends BaseShape {
     return false
   }
 
-  isHoverIn(p: P, cu: CanvasUtil2): boolean {
-    return super.isInBox(p)
+  isHoverIn(mousePoint: P, cu: CanvasUtil2): boolean {
+    const {x, y} = mousePoint
+    let conf = this.conf
+    if (this.isSelect){
+      return super.isInBox(mousePoint)
+    }else {
+      let r = conf.original.x < x && x < conf.original.x + conf.nameWidth
+        && conf.original.y > y && y > conf.original.y - 18
+      // console.log('r', r, mousePoint, conf)
+      return r
+    }
   }
 
   render(ctx: CanvasRenderingContext2D, p: P, parent?: BaseConfig) {
@@ -47,6 +56,7 @@ export class Frame extends BaseShape {
       w, h, radius,
       fillColor, borderColor, rotate, lineWidth,
       type, flipVertical, flipHorizontal, children,
+      name
     } = this.conf
     const {x, y} = p
     if (radius) {
@@ -59,6 +69,15 @@ export class Frame extends BaseShape {
       ctx.lineTo(x, y + h)
       ctx.lineTo(x, y)
       ctx.closePath()
+      ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
+      let text = `${w.toFixed(2)} x ${h.toFixed(2)}`
+      let m = ctx.measureText(text)
+      let lX = x + w / 2 - m.width / 2
+      ctx.textBaseline = 'top'
+      ctx.fillText(text, lX, y + h + 5)
+      ctx.textBaseline = 'bottom'
+      ctx.fillText(name, x, y)
+
       ctx.fillStyle = fillColor
       ctx.fill()
       ctx.strokeStyle = borderColor

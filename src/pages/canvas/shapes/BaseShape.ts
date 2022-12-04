@@ -37,12 +37,12 @@ export abstract class BaseShape {
 
   constructor(props: ShapeProps) {
     // console.log('props', clone(props))
-    this.conf = helper.getPath(props.conf, undefined, props.parent?.conf)
+    this.conf = helper.initConf(props.conf, props.ctx, props.parent?.conf,)
     this.parent = props.parent
     this.original = cloneDeep(this.conf)
     // console.log('config', clone(this.config))
     this.children = this.conf.children.map((conf: BaseConfig) => {
-      return getShapeFromConfig({conf, old: null, parent: this})
+      return getShapeFromConfig({conf, parent: this, ctx: props.ctx})
     })
   }
 
@@ -259,6 +259,21 @@ export abstract class BaseShape {
     return this.isHoverIn({x, y}, cu)
   }
 
+  /**
+   * 事件向下传递的先决条件：有子级，自己没有父级
+   * 1、有子级
+   * 2、自己没有父级
+   * 3、类型为FRAME
+   * 再判断是否捕获、是否是设计模式
+   * */
+  canNext(cu: CanvasUtil2) {
+    if (this.conf.type === ShapeType.FRAME &&
+      this.children.length && !this.parent) {
+      return !this.isCapture || !cu.isDesignMode()
+    }
+    return false
+  }
+
   /** @desc 事件转发方法
    * @param event 合成的事件
    * @param parent 父级链
@@ -276,10 +291,7 @@ export abstract class BaseShape {
       // return true
 
       // console.log('捕获', this.config.name)
-      let eventIsNext = !this.isCapture || !cu.isDesign()
-      //如果有子级，并且自己没有父级，那么直接向下传递事件
-      if (this.children.length && !this.parent) eventIsNext = true
-      if (eventIsNext) {
+      if (this.canNext(cu)) {
         // if (true) {
         for (let i = 0; i < this.children.length; i++) {
           let shape = this.children[i]
@@ -296,8 +308,8 @@ export abstract class BaseShape {
         //手动重置一个enter，不然会跟手
         this.mouseup(event, parent)
       } else {
-        if (!eventIsNext) {
-          // if (true) {
+        // if (!eventIsNext) {
+        if (true) {
           this.emit(event, parent)
         }
       }
@@ -720,6 +732,7 @@ export abstract class BaseShape {
       x: this.original.absolute.x + dx,
       y: this.original.absolute.y + dy,
     }
+
     this.conf.center.x = this.original.center.x + dx
     this.conf.center.y = this.original.center.y + dy
     this.conf = helper.calcPath(this.conf,)

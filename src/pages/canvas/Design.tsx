@@ -33,7 +33,7 @@ class Design extends React.Component<any, IState> {
     rectColorType: null,
     drawCount: 0,
     handScale: config.handScale,
-    selectShape: null,
+    selectShape: undefined,
     selectDrawType: 'drawType',
     drawType: ShapeType.SELECT,
     drawType2: ShapeType.FRAME,
@@ -62,6 +62,7 @@ class Design extends React.Component<any, IState> {
       })
     })
     EventBus.on([EventTypes.onMouseDown, EventTypes.onMouseMove, EventTypes.onMouseUp], (val: any) => {
+      console.log('selectShape', val)
       this.setState({selectShape: val})
     })
     EventBus.on([EventTypes.onWheel], (val: any) => {
@@ -78,7 +79,7 @@ class Design extends React.Component<any, IState> {
 
 
   flip(type: number) {
-    this.state.selectShape.flip(type)
+    this.state.selectShape?.flip(type)
     this.setState({selectShape: this.state.selectShape})
     this.state.cu.render()
   }
@@ -121,9 +122,9 @@ class Design extends React.Component<any, IState> {
       selectShape,
       selectDrawType
     } = this.state
-    // console.log('selectRect', selectRect?.fontFamily)
+    // console.log('selectRectConf', selectRectConf?.fontFamily)
     // @ts-ignore
-    const selectRect: BaseConfig = selectShape?.config
+    const selectRectConf: BaseConfig = selectShape?.conf
     return <>
       <div className={'design'}>
         <div className="header">
@@ -255,119 +256,123 @@ class Design extends React.Component<any, IState> {
           </div>
           <div className="right">
             {/*<img src={require('../../assets/image/a.jpg')} alt=""/>*/}
-
             <div className="config-wrapper">
               {
-                selectRect && <>
-                      <div className="base-info">
-                          <div className="row">
-                              <div className="col">
-                                  <BaseInput value={selectRect?.x?.toFixed(0)} prefix={<span className={'gray'}>X</span>}/>
-                              </div>
-                              <div className="col">
-                                  <BaseInput value={selectRect?.y?.toFixed(0)} prefix={<span className={'gray'}>Y</span>}/>
-                              </div>
-                          </div>
-                          <div className="row">
-                              <div className="col">
-                                  <BaseInput value={selectRect?.w?.toFixed(0)} prefix={<span className={'gray'}>W</span>}/>
-                              </div>
-                              <div className="col">
-                                  <BaseInput value={selectRect?.h?.toFixed(0)} prefix={<span className={'gray'}>H</span>}/>
-                              </div>
-                              <div className="col">
-                                  <BaseIcon active={false}>
-                                      <Unlock theme="outline" size="16" fill="#929596"/>
-                                  </BaseIcon>
-                              </div>
-                          </div>
-                          <div className="row">
-                              <div className="col">
-                                  <BaseInput value={selectRect?.rotate} prefix={<RotateIcon style={{fontSize: "16rem"}}/>}/>
-                              </div>
-                              <div className="col">
-                                  <BaseButton active={selectRect?.flipHorizontal} onClick={() => this.flip(0)}>
-                                      <FlipIcon style={{fontSize: "16rem", 'transform': 'rotate(-90deg)'}}/>
-                                  </BaseButton>
-                                  <BaseButton active={selectRect?.flipVertical} onClick={() => this.flip(1)}>
-                                      <FlipIcon style={{fontSize: "16rem", 'transform': 'rotate(0deg)'}}/>
-                                  </BaseButton>
-                              </div>
-                          </div>
-                          <div className="row">
-                              <div className="col">
-                                  <BaseInput value={selectRect?.radius} prefix={<AngleIcon style={{fontSize: "16rem"}}/>}/>
-                              </div>
-                              <div className="col">
-                                  <BaseIcon active={false}>
-                                      <FullScreen theme="outline" size="16" fill="#929596"/>
-                                  </BaseIcon>
-                              </div>
-                          </div>
+                selectShape && (
+                  <>
+                    <div className="base-info">
+                      <div className="row">
+                        <div className="col">
+                          <BaseInput value={selectRectConf?.x?.toFixed(0)} prefix={<span className={'gray'}>X</span>}/>
+                        </div>
+                        <div className="col">
+                          <BaseInput value={selectRectConf?.y?.toFixed(0)} prefix={<span className={'gray'}>Y</span>}/>
+                        </div>
                       </div>
-                      <div className="base-info">
-                          <div className="header">填充</div>
-                          <div className="row-single">
-                              <div className="col">
-                                  <BaseSlotButton value={selectRect?.x?.toFixed(0)}
-                                                  prefix={
-                                                    <div className={'color-block'}
-                                                         style={{background: selectRect.fillColor}}
-                                                         onClick={() => this.setState({
-                                                           showPicker: !showPicker,
-                                                           rectColor: selectRect.fillColor,
-                                                           rectColorType: RectColorType.FillColor
-                                                         })}/>
-                                                  }
-                                    // suffix={<PreviewOpen fill="#929596"/>}
-                                                  suffix={<PreviewClose fill="#929596"/>}
-                                  >
-                                      <div className={'test'}>
-                                          <input type="text" value={selectRect?.fillColor} onChange={this.inputOnChange}/>
-                                          <input type="text"/>
-                                      </div>
-                                  </BaseSlotButton>
-                              </div>
+                      <div className="row">
+                        <div className="col">
+                          <BaseInput value={selectRectConf?.w?.toFixed(0)} prefix={<span className={'gray'}>W</span>}/>
+                        </div>
+                        <div className="col">
+                          <BaseInput value={selectRectConf?.h?.toFixed(0)} prefix={<span className={'gray'}>H</span>}/>
+                        </div>
+                        <div className="col">
+                          <BaseIcon active={false}>
+                            <Unlock theme="outline" size="16" fill="#929596"/>
+                          </BaseIcon>
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="col">
+                          <BaseInput value={selectRectConf?.rotate} prefix={<RotateIcon style={{fontSize: "16rem"}}/>}/>
+                        </div>
+                        <div className="col">
+                          <BaseButton active={selectRectConf?.flipHorizontal} onClick={() => this.flip(0)}>
+                            <FlipIcon style={{fontSize: "16rem", 'transform': 'rotate(-90deg)'}}/>
+                          </BaseButton>
+                          <BaseButton active={selectRectConf?.flipVertical} onClick={() => this.flip(1)}>
+                            <FlipIcon style={{fontSize: "16rem", 'transform': 'rotate(0deg)'}}/>
+                          </BaseButton>
+                        </div>
+                      </div>
+                      <div className="row">
+                        <div className="col">
+                          <BaseInput value={selectRectConf?.radius} prefix={<AngleIcon style={{fontSize: "16rem"}}/>}/>
+                        </div>
+                        <div className="col">
+                          <BaseIcon active={false}>
+                            <FullScreen theme="outline" size="16" fill="#929596"/>
+                          </BaseIcon>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="base-info">
+                      1{selectShape?.enter}
+                    </div>
+                    <div className="base-info">
+                      <div className="header">填充</div>
+                      <div className="row-single">
+                        <div className="col">
+                          <BaseSlotButton value={selectRectConf?.x?.toFixed(0)}
+                                          prefix={
+                                            <div className={'color-block'}
+                                                 style={{background: selectRectConf.fillColor}}
+                                                 onClick={() => this.setState({
+                                                   showPicker: !showPicker,
+                                                   rectColor: selectRectConf.fillColor,
+                                                   rectColorType: RectColorType.FillColor
+                                                 })}/>
+                                          }
+                            // suffix={<PreviewOpen fill="#929596"/>}
+                                          suffix={<PreviewClose fill="#929596"/>}
+                          >
+                            <div className={'test'}>
+                              <input type="text" value={selectRectConf?.fillColor} onChange={this.inputOnChange}/>
+                              <input type="text"/>
+                            </div>
+                          </BaseSlotButton>
+                        </div>
 
-                              <div className="col">
-                                  <BaseIcon active={false}>
-                                      <Unlock theme="outline" size="16" fill="#929596"/>
-                                  </BaseIcon>
-                              </div>
-                          </div>
+                        <div className="col">
+                          <BaseIcon active={false}>
+                            <Unlock theme="outline" size="16" fill="#929596"/>
+                          </BaseIcon>
+                        </div>
                       </div>
-                      <div className="base-info">
-                          <div className="header">描边</div>
-                          <div className="row-single">
-                              <div className="col">
-                                  <BaseSlotButton value={selectRect?.x?.toFixed(0)}
-                                                  prefix={
-                                                    <div className={'color-block'}
-                                                         style={{background: selectRect.borderColor}}
-                                                         onClick={() => this.setState({
-                                                           showPicker: !showPicker,
-                                                           rectColor: selectRect.borderColor,
-                                                           rectColorType: RectColorType.BorderColor
-                                                         })}/>
-                                                  }
-                                    // suffix={<PreviewOpen fill="#929596"/>}
-                                                  suffix={<PreviewClose fill="#929596"/>}
-                                  >
-                                      <div className={'test'}>
-                                          <input type="text" value={selectRect?.borderColor} onChange={this.inputOnChange}/>
-                                          <input type="text"/>
-                                      </div>
-                                  </BaseSlotButton>
-                              </div>
+                    </div>
+                    <div className="base-info">
+                      <div className="header">描边</div>
+                      <div className="row-single">
+                        <div className="col">
+                          <BaseSlotButton value={selectRectConf?.x?.toFixed(0)}
+                                          prefix={
+                                            <div className={'color-block'}
+                                                 style={{background: selectRectConf.borderColor}}
+                                                 onClick={() => this.setState({
+                                                   showPicker: !showPicker,
+                                                   rectColor: selectRectConf.borderColor,
+                                                   rectColorType: RectColorType.BorderColor
+                                                 })}/>
+                                          }
+                            // suffix={<PreviewOpen fill="#929596"/>}
+                                          suffix={<PreviewClose fill="#929596"/>}
+                          >
+                            <div className={'test'}>
+                              <input type="text" value={selectRectConf?.borderColor} onChange={this.inputOnChange}/>
+                              <input type="text"/>
+                            </div>
+                          </BaseSlotButton>
+                        </div>
 
-                              <div className="col">
-                                  <BaseIcon active={false}>
-                                      <Unlock theme="outline" size="16" fill="#929596"/>
-                                  </BaseIcon>
-                              </div>
-                          </div>
+                        <div className="col">
+                          <BaseIcon active={false}>
+                            <Unlock theme="outline" size="16" fill="#929596"/>
+                          </BaseIcon>
+                        </div>
                       </div>
+                    </div>
                   </>
+                )
               }
             </div>
           </div>

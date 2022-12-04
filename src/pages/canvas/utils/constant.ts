@@ -943,15 +943,15 @@ export const rects: any[] = [
     "y": 100,
     "w": 200,
     "h": 200,
-    "rotate": 65,
+    "rotate": 20,
     "lineWidth": 2,
     "type": ShapeType.FRAME,
     "color": "gray",
     "radius": 0,
     "children": [
       {
-        "x": 0,
-        "y": 0,
+        "x": 20,
+        "y": 20,
         "w": 100,
         "h": 100,
         "rotate": 15,

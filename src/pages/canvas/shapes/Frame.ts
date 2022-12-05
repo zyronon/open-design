@@ -1,6 +1,6 @@
 import {BaseShape} from "./BaseShape"
 import CanvasUtil2 from "../CanvasUtil2"
-import {BaseEvent2, P} from "../utils/type"
+import {BaseEvent2, P, ShapeType} from "../utils/type"
 import {drawSelectedHover} from "./Ellipse/draw"
 import {BaseConfig} from "../config/BaseConfig"
 import draw from "../utils/draw"
@@ -38,17 +38,21 @@ export class Frame extends BaseShape {
     return false
   }
 
+  canHover() {
+    return this.conf.type === ShapeType.FRAME &&
+      !this.children.length && !this.parent
+  }
+
   isHoverIn(mousePoint: P, cu: CanvasUtil2): boolean {
     const {x, y} = mousePoint
     let conf = this.conf
-    if (this.isSelect){
+    if (this.canHover() || this.isSelect) {
       return super.isInBox(mousePoint)
-    }else {
-      let r = conf.original.x < x && x < conf.original.x + conf.nameWidth
-        && conf.original.y > y && y > conf.original.y - 18
-      // console.log('r', r, mousePoint, conf)
-      return r
     }
+    let r = conf.original.x < x && x < conf.original.x + conf.nameWidth
+      && conf.original.y > y && y > conf.original.y - 18
+    // console.log('r', r, mousePoint, conf)
+    return r
   }
 
   render(ctx: CanvasRenderingContext2D, p: P, parent?: BaseConfig) {

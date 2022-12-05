@@ -306,8 +306,8 @@ class Design extends React.Component<any, IState> {
                         </div>
                       </div>
                     </div>
-                    <div className="base-info">
-                      1{selectShape?.enter}
+                    <div className="base-info" style={{lineBreak: 'anywhere'}}>
+                      {selectShape.getStatus()}
                     </div>
                     <div className="base-info">
                       <div className="header">填充</div>

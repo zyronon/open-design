@@ -46,6 +46,16 @@ export abstract class BaseShape {
     })
   }
 
+  getStatus() {
+    return `
+    isSelect:${!!this.isSelect}
+    enter:${!!this.enter}
+    isEdit:${!!this.isEdit}
+    
+    box:${JSON.stringify(this.conf.box)}
+    `
+  }
+
   resetHover() {
     this.hoverL = false
     this.hoverLT = false
@@ -274,6 +284,7 @@ export abstract class BaseShape {
     return false
   }
 
+
   /** @desc 事件转发方法
    * @param event 合成的事件
    * @param parent 父级链
@@ -366,6 +377,9 @@ export abstract class BaseShape {
     let {x, y, cu} = this.getXY(point)
 
     this.original = cloneDeep(this.conf)
+    this.children.map(shape => {
+      shape.original = cloneDeep(shape.conf)
+    })
     cu.startX = x
     cu.startY = y
     cu.offsetX = x - this.conf.x
@@ -722,10 +736,16 @@ export abstract class BaseShape {
   }
 
   //移动图形
-  move(point: P) {
-    let {x, y, cu} = this.getXY(point)
-    let dx = (x - cu.startX)
-    let dy = (y - cu.startY)
+  move(point: P, fromParent?: { dx: number, dy: number }) {
+    let dx: number, dy: number
+    if (fromParent) {
+      dx = fromParent.dx
+      dy = fromParent.dy
+    } else {
+      let {x, y, cu} = this.getXY(point)
+      dx = (x - cu.startX)
+      dy = (y - cu.startY)
+    }
     this.conf.x = this.original.x + dx
     this.conf.y = this.original.y + dy
     this.conf.absolute = {
@@ -736,8 +756,15 @@ export abstract class BaseShape {
     this.conf.center.x = this.original.center.x + dx
     this.conf.center.y = this.original.center.y + dy
     this.conf = helper.calcPath(this.conf,)
-    cu.render()
+    this.children.map(shape => {
+      shape.move(helper.getXy(), {dx, dy})
+    })
+    if (!fromParent) {
+      let cu = CanvasUtil2.getInstance()
+      cu.render()
+    }
   }
+
 
   mouseup(e: BaseEvent2, p: BaseShape[] = []) {
     // if (e.capture) return

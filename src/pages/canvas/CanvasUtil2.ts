@@ -404,7 +404,7 @@ export default class CanvasUtil2 {
       if (item.children) {
         item.children = this.print(item.children)
       }
-      return {...item.config, id: null}
+      return {...item.conf, id: null}
     })
   }
 

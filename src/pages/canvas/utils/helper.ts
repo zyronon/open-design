@@ -445,6 +445,9 @@ export default {
 
     // return -2 * b + (
     // )
+  },
+  getXy() {
+    return {x: 0, y: 0}
   }
 
 

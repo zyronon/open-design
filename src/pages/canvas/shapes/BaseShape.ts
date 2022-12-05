@@ -579,17 +579,16 @@ export abstract class BaseShape {
     // console.log('x-------', x, '          y--------', y)
     let a = getAngle2(
       this.original.center,
-      this.original.topLeft,
+      this.original.original,
       current)
-    // console.log('getAngle', a)
+    console.log('getAngle', a)
 
-    let reverseTopLeft = getRotatedPoint(this.original.topLeft, this.original.center, -this.original.rotate)
+    let reverseTopLeft = getRotatedPoint(this.original.absolute, this.original.center, -this.original.rotate)
     let topLeft = getRotatedPoint(reverseTopLeft, this.original.center, a)
-    this.conf.topLeft = topLeft
+    this.conf.absolute = this.conf.topLeft = topLeft
     this.conf.x = topLeft.x
     this.conf.y = topLeft.y
-    this.conf.rotate = a
-
+    this.conf.rotate = a < 180 ? a : a - 360
     cu.render()
   }
 
@@ -751,6 +750,10 @@ export abstract class BaseShape {
     this.conf.absolute = {
       x: this.original.absolute.x + dx,
       y: this.original.absolute.y + dy,
+    }
+    this.conf.original = {
+      x: this.original.original.x + dx,
+      y: this.original.original.y + dy,
     }
 
     this.conf.center.x = this.original.center.x + dx

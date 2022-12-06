@@ -402,7 +402,7 @@ export default class CanvasUtil2 {
   print(list: any) {
     return list.map((item: any) => {
       if (item.children) {
-        item.children = this.print(item.children)
+        item.conf.children = this.print(item.children)
       }
       return {...item.conf, id: null}
     })

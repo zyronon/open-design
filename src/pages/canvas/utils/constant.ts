@@ -938,6 +938,29 @@ const children = [
 ]
 export const rects: any[] = [
   {
+    "x": 0,
+    "y": 0,
+    "w": 0,
+    "h": 0,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": ShapeType.RULER,
+    "color": "gray",
+    "radius": 0,
+    "children": [],
+    "brokenTexts": [],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "rgb(48,48,48)",
+    "fontSize": 16,
+    "fontWeight": 500,
+    "fontFamily": "SourceHanSansCN",
+    "texts": [],
+    "name": "直尺-横",
+    "flipHorizontal": false,
+    "flipVertical": false,
+    "nameWidth": 36,
+  },
+  {
     "name": "容器",
     "x": 197.46550450795212,
     "y": 227.65744717768456,
@@ -952,7 +975,7 @@ export const rects: any[] = [
       {
         "x": 30,
         "y": 50,
-        "w": 100,
+        "w": 200,
         "h": 100,
         "rotate": 15,
         "lineWidth": 2,

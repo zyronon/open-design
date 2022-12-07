@@ -307,7 +307,8 @@ class Design extends React.Component<any, IState> {
                       </div>
                     </div>
                     <div className="base-info" style={{lineBreak: 'anywhere'}}>
-                      {selectShape.getStatus()}
+                      <div dangerouslySetInnerHTML={{__html:selectShape.getStatus()}}>
+                      </div>
                     </div>
                     <div className="base-info">
                       <div className="header">填充</div>

@@ -4,7 +4,7 @@ import {BaseEvent2, EventTypes, P, ShapeType} from "./utils/type"
 import {cloneDeep, throttle} from "lodash"
 import {config} from "./utils/constant"
 import {mat4} from "gl-matrix"
-import {getShapeFromConfig} from "./shapes/common"
+import {getShapeFromConfig} from "./utils/common"
 import {Rectangle} from "./shapes/Rectangle"
 import {BaseConfig} from "./config/BaseConfig"
 import helper from "./utils/helper"
@@ -35,9 +35,9 @@ export default class CanvasUtil2 {
   // @ts-ignore
   public ctx: CanvasRenderingContext2D
   // @ts-ignore
-  private canvasRect: DOMRect
+  public canvasRect: DOMRect
   private dpr: number = 0
-  private children: BaseShape[] = []
+  public children: BaseShape[] = []
   private currentMat: any = new Float32Array(config.currentMat)
   handScale: number = config.handScale
   handMove: P = config.handMove

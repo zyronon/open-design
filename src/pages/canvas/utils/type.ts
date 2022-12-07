@@ -1,6 +1,7 @@
 import CanvasUtil2 from "../CanvasUtil2"
 import {BaseConfig} from "../config/BaseConfig"
 import {BaseShape} from "../shapes/BaseShape"
+import {RulerLine} from "../shapes/RulerLine"
 
 export type IState = {
   canvas: HTMLCanvasElement,
@@ -83,6 +84,8 @@ export enum ShapeType {
   MOVE = 'MOVE',
 
   COMPONENT = 'COMPONENT',
+  RULER = 'RULER',
+  RULER_LINE = 'RULER_LINE',
   HOVER = 'HOVER',
   EDIT = 'EDIT',
 }

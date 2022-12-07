@@ -2,7 +2,7 @@ import {BaseEvent2, P, ShapeProps, ShapeType} from "../utils/type"
 import CanvasUtil2 from "../CanvasUtil2"
 import {cloneDeep} from "lodash"
 import getCenterPoint, {getAngle2, getRotatedPoint} from "../../../utils"
-import {getShapeFromConfig} from "./common"
+import {getShapeFromConfig} from "../utils/common"
 import EventBus from "../../../utils/event-bus"
 import {EventMapTypes} from "../../canvas20221111/type"
 import {BaseConfig} from "../config/BaseConfig"
@@ -49,9 +49,22 @@ export abstract class BaseShape {
   getStatus() {
     return `
     isSelect:${!!this.isSelect}
-    enter:${!!this.enter}
+        <br/>
+    enter:${!!this.enter}    <br/>
     isEdit:${!!this.isEdit}
-    
+    <div>
+        absoluteX:${this.conf.absolute.x.toFixed()}
+</div>
+    <div>
+        absoluteY:${this.conf.absolute.y.toFixed()}    
+</div>
+    <div>
+        centerX:${this.conf.center.x.toFixed()}
+</div>
+    <div>
+        centerY:${this.conf.center.y.toFixed()}    
+</div>
+
     box:${JSON.stringify(this.conf.box)}
     `
   }
@@ -126,7 +139,7 @@ export abstract class BaseShape {
   }
 
   //判断是否hover在图形上
-  abstract isHoverIn(p: P, cu: CanvasUtil2): boolean
+  abstract isHoverIn(mousePoint: P, cu: CanvasUtil2): boolean
 
   //当select时，判断是否在图形上
   abstract isInOnSelect(p: P, cu: CanvasUtil2): boolean
@@ -787,7 +800,6 @@ export abstract class BaseShape {
     }
   }
 
-
   mouseup(e: BaseEvent2, p: BaseShape[] = []) {
     // if (e.capture) return
     // console.log('mouseup')
@@ -820,14 +832,15 @@ export abstract class BaseShape {
   flip(type: number) {
     const conf = this.conf
     let {
-      x, y, center, rotate
+      x, y, center, absolute
     } = conf
+    let rotate = this.getRotate()
     if (type === 0) {
-      conf.x = center.x + Math.abs(x - center.x) * (x < center.x ? 1 : -1)
+      conf.absolute.x = helper.getReversePoint(absolute.x, center.x)
       if (conf.rotate < 0) {
         conf.rotate = -(180 + rotate)
       } else {
-        conf.rotate = 180 - conf.rotate
+        conf.rotate = 180 - rotate - (this.parent?.conf.rotate ?? 0)
       }
       conf.flipHorizontal = !conf.flipHorizontal
     } else {
@@ -837,7 +850,7 @@ export abstract class BaseShape {
     }
   }
 
-  getRotate(conf = this.conf) {
+  getRotate(conf = this.conf): number {
     let {rotate, flipHorizontal, flipVertical} = conf
     let r = rotate
     if (flipHorizontal && flipVertical) {

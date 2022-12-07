@@ -37,12 +37,8 @@ export default {
       * */
       let scaleX = 1
       let scaleY = 1
-      if (flipHorizontal) {
-        scaleX = -1
-      }
-      if (flipVertical) {
-        scaleY = -1
-      }
+      if (flipHorizontal) scaleX = -1
+      if (flipVertical) scaleY = -1
 
       ctx.translate(center.x, center.y)
       if (flipHorizontal && flipVertical) {

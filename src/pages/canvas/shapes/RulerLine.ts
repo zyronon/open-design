@@ -1,0 +1,65 @@
+import {BaseShape} from "./BaseShape"
+import {BaseEvent2, P} from "../utils/type"
+import CanvasUtil2 from "../CanvasUtil2"
+import {BaseConfig} from "../config/BaseConfig"
+
+export class RulerLine extends BaseShape {
+  beforeShapeIsIn(): boolean {
+    return false
+  }
+
+  childDbClick(event: BaseEvent2, p: BaseShape[]): boolean {
+    return false
+  }
+
+  childMouseDown(event: BaseEvent2, p: BaseShape[]): boolean {
+    this.enter = true
+    return true
+  }
+
+  childMouseMove(mousePoint: P): boolean {
+    if (this.enter) {
+      return true
+    }
+    return true
+  }
+
+  childMouseUp(): boolean {
+    return false
+  }
+
+  isHoverIn(mousePoint: P, cu: CanvasUtil2): boolean {
+    const {x, y} = mousePoint
+    let r = 0 < x && x < cu.canvasRect.width
+      && 0 < y && y < 20
+    if (r) {
+      document.body.style.cursor = 'row-resize'
+    } else {
+      document.body.style.cursor = 'default'
+    }
+    return r
+  }
+
+  isInOnSelect(p: P, cu: CanvasUtil2): boolean {
+    return false
+  }
+
+  render(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {
+    let cu = CanvasUtil2.getInstance()
+    ctx.rect(0, this.conf.y, cu.canvasRect.width, 1)
+    ctx.fill()
+  }
+
+  renderEdit(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {
+  }
+
+  renderHover(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {
+  }
+
+  renderSelected(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {
+  }
+
+  renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void {
+  }
+
+}

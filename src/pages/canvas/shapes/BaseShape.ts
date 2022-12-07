@@ -583,12 +583,31 @@ export abstract class BaseShape {
       current)
     console.log('getAngle', a)
 
-    let reverseTopLeft = getRotatedPoint(this.original.absolute, this.original.center, -this.original.rotate)
+    let rotate = this.getRotate(this.original)
+
+    let reverseTopLeft = getRotatedPoint(this.original.absolute, this.original.center, -rotate)
     let topLeft = getRotatedPoint(reverseTopLeft, this.original.center, a)
     this.conf.absolute = this.conf.topLeft = topLeft
     this.conf.x = topLeft.x
     this.conf.y = topLeft.y
-    this.conf.rotate = a < 180 ? a : a - 360
+    //这里要减去，父级的旋转角度
+    let endA = (a - (this.parent?.conf?.rotate ?? 0))
+    this.conf.rotate = endA < 180 ? endA : endA - 360
+
+    this.children.map(shape => {
+      let conf = shape.conf
+      //absolute和center这两个点围着父组件的中心点转
+      let reverseTopLeft = getRotatedPoint(shape.original.absolute, this.original.center, -rotate)
+      let topLeft = getRotatedPoint(reverseTopLeft, this.original.center, a)
+      conf.absolute = conf.topLeft = topLeft
+
+      reverseTopLeft = getRotatedPoint(shape.original.center, this.original.center, -rotate)
+      topLeft = getRotatedPoint(reverseTopLeft, this.original.center, a)
+      conf.center = topLeft
+
+
+      // shape.dragLTR(point)
+    })
     cu.render()
   }
 
@@ -818,8 +837,8 @@ export abstract class BaseShape {
     }
   }
 
-  getRotate() {
-    let {rotate, flipHorizontal, flipVertical} = this.conf
+  getRotate(conf = this.conf) {
+    let {rotate, flipHorizontal, flipVertical} = conf
     let r = rotate
     if (flipHorizontal && flipVertical) {
       r = (180 + rotate)

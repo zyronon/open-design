@@ -9,6 +9,7 @@ import {Provider} from "react-redux";
 import './types/global.d.ts'
 import Test from "./pages/test/Test";
 import Design from "./pages/canvas/Design";
+import Home from "./pages/home";
 
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
@@ -16,7 +17,9 @@ createRoot(document.getElementById("root")!).render(
       <Routes>
         <Route path={'/'} element={<Navigate to="/design"/>}/>
         <Route path={'/design'} element={<Design/>}/>
+        <Route path={'/home'} element={<Home/>}/>
         <Route path={'/test'} element={<Test/>}/>
+        <Route path={'*'} element={<Navigate to="/design"/>}/>
       </Routes>
     </Provider>
   </BrowserRouter>,

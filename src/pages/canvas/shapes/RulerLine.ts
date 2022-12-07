@@ -44,9 +44,17 @@ export class RulerLine extends BaseShape {
     return false
   }
 
+  isHorizontal(): boolean {
+    return this.conf.data?.direction === 'horizontal'
+  }
+
   render(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {
     let cu = CanvasUtil2.getInstance()
-    ctx.rect(0, this.conf.y, cu.canvasRect.width, 1)
+    if (this.isHorizontal()) {
+      ctx.rect(xy.x, xy.y, cu.canvasRect.width, 1)
+    } else {
+      ctx.rect(xy.x, xy.y, 1, cu.canvasRect.width)
+    }
     ctx.fill()
   }
 

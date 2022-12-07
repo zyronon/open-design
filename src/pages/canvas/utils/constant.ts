@@ -959,6 +959,35 @@ export const rects: any[] = [
     "flipHorizontal": false,
     "flipVertical": false,
     "nameWidth": 36,
+    data: {
+      direction: 'horizontal'
+    }
+  },
+  {
+    "x": 0,
+    "y": 0,
+    "w": 0,
+    "h": 0,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": ShapeType.RULER,
+    "color": "gray",
+    "radius": 0,
+    "children": [],
+    "brokenTexts": [],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "rgb(48,48,48)",
+    "fontSize": 16,
+    "fontWeight": 500,
+    "fontFamily": "SourceHanSansCN",
+    "texts": [],
+    data: {
+      direction: 'vertical'
+    },
+    "name": "直尺-竖",
+    "flipHorizontal": false,
+    "flipVertical": false,
+    "nameWidth": 36,
   },
   {
     "name": "容器",
@@ -1083,6 +1112,118 @@ export const rects: any[] = [
       "rightX": 357.23275225397606,
       "topY": 135.82872358884228,
       "bottomY": 335.8287235888423
+    }
+  },
+  {
+    "x": 0,
+    "y": 203,
+    "w": 0,
+    "h": 20,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": "RULER_LINE",
+    "radius": 0,
+    "children": [],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "red",
+    "nameWidth": 87.7587890625,
+    "id": null,
+    "percent": {
+      "x": 0,
+      "y": 0
+    },
+    "absolute": {
+      "x": 0,
+      "y": 0
+    },
+    "original": {
+      "x": 0,
+      "y": 0
+    },
+    "center": {
+      "x": 0,
+      "y": 10
+    },
+    "topLeft": {
+      "x": 0,
+      "y": 0
+    },
+    "topRight": {
+      "x": 0,
+      "y": 0
+    },
+    "bottomLeft": {
+      "x": 0,
+      "y": 20
+    },
+    "bottomRight": {
+      "x": 0,
+      "y": 20
+    },
+    "box": {
+      "leftX": 0,
+      "rightX": 0,
+      "topY": 0,
+      "bottomY": 20
+    },
+    data: {
+      direction: 'horizontal'
+    }
+  },
+  {
+    "x": 385,
+    "y": 0,
+    "w": 0,
+    "h": 20,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": "RULER_LINE",
+    "radius": 0,
+    "children": [],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "red",
+    "data": {
+      "direction": "vertical"
+    },
+    "nameWidth": 87.7587890625,
+    "id": null,
+    "percent": {
+      "x": 0,
+      "y": 0
+    },
+    "absolute": {
+      "x": 385,
+      "y": 0
+    },
+    "original": {
+      "x": 0,
+      "y": 0
+    },
+    "center": {
+      "x": 0,
+      "y": 10
+    },
+    "topLeft": {
+      "x": 0,
+      "y": 0
+    },
+    "topRight": {
+      "x": 0,
+      "y": 0
+    },
+    "bottomLeft": {
+      "x": 0,
+      "y": 20
+    },
+    "bottomRight": {
+      "x": 0,
+      "y": 20
+    },
+    "box": {
+      "leftX": 0,
+      "rightX": 0,
+      "topY": 0,
+      "bottomY": 20
     }
   }
 ]

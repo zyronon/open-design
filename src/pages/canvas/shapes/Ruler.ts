@@ -3,6 +3,7 @@ import {BaseEvent2, P, ShapeType} from "../utils/type"
 import CanvasUtil2 from "../CanvasUtil2"
 import {BaseConfig} from "../config/BaseConfig"
 import {RulerLine} from "./RulerLine"
+import helper from "../utils/helper"
 
 export class Ruler extends BaseShape {
   beforeShapeIsIn(): boolean {
@@ -22,7 +23,13 @@ export class Ruler extends BaseShape {
     if (this.enter) {
       let cu = CanvasUtil2.getInstance()
       if (cu.newShape) {
-        cu.newShape.conf.y = mousePoint.y
+        if (this.isHorizontal()) {
+          cu.newShape.conf.y = mousePoint.y
+          cu.newShape.conf.absolute.y = mousePoint.y
+        } else {
+          cu.newShape.conf.x = mousePoint.x
+          cu.newShape.conf.absolute.x = mousePoint.x
+        }
         cu.render()
       } else {
         cu.newShape = new RulerLine({
@@ -37,7 +44,10 @@ export class Ruler extends BaseShape {
             "radius": 0,
             "children": [],
             "borderColor": "rgb(216,216,216)",
-            "fillColor": "red"
+            "fillColor": "red",
+            data: {
+              direction: this.conf.data?.direction
+            }
           } as any,
           parent: undefined, ctx: cu.ctx
         },)
@@ -54,14 +64,29 @@ export class Ruler extends BaseShape {
     return false
   }
 
+  isHorizontal(): boolean {
+    return this.conf.data?.direction === 'horizontal'
+  }
+
   isHoverIn(mousePoint: P, cu: CanvasUtil2): boolean {
     const {x, y} = mousePoint
-    let r = 0 < x && x < cu.canvasRect.width
-      && 0 < y && y < 20
-    if (r) {
-      document.body.style.cursor = 'row-resize'
+    let r
+    if (this.isHorizontal()) {
+      r = 0 < x && x < cu.canvasRect.width
+        && 0 < y && y < 20
+      if (r) {
+        document.body.style.cursor = 'row-resize'
+      } else {
+        document.body.style.cursor = 'default'
+      }
     } else {
-      document.body.style.cursor = 'default'
+      r = 0 < x && x < 20
+        && 0 < y && y < cu.canvasRect.height
+      if (r) {
+        document.body.style.cursor = 'col-resize'
+      } else {
+        document.body.style.cursor = 'default'
+      }
     }
     return r
   }
@@ -72,7 +97,11 @@ export class Ruler extends BaseShape {
 
   render(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {
     let cu = CanvasUtil2.getInstance()
-    ctx.rect(0, 0, cu.canvasRect.width, 20)
+    if (this.isHorizontal()) {
+      ctx.rect(0, 0, cu.canvasRect.width, 20)
+    } else {
+      ctx.rect(0, 0, 20, cu.canvasRect.height)
+    }
     ctx.fill()
   }
 

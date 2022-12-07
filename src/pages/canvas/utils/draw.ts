@@ -30,30 +30,30 @@ export default {
     ctx.lineWidth = lineWidth
     ctx.fillStyle = fillColor
     ctx.strokeStyle = borderColor
-    if (flipHorizontal || flipVertical) {
-      /*
-      * 渲染翻转后的图形，把canvas的起点移到中心点（要保证图形中心点的正确）
-      * 返回x为-w/2，y同理 ，直接从左上角开始渲染就行了
-      * */
-      let scaleX = 1
-      let scaleY = 1
-      if (flipHorizontal) scaleX = -1
-      if (flipVertical) scaleY = -1
+    if (parent) {
+      if (flipHorizontal || flipVertical) {
+        /*
+        * 渲染翻转后的图形，把canvas的起点移到中心点（要保证图形中心点的正确）
+        * 返回x为-w/2，y同理 ，直接从左上角开始渲染就行了
+        * */
+        let scaleX = 1
+        let scaleY = 1
+        if (flipHorizontal) scaleX = -1
+        if (flipVertical) scaleY = -1
 
-      ctx.translate(center.x, center.y)
-      if (flipHorizontal && flipVertical) {
-        ctx.rotate((180 + rotate) * Math.PI / 180)
-      } else {
-        if (flipHorizontal) {
-          ctx.rotate((rotate - 180) * Math.PI / 180)
+        ctx.translate(center.x, center.y)
+        if (flipHorizontal && flipVertical) {
+          ctx.rotate((180 + rotate) * Math.PI / 180)
         } else {
-          ctx.rotate(rotate * Math.PI / 180)
+          if (flipHorizontal) {
+            ctx.rotate((rotate - 180) * Math.PI / 180)
+          } else {
+            ctx.rotate(rotate * Math.PI / 180)
+          }
         }
-      }
-      ctx.scale(scaleX, scaleY)
-      return {x: -w / 2, y: -h / 2}
-    } else {
-      if (parent) {
+        ctx.scale(scaleX, scaleY)
+        return {x: -w / 2, y: -h / 2}
+      } else {
         if (rotate) {
           rotate += parent.rotate
           ctx.translate2(absolute)
@@ -64,6 +64,30 @@ export default {
           ctx.rotate(parent.rotate * Math.PI / 180)
           return {x: x - parent.w / 2, y: y - parent.h / 2}
         }
+      }
+    } else {
+      if (flipHorizontal || flipVertical) {
+        /*
+        * 渲染翻转后的图形，把canvas的起点移到中心点（要保证图形中心点的正确）
+        * 返回x为-w/2，y同理 ，直接从左上角开始渲染就行了
+        * */
+        let scaleX = 1
+        let scaleY = 1
+        if (flipHorizontal) scaleX = -1
+        if (flipVertical) scaleY = -1
+
+        ctx.translate(center.x, center.y)
+        if (flipHorizontal && flipVertical) {
+          ctx.rotate((180 + rotate) * Math.PI / 180)
+        } else {
+          if (flipHorizontal) {
+            ctx.rotate((rotate - 180) * Math.PI / 180)
+          } else {
+            ctx.rotate(rotate * Math.PI / 180)
+          }
+        }
+        ctx.scale(scaleX, scaleY)
+        return {x: -w / 2, y: -h / 2}
       } else {
         ctx.translate2(absolute)
         ctx.rotate(rotate * Math.PI / 180)

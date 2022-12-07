@@ -79,6 +79,11 @@ interface Geometry {
 
 export interface BaseConfig extends Layout, Geometry {
   id: number | string,
+  /**
+   * 存放一些组件额外，但又不是必须的数据。
+   * 比如直尺的 方向
+   * */
+  data?: any,
   name: string,
   nameWidth: number,
   lineWidth: number,

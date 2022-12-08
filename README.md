@@ -1,6 +1,8 @@
 ### English | [简体中文](README-zh_CN.md)
 
-## This code is for study only and should not be used for commercial purposes
+## Preview Demo
+
+[Online Demo](http://ttentau.top/design)
 
 ## Open-Design
 
@@ -8,14 +10,6 @@
 have used Figma\ MasterGo, you will be familiar with it.
 Implemented by [React](https://reactjs.org/),Canvas,[gl-matrix](https://glmatrix.net/),[antd](https://ant.design)
 ,[Redux](https://redux.js.org/)
-
-## Preview Demo
-
-[Online Demo](http://ttentau.top/design)
-
-## Learn More
-
-[Some technical summaries](NOTE.md)
 
 ## How to start
 
@@ -36,9 +30,13 @@ npm run start
 Chrome browser visit http://localhost:8000
 ```
 
-## Contribution
-Feel free to contribute by opening issues with any questions, bug reports or feature requests.
+## Learn More
 
+[Some technical summaries](NOTE.md)
+
+## Contribution
+
+Feel free to contribute by opening issues with any questions, bug reports or feature requests.
 
 ## Get in touch
 

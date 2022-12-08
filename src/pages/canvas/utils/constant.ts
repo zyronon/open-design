@@ -991,8 +991,8 @@ export const rects: any[] = [
   },
   {
     "name": "容器",
-    "x": 197.46550450795212,
-    "y": 227.65744717768456,
+    "x": 100,
+    "y": 200,
     "w": 400,
     "h": 200,
     "rotate": 20,
@@ -1194,6 +1194,174 @@ export const rects: any[] = [
     "absolute": {
       "x": 385,
       "y": 0
+    },
+    "original": {
+      "x": 0,
+      "y": 0
+    },
+    "center": {
+      "x": 0,
+      "y": 10
+    },
+    "topLeft": {
+      "x": 0,
+      "y": 0
+    },
+    "topRight": {
+      "x": 0,
+      "y": 0
+    },
+    "bottomLeft": {
+      "x": 0,
+      "y": 20
+    },
+    "bottomRight": {
+      "x": 0,
+      "y": 20
+    },
+    "box": {
+      "leftX": 0,
+      "rightX": 0,
+      "topY": 0,
+      "bottomY": 20
+    }
+  },
+  {
+    "x": 279,
+    "y": 0,
+    "w": 0,
+    "h": 20,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": "RULER_LINE",
+    "radius": 0,
+    "children": [],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "red",
+    "data": {
+      "direction": "vertical"
+    },
+    "nameWidth": 87.7587890625,
+    "id": null,
+    "percent": {
+      "x": 0,
+      "y": 0
+    },
+    "absolute": {
+      "x": 279,
+      "y": 0
+    },
+    "original": {
+      "x": 0,
+      "y": 0
+    },
+    "center": {
+      "x": 0,
+      "y": 10
+    },
+    "topLeft": {
+      "x": 0,
+      "y": 0
+    },
+    "topRight": {
+      "x": 0,
+      "y": 0
+    },
+    "bottomLeft": {
+      "x": 0,
+      "y": 20
+    },
+    "bottomRight": {
+      "x": 0,
+      "y": 20
+    },
+    "box": {
+      "leftX": 0,
+      "rightX": 0,
+      "topY": 0,
+      "bottomY": 20
+    }
+  },
+  {
+    "x": 331,
+    "y": 0,
+    "w": 0,
+    "h": 20,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": "RULER_LINE",
+    "radius": 0,
+    "children": [],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "red",
+    "data": {
+      "direction": "vertical"
+    },
+    "nameWidth": 87.7587890625,
+    "id": null,
+    "percent": {
+      "x": 0,
+      "y": 0
+    },
+    "absolute": {
+      "x": 331,
+      "y": 0
+    },
+    "original": {
+      "x": 0,
+      "y": 0
+    },
+    "center": {
+      "x": 0,
+      "y": 10
+    },
+    "topLeft": {
+      "x": 0,
+      "y": 0
+    },
+    "topRight": {
+      "x": 0,
+      "y": 0
+    },
+    "bottomLeft": {
+      "x": 0,
+      "y": 20
+    },
+    "bottomRight": {
+      "x": 0,
+      "y": 20
+    },
+    "box": {
+      "leftX": 0,
+      "rightX": 0,
+      "topY": 0,
+      "bottomY": 20
+    }
+  },
+  {
+    "x": 0,
+    "y": 302,
+    "w": 0,
+    "h": 20,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": "RULER_LINE",
+    "radius": 0,
+    "children": [],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "red",
+    "data": {
+      "direction": "horizontal"
+    },
+    "nameWidth": 87.7587890625,
+    "id": null,
+    "percent": {
+      "x": 0,
+      "y": 0
+    },
+    "absolute": {
+      "x": 0,
+      "y": 302
     },
     "original": {
       "x": 0,

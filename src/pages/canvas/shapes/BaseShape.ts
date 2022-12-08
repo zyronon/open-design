@@ -59,6 +59,12 @@ export abstract class BaseShape {
         absoluteY:${this.conf.absolute.y.toFixed()}    
 </div>
     <div>
+        originalX:${this.conf.original.x.toFixed()}
+</div>
+    <div>
+        originalY:${this.conf.original.y.toFixed()}    
+</div>
+    <div>
         centerX:${this.conf.center.x.toFixed()}
 </div>
     <div>
@@ -123,6 +129,7 @@ export abstract class BaseShape {
     draw.drawRound(ctx, this.conf.bottomLeft)
     draw.drawRound(ctx, this.conf.bottomRight)
     draw.drawRound(ctx, this.conf.center)
+    draw.drawRound(ctx, this.conf.original)
     // ctx.save()
     // let rect = this.config
     // ctx.fillStyle = 'gray'
@@ -598,8 +605,7 @@ export abstract class BaseShape {
 
     let rotate = this.getRotate(this.original)
 
-    let reverseTopLeft = getRotatedPoint(this.original.absolute, this.original.center, -rotate)
-    let topLeft = getRotatedPoint(reverseTopLeft, this.original.center, a)
+    let topLeft = getRotatedPoint(this.original.original, this.original.center, a)
     this.conf.absolute = this.conf.topLeft = topLeft
     this.conf.x = topLeft.x
     this.conf.y = topLeft.y
@@ -617,8 +623,6 @@ export abstract class BaseShape {
       reverseTopLeft = getRotatedPoint(shape.original.center, this.original.center, -rotate)
       topLeft = getRotatedPoint(reverseTopLeft, this.original.center, a)
       conf.center = topLeft
-
-
       // shape.dragLTR(point)
     })
     cu.render()
@@ -699,7 +703,7 @@ export abstract class BaseShape {
     cu.render()
   }
 
-  //拖动左边
+  //拖动右边
   dragR(point: P) {
     let {x, y, cu,} = this.getXY(point)
     const {flipHorizontal, flipVertical} = this.conf
@@ -783,14 +787,14 @@ export abstract class BaseShape {
       x: this.original.absolute.x + dx,
       y: this.original.absolute.y + dy,
     }
-    this.conf.original = {
-      x: this.original.original.x + dx,
-      y: this.original.original.y + dy,
-    }
+    // this.conf.original = {
+    //   x: this.original.original.x + dx,
+    //   y: this.original.original.y + dy,
+    // }
 
     this.conf.center.x = this.original.center.x + dx
     this.conf.center.y = this.original.center.y + dy
-    this.conf = helper.calcPath(this.conf,)
+    // this.conf = helper.calcPath(this.conf,)
     this.children.map(shape => {
       shape.move(helper.getXy(), {dx, dy})
     })

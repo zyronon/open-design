@@ -152,7 +152,7 @@ export default {
         y: ay + h
       }
       if (rotate) {
-        conf.topLeft = getRotatedPoint(conf.absolute, conf.center, rotate)
+        conf.topLeft = getRotatedPoint(conf.topLeft, conf.center, rotate)
         conf.topRight = getRotatedPoint(conf.topRight, conf.center, rotate)
         conf.bottomLeft = getRotatedPoint(conf.bottomLeft, conf.center, rotate)
         conf.bottomRight = getRotatedPoint(conf.bottomRight, conf.center, rotate)
@@ -170,27 +170,40 @@ export default {
         conf.bottomLeft = getRotatedPoint(conf.bottomLeft, pConf.center, pConf.rotate)
         conf.bottomRight = getRotatedPoint(conf.bottomRight, pConf.center, pConf.rotate)
         conf.absolute = conf.topLeft
-      }
 
-      let xs = [
-        conf.topLeft.x,
-        conf.topRight.x,
-        conf.bottomLeft.x,
-        conf.bottomRight.x,
-      ]
-      let ys = [
-        conf.topLeft.y,
-        conf.topRight.y,
-        conf.bottomLeft.y,
-        conf.bottomRight.y,
-      ]
-      let maxX = Math.max(...xs)
-      let minX = Math.min(...xs)
-      let maxY = Math.max(...ys)
-      let minY = Math.min(...ys)
-      conf.center = {
-        x: minX + (maxX - minX) / 2,
-        y: minY + (maxY - minY) / 2
+        let xs = [
+          conf.topLeft.x,
+          conf.topRight.x,
+          conf.bottomLeft.x,
+          conf.bottomRight.x,
+        ]
+        let ys = [
+          conf.topLeft.y,
+          conf.topRight.y,
+          conf.bottomLeft.y,
+          conf.bottomRight.y,
+        ]
+        let maxX = Math.max(...xs)
+        let minX = Math.min(...xs)
+        let maxY = Math.max(...ys)
+        let minY = Math.min(...ys)
+        /**
+         * 父组件旋转了，那么中心点也要相应的偏移
+         * 通过四个边点来确定中心点
+         * */
+        conf.center = {
+          x: minX + (maxX - minX) / 2,
+          y: minY + (maxY - minY) / 2
+        }
+
+        /**
+         *  父组件旋转了，那么original值应该重置为负的（自转角度加上父角度）后的absolute值。
+         *  因为旋转操作时， original点始终是0度的absolute点，
+         *  这样计算current和original以center点计算角度时，才会得到总的旋转角度（即包括父角度）
+         * */
+        let totalRotate = pConf?.rotate + rotate
+        let reverseXy = getRotatedPoint(conf.absolute, conf.center, -(totalRotate))
+        conf.original = reverseXy
       }
 
       conf.box = {

@@ -781,19 +781,33 @@ export abstract class BaseShape {
       dx = (x - cu.startX)
       dy = (y - cu.startY)
     }
-    this.conf.x = this.original.x + dx
-    this.conf.y = this.original.y + dy
+
     this.conf.absolute = {
       x: this.original.absolute.x + dx,
       y: this.original.absolute.y + dy,
     }
-    // this.conf.original = {
-    //   x: this.original.original.x + dx,
-    //   y: this.original.original.y + dy,
-    // }
+    this.conf.original = {
+      x: this.original.original.x + dx,
+      y: this.original.original.y + dy,
+    }
 
     this.conf.center.x = this.original.center.x + dx
     this.conf.center.y = this.original.center.y + dy
+
+    let pRotate = this.parent?.getRotate()
+    //当有父级并且父级有角度时，特殊计算xy的值
+    if (this.parent && pRotate) {
+      /**
+       * 先把ab值，负回父角度的位置。（此时的ab值即父级未旋转时的值，一开始initConf的xy也是取的这个值）
+       * 然后把ab值和父级的original相减，就可以得出最新的xy值
+       * */
+      let rXy = getRotatedPoint(this.conf.absolute, this.parent.conf.center, -pRotate)
+      this.conf.x = rXy.x - this.parent.conf.original.x
+      this.conf.y = rXy.y - this.parent.conf.original.y
+    } else {
+      this.conf.x = this.original.x + dx
+      this.conf.y = this.original.y + dy
+    }
     // this.conf = helper.calcPath(this.conf,)
     this.children.map(shape => {
       shape.move(helper.getXy(), {dx, dy})
@@ -833,6 +847,23 @@ export abstract class BaseShape {
     }
   }
 
+  getRotate(conf = this.conf): number {
+    let {rotate, flipHorizontal, flipVertical} = conf
+    let r = rotate
+    if (flipHorizontal && flipVertical) {
+      r = (180 + rotate)
+    } else {
+      if (flipHorizontal) {
+        r = (rotate - 180)
+      }
+    }
+    //这里要加上父组件旋转的角度
+    if (this.parent) {
+      r += this.parent.getRotate()
+    }
+    return r
+  }
+
   flip(type: number) {
     const conf = this.conf
     let {
@@ -855,22 +886,5 @@ export abstract class BaseShape {
       conf.rotate = -conf.rotate
       conf.flipVertical = !conf.flipVertical
     }
-  }
-
-  getRotate(conf = this.conf): number {
-    let {rotate, flipHorizontal, flipVertical} = conf
-    let r = rotate
-    if (flipHorizontal && flipVertical) {
-      r = (180 + rotate)
-    } else {
-      if (flipHorizontal) {
-        r = (rotate - 180)
-      }
-    }
-    //这里要加上父组件旋转的角度
-    if (this.parent) {
-      r += this.parent.getRotate()
-    }
-    return r
   }
 }

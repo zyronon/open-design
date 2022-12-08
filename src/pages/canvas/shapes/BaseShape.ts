@@ -841,12 +841,13 @@ export abstract class BaseShape {
     let rotate = this.getRotate()
     if (type === 0) {
       conf.absolute.x = helper.getReversePoint(absolute.x, center.x)
-      conf.x = helper.getReversePoint(x, center.x)
+      // conf.x = helper.getReversePoint(x, center.x)
       if (conf.rotate < 0) {
         conf.rotate = -(180 + rotate)
       } else {
-        conf.rotate = 180 - rotate - (this.parent?.conf.rotate ?? 0)
+        conf.rotate = 180 - rotate
       }
+      conf.rotate -= (this.parent?.conf.rotate ?? 0)
       conf.flipHorizontal = !conf.flipHorizontal
     } else {
       conf.y = center.y + Math.abs(y - center.y) * (y < center.y ? 1 : -1)

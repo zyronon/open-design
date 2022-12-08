@@ -40,13 +40,17 @@ export default {
         let scaleY = 1
         if (flipHorizontal) scaleX = -1
         if (flipVertical) scaleY = -1
-
+        let r = rotate
         ctx.translate(center.x, center.y)
         if (flipHorizontal && flipVertical) {
-          ctx.rotate((180 + rotate) * Math.PI / 180)
+          r = (180 + rotate)
+          r += parent.rotate
+          ctx.rotate(r * Math.PI / 180)
         } else {
           if (flipHorizontal) {
-            ctx.rotate((rotate - 180) * Math.PI / 180)
+            r = (rotate - 180)
+            r += parent.rotate
+            ctx.rotate(r * Math.PI / 180)
           } else {
             ctx.rotate(rotate * Math.PI / 180)
           }

@@ -1115,63 +1115,7 @@ export const rects: any[] = [
     }
   },
   {
-    "x": 0,
-    "y": 203,
-    "w": 0,
-    "h": 20,
-    "rotate": 0,
-    "lineWidth": 2,
-    "type": "RULER_LINE",
-    "radius": 0,
-    "children": [],
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "red",
-    "nameWidth": 87.7587890625,
-    "id": null,
-    "percent": {
-      "x": 0,
-      "y": 0
-    },
-    "absolute": {
-      "x": 0,
-      "y": 0
-    },
-    "original": {
-      "x": 0,
-      "y": 0
-    },
-    "center": {
-      "x": 0,
-      "y": 10
-    },
-    "topLeft": {
-      "x": 0,
-      "y": 0
-    },
-    "topRight": {
-      "x": 0,
-      "y": 0
-    },
-    "bottomLeft": {
-      "x": 0,
-      "y": 20
-    },
-    "bottomRight": {
-      "x": 0,
-      "y": 20
-    },
-    "box": {
-      "leftX": 0,
-      "rightX": 0,
-      "topY": 0,
-      "bottomY": 20
-    },
-    data: {
-      direction: 'horizontal'
-    }
-  },
-  {
-    "x": 385,
+    "x": 233,
     "y": 0,
     "w": 0,
     "h": 20,
@@ -1192,7 +1136,7 @@ export const rects: any[] = [
       "y": 0
     },
     "absolute": {
-      "x": 385,
+      "x": 233,
       "y": 0
     },
     "original": {
@@ -1227,7 +1171,7 @@ export const rects: any[] = [
     }
   },
   {
-    "x": 279,
+    "x": 299,
     "y": 0,
     "w": 0,
     "h": 20,
@@ -1248,63 +1192,7 @@ export const rects: any[] = [
       "y": 0
     },
     "absolute": {
-      "x": 279,
-      "y": 0
-    },
-    "original": {
-      "x": 0,
-      "y": 0
-    },
-    "center": {
-      "x": 0,
-      "y": 10
-    },
-    "topLeft": {
-      "x": 0,
-      "y": 0
-    },
-    "topRight": {
-      "x": 0,
-      "y": 0
-    },
-    "bottomLeft": {
-      "x": 0,
-      "y": 20
-    },
-    "bottomRight": {
-      "x": 0,
-      "y": 20
-    },
-    "box": {
-      "leftX": 0,
-      "rightX": 0,
-      "topY": 0,
-      "bottomY": 20
-    }
-  },
-  {
-    "x": 331,
-    "y": 0,
-    "w": 0,
-    "h": 20,
-    "rotate": 0,
-    "lineWidth": 2,
-    "type": "RULER_LINE",
-    "radius": 0,
-    "children": [],
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "red",
-    "data": {
-      "direction": "vertical"
-    },
-    "nameWidth": 87.7587890625,
-    "id": null,
-    "percent": {
-      "x": 0,
-      "y": 0
-    },
-    "absolute": {
-      "x": 331,
+      "x": 299,
       "y": 0
     },
     "original": {
@@ -1340,7 +1228,7 @@ export const rects: any[] = [
   },
   {
     "x": 0,
-    "y": 302,
+    "y": 177,
     "w": 0,
     "h": 20,
     "rotate": 0,
@@ -1361,7 +1249,63 @@ export const rects: any[] = [
     },
     "absolute": {
       "x": 0,
-      "y": 302
+      "y": 177
+    },
+    "original": {
+      "x": 0,
+      "y": 0
+    },
+    "center": {
+      "x": 0,
+      "y": 10
+    },
+    "topLeft": {
+      "x": 0,
+      "y": 0
+    },
+    "topRight": {
+      "x": 0,
+      "y": 0
+    },
+    "bottomLeft": {
+      "x": 0,
+      "y": 20
+    },
+    "bottomRight": {
+      "x": 0,
+      "y": 20
+    },
+    "box": {
+      "leftX": 0,
+      "rightX": 0,
+      "topY": 0,
+      "bottomY": 20
+    }
+  },
+  {
+    "x": 287,
+    "y": 0,
+    "w": 0,
+    "h": 20,
+    "rotate": 0,
+    "lineWidth": 2,
+    "type": "RULER_LINE",
+    "radius": 0,
+    "children": [],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "red",
+    "data": {
+      "direction": "vertical"
+    },
+    "nameWidth": 87.7587890625,
+    "id": null,
+    "percent": {
+      "x": 0,
+      "y": 0
+    },
+    "absolute": {
+      "x": 287,
+      "y": 0
     },
     "original": {
       "x": 0,

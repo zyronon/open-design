@@ -108,12 +108,9 @@ export default {
   },
   initConf(conf: BaseConfig, ctx: CanvasRenderingContext2D, pConf?: BaseConfig) {
     // console.log('getPath')
-    //根据老的config，计算出最新的rx,ry
     let {
       x, y, w, h, rotate,
-      center, flipHorizontal, flipVertical
     } = conf
-
     if (!conf.id) {
       ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
       let m = ctx.measureText(conf.name)

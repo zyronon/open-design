@@ -93,6 +93,9 @@ export default memo((props: any) => {
         <div className="component" onClick={props.copy}>
           复制
         </div>
+        <div className="component" onClick={props.copy2}>
+          复制2
+        </div>
       </div>
       <div className="tabs">
         <div className={cx('tab', tabIndex === 0 && 'active')} onClick={() => setTabIndex(0)}>

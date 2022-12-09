@@ -399,18 +399,26 @@ export default class CanvasUtil2 {
     this.children = []
   }
 
-  print(list: any) {
+  printO(list: any, needId = false) {
     return list.map((item: any) => {
       if (item.children) {
-        item.conf.children = this.print(item.children)
+        item.conf.children = this.printO(item.children, needId)
+      }
+      if (needId) {
+        return item.conf
       }
       return {...item.conf, id: null}
     })
   }
 
-  print2() {
-    return this.print(cloneDeep(this.children))
+  print() {
+    return this.printO(cloneDeep(this.children))
   }
+
+  print2() {
+    return this.printO(cloneDeep(this.children), true)
+  }
+
 
   setMode(mode: ShapeType) {
     console.log('mode', mode)

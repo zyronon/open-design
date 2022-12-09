@@ -41,9 +41,9 @@ export abstract class BaseShape {
     this.parent = props.parent
     this.original = cloneDeep(this.conf)
     // console.log('config', clone(this.config))
-    this.children = this.conf.children.map((conf: BaseConfig) => {
+    this.children = this.conf.children?.map((conf: BaseConfig) => {
       return getShapeFromConfig({conf, parent: this, ctx: props.ctx})
-    })
+    })??[]
   }
 
   getStatus() {
@@ -870,6 +870,7 @@ export abstract class BaseShape {
       x, y, center, absolute
     } = conf
     let rotate = this.getRotate()
+    console.log('r', rotate)
     if (type === 0) {
       conf.absolute.x = helper.getReversePoint(absolute.x, center.x)
       let pRotate = this.parent?.getRotate()
@@ -879,15 +880,16 @@ export abstract class BaseShape {
         let rXy = getRotatedPoint(conf.absolute, pConf.center, -pRotate)
         conf.x = rXy.x - pConf.original.x
         conf.y = rXy.y - pConf.original.y
-      }else {
+      } else {
         conf.x = helper.getReversePoint(x, center.x)
       }
 
-      if (conf.rotate < 0) {
-        conf.rotate = -(180 + rotate)
+      if (rotate < 0) {
+        conf.rotate = -rotate
       } else {
         conf.rotate = 180 - rotate
       }
+      //减去父角度
       conf.rotate -= (this.parent?.conf.rotate ?? 0)
       conf.flipHorizontal = !conf.flipHorizontal
     } else {

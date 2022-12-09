@@ -91,14 +91,20 @@ class Design extends React.Component<any, IState> {
   }
 
   copy = () => {
+    console.log(this.state.cu.print())
+    navigator.clipboard.writeText(JSON.stringify(this.state.cu.print(), null, 2))
+      .then(() => {
+        message.success('复制成功')
+      })
+  }
+
+  copy2 = () => {
     console.log(this.state.cu.print2())
     navigator.clipboard.writeText(JSON.stringify(this.state.cu.print2(), null, 2))
       .then(() => {
         message.success('复制成功2')
       })
-      .catch(err => {
-        message.error('复制失败')
-      })
+
   }
 
   setCanvasUtilMode = (mode: ShapeType, key: any) => {
@@ -138,6 +144,7 @@ class Design extends React.Component<any, IState> {
             init={() => this.init()}
             navigate={() => this.props.navigate('/test')}
             copy={this.copy}
+            copy2={this.copy2}
           />
           <div className="canvas-wrapper">
             <div className="tool-bar">
@@ -307,7 +314,7 @@ class Design extends React.Component<any, IState> {
                       </div>
                     </div>
                     <div className="base-info" style={{lineBreak: 'anywhere'}}>
-                      <div dangerouslySetInnerHTML={{__html:selectShape.getStatus()}}>
+                      <div dangerouslySetInnerHTML={{__html: selectShape.getStatus()}}>
                       </div>
                     </div>
                     <div className="base-info">

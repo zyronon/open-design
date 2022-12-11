@@ -2,6 +2,7 @@ import {IState, P, P2, ShapeType} from "./type"
 import {BaseConfig} from "../config/BaseConfig"
 import {Colors} from "./constant"
 import {jiaodu2hudu} from "../../../utils"
+import {BaseShape} from "../shapes/BaseShape"
 
 export default {
   /** @desc 修改位置
@@ -13,7 +14,9 @@ export default {
     conf: BaseConfig,
     original: any,
     status: any,
-    parent?: BaseConfig) {
+    parent?: BaseConfig,
+    parent2?: BaseShape
+  ) {
     const {isHover, isSelect, enterL, enterLT} = status
     let {
       x, y, w, h, radius, absolute,
@@ -31,6 +34,7 @@ export default {
     ctx.fillStyle = fillColor
     ctx.strokeStyle = borderColor
     if (parent) {
+      let pR = parent2?.getRotate() ?? 0
       if (flipHorizontal || flipVertical) {
         /*
         * 渲染翻转后的图形，把canvas的起点移到中心点（要保证图形中心点的正确）
@@ -59,13 +63,13 @@ export default {
         return {x: -w / 2, y: -h / 2}
       } else {
         if (rotate) {
-          rotate += parent.rotate
+          rotate += pR
           ctx.translate2(absolute)
           ctx.rotate(rotate * Math.PI / 180)
           return {x: 0, y: 0}
         } else {
           ctx.translate(parent.center.x, parent.center.y)
-          ctx.rotate(parent.rotate * Math.PI / 180)
+          ctx.rotate(pR * Math.PI / 180)
           return {x: x - parent.w / 2, y: y - parent.h / 2}
         }
       }

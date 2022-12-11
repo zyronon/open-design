@@ -43,7 +43,7 @@ export abstract class BaseShape {
     // console.log('config', clone(this.config))
     this.children = this.conf.children?.map((conf: BaseConfig) => {
       return getShapeFromConfig({conf, parent: this, ctx: props.ctx})
-    })??[]
+    }) ?? []
   }
 
   getStatus() {
@@ -102,9 +102,9 @@ export abstract class BaseShape {
 
   abstract renderEdit(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any
 
-  shapeRender(ctx: CanvasRenderingContext2D, parent?: BaseConfig) {
+  shapeRender(ctx: CanvasRenderingContext2D, parent?: BaseConfig, parent2?: BaseShape) {
     ctx.save()
-    let {x, y} = draw.calcPosition(ctx, this.conf, this.original, this.getState(), parent)
+    let {x, y} = draw.calcPosition(ctx, this.conf, this.original, this.getState(), parent, parent2)
     const {isHover, isSelect, isEdit, isSelectHover} = this
 
     if (isHover) {
@@ -141,7 +141,7 @@ export abstract class BaseShape {
     // this.config = helper.getPath(this.config, undefined, parent)
     for (let i = 0; i < this.children.length; i++) {
       let shape = this.children[i]
-      shape.shapeRender(ctx, this.conf)
+      shape.shapeRender(ctx, this.conf, this)
     }
   }
 

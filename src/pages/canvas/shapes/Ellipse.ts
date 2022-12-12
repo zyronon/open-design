@@ -159,7 +159,7 @@ export class Ellipse extends BaseShape {
   render(ctx: CanvasRenderingContext2D, p: P, parent?: BaseConfig) {
     let {
       w, h, radius,
-      fillColor, borderColor, rotate, lineWidth,
+      fillColor, borderColor, rotation, lineWidth,
       type, flipVertical, flipHorizontal, children,
       totalLength, startLength
     } = this._config
@@ -168,7 +168,7 @@ export class Ellipse extends BaseShape {
 
     ctx.save()
     //如果旋转、翻转，那么不需要再移动中心点
-    if (rotate || flipHorizontal || flipVertical) {
+    if (rotation || flipHorizontal || flipVertical) {
     } else {
       ctx.translate(x + w2, y + h2)
     }
@@ -534,7 +534,7 @@ export class Ellipse extends BaseShape {
   renderSelectedHover(ctx: CanvasRenderingContext2D, conf: EllipseConfig): void {
     let {
       x, y, w, h, radius,
-      fillColor, borderColor, rotate,
+      fillColor, borderColor, rotation,
       type, flipVertical, flipHorizontal, children,
       totalLength,
       startLength

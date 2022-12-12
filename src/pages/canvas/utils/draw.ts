@@ -20,7 +20,7 @@ export default {
     const {isHover, isSelect, enterL, enterLT} = status
     let {
       x, y, w, h, radius, absolute,
-      fillColor, borderColor, rotate, lineWidth,
+      fillColor, borderColor, rotation, lineWidth,
       type, flipVertical, flipHorizontal, children,
       center,
       topLeft,
@@ -44,28 +44,28 @@ export default {
         let scaleY = 1
         if (flipHorizontal) scaleX = -1
         if (flipVertical) scaleY = -1
-        let r = rotate
+        let r = rotation
         ctx.translate(center.x, center.y)
         if (flipHorizontal && flipVertical) {
-          r = (180 + rotate)
-          r += parent.rotate
+          r = (180 + rotation)
+          r += parent.rotation
           ctx.rotate(r * Math.PI / 180)
         } else {
           if (flipHorizontal) {
-            r = (rotate - 180)
-            r += parent.rotate
+            r = (rotation - 180)
+            r += parent.rotation
             ctx.rotate(r * Math.PI / 180)
           } else {
-            ctx.rotate(rotate * Math.PI / 180)
+            ctx.rotate(rotation * Math.PI / 180)
           }
         }
         ctx.scale(scaleX, scaleY)
         return {x: -w / 2, y: -h / 2}
       } else {
-        if (rotate) {
-          rotate += pR
+        if (rotation) {
+          rotation += pR
           ctx.translate2(absolute)
-          ctx.rotate(rotate * Math.PI / 180)
+          ctx.rotate(rotation * Math.PI / 180)
           return {x: 0, y: 0}
         } else {
           ctx.translate(parent.center.x, parent.center.y)
@@ -86,19 +86,19 @@ export default {
 
         ctx.translate(center.x, center.y)
         if (flipHorizontal && flipVertical) {
-          ctx.rotate((180 + rotate) * Math.PI / 180)
+          ctx.rotate((180 + rotation) * Math.PI / 180)
         } else {
           if (flipHorizontal) {
-            ctx.rotate((rotate - 180) * Math.PI / 180)
+            ctx.rotate((rotation - 180) * Math.PI / 180)
           } else {
-            ctx.rotate(rotate * Math.PI / 180)
+            ctx.rotate(rotation * Math.PI / 180)
           }
         }
         ctx.scale(scaleX, scaleY)
         return {x: -w / 2, y: -h / 2}
       } else {
         ctx.translate2(absolute)
-        ctx.rotate(rotate * Math.PI / 180)
+        ctx.rotate(rotation * Math.PI / 180)
         return {x: 0, y: 0}
       }
     }
@@ -112,7 +112,7 @@ export default {
     const {isHover, isSelect, enterL, enterLT} = status
     let {
       x, y, w, h, radius,
-      fillColor, borderColor, rotate, lineWidth,
+      fillColor, borderColor, rotation, lineWidth,
       type, flipVertical, flipHorizontal, children,
       selected,
       rx, ry
@@ -147,7 +147,7 @@ export default {
     let tranY = 0
     let scaleX = 1
     let scaleY = 1
-    if (rotate || flipHorizontal || flipVertical) {
+    if (rotation || flipHorizontal || flipVertical) {
       tranX = x + w / 2
       tranY = y + h / 2
       x = -w / 2
@@ -182,12 +182,12 @@ export default {
       console.log('x, y', x, y)
       console.log('tranX, tranY', tranX, tranY)
       console.log('tranX, tranY', scaleX, scaleY)
-      console.log('rotate', rotate)
+      console.log('rotation', rotation)
     }
 
     ctx.translate(tranX, tranY)
     ctx.scale(scaleX, scaleY)
-    ctx.rotate(rotate * Math.PI / 180)
+    ctx.rotate(rotation * Math.PI / 180)
     return {x, y}
   },
   clearAll(state: IState) {
@@ -206,7 +206,7 @@ export default {
   selected(ctx: CanvasRenderingContext2D, config: any) {
     let {
       x, y, w, h, radius,
-      fillColor, borderColor, rotate,
+      fillColor, borderColor, rotation,
       type, flipVertical, flipHorizontal, children,
     } = config
     ctx.strokeStyle = 'rgb(139,80,255)'
@@ -282,7 +282,7 @@ export default {
   edit(ctx: CanvasRenderingContext2D, config: any) {
     let {
       x, y, w, h, radius,
-      fillColor, borderColor, rotate,
+      fillColor, borderColor, rotation,
       type, flipVertical, flipHorizontal, children,
     } = config
     ctx.strokeStyle = 'rgb(139,80,255)'
@@ -365,7 +365,7 @@ export default {
   hover(ctx: CanvasRenderingContext2D, config: any) {
     let {
       x, y, w, h, radius,
-      fillColor, borderColor, rotate,
+      fillColor, borderColor, rotation,
       type, flipVertical, flipHorizontal, children,
     } = config
     let d = .5

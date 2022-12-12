@@ -54,7 +54,7 @@ export const rects2 = [
     "ry": 50,
     "w": 280,
     "h": 580,
-    "rotate": 0,
+    "rotation": 0,
     "lineWidth": 2,
     "type": 102,
     "color": "gray",
@@ -67,7 +67,7 @@ export const rects2 = [
         "y": 57,
         "w": 200,
         "h": 400,
-        "rotate": 0,
+        "rotation": 0,
         "lineWidth": 2,
         "type": 102,
         "color": "gray",
@@ -80,7 +80,7 @@ export const rects2 = [
             "y": 67,
             "w": 100,
             "h": 200,
-            "rotate": 0,
+            "rotation": 0,
             "lineWidth": 2,
             "type": 102,
             "color": "gray",
@@ -93,7 +93,7 @@ export const rects2 = [
                 "y": 77,
                 "w": 50,
                 "h": 100,
-                "rotate": 0,
+                "rotation": 0,
                 "lineWidth": 2,
                 "type": 102,
                 "color": "gray",
@@ -135,7 +135,7 @@ export const rects2 = [
             "y": 307,
             "w": 100,
             "h": 200,
-            "rotate": 0,
+            "rotation": 0,
             "lineWidth": 2,
             "type": 102,
             "color": "gray",
@@ -148,7 +148,7 @@ export const rects2 = [
                 "y": 402.4,
                 "w": 183,
                 "h": 100,
-                "rotate": 10,
+                "rotation": 10,
                 "lineWidth": 2,
                 "type": 102,
                 "color": "gray",
@@ -222,7 +222,7 @@ export const rects2 = [
     "ry": 104,
     "w": 500,
     "h": 500,
-    "rotate": 0,
+    "rotation": 0,
     "lineWidth": 2,
     "type": 102,
     "color": "gray",
@@ -235,7 +235,7 @@ export const rects2 = [
         "y": 143,
         "w": 150,
         "h": 170,
-        "rotate": 351,
+        "rotation": 351,
         "lineWidth": 2,
         "type": 102,
         "color": "gray",
@@ -248,7 +248,7 @@ export const rects2 = [
             "y": 178,
             "w": 40,
             "h": 56,
-            "rotate": 344,
+            "rotation": 344,
             "lineWidth": 2,
             "type": 102,
             "color": "gray",
@@ -303,588 +303,546 @@ export const rects2 = [
 ]
 export const r = [
   {
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "black",
-    "fontSize": 0,
-    "texts": [],
     "x": 0,
     "y": 0,
     "w": 0,
     "h": 0,
-    "rotate": 0,
+    "rotation": 0,
     "lineWidth": 2,
-    "type": ShapeType.ARROW,
-    "radius": 0,
-    "points": [
-      {
-        "x": 150,
-        "y": 250
-      },
-      {
-        "x": 50,
-        "y": 250
-      }
-    ],
-    "children": [],
-    "name": "箭头",
-    "leftX": 0,
-    "rightX": 0,
-    "topY": 0,
-    "bottomY": 0,
-    "centerX": 0,
-    "centerY": 0,
-    "id": "16d2c332-d660-4607-9cf2-1cee5030645f"
-  },
-  {
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "black",
-    "fontSize": 0,
-    "texts": [],
-    "x": 0,
-    "y": 0,
-    "w": 0,
-    "h": 0,
-    "rotate": 0,
-    "lineWidth": 2,
-    "type": ShapeType.LINE,
-    "radius": 0,
-    "points": [
-      {
-        "x": 100,
-        "y": 100
-      },
-      {
-        "x": 200,
-        "y": 300
-      }
-    ],
-    "children": [],
-    "name": "直线",
-    "leftX": 0,
-    "rightX": 0,
-    "topY": 0,
-    "bottomY": 0,
-    "centerX": 0,
-    "centerY": 0,
-    "id": "30411d05-f45f-4950-ba7f-f4f7d2506177"
-  },
-  {
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "black",
-    "fontSize": 0,
-    "texts": [],
-    "x": 0,
-    "y": 0,
-    "w": 0,
-    "h": 0,
-    "rotate": 0,
-    "lineWidth": 2,
-    "type": ShapeType.PEN,
-    "radius": 0,
-    "points": [
-      {
-        "x": 800,
-        "y": 100
-      },
-      {
-        "x": 1200,
-        "y": 300
-      },
-      {
-        "x": 1100,
-        "y": 400
-      }
-    ],
-    "children": [],
-    "name": "PEN",
-    "leftX": 0,
-    "rightX": 0,
-    "topY": 0,
-    "bottomY": 0,
-    "centerX": 0,
-    "centerY": 0,
-    "id": "159e1e2d-50f9-4ba9-afa1-0c69e18748fc"
-  },
-  {
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "black",
-    "fontSize": 0,
-    "texts": [],
-    "x": 0,
-    "y": 0,
-    "w": 0,
-    "h": 0,
-    "rotate": 0,
-    "lineWidth": 2,
-    "type": ShapeType.PENCIL,
-    "radius": 0,
-    "points": [
-      {
-        "x": 800,
-        "y": 200
-      },
-      {
-        "x": 1200,
-        "y": 500
-      }
-    ],
-    "children": [],
-    "name": "PENCIL",
-    "leftX": 0,
-    "rightX": 0,
-    "topY": 0,
-    "bottomY": 0,
-    "centerX": 0,
-    "centerY": 0,
-    "id": "75aee8da-7a50-40a4-98e5-f61dea469a52"
-  },
-  {
-    "x": 1335.4,
-    "y": 431.6,
-    "rx": 3733.4000000000005,
-    "ry": 549.6,
-    "w": 80,
-    "h": 25,
-    "rotate": 0,
-    "lineWidth": 2,
-    "type": ShapeType.TEXT,
-    "color": "gray",
-    "radius": 0,
-    "children": [],
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "#D8D8D8",
-    "fontSize": 16,
-    "fontWeight": 500,
-    "fontFamily": "SourceHanSansCN",
-    "texts": [
-      "输入文本"
-    ],
-    "brokenTexts": [
-      "输入文本",
-      "输入文本"
-    ],
-    "textAlign": "right",
-    "textBaseline": 1,
-    "letterSpacing": 0,
-    "textLineHeight": 20,
-    "textMode": 2,
-    "flipHorizontal": false,
-    "flipVertical": false,
-    "name": "文字",
-    "leftX": 1335.4,
-    "rightX": 1415.4,
-    "topY": 431.6,
-    "bottomY": 456.6,
-    "centerX": 1375.4,
-    "centerY": 444.1,
-    "points": [],
-    "id": "ed31f95c-9141-4a3b-915a-64aa9cdd6cc9"
-  },
-  {
-    "x": 1234.6000000000001,
-    "y": 98.80000000000001,
-    "rx": 3432.6,
-    "ry": 216.80000000000004,
-    "w": 149.79999999999984,
-    "h": 157.80000000000007,
-    "rotate": 0,
-    "lineWidth": 2,
-    "type": ShapeType.IMAGE,
-    "src": "a.jpg",
-    "color": "gray",
-    "radius": 0,
-    "children": [],
-    "flipHorizontal": false,
-    "flipVertical": false,
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "#D8D8D8",
-    "fontSize": 16,
-    "name": "图像",
-    "leftX": 1234.6000000000001,
-    "rightX": 1384.4,
-    "topY": 98.80000000000001,
-    "bottomY": 256.6000000000001,
-    "centerX": 1309.5,
-    "centerY": 177.70000000000005,
-    "points": [],
-    "id": "e7550924-9a2c-4472-b8f4-b8a060ac365e"
-  },
-  {
-    "x": 1110.8,
-    "y": 155.40000000000003,
-    "rx": 2765.8,
-    "ry": 263.40000000000003,
-    "w": 149.79999999999984,
-    "h": 157.80000000000007,
-    "rotate": 0,
-    "lineWidth": 2,
-    "type": ShapeType.STAR,
-    "totalLength": 2,
-    "startLength": 1.2,
+    "type": "RULER",
     "color": "gray",
     "radius": 0,
     "children": [],
     "brokenTexts": [],
-    "flipHorizontal": false,
-    "flipVertical": false,
     "borderColor": "rgb(216,216,216)",
-    "fillColor": "#D8D8D8",
+    "fillColor": "rgb(48,48,48)",
     "fontSize": 16,
     "fontWeight": 500,
     "fontFamily": "SourceHanSansCN",
     "texts": [],
-    "name": "星形",
-    "leftX": 1110.8,
-    "rightX": 1260.6,
-    "topY": 155.40000000000003,
-    "bottomY": 313.2000000000001,
-    "centerX": 1185.6999999999998,
-    "centerY": 234.30000000000007,
-    "points": [],
-    "id": "e1e2ed4a-c7e2-4f59-a7e3-b692bccf5399"
-  },
-  {
-    "x": 1202,
-    "y": 212.20000000000005,
-    "rx": 2557.000000000002,
-    "ry": 320.2000000000001,
-    "w": 152.19999999999982,
-    "h": 181.80000000000013,
-    "rotate": 10,
-    "lineWidth": 2,
-    "type": ShapeType.POLYGON,
-    "totalLength": 2,
-    "startLength": 1.2,
-    "color": "gray",
-    "radius": 0,
-    "children": [],
-    "brokenTexts": [],
+    "name": "直尺-横",
     "flipHorizontal": false,
     "flipVertical": false,
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "#D8D8D8",
-    "fontSize": 16,
-    "fontWeight": 500,
-    "fontFamily": "SourceHanSansCN",
-    "texts": [],
-    "name": "多边形",
-    "leftX": 1202,
-    "rightX": 1354.1999999999998,
-    "topY": 212.20000000000005,
-    "bottomY": 394.00000000000017,
-    "centerX": 1278.1,
-    "centerY": 303.10000000000014,
-    "points": [],
-    "id": "af6422d9-71bc-41fd-b9a5-ee3a596e2716"
-  },
-  {
-    "x": 855.5999999999999,
-    "y": 362.59999999999997,
-    "rx": 1710.6000000000004,
-    "ry": 470.59999999999997,
-    "w": 155.39999999999998,
-    "h": 185.00000000000014,
-    "rotate": 0,
-    "lineWidth": 2,
-    "type": ShapeType.ELLIPSE,
-    "totalLength": 3.5,
-    "startLength": 0,
-    "startPoint": {
-      "x": -24.559211120639993,
-      "y": 87.78428902400009
+    "nameWidth": 61.787109375,
+    "data": {
+      "direction": "horizontal"
     },
-    "endPoint": {
-      "use": true,
-      "x": 54.94219835999999,
-      "y": -65.40737900000005,
-      "px": 0,
-      "py": 0,
-      "rx": 0,
-      "ry": 0
+    "id": "14c8a103-bcdb-4b28-92c9-80fb0bc0d5d5",
+    "percent": {
+      "x": 0,
+      "y": 0
     },
-    "color": "gray",
-    "radius": 0,
-    "children": [],
-    "brokenTexts": [],
-    "flipHorizontal": false,
-    "flipVertical": false,
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "#D8D8D8",
-    "fontSize": 16,
-    "fontWeight": 500,
-    "fontFamily": "SourceHanSansCN",
-    "texts": [],
-    "name": "椭圆",
-    "leftX": 855.5999999999999,
-    "rightX": 1010.9999999999999,
-    "topY": 362.59999999999997,
-    "bottomY": 547.6000000000001,
-    "centerX": 933.3,
-    "centerY": 455.1,
-    "points": [],
-    "cps": [
-      {
-        "x": 77.69999999999999,
-        "y": 0
-      },
-      {
-        "x": 77.69999999999999,
-        "y": 51.08634400000004
-      },
-      {
-        "x": 42.912528959999996,
-        "y": 92.50000000000007
-      },
-      {
-        "x": 0,
-        "y": 92.50000000000007
-      },
-      {
-        "x": -42.912528959999996,
-        "y": 92.50000000000007
-      },
-      {
-        "x": -77.69999999999999,
-        "y": 51.08634400000004
-      },
-      {
-        "x": -77.69999999999999,
-        "y": 0
-      },
-      {
-        "x": -77.69999999999999,
-        "y": -51.08634400000004
-      },
-      {
-        "x": -42.912528959999996,
-        "y": -92.50000000000007
-      },
-      {
-        "x": 0,
-        "y": -92.50000000000007
-      },
-      {
-        "x": 42.912528959999996,
-        "y": -92.50000000000007
-      },
-      {
-        "x": 77.69999999999999,
-        "y": -51.08634400000004
-      }
-    ],
-    "id": "3a04646c-00e3-44f4-bedc-9a7a9f8f3893",
-    "startMouseControlPoint": {
-      "x": 5.4407888793600065,
-      "y": -19.44752138650364
+    "absolute": {
+      "x": 0,
+      "y": 0
     },
-    "endMouseControlPoint": {
-      "x": 29.742198360000017,
-      "y": -35.40737900000005
+    "original": {
+      "x": 0,
+      "y": 0
+    },
+    "center": {
+      "x": 0,
+      "y": 0
+    },
+    "topLeft": {
+      "x": 0,
+      "y": 0
+    },
+    "topRight": {
+      "x": 0,
+      "y": 0
+    },
+    "bottomLeft": {
+      "x": 0,
+      "y": 0
+    },
+    "bottomRight": {
+      "x": 0,
+      "y": 0
+    },
+    "box": {
+      "leftX": 0,
+      "rightX": 0,
+      "topY": 0,
+      "bottomY": 0
     }
   },
   {
-    "x": 1107.1999999999998,
-    "y": 77.20000000000013,
-    "rx": 1807.1999999999994,
-    "ry": 77.20000000000013,
-    "w": 202.40000000000003,
-    "h": 380,
-    "rotate": 0,
+    "x": 0,
+    "y": 0,
+    "w": 0,
+    "h": 0,
+    "rotation": 0,
     "lineWidth": 2,
-    "type": ShapeType.FRAME,
+    "type": "RULER",
     "color": "gray",
-    "radius": 23.199999999999932,
-    "children": [
-      {
-        "rx": -32.40000000000009,
-        "ry": 18.200000000000045,
-        "x": 1074.7999999999997,
-        "y": 95.40000000000018,
-        "w": 200,
-        "h": 400,
-        "rotate": 0,
-        "lineWidth": 2,
-        "type": ShapeType.FRAME,
-        "color": "gray",
-        "radius": 40,
-        "children": [
-          {
-            "rx": 20,
-            "ry": 10,
-            "x": 1094.7999999999997,
-            "y": 105.40000000000018,
-            "w": 100,
-            "h": 200,
-            "rotate": 0,
-            "lineWidth": 2,
-            "type": ShapeType.FRAME,
-            "color": "gray",
-            "radius": 40,
-            "children": [
-              {
-                "rx": 20,
-                "ry": 10,
-                "x": 1114.7999999999997,
-                "y": 115.40000000000018,
-                "w": 50,
-                "h": 100,
-                "rotate": 0,
-                "lineWidth": 2,
-                "type": ShapeType.RECTANGLE,
-                "color": "gray",
-                "radius": 20,
-                "children": [],
-                "brokenTexts": [],
-                "borderColor": "rgb(216,216,216)",
-                "fillColor": "rgb(216,216,216)",
-                "fontSize": 0,
-                "texts": [],
-                "name": "孙矩形111111",
-                "leftX": 1114.7999999999997,
-                "rightX": 1164.7999999999997,
-                "topY": 115.40000000000018,
-                "bottomY": 215.40000000000018,
-                "id": "bb3b6d65-008b-431a-92f3-55f3d4f987b1",
-                "centerX": 1139.7999999999997,
-                "centerY": 165.40000000000018,
-                "points": []
-              }
-            ],
-            "brokenTexts": [],
-            "borderColor": "rgb(216,216,216)",
-            "fillColor": "rgb(216,216,216)",
-            "fontSize": 0,
-            "texts": [],
-            "name": "子组件111111111",
-            "leftX": 1094.7999999999997,
-            "rightX": 1194.7999999999997,
-            "topY": 105.40000000000018,
-            "bottomY": 305.4000000000002,
-            "id": "207d7573-5d38-46ec-b80f-ef73fdd25573",
-            "centerX": 1144.7999999999997,
-            "centerY": 205.40000000000018,
-            "points": []
-          },
-          {
-            "rx": 20,
-            "ry": 250,
-            "x": 1094.7999999999997,
-            "y": 345.4000000000002,
-            "w": 100,
-            "h": 200,
-            "rotate": 0,
-            "lineWidth": 2,
-            "type": ShapeType.FRAME,
-            "color": "gray",
-            "radius": 40,
-            "children": [
-              {
-                "rx": -40.80000000000001,
-                "ry": 95.39999999999998,
-                "x": 1053.9999999999998,
-                "y": 440.8000000000002,
-                "w": 183,
-                "h": 100,
-                "rotate": 10,
-                "lineWidth": 2,
-                "type": ShapeType.RECTANGLE,
-                "color": "gray",
-                "radius": 20,
-                "children": [],
-                "brokenTexts": [],
-                "borderColor": "rgb(216,216,216)",
-                "fillColor": "rgb(216,216,216)",
-                "fontSize": 0,
-                "texts": [],
-                "name": "孙矩形222222222",
-                "leftX": 1053.9999999999998,
-                "rightX": 1236.9999999999998,
-                "topY": 440.8000000000002,
-                "bottomY": 540.8000000000002,
-                "id": "997d0f37-4f52-4bc4-a081-ac8a305722d0",
-                "centerX": 1145.4999999999998,
-                "centerY": 490.8000000000002,
-                "points": []
-              }
-            ],
-            "brokenTexts": [],
-            "borderColor": "rgb(216,216,216)",
-            "fillColor": "rgb(216,216,216)",
-            "fontSize": 0,
-            "texts": [],
-            "name": "子组件222222",
-            "leftX": 1094.7999999999997,
-            "rightX": 1194.7999999999997,
-            "topY": 345.4000000000002,
-            "bottomY": 545.4000000000002,
-            "id": "3c8bb38f-b1ec-43a0-b149-dcb169404773",
-            "centerX": 1144.7999999999997,
-            "centerY": 445.4000000000002,
-            "points": []
-          }
-        ],
-        "brokenTexts": [],
-        "borderColor": "rgb(216,216,216)",
-        "fillColor": "rgb(216,216,216)",
-        "fontSize": 0,
-        "texts": [],
-        "name": "父组件",
-        "leftX": 1074.7999999999997,
-        "rightX": 1274.7999999999997,
-        "topY": 95.40000000000018,
-        "bottomY": 495.4000000000002,
-        "id": "9c2ed082-7b4e-4798-8a2a-addaf01c3b95",
-        "centerX": 1174.7999999999997,
-        "centerY": 295.4000000000002,
-        "points": []
-      }
-    ],
-    "brokenTexts": [],
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "rgb(216,216,216)",
-    "fontSize": 16,
-    "fontWeight": 500,
-    "fontFamily": "SourceHanSansCN",
-    "texts": [],
-    "name": "容器2",
-    "leftX": 1107.1999999999998,
-    "rightX": 1309.6,
-    "topY": 77.20000000000013,
-    "bottomY": 457.20000000000016,
-    "centerX": 1208.3999999999999,
-    "centerY": 267.20000000000016,
-    "points": [],
-    "id": "9eeba7de-9848-41ec-9f85-6cd2d51d1edb"
-  },
-  {
-    "x": 554.8,
-    "y": 244.2,
-    "rx": 554.8,
-    "ry": 244.2,
-    "w": 145.5999999999998,
-    "h": 141.19999999999987,
-    "rotate": 0,
-    "lineWidth": 2,
-    "type": ShapeType.RECTANGLE,
-    "color": "gray",
-    "radius": 22.40000000000009,
+    "radius": 0,
     "children": [],
     "brokenTexts": [],
     "borderColor": "rgb(216,216,216)",
-    "fillColor": "rgb(216,216,216)",
+    "fillColor": "rgb(48,48,48)",
     "fontSize": 16,
     "fontWeight": 500,
     "fontFamily": "SourceHanSansCN",
     "texts": [],
-    "name": "矩形",
-    "leftX": 554.8,
-    "rightX": 700.3999999999997,
-    "topY": 244.2,
-    "bottomY": 385.39999999999986,
-    "centerX": 627.5999999999999,
-    "centerY": 314.79999999999995,
-    "points": [],
-    "id": "e378e9bc-080a-46ab-b184-ce86647aca9e"
+    "data": {
+      "direction": "vertical"
+    },
+    "name": "直尺-竖",
+    "flipHorizontal": false,
+    "flipVertical": false,
+    "nameWidth": 61.787109375,
+    "id": "a3bf6f0e-e3f5-4553-845f-7ce6e0fdbe76",
+    "percent": {
+      "x": 0,
+      "y": 0
+    },
+    "absolute": {
+      "x": 0,
+      "y": 0
+    },
+    "original": {
+      "x": 0,
+      "y": 0
+    },
+    "center": {
+      "x": 0,
+      "y": 0
+    },
+    "topLeft": {
+      "x": 0,
+      "y": 0
+    },
+    "topRight": {
+      "x": 0,
+      "y": 0
+    },
+    "bottomLeft": {
+      "x": 0,
+      "y": 0
+    },
+    "bottomRight": {
+      "x": 0,
+      "y": 0
+    },
+    "box": {
+      "leftX": 0,
+      "rightX": 0,
+      "topY": 0,
+      "bottomY": 0
+    }
+  },
+  {
+    "name": "容器",
+    "x": 146.2634901753852,
+    "y": 137.62670925627543,
+    "w": 400,
+    "h": 200,
+    "rotation": 20,
+    "lineWidth": 2,
+    "type": "FRAME",
+    "color": "gray",
+    "radius": 0,
+    "children": [
+      {
+        children: [
+          {
+            "x": 0,
+            "y": 0,
+            "w": 100,
+            "h": 50,
+            "rotation": 0,
+            "lineWidth": 2,
+            "type": "RECTANGLE",
+            "radius": 0,
+            "brokenTexts": [],
+            "borderColor": "rgb(216,216,216)",
+            "fillColor": "rgb(216,216,216)",
+            "fontSize": 16,
+            "fontWeight": 500,
+            "fontFamily": "SourceHanSansCN",
+            "texts": [],
+            "name": "矩形",
+            "leftX": 1396.6517760479487,
+            "rightX": 1523.9908970134784,
+            "topY": 107.21652274196168,
+            "bottomY": 257.2165227419617,
+            "points": [],
+            "center": {
+              "x": 234.2215165449864,
+              "y": 276.05858996720315
+            },
+            "topLeft": {
+              "x": 180.98513393363953,
+              "y": 177.74334411764897
+            },
+            "topRight": {
+              "x": 344.8155427914379,
+              "y": 292.4586313878582
+            },
+            "bottomLeft": {
+              "x": 123.62749029853492,
+              "y": 259.65854854654816
+            },
+            "bottomRight": {
+              "x": 287.45789915633327,
+              "y": 374.3738358167574
+            },
+            "flipHorizontal": false,
+            "flipVertical": false,
+            "nameWidth": 36,
+            "percent": {
+              "x": 0.075,
+              "y": 0.25
+            },
+            "absolute": {
+              "x": 180.98513393363953,
+              "y": 177.74334411764897
+            },
+            "original": {
+              "x": 134.22151654498643,
+              "y": 226.05858996720315
+            },
+            "box": {
+              "leftX": 134.2215165449864,
+              "rightX": 334.2215165449864,
+              "topY": 226.05858996720315,
+              "bottomY": 326.05858996720315
+            },
+          }
+        ],
+        "x": 46.34836962621918,
+        "y": 25.82180417529449,
+        "w": 200,
+        "h": 100,
+        "rotation": 15,
+        "lineWidth": 2,
+        "type": "FRAME",
+        "color": "gray",
+        "radius": 0,
+        "brokenTexts": [],
+        "borderColor": "rgb(216,216,216)",
+        "fillColor": "rgb(199,145,145)",
+        "fontSize": 16,
+        "fontWeight": 500,
+        "fontFamily": "SourceHanSansCN",
+        "texts": [],
+        "name": "容器1",
+        "points": [],
+        "center": {
+          "x": 234.2215165449864,
+          "y": 276.05858996720315
+        },
+        "topLeft": {
+          "x": 180.98513393363953,
+          "y": 177.74334411764897
+        },
+        "topRight": {
+          "x": 344.8155427914379,
+          "y": 292.4586313878582
+        },
+        "bottomLeft": {
+          "x": 123.62749029853492,
+          "y": 259.65854854654816
+        },
+        "bottomRight": {
+          "x": 287.45789915633327,
+          "y": 374.3738358167574
+        },
+        "flipHorizontal": false,
+        "flipVertical": false,
+        "nameWidth": 40,
+        "percent": {
+          "x": 0.075,
+          "y": 0.25
+        },
+        "absolute": {
+          "x": 180.98513393363953,
+          "y": 177.74334411764897
+        },
+        "original": {
+          "x": 134.22151654498643,
+          "y": 226.05858996720315
+        },
+        "box": {
+          "leftX": 134.2215165449864,
+          "rightX": 334.2215165449864,
+          "topY": 226.05858996720315,
+          "bottomY": 326.05858996720315
+        },
+        "id": "bf820ba9-f8b4-4c28-b1c8-3b7536220dec"
+      }
+    ],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "white",
+    "center": {
+      "x": 300,
+      "y": 300
+    },
+    "leftX": 486,
+    "rightX": 898,
+    "topY": 72,
+    "bottomY": 516,
+    "topLeft": {
+      "x": 146.2634901753852,
+      "y": 137.62670925627543
+    },
+    "topRight": {
+      "x": 522.1405384897486,
+      "y": 274.4347665865429
+    },
+    "bottomLeft": {
+      "x": 77.85946151025144,
+      "y": 325.5652334134571
+    },
+    "bottomRight": {
+      "x": 453.7365098246148,
+      "y": 462.37329074372457
+    },
+    "nameWidth": 36,
+    "percent": {
+      "x": 0,
+      "y": 0
+    },
+    "absolute": {
+      "x": 146.2634901753852,
+      "y": 137.62670925627543
+    },
+    "original": {
+      "x": 100,
+      "y": 200
+    },
+    "box": {
+      "leftX": 100,
+      "rightX": 500,
+      "topY": 200,
+      "bottomY": 400
+    },
+    "id": "7a0272a8-b433-464d-a09b-37c21e15fd0d"
+  },
+  {
+    "x": 233,
+    "y": 0,
+    "w": 0,
+    "h": 20,
+    "rotation": 0,
+    "lineWidth": 2,
+    "type": "RULER_LINE",
+    "radius": 0,
+    "children": [],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "red",
+    "data": {
+      "direction": "vertical"
+    },
+    "nameWidth": 87.7587890625,
+    "id": "642f8440-e8f5-479c-9771-615c14784ce7",
+    "percent": {
+      "x": 0,
+      "y": 0
+    },
+    "absolute": {
+      "x": 233,
+      "y": 0
+    },
+    "original": {
+      "x": 233,
+      "y": 0
+    },
+    "center": {
+      "x": 233,
+      "y": 10
+    },
+    "topLeft": {
+      "x": 233,
+      "y": 0
+    },
+    "topRight": {
+      "x": 233,
+      "y": 0
+    },
+    "bottomLeft": {
+      "x": 233,
+      "y": 20
+    },
+    "bottomRight": {
+      "x": 233,
+      "y": 20
+    },
+    "box": {
+      "leftX": 233,
+      "rightX": 233,
+      "topY": 0,
+      "bottomY": 20
+    }
+  },
+  {
+    "x": 299,
+    "y": 0,
+    "w": 0,
+    "h": 20,
+    "rotation": 0,
+    "lineWidth": 2,
+    "type": "RULER_LINE",
+    "radius": 0,
+    "children": [],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "red",
+    "data": {
+      "direction": "vertical"
+    },
+    "nameWidth": 87.7587890625,
+    "id": "54470592-43ba-4691-90f9-fcd71e14d392",
+    "percent": {
+      "x": 0,
+      "y": 0
+    },
+    "absolute": {
+      "x": 299,
+      "y": 0
+    },
+    "original": {
+      "x": 299,
+      "y": 0
+    },
+    "center": {
+      "x": 299,
+      "y": 10
+    },
+    "topLeft": {
+      "x": 299,
+      "y": 0
+    },
+    "topRight": {
+      "x": 299,
+      "y": 0
+    },
+    "bottomLeft": {
+      "x": 299,
+      "y": 20
+    },
+    "bottomRight": {
+      "x": 299,
+      "y": 20
+    },
+    "box": {
+      "leftX": 299,
+      "rightX": 299,
+      "topY": 0,
+      "bottomY": 20
+    }
+  },
+  {
+    "x": 0,
+    "y": 177,
+    "w": 0,
+    "h": 20,
+    "rotation": 0,
+    "lineWidth": 2,
+    "type": "RULER_LINE",
+    "radius": 0,
+    "children": [],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "red",
+    "data": {
+      "direction": "horizontal"
+    },
+    "nameWidth": 87.7587890625,
+    "id": "350296d6-2452-4287-9a2a-f3c5197014a0",
+    "percent": {
+      "x": 0,
+      "y": 0
+    },
+    "absolute": {
+      "x": 0,
+      "y": 177
+    },
+    "original": {
+      "x": 0,
+      "y": 177
+    },
+    "center": {
+      "x": 0,
+      "y": 187
+    },
+    "topLeft": {
+      "x": 0,
+      "y": 177
+    },
+    "topRight": {
+      "x": 0,
+      "y": 177
+    },
+    "bottomLeft": {
+      "x": 0,
+      "y": 197
+    },
+    "bottomRight": {
+      "x": 0,
+      "y": 197
+    },
+    "box": {
+      "leftX": 0,
+      "rightX": 0,
+      "topY": 177,
+      "bottomY": 197
+    }
+  },
+  {
+    "x": 287,
+    "y": 0,
+    "w": 0,
+    "h": 20,
+    "rotation": 0,
+    "lineWidth": 2,
+    "type": "RULER_LINE",
+    "radius": 0,
+    "children": [],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "red",
+    "data": {
+      "direction": "vertical"
+    },
+    "nameWidth": 87.7587890625,
+    "id": "0f15a57d-4186-4c25-99ee-60fe8dbcffbe",
+    "percent": {
+      "x": 0,
+      "y": 0
+    },
+    "absolute": {
+      "x": 287,
+      "y": 0
+    },
+    "original": {
+      "x": 287,
+      "y": 0
+    },
+    "center": {
+      "x": 287,
+      "y": 10
+    },
+    "topLeft": {
+      "x": 287,
+      "y": 0
+    },
+    "topRight": {
+      "x": 287,
+      "y": 0
+    },
+    "bottomLeft": {
+      "x": 287,
+      "y": 20
+    },
+    "bottomRight": {
+      "x": 287,
+      "y": 20
+    },
+    "box": {
+      "leftX": 287,
+      "rightX": 287,
+      "topY": 0,
+      "bottomY": 20
+    }
   }
 ]
 const noId = [
@@ -893,7 +851,7 @@ const noId = [
     "y": 0,
     "w": 0,
     "h": 0,
-    "rotate": 0,
+    "rotation": 0,
     "lineWidth": 2,
     "type": ShapeType.RULER,
     "color": "gray",
@@ -919,7 +877,7 @@ const noId = [
     "y": 0,
     "w": 0,
     "h": 0,
-    "rotate": 0,
+    "rotation": 0,
     "lineWidth": 2,
     "type": ShapeType.RULER,
     "color": "gray",
@@ -946,7 +904,7 @@ const noId = [
     "y": 200,
     "w": 400,
     "h": 200,
-    "rotate": 20,
+    "rotation": 20,
     "lineWidth": 2,
     "type": "FRAME",
     "color": "gray",
@@ -957,7 +915,7 @@ const noId = [
         "y": 50,
         "w": 200,
         "h": 100,
-        "rotate": 15,
+        "rotation": 15,
         "lineWidth": 2,
         "type": "RECTANGLE",
         "color": "gray",
@@ -1070,7 +1028,7 @@ const noId = [
     "y": 0,
     "w": 0,
     "h": 20,
-    "rotate": 0,
+    "rotation": 0,
     "lineWidth": 2,
     "type": "RULER_LINE",
     "radius": 0,
@@ -1126,7 +1084,7 @@ const noId = [
     "y": 0,
     "w": 0,
     "h": 20,
-    "rotate": 0,
+    "rotation": 0,
     "lineWidth": 2,
     "type": "RULER_LINE",
     "radius": 0,
@@ -1182,7 +1140,7 @@ const noId = [
     "y": 177,
     "w": 0,
     "h": 20,
-    "rotate": 0,
+    "rotation": 0,
     "lineWidth": 2,
     "type": "RULER_LINE",
     "radius": 0,
@@ -1238,7 +1196,7 @@ const noId = [
     "y": 0,
     "w": 0,
     "h": 20,
-    "rotate": 0,
+    "rotation": 0,
     "lineWidth": 2,
     "type": "RULER_LINE",
     "radius": 0,
@@ -1296,7 +1254,7 @@ const children = [
     "y": 20,
     "w": 100,
     "h": 100,
-    "rotate": 15,
+    "rotation": 15,
     "lineWidth": 2,
     "type": ShapeType.RECTANGLE,
     "color": "gray",
@@ -1346,9 +1304,9 @@ export const rects: any[] = [
     "y": 0,
     "w": 0,
     "h": 0,
-    "rotate": 0,
+    "rotation": 0,
     "lineWidth": 2,
-    "type": "RULER",
+    "type": ShapeType.RULER,
     "color": "gray",
     "radius": 0,
     "children": [],
@@ -1362,48 +1320,9 @@ export const rects: any[] = [
     "name": "直尺-横",
     "flipHorizontal": false,
     "flipVertical": false,
-    "nameWidth": 61.787109375,
-    "data": {
-      "direction": "horizontal"
-    },
-    "id": "14c8a103-bcdb-4b28-92c9-80fb0bc0d5d5",
-    "percent": {
-      "x": 0,
-      "y": 0
-    },
-    "absolute": {
-      "x": 0,
-      "y": 0
-    },
-    "original": {
-      "x": 0,
-      "y": 0
-    },
-    "center": {
-      "x": 0,
-      "y": 0
-    },
-    "topLeft": {
-      "x": 0,
-      "y": 0
-    },
-    "topRight": {
-      "x": 0,
-      "y": 0
-    },
-    "bottomLeft": {
-      "x": 0,
-      "y": 0
-    },
-    "bottomRight": {
-      "x": 0,
-      "y": 0
-    },
-    "box": {
-      "leftX": 0,
-      "rightX": 0,
-      "topY": 0,
-      "bottomY": 0
+    "nameWidth": 36,
+    data: {
+      direction: 'horizontal'
     }
   },
   {
@@ -1411,9 +1330,9 @@ export const rects: any[] = [
     "y": 0,
     "w": 0,
     "h": 0,
-    "rotate": 0,
+    "rotation": 0,
     "lineWidth": 2,
-    "type": "RULER",
+    "type": ShapeType.RULER,
     "color": "gray",
     "radius": 0,
     "children": [],
@@ -1424,465 +1343,63 @@ export const rects: any[] = [
     "fontWeight": 500,
     "fontFamily": "SourceHanSansCN",
     "texts": [],
-    "data": {
-      "direction": "vertical"
+    data: {
+      direction: 'vertical'
     },
     "name": "直尺-竖",
     "flipHorizontal": false,
     "flipVertical": false,
-    "nameWidth": 61.787109375,
-    "id": "a3bf6f0e-e3f5-4553-845f-7ce6e0fdbe76",
-    "percent": {
-      "x": 0,
-      "y": 0
-    },
-    "absolute": {
-      "x": 0,
-      "y": 0
-    },
-    "original": {
-      "x": 0,
-      "y": 0
-    },
-    "center": {
-      "x": 0,
-      "y": 0
-    },
-    "topLeft": {
-      "x": 0,
-      "y": 0
-    },
-    "topRight": {
-      "x": 0,
-      "y": 0
-    },
-    "bottomLeft": {
-      "x": 0,
-      "y": 0
-    },
-    "bottomRight": {
-      "x": 0,
-      "y": 0
-    },
-    "box": {
-      "leftX": 0,
-      "rightX": 0,
-      "topY": 0,
-      "bottomY": 0
-    }
+    "nameWidth": 36,
   },
   {
     "name": "容器",
-    "x": 146.2634901753852,
-    "y": 137.62670925627543,
-    "w": 400,
-    "h": 200,
-    "rotate": 20,
+    "x": 200,
+    "y": 150,
+    "w": 700,
+    "h": 400,
+    "rotation": 20,
     "lineWidth": 2,
     "type": "FRAME",
     "color": "gray",
     "radius": 0,
     "children": [
       {
-        children:[
-          {
-            "x": 0,
-            "y": 0,
-            "w": 100,
-            "h": 50,
-            "rotate": 0,
-            "lineWidth": 2,
-            "type": "RECTANGLE",
-            "radius": 0,
-            "brokenTexts": [],
-            "borderColor": "rgb(216,216,216)",
-            "fillColor": "rgb(216,216,216)",
-            "fontSize": 16,
-            "fontWeight": 500,
-            "fontFamily": "SourceHanSansCN",
-            "texts": [],
-            "name": "矩形",
-            "leftX": 1396.6517760479487,
-            "rightX": 1523.9908970134784,
-            "topY": 107.21652274196168,
-            "bottomY": 257.2165227419617,
-            "points": [],
-            "center": {
-              "x": 234.2215165449864,
-              "y": 276.05858996720315
-            },
-            "topLeft": {
-              "x": 180.98513393363953,
-              "y": 177.74334411764897
-            },
-            "topRight": {
-              "x": 344.8155427914379,
-              "y": 292.4586313878582
-            },
-            "bottomLeft": {
-              "x": 123.62749029853492,
-              "y": 259.65854854654816
-            },
-            "bottomRight": {
-              "x": 287.45789915633327,
-              "y": 374.3738358167574
-            },
-            "flipHorizontal": false,
-            "flipVertical": false,
-            "nameWidth": 36,
-            "percent": {
-              "x": 0.075,
-              "y": 0.25
-            },
-            "absolute": {
-              "x": 180.98513393363953,
-              "y": 177.74334411764897
-            },
-            "original": {
-              "x": 134.22151654498643,
-              "y": 226.05858996720315
-            },
-            "box": {
-              "leftX": 134.2215165449864,
-              "rightX": 334.2215165449864,
-              "topY": 226.05858996720315,
-              "bottomY": 326.05858996720315
-            },
-          }
-        ],
-        "x": 46.34836962621918,
-        "y": 25.82180417529449,
-        "w": 200,
-        "h": 100,
-        "rotate": 15,
+        "name": "矩形",
+        "x": 50,
+        "y": 70,
+        "w": 500,
+        "h": 250,
+        "rotation": 15,
         "lineWidth": 2,
         "type": "FRAME",
         "color": "gray",
         "radius": 0,
         "brokenTexts": [],
         "borderColor": "rgb(216,216,216)",
-        "fillColor": "rgb(199,145,145)",
-        "fontSize": 16,
-        "fontWeight": 500,
-        "fontFamily": "SourceHanSansCN",
-        "texts": [],
-        "name": "容器1",
-        "points": [],
-        "center": {
-          "x": 234.2215165449864,
-          "y": 276.05858996720315
-        },
-        "topLeft": {
-          "x": 180.98513393363953,
-          "y": 177.74334411764897
-        },
-        "topRight": {
-          "x": 344.8155427914379,
-          "y": 292.4586313878582
-        },
-        "bottomLeft": {
-          "x": 123.62749029853492,
-          "y": 259.65854854654816
-        },
-        "bottomRight": {
-          "x": 287.45789915633327,
-          "y": 374.3738358167574
-        },
-        "flipHorizontal": false,
-        "flipVertical": false,
-        "nameWidth": 36,
-        "percent": {
-          "x": 0.075,
-          "y": 0.25
-        },
-        "absolute": {
-          "x": 180.98513393363953,
-          "y": 177.74334411764897
-        },
-        "original": {
-          "x": 134.22151654498643,
-          "y": 226.05858996720315
-        },
-        "box": {
-          "leftX": 134.2215165449864,
-          "rightX": 334.2215165449864,
-          "topY": 226.05858996720315,
-          "bottomY": 326.05858996720315
-        },
-        "id": "bf820ba9-f8b4-4c28-b1c8-3b7536220dec"
+        "fillColor": "rgb(252,230,230)",
+        "children": [
+          {
+            "name": "矩形2",
+            "x": 30,
+            "y": 50,
+            "w": 200,
+            "h": 150,
+            "rotation": 15,
+            "lineWidth": 2,
+            "type": "RECTANGLE",
+            "color": "gray",
+            "radius": 0,
+            "children": [],
+            "brokenTexts": [],
+            "borderColor": "rgb(216,216,216)",
+            "fillColor": "rgb(255,82,82)",
+          }
+        ],
       }
     ],
     "borderColor": "rgb(216,216,216)",
     "fillColor": "white",
-    "center": {
-      "x": 300,
-      "y": 300
-    },
-    "leftX": 486,
-    "rightX": 898,
-    "topY": 72,
-    "bottomY": 516,
-    "topLeft": {
-      "x": 146.2634901753852,
-      "y": 137.62670925627543
-    },
-    "topRight": {
-      "x": 522.1405384897486,
-      "y": 274.4347665865429
-    },
-    "bottomLeft": {
-      "x": 77.85946151025144,
-      "y": 325.5652334134571
-    },
-    "bottomRight": {
-      "x": 453.7365098246148,
-      "y": 462.37329074372457
-    },
-    "nameWidth": 36,
-    "percent": {
-      "x": 0,
-      "y": 0
-    },
-    "absolute": {
-      "x": 146.2634901753852,
-      "y": 137.62670925627543
-    },
-    "original": {
-      "x": 100,
-      "y": 200
-    },
-    "box": {
-      "leftX": 100,
-      "rightX": 500,
-      "topY": 200,
-      "bottomY": 400
-    },
-    "id": "7a0272a8-b433-464d-a09b-37c21e15fd0d"
   },
-  {
-    "x": 233,
-    "y": 0,
-    "w": 0,
-    "h": 20,
-    "rotate": 0,
-    "lineWidth": 2,
-    "type": "RULER_LINE",
-    "radius": 0,
-    "children": [],
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "red",
-    "data": {
-      "direction": "vertical"
-    },
-    "nameWidth": 87.7587890625,
-    "id": "642f8440-e8f5-479c-9771-615c14784ce7",
-    "percent": {
-      "x": 0,
-      "y": 0
-    },
-    "absolute": {
-      "x": 233,
-      "y": 0
-    },
-    "original": {
-      "x": 233,
-      "y": 0
-    },
-    "center": {
-      "x": 233,
-      "y": 10
-    },
-    "topLeft": {
-      "x": 233,
-      "y": 0
-    },
-    "topRight": {
-      "x": 233,
-      "y": 0
-    },
-    "bottomLeft": {
-      "x": 233,
-      "y": 20
-    },
-    "bottomRight": {
-      "x": 233,
-      "y": 20
-    },
-    "box": {
-      "leftX": 233,
-      "rightX": 233,
-      "topY": 0,
-      "bottomY": 20
-    }
-  },
-  {
-    "x": 299,
-    "y": 0,
-    "w": 0,
-    "h": 20,
-    "rotate": 0,
-    "lineWidth": 2,
-    "type": "RULER_LINE",
-    "radius": 0,
-    "children": [],
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "red",
-    "data": {
-      "direction": "vertical"
-    },
-    "nameWidth": 87.7587890625,
-    "id": "54470592-43ba-4691-90f9-fcd71e14d392",
-    "percent": {
-      "x": 0,
-      "y": 0
-    },
-    "absolute": {
-      "x": 299,
-      "y": 0
-    },
-    "original": {
-      "x": 299,
-      "y": 0
-    },
-    "center": {
-      "x": 299,
-      "y": 10
-    },
-    "topLeft": {
-      "x": 299,
-      "y": 0
-    },
-    "topRight": {
-      "x": 299,
-      "y": 0
-    },
-    "bottomLeft": {
-      "x": 299,
-      "y": 20
-    },
-    "bottomRight": {
-      "x": 299,
-      "y": 20
-    },
-    "box": {
-      "leftX": 299,
-      "rightX": 299,
-      "topY": 0,
-      "bottomY": 20
-    }
-  },
-  {
-    "x": 0,
-    "y": 177,
-    "w": 0,
-    "h": 20,
-    "rotate": 0,
-    "lineWidth": 2,
-    "type": "RULER_LINE",
-    "radius": 0,
-    "children": [],
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "red",
-    "data": {
-      "direction": "horizontal"
-    },
-    "nameWidth": 87.7587890625,
-    "id": "350296d6-2452-4287-9a2a-f3c5197014a0",
-    "percent": {
-      "x": 0,
-      "y": 0
-    },
-    "absolute": {
-      "x": 0,
-      "y": 177
-    },
-    "original": {
-      "x": 0,
-      "y": 177
-    },
-    "center": {
-      "x": 0,
-      "y": 187
-    },
-    "topLeft": {
-      "x": 0,
-      "y": 177
-    },
-    "topRight": {
-      "x": 0,
-      "y": 177
-    },
-    "bottomLeft": {
-      "x": 0,
-      "y": 197
-    },
-    "bottomRight": {
-      "x": 0,
-      "y": 197
-    },
-    "box": {
-      "leftX": 0,
-      "rightX": 0,
-      "topY": 177,
-      "bottomY": 197
-    }
-  },
-  {
-    "x": 287,
-    "y": 0,
-    "w": 0,
-    "h": 20,
-    "rotate": 0,
-    "lineWidth": 2,
-    "type": "RULER_LINE",
-    "radius": 0,
-    "children": [],
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "red",
-    "data": {
-      "direction": "vertical"
-    },
-    "nameWidth": 87.7587890625,
-    "id": "0f15a57d-4186-4c25-99ee-60fe8dbcffbe",
-    "percent": {
-      "x": 0,
-      "y": 0
-    },
-    "absolute": {
-      "x": 287,
-      "y": 0
-    },
-    "original": {
-      "x": 287,
-      "y": 0
-    },
-    "center": {
-      "x": 287,
-      "y": 10
-    },
-    "topLeft": {
-      "x": 287,
-      "y": 0
-    },
-    "topRight": {
-      "x": 287,
-      "y": 0
-    },
-    "bottomLeft": {
-      "x": 287,
-      "y": 20
-    },
-    "bottomRight": {
-      "x": 287,
-      "y": 20
-    },
-    "box": {
-      "leftX": 287,
-      "rightX": 287,
-      "topY": 0,
-      "bottomY": 20
-    }
-  }
 ]
 
 const defaultCurrentMat = [

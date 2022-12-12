@@ -124,8 +124,8 @@ export class Rectangle extends BaseShape {
       let m = ctx.measureText(text)
       let lX = x + w / 2 - m.width / 2
       ctx.fillText(text, lX, y + h + 26)
-      // ctx.fillStyle = fillColor
-      // ctx.fill()
+      ctx.fillStyle = fillColor
+      ctx.fill()
       ctx.strokeStyle = borderColor
       ctx.stroke()
     }

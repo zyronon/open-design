@@ -291,7 +291,7 @@ class Design extends React.Component<any, IState> {
                       </div>
                       <div className="row">
                         <div className="col">
-                          <BaseInput value={selectRectConf?.rotate} prefix={<RotateIcon style={{fontSize: "16rem"}}/>}/>
+                          <BaseInput value={selectRectConf?.rotation} prefix={<RotateIcon style={{fontSize: "16rem"}}/>}/>
                         </div>
                         <div className="col">
                           <BaseButton active={selectRectConf?.flipHorizontal} onClick={() => this.flip(0)}>

@@ -200,6 +200,10 @@ export default class CanvasUtil2 {
     })
     this.canvas[fn](EventTypes.onWheel, this.onWheel)
     this.canvas[fn](EventTypes.onDbClick, this.handleEvent)
+    // this.canvas[fn](EventTypes.onMouseEnter, this.onWheel)
+    this.canvas[fn](EventTypes.onMouseLeave, () => {
+      document.body.style.cursor = 'default'
+    })
   }
 
   //TODO　这里过滤会导致mouseup丢失

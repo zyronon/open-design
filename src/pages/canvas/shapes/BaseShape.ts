@@ -116,6 +116,9 @@ export abstract class BaseShape {
     enter:${!!this.enter}    <br/>
     isEdit:${!!this.isEdit}
     <div>
+        realRotation:${this.conf.realRotation}
+</div>
+    <div>
         absoluteX:${this.conf.absolute.x.toFixed()}
 </div>
     <div>
@@ -161,13 +164,13 @@ export abstract class BaseShape {
   }
 
   getRotate(conf = this.conf): number {
-    let {rotate, flipHorizontal, flipVertical} = conf
-    let r = rotate
+    let {rotation, flipHorizontal, flipVertical} = conf
+    let r = rotation
     if (flipHorizontal && flipVertical) {
-      r = (180 + rotate)
+      r = (180 + rotation)
     } else {
       if (flipHorizontal) {
-        r = (rotate - 180)
+        r = (rotation - 180)
       }
     }
     //这里要加上父组件旋转的角度
@@ -215,7 +218,7 @@ export abstract class BaseShape {
     y = (y - handY) / cu.handScale
 
     let {
-      w, h, rotate, radius,
+      w, h, rotation, radius,
       box,
       flipHorizontal, flipVertical, center
     } = this.conf
@@ -240,7 +243,7 @@ export abstract class BaseShape {
       // if (flipVertical) y = helper.getReversePoint(y, center.y)
       let edge = 10
       let angle = 7
-      let rotate = 27
+      let rotation = 27
       //左边
       if ((leftX! - edge < x && x < leftX! + edge) &&
         (topY! + edge < y && y < bottomY! - edge)
@@ -275,8 +278,8 @@ export abstract class BaseShape {
       }
 
       //左上旋转
-      if ((leftX! - rotate < x && x < leftX! - angle) &&
-        (topY! - rotate < y && y < topY! - angle)
+      if ((leftX! - rotation < x && x < leftX! - angle) &&
+        (topY! - rotation < y && y < topY! - angle)
       ) {
         this.hoverLTR = true
 
@@ -455,7 +458,7 @@ export abstract class BaseShape {
     //按下左边
     if (this.hoverL) {
       // console.log('config', cloneDeep(this.config))
-      let {w, h, rotate, center, flipHorizontal, flipVertical} = this.conf
+      let {w, h, rotation, center, flipHorizontal, flipVertical} = this.conf
       let lx = this.conf.x
       let ly = this.conf.y
       //反转当前xy到0度
@@ -487,9 +490,9 @@ export abstract class BaseShape {
     if (this.hoverR) {
       // console.log('config', cloneDeep(this.config))
       let {w, h, absolute, center, flipHorizontal, flipVertical} = this.conf
-      const rotate = this.getRotate()
+      const rotation = this.getRotate()
       //反转当前xy到0度
-      let reverseXy = getRotatedPoint(absolute, center, -rotate)
+      let reverseXy = getRotatedPoint(absolute, center, -rotation)
       /**
        * 根据flipHorizontal、flipVertical计算出当前按的那条边的中间点
        * 如果水平翻转：x在左边，直接使用。未翻转：x加上宽度
@@ -502,7 +505,7 @@ export abstract class BaseShape {
       //根据当前角度，转回来。得到的点就是当前鼠标按住那条边的中间点（当前角度），非鼠标点
       let handlePoint = getRotatedPoint(
         currentHandLineCenterPoint,
-        center, rotate)
+        center, rotation)
       this.handlePoint = handlePoint
       //翻转得到对面的点
       this.diagonal = {
@@ -521,7 +524,7 @@ export abstract class BaseShape {
         y: rect.y + (rect.h / 2)
       }
       //可以用当前位置，如果点击的不是点位上，那么会有细小的偏差
-      let handlePoint = getRotatedPoint({x: rect.x, y: rect.y}, center, rect.rotate)
+      let handlePoint = getRotatedPoint({x: rect.x, y: rect.y}, center, rect.rotation)
       if (rect.flipHorizontal) {
         // handlePoint.x = center.x + Math.abs(handlePoint.x - center.x) * (handlePoint.x < center.x ? 1 : -1)
       }
@@ -697,24 +700,24 @@ export abstract class BaseShape {
       current)
     console.log('getAngle', a)
 
-    let rotate = this.getRotate(this.original)
+    let rotation = this.getRotate(this.original)
 
     let topLeft = getRotatedPoint(this.original.original, this.original.center, a)
     this.conf.absolute = this.conf.topLeft = topLeft
     this.conf.x = topLeft.x
     this.conf.y = topLeft.y
     //这里要减去，父级的旋转角度
-    let endA = (a - (this.parent?.conf?.rotate ?? 0))
-    this.conf.rotate = endA < 180 ? endA : endA - 360
+    let endA = (a - (this.parent?.conf?.rotation ?? 0))
+    this.conf.rotation = endA < 180 ? endA : endA - 360
 
     this.children.map(shape => {
       let conf = shape.conf
       //absolute和center这两个点围着父组件的中心点转
-      let reverseTopLeft = getRotatedPoint(shape.original.absolute, this.original.center, -rotate)
+      let reverseTopLeft = getRotatedPoint(shape.original.absolute, this.original.center, -rotation)
       let topLeft = getRotatedPoint(reverseTopLeft, this.original.center, a)
       conf.absolute = conf.topLeft = topLeft
 
-      reverseTopLeft = getRotatedPoint(shape.original.center, this.original.center, -rotate)
+      reverseTopLeft = getRotatedPoint(shape.original.center, this.original.center, -rotation)
       topLeft = getRotatedPoint(reverseTopLeft, this.original.center, a)
       conf.center = topLeft
       // shape.dragLTR(point)
@@ -744,8 +747,8 @@ export abstract class BaseShape {
     }
 
     let newCenter = getCenterPoint(current, this.diagonal)
-    let newTopLeftPoint = getRotatedPoint(current, newCenter, -s.rotate)
-    let newBottomRightPoint = getRotatedPoint(this.diagonal, newCenter, -s.rotate)
+    let newTopLeftPoint = getRotatedPoint(current, newCenter, -s.rotation)
+    let newBottomRightPoint = getRotatedPoint(this.diagonal, newCenter, -s.rotation)
 
     let newWidth = newBottomRightPoint.x - newTopLeftPoint.x
     let newHeight = newBottomRightPoint.y - newTopLeftPoint.y
@@ -762,14 +765,14 @@ export abstract class BaseShape {
   dragL(point: P) {
     let {x, y, cu,} = this.getXY(point)
     const {flipHorizontal, flipVertical} = this.conf
-    let rotate = this.getRotate()
-    if (rotate || flipHorizontal || flipVertical) {
+    let rotation = this.getRotate()
+    if (rotation || flipHorizontal || flipVertical) {
       let rect = this.conf
       const current = {x, y}
       const handlePoint = this.handlePoint
-      const zeroAngleCurrentPoint = getRotatedPoint(current, handlePoint, -rotate)
+      const zeroAngleCurrentPoint = getRotatedPoint(current, handlePoint, -rotation)
       const zeroAngleMovePoint = {x: zeroAngleCurrentPoint.x, y: handlePoint.y}
-      const currentAngleMovePoint = getRotatedPoint(zeroAngleMovePoint, handlePoint, rotate)
+      const currentAngleMovePoint = getRotatedPoint(zeroAngleMovePoint, handlePoint, rotation)
       const newWidth = Math.hypot(currentAngleMovePoint.x - this.diagonal.x, currentAngleMovePoint.y - this.diagonal.y)
       const newCenter = {
         x: this.diagonal.x + (currentAngleMovePoint.x - this.diagonal.x) / 2,
@@ -780,10 +783,10 @@ export abstract class BaseShape {
 
       /*变化：非水平翻转时需要处理*/
       if (!flipHorizontal) {
-        let zeroAngleXy = getRotatedPoint(this.original, newCenter, -rotate)
+        let zeroAngleXy = getRotatedPoint(this.original, newCenter, -rotation)
         /*变化：x减去多的宽度*/
         zeroAngleXy.x -= (newWidth - this.original.w)
-        let angleXy = getRotatedPoint(zeroAngleXy, newCenter, rotate)
+        let angleXy = getRotatedPoint(zeroAngleXy, newCenter, rotation)
         rect.x = angleXy.x
         rect.y = angleXy.y
       }
@@ -801,17 +804,17 @@ export abstract class BaseShape {
   dragR(point: P) {
     let {x, y, cu,} = this.getXY(point)
     const {flipHorizontal, flipVertical} = this.conf
-    let rotate = this.getRotate()
-    if (rotate || flipHorizontal || flipVertical) {
+    let rotation = this.getRotate()
+    if (rotation || flipHorizontal || flipVertical) {
       let conf = this.conf
       const current = {x, y}
       const handlePoint = this.handlePoint
       //0度的当前点：以当前边中间点为圆心，负角度偏转当前点，得到0度的当前点
-      const zeroAngleCurrentPoint = getRotatedPoint(current, handlePoint, -rotate)
+      const zeroAngleCurrentPoint = getRotatedPoint(current, handlePoint, -rotation)
       //0度的移动点：x取其0度的当前点的，y取当前边中间点的（保证在一条直线上，因为只能拖动x，y不需要变动）
       const zeroAngleMovePoint = {x: zeroAngleCurrentPoint.x, y: handlePoint.y}
       // 当前角度的移动点：以当前边中间点为圆心，正角度偏转
-      const currentAngleMovePoint = getRotatedPoint(zeroAngleMovePoint, handlePoint, rotate)
+      const currentAngleMovePoint = getRotatedPoint(zeroAngleMovePoint, handlePoint, rotation)
       //最新宽度：利用勾股定理求出斜边(不能直接zeroAngleMovePoint.x - this.diagonal.x相减，会有细微的差别)
       const newWidth = Math.hypot(currentAngleMovePoint.x - this.diagonal.x, currentAngleMovePoint.y - this.diagonal.y)
       //最新中心点：
@@ -824,17 +827,17 @@ export abstract class BaseShape {
       //如果水平了翻转，那么xy值在左边，但是拖动的也是左边，所以要重新计算xy值
       if (flipHorizontal) {
         //0度的xy
-        let zeroAngleXy = getRotatedPoint(this.original, newCenter, -rotate)
+        let zeroAngleXy = getRotatedPoint(this.original, newCenter, -rotation)
         //0度的x，加上当前移动的距离（新宽度减去原始宽度）
         zeroAngleXy.x += (newWidth - this.original.w)
         //再偏转回去
-        let angleXy = getRotatedPoint(zeroAngleXy, newCenter, rotate)
+        let angleXy = getRotatedPoint(zeroAngleXy, newCenter, rotation)
         conf.x = angleXy.x
         conf.y = angleXy.y
       }
 
       if (false) {
-        let reverseXy = getRotatedPoint(conf.absolute, newCenter, -rotate)
+        let reverseXy = getRotatedPoint(conf.absolute, newCenter, -rotation)
         conf.topLeft = {
           x: reverseXy.x,
           y: reverseXy.y
@@ -844,17 +847,17 @@ export abstract class BaseShape {
           y: reverseXy.y
         }
         // }
-        if (rotate) {
-          conf.topLeft = getRotatedPoint(conf.topLeft, newCenter, rotate)
-          conf.topRight = getRotatedPoint(conf.topRight, newCenter, rotate)
-          // conf.bottomLeft = getRotatedPoint(conf.bottomLeft, center, rotate)
-          // conf.bottomRight = getRotatedPoint(conf.bottomRight, center, rotate)
+        if (rotation) {
+          conf.topLeft = getRotatedPoint(conf.topLeft, newCenter, rotation)
+          conf.topRight = getRotatedPoint(conf.topRight, newCenter, rotation)
+          // conf.bottomLeft = getRotatedPoint(conf.bottomLeft, center, rotation)
+          // conf.bottomRight = getRotatedPoint(conf.bottomRight, center, rotation)
           // conf.absolute = conf.topLeft
           // conf.x = x + (conf.absolute.x - ax)
           // conf.y = y + (conf.absolute.y - ay)
         }
       }
-      this.conf = helper.calcPath(conf, rotate, this.parent?.conf)
+      this.conf = helper.calcPath(conf, rotation, this.parent?.conf)
     } else {
       let dx = (x - cu.startX)
       this.conf.w = this.original.w + dx
@@ -869,8 +872,8 @@ export abstract class BaseShape {
     let {
       x, y, center, absolute
     } = conf
-    let rotate = this.getRotate()
-    console.log('r', rotate)
+    let rotation = this.getRotate()
+    console.log('r', rotation)
     if (type === 0) {
       conf.absolute.x = helper.getReversePoint(absolute.x, center.x)
       let pRotate = this.parent?.getRotate()
@@ -884,17 +887,17 @@ export abstract class BaseShape {
         conf.x = helper.getReversePoint(x, center.x)
       }
 
-      if (rotate < 0) {
-        conf.rotate = -rotate
+      if (rotation < 0) {
+        conf.rotation = -rotation
       } else {
-        conf.rotate = 180 - rotate
+        conf.rotation = 180 - rotation
       }
       //减去父角度
-      conf.rotate -= (this.parent?.conf.rotate ?? 0)
+      conf.rotation -= (this.parent?.conf.rotation ?? 0)
       conf.flipHorizontal = !conf.flipHorizontal
     } else {
       conf.y = center.y + Math.abs(y - center.y) * (y < center.y ? 1 : -1)
-      conf.rotate = -conf.rotate
+      conf.rotation = -conf.rotation
       conf.flipVertical = !conf.flipVertical
     }
   }

@@ -7,10 +7,16 @@ interface Layout {
   x: number,//图层节点的位置，等价于 relativeTransform[0][2]。
   y: number,//图层节点的位置，等价于 relativeTransform[1][2]。
   bound: Rect//图层节点的 rect。
-  /** @desc 图层节点的旋转角度.值域为 [-180, 180]。
+  /** @desc 显示旋转角度
+   *  图层节点的旋转角度.值域为 [-180, 180]。
    * 其值等价于：Math.atan2(-relativeTransform[1][0], relativeTransform[0][0])
    * */
   rotation: number,
+  /** @desc 真实的显示旋转角度，渲染时使用此值
+   * 有父级的情况下，翻转的情况下
+   * 显示角度和真实的角度不同
+   * */
+  realRotation: number,
   w: number,
   h: number,
   percent: P,//相对于父级的百分比坐标
@@ -27,7 +33,6 @@ interface Layout {
   topY: number,//废弃
   rightX: number,//废弃
   bottomY: number,//废弃
-  rotate: number,
   radius: number,
   topLeft: P,//废弃
   topRight: P,//废弃

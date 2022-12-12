@@ -38,13 +38,13 @@ export class Rectangle extends BaseShape {
     this.conf = val
   }
 
-  childDbClick(event: BaseEvent2, p: BaseShape[]): boolean {
+  childDbClick(event: BaseEvent2, parents: BaseShape[]): boolean {
     return false
   }
 
   hoverPointIndex: number = -1
 
-  childMouseDown(event: BaseEvent2, p: BaseShape[] = []) {
+  childMouseDown(event: BaseEvent2, parents: BaseShape[]) {
     // console.log('childMouseDown', this.hoverPointIndex)
     if (this.isEdit) {
       this._config.isCustom = true
@@ -54,11 +54,11 @@ export class Rectangle extends BaseShape {
     return false
   }
 
-  childMouseMove(mousePoint: P) {
+  childMouseMove(event: BaseEvent2, parents: BaseShape[]) {
     // console.log('childMouseMove', this.hoverPointIndex)
     if (this.isEdit) {
       if (this.hoverPointIndex < 0 || !this.enter) return false
-      let {x, y,} = mousePoint
+      let {x, y,} = event.point
       let cu = CanvasUtil2.getInstance()
       // let {x, y, w, h, points} = this._config
       // mousePoint.x = mousePoint.x - x - w / 2
@@ -70,7 +70,7 @@ export class Rectangle extends BaseShape {
     return false
   }
 
-  childMouseUp() {
+  childMouseUp(event: BaseEvent2, parents: BaseShape[]) {
     // console.log('childMouseUp', this.hoverPointIndex)
 
     return false

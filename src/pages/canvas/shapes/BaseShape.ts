@@ -60,9 +60,9 @@ export abstract class BaseShape {
 
   abstract childDbClick(event: BaseEvent2, parents: BaseShape[]): boolean
 
-  abstract childMouseMove(mousePoint: P): boolean
+  abstract childMouseMove(event: BaseEvent2, parents: BaseShape[]): boolean
 
-  abstract childMouseUp(): boolean
+  abstract childMouseUp(event: BaseEvent2, parents: BaseShape[]): boolean
 
   //判断是否hover在图形上
   abstract isHoverIn(mousePoint: P, cu: CanvasUtil2): boolean
@@ -550,10 +550,11 @@ export abstract class BaseShape {
 
   mousemove(event: BaseEvent2, parents: BaseShape[] = []) {
     // console.log('mousemove', this.enterLTR)
+    if (this.childMouseMove(event, parents)) return
+
     let {e, point, type} = event
     // console.log('mousemove', this.config.name, `isHover：${this.isHover}`)
 
-    if (this.childMouseMove(point)) return
 
     //编辑模式下，不用添加hover样式
     if (!this.isEdit) {
@@ -597,10 +598,10 @@ export abstract class BaseShape {
     }
   }
 
-  mouseup(e: BaseEvent2, p: BaseShape[] = []) {
+  mouseup(event: BaseEvent2, parents: BaseShape[] = []) {
     // if (e.capture) return
     // console.log('mouseup')
-    if (this.childMouseUp()) return
+    if (this.childMouseUp(event, parents)) return
     this.resetEnter()
   }
 

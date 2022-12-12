@@ -8,23 +8,23 @@ export class RulerLine extends BaseShape {
     return false
   }
 
-  childDbClick(event: BaseEvent2, p: BaseShape[]): boolean {
+  childDbClick(event: BaseEvent2, parents: BaseShape[]): boolean {
     return false
   }
 
-  childMouseDown(event: BaseEvent2, p: BaseShape[]): boolean {
+  childMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean {
     this.enter = true
     return true
   }
 
-  childMouseMove(mousePoint: P): boolean {
+  childMouseMove(event: BaseEvent2, parents: BaseShape[]): boolean {
     if (this.enter) {
       return true
     }
     return true
   }
 
-  childMouseUp(): boolean {
+  childMouseUp(event: BaseEvent2, parents: BaseShape[]): boolean {
     return false
   }
 

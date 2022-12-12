@@ -7,18 +7,17 @@ import draw from "../utils/draw"
 
 export class Frame extends BaseShape {
 
-  childDbClick(event: BaseEvent2, p: BaseShape[]): boolean {
-    let cu = CanvasUtil2.getInstance()
+  childDbClick(event: BaseEvent2, parents: BaseShape[]): boolean {
     console.log('childDbClick')
     for (let i = 0; i < this.children.length; i++) {
       let shape = this.children[i]
-      let isBreak = shape.event(event, p?.concat([this]), true)
+      let isBreak = shape.event(event, parents?.concat([this]), true)
       if (isBreak) break
     }
     return true
   }
 
-  childMouseDown(event: BaseEvent2, p: any[]): boolean {
+  childMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean {
     if (!this.canHover()) {
       const {x, y} = event.point
       let conf = this.conf
@@ -30,11 +29,11 @@ export class Frame extends BaseShape {
     return false
   }
 
-  childMouseMove() {
+  childMouseMove(event: BaseEvent2, parents: BaseShape[]) {
     return !this.canHover()
   }
 
-  childMouseUp(): boolean {
+  childMouseUp(event: BaseEvent2, parents: BaseShape[]): boolean {
     return false
   }
 

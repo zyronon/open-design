@@ -10,25 +10,25 @@ export class Ruler extends BaseShape {
     return false
   }
 
-  childDbClick(event: BaseEvent2, p: BaseShape[]): boolean {
+  childDbClick(event: BaseEvent2, parents: BaseShape[]): boolean {
     return false
   }
 
-  childMouseDown(event: BaseEvent2, p: BaseShape[]): boolean {
+  childMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean {
     this.enter = true
     return true
   }
 
-  childMouseMove(mousePoint: P): boolean {
+  childMouseMove(event: BaseEvent2, parents: BaseShape[]): boolean {
     if (this.enter) {
       let cu = CanvasUtil2.getInstance()
       if (cu.newShape) {
         if (this.isHorizontal()) {
-          cu.newShape.conf.y = mousePoint.y
-          cu.newShape.conf.absolute.y = mousePoint.y
+          cu.newShape.conf.y = event.point.y
+          cu.newShape.conf.absolute.y = event.point.y
         } else {
-          cu.newShape.conf.x = mousePoint.x
-          cu.newShape.conf.absolute.x = mousePoint.x
+          cu.newShape.conf.x = event.point.x
+          cu.newShape.conf.absolute.x = event.point.x
         }
         cu.render()
       } else {
@@ -58,7 +58,7 @@ export class Ruler extends BaseShape {
     return true
   }
 
-  childMouseUp(): boolean {
+  childMouseUp(event: BaseEvent2, parents: BaseShape[]): boolean {
     let cu = CanvasUtil2.getInstance()
     cu.newShape = undefined
     return false

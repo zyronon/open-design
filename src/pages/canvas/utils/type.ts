@@ -127,7 +127,9 @@ export const EventTypes = {
 export interface BaseEvent2 {
   capture: boolean,
   e: MouseEvent,
-  point: P,
+  screenPoint: P,//屏幕左上角
+  canvasPoint: P,//起点为canvas dom的左上角
+  point: P,//经过反向transform的点（平移、缩放）
   type: string
   stopPropagation: Function
   cancelStopPropagation: Function

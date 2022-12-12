@@ -18,15 +18,23 @@ export class Frame extends BaseShape {
     return true
   }
 
-  childMouseDown(event: BaseEvent2, p: any[]) {
+  childMouseDown(event: BaseEvent2, p: any[]): boolean {
+    if (!this.canHover()) {
+      const {x, y} = event.point
+      let conf = this.conf
+      let r = conf.original.x < x && x < conf.original.x + conf.nameWidth
+        && conf.original.y > y && y > conf.original.y - 18
+      // console.log('r', r, mousePoint, conf)
+      return r
+    }
     return false
   }
 
   childMouseMove() {
-    return false
+    return !this.canHover()
   }
 
-  childMouseUp() {
+  childMouseUp(): boolean {
     return false
   }
 
@@ -38,12 +46,18 @@ export class Frame extends BaseShape {
     return false
   }
 
-  canHover() {
-    return this.conf.type === ShapeType.FRAME &&
-      !this.children.length && !this.parent
+  canHover(): boolean {
+    //如果有父级，都可以hover
+    if (this.parent) {
+      return true
+    } else {
+      //反之，则必须没有孩子时才能hover
+      return !this.children.length
+    }
   }
 
   isHoverIn(mousePoint: P, cu: CanvasUtil2): boolean {
+    return super.isInBox(mousePoint)
     const {x, y} = mousePoint
     let conf = this.conf
     if (this.canHover() || this.isSelect) {

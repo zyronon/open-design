@@ -56,9 +56,9 @@ export abstract class BaseShape {
 
   abstract renderEdit(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any
 
-  abstract childMouseDown(event: BaseEvent2, p: BaseShape[]): boolean
+  abstract childMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean
 
-  abstract childDbClick(event: BaseEvent2, p: BaseShape[]): boolean
+  abstract childDbClick(event: BaseEvent2, parents: BaseShape[]): boolean
 
   abstract childMouseMove(mousePoint: P): boolean
 
@@ -101,12 +101,13 @@ export abstract class BaseShape {
    * 3、类型为FRAME
    * 再判断是否捕获、是否是设计模式
    * */
-  canNext(cu: CanvasUtil2) {
-    if (this.conf.type === ShapeType.FRAME &&
-      this.children.length && !this.parent) {
-      return !this.isCapture || !cu.isDesignMode()
+  canNext(cu: CanvasUtil2): boolean {
+    if (this.conf.type === ShapeType.FRAME) {
+      if (this.children.length && !this.parent) {
+        return true
+      }
     }
-    return false
+    return !this.isCapture || !cu.isDesignMode()
   }
 
   getStatus() {
@@ -139,17 +140,6 @@ export abstract class BaseShape {
 
     box:${JSON.stringify(this.conf.box)}
     `
-  }
-
-  //获取缩放平移之后的x和y值
-  getXY(point: P) {
-    let {x, y} = point
-    let cu = CanvasUtil2.getInstance()
-    //修正当前鼠标点为变换过后的点，确保和图形同一transform
-    const {x: handX, y: handY} = cu.handMove
-    x = (x - handX) / cu.handScale
-    y = (y - handY) / cu.handScale
-    return {x, y, cu}
   }
 
   getState() {
@@ -211,11 +201,7 @@ export abstract class BaseShape {
       return true
     }
 
-    //修正当前鼠标点为变换过后的点，确保和图形同一transform
-    const {x: handX, y: handY} = cu.handMove
     let {x, y} = mousePoint
-    x = (x - handX) / cu.handScale//上面的简写
-    y = (y - handY) / cu.handScale
 
     let {
       w, h, rotation, radius,
@@ -229,7 +215,6 @@ export abstract class BaseShape {
      * 翻转之后的角度与正常图形的角度并不匹配，但是不知道为什么masterGo和figma都是这样子设计的
      * 所以这里只需要负角度旋转回默认点就行了
      * */
-
       let s2 = getRotatedPoint({x, y}, center, -r)
       x = s2.x
       y = s2.y
@@ -435,9 +420,10 @@ export abstract class BaseShape {
 
   mousedown(event: BaseEvent2, parents: BaseShape[] = []) {
     // console.log('mousedown', this.config)
-    let {e, point, type} = event
-    let {x, y, cu} = this.getXY(point)
+    if (this.childMouseDown(event, parents)) return
 
+    let {e, point: {x, y}, type} = event
+    let cu = CanvasUtil2.getInstance()
     this.original = cloneDeep(this.conf)
     this.children.map(shape => {
       shape.original = cloneDeep(shape.conf)
@@ -446,8 +432,6 @@ export abstract class BaseShape {
     cu.startY = y
     cu.offsetX = x - this.conf.x
     cu.offsetY = y - this.conf.y
-
-    if (this.childMouseDown(event, parents)) return
 
     let rect = this.conf
 
@@ -627,7 +611,8 @@ export abstract class BaseShape {
       dx = fromParent.dx
       dy = fromParent.dy
     } else {
-      let {x, y, cu} = this.getXY(point)
+      let {x, y,} = point
+      let cu = CanvasUtil2.getInstance()
       dx = (x - cu.startX)
       dy = (y - cu.startY)
     }
@@ -670,7 +655,8 @@ export abstract class BaseShape {
 
   //拖动左上，改变圆角按钮
   dragRd1(point: P) {
-    let {x, y, cu} = this.getXY(point)
+    let {x, y,} = point
+    let cu = CanvasUtil2.getInstance()
     let dx = (x - cu.startX)
     this.conf.radius = this.original.radius + dx
     cu.render()
@@ -679,7 +665,8 @@ export abstract class BaseShape {
 
   //拖动左上旋转
   dragLTR(point: P) {
-    let {x, y, cu} = this.getXY(point)
+    let {x, y,} = point
+    let cu = CanvasUtil2.getInstance()
     let rect = this.original
     let old = this.original
     let center = {
@@ -727,7 +714,8 @@ export abstract class BaseShape {
 
   //拖动左上
   dragLT(point: P) {
-    let {x, y, cu} = this.getXY(point)
+    let {x, y,} = point
+    let cu = CanvasUtil2.getInstance()
 
     let rect = this.conf
     let s = this.original
@@ -763,7 +751,8 @@ export abstract class BaseShape {
 
   //拖动左边
   dragL(point: P) {
-    let {x, y, cu,} = this.getXY(point)
+    let {x, y,} = point
+    let cu = CanvasUtil2.getInstance()
     const {flipHorizontal, flipVertical} = this.conf
     let rotation = this.getRotate()
     if (rotation || flipHorizontal || flipVertical) {
@@ -802,7 +791,8 @@ export abstract class BaseShape {
 
   //拖动右边
   dragR(point: P) {
-    let {x, y, cu,} = this.getXY(point)
+    let {x, y,} = point
+    let cu = CanvasUtil2.getInstance()
     const {flipHorizontal, flipVertical} = this.conf
     let rotation = this.getRotate()
     if (rotation || flipHorizontal || flipVertical) {

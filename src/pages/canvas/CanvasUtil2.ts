@@ -210,12 +210,18 @@ export default class CanvasUtil2 {
   handleEvent = throttle(e => this._handleEvent(e), 0)
 
   _handleEvent = async (e: any) => {
-    let x = e.x - this.canvasRect.left
-    let y = e.y - this.canvasRect.top
+    let screenPoint = {x: e.x, y: e.y}
+    let canvasPoint = {x: e.x - this.canvasRect.left, y: e.y - this.canvasRect.top}
+
+    //修正当前鼠标点为变换过后的点，确保和图形同一transform
+    const {x: handX, y: handY} = this.handMove
+    let point = {x: (canvasPoint.x - handX) / this.handScale, y: (canvasPoint.y - handY) / this.handScale}
     let event: BaseEvent2 = {
       capture: false,
       e,
-      point: {x, y},
+      screenPoint,
+      canvasPoint,
+      point,
       type: e.type,
       stopPropagation() {
         this.capture = true
@@ -241,13 +247,13 @@ export default class CanvasUtil2 {
     }
 
     if (event.type === EventTypes.onMouseMove) {
-      this.onMouseMove(event, {x, y})
+      this.onMouseMove(event)
     }
     if (event.type === EventTypes.onMouseDown) {
-      this.onMouseDown(event, {x, y})
+      this.onMouseDown(event)
     }
     if (event.type === EventTypes.onMouseUp) {
-      this.onMouseUp(event, {x, y})
+      this.onMouseUp(event)
     }
     if (event.type === EventTypes.onDbClick) {
       this.onDbClick(event)
@@ -265,7 +271,7 @@ export default class CanvasUtil2 {
     }
   }
 
-  onMouseDown(e: BaseEvent2, p: P,) {
+  onMouseDown(e: BaseEvent2,) {
     if (e.capture) return
     if (this.editShape) return
     console.log('cu-onMouseDown', e)
@@ -275,18 +281,18 @@ export default class CanvasUtil2 {
       this.render()
     }
     if (!this.isDesignMode()) {
-      this.startX = p.x
-      this.startY = p.y
+      this.startX = e.point.x
+      this.startY = e.point.y
       this.isMouseDown = true
     }
   }
 
-  onMouseMove(e: BaseEvent2, p: P,) {
+  onMouseMove(e: BaseEvent2,) {
     if (e.capture) return
     // console.log('cu-onMouseMove', e)
     if (this.isMouseDown) {
-      let w = p.x - this.startX
-      let h = p.y - this.startY
+      let w = e.point.x - this.startX
+      let h = e.point.y - this.startY
       switch (this.mode) {
         case ShapeType.RECTANGLE:
           if (this.newShape) {
@@ -348,7 +354,7 @@ export default class CanvasUtil2 {
     }
   }
 
-  onMouseUp(e: BaseEvent2, p: P,) {
+  onMouseUp(e: BaseEvent2,) {
     if (e.capture) return
     console.log('cu-onMouseUp', e)
     if (this.isMouseDown) {

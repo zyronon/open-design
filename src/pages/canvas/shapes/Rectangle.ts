@@ -16,6 +16,8 @@ export class Rectangle extends BaseShape {
         capture: false,
         e: {} as any,
         point: {x: 0, y: 0},
+        screenPoint: {x: 0, y: 0},
+        canvasPoint: {x: 0, y: 0},
         type: '',
         stopPropagation() {
           this.capture = true
@@ -56,7 +58,8 @@ export class Rectangle extends BaseShape {
     // console.log('childMouseMove', this.hoverPointIndex)
     if (this.isEdit) {
       if (this.hoverPointIndex < 0 || !this.enter) return false
-      let {x, y, cu} = this.getXY(mousePoint)
+      let {x, y,} = mousePoint
+      let cu = CanvasUtil2.getInstance()
       // let {x, y, w, h, points} = this._config
       // mousePoint.x = mousePoint.x - x - w / 2
       // mousePoint.y = mousePoint.y - y - h / 2

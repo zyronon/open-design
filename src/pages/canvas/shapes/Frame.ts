@@ -4,8 +4,49 @@ import {BaseEvent2, P, ShapeType} from "../utils/type"
 import {drawSelectedHover} from "./Ellipse/draw"
 import {BaseConfig} from "../config/BaseConfig"
 import draw from "../utils/draw"
+import {getRotatedPoint} from "../../../utils"
 
 export class Frame extends BaseShape {
+
+  /** @desc 只能在名字那里hover
+   * */
+  isOnlyHoverInName(): boolean {
+    //如果有父级，都可以hover
+    if (this.parent) {
+      return false
+    } else {
+      //反之，则必须没有孩子时才能hover
+      return !!this.children.length
+    }
+  }
+
+  isInOnSelect(p: P, cu: CanvasUtil2): boolean {
+    return false
+  }
+
+  isInName(mousePoint: P, isReverse = false) {
+    let {x, y} = mousePoint
+    const {original, nameWidth,} = this.conf
+    if (isReverse) {
+      const {realRotation, center} = this.conf
+      if (realRotation) {
+        //注释同shapeIsIn
+        let s2 = getRotatedPoint({x, y}, center, -realRotation)
+        x = s2.x
+        y = s2.y
+      }
+    }
+    return original.x < x && x < original.x + nameWidth
+      && original.y > y && y > original.y - 18
+  }
+
+  isHoverIn(mousePoint: P, cu: CanvasUtil2): boolean {
+    if (this.isOnlyHoverInName()) {
+      return this.isInName(mousePoint) || super.isInBox(mousePoint)
+    }
+    return super.isInBox(mousePoint)
+  }
+
 
   childDbClick(event: BaseEvent2, parents: BaseShape[]): boolean {
     console.log('childDbClick')
@@ -18,19 +59,20 @@ export class Frame extends BaseShape {
   }
 
   childMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean {
-    if (!this.canHover()) {
-      const {x, y} = event.point
-      let conf = this.conf
-      let r = conf.original.x < x && x < conf.original.x + conf.nameWidth
-        && conf.original.y > y && y > conf.original.y - 18
-      // console.log('r', r, mousePoint, conf)
-      return r
+    if (this.isSelect) return false
+
+    if (this.isOnlyHoverInName()) {
+      return !this.isInName(event.point, true)
     }
     return false
   }
 
   childMouseMove(event: BaseEvent2, parents: BaseShape[]) {
-    return !this.canHover()
+    if (this.isSelect) return false
+    if (this.isOnlyHoverInName()) {
+      return !this.isInName(event.point, true)
+    }
+    return false
   }
 
   childMouseUp(event: BaseEvent2, parents: BaseShape[]): boolean {
@@ -41,32 +83,6 @@ export class Frame extends BaseShape {
     return false
   }
 
-  isInOnSelect(p: P, cu: CanvasUtil2): boolean {
-    return false
-  }
-
-  canHover(): boolean {
-    //如果有父级，都可以hover
-    if (this.parent) {
-      return true
-    } else {
-      //反之，则必须没有孩子时才能hover
-      return !this.children.length
-    }
-  }
-
-  isHoverIn(mousePoint: P, cu: CanvasUtil2): boolean {
-    return super.isInBox(mousePoint)
-    const {x, y} = mousePoint
-    let conf = this.conf
-    if (this.canHover() || this.isSelect) {
-      return super.isInBox(mousePoint)
-    }
-    let r = conf.original.x < x && x < conf.original.x + conf.nameWidth
-      && conf.original.y > y && y > conf.original.y - 18
-    // console.log('r', r, mousePoint, conf)
-    return r
-  }
 
   render(ctx: CanvasRenderingContext2D, p: P, parent?: BaseConfig) {
     let {

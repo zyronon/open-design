@@ -58,11 +58,11 @@ export abstract class BaseShape {
 
   abstract childMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean
 
-  abstract childDbClick(event: BaseEvent2, parents: BaseShape[]): boolean
-
   abstract childMouseMove(event: BaseEvent2, parents: BaseShape[]): boolean
 
   abstract childMouseUp(event: BaseEvent2, parents: BaseShape[]): boolean
+
+  abstract childDbClick(event: BaseEvent2, parents: BaseShape[]): boolean
 
   //判断是否hover在图形上
   abstract isHoverIn(mousePoint: P, cu: CanvasUtil2): boolean
@@ -197,25 +197,22 @@ export abstract class BaseShape {
       this.enterLTR) {
       return true
     }
-    if (this.beforeShapeIsIn()) {
-      return true
-    }
+    if (this.beforeShapeIsIn())return true
 
     let {x, y} = mousePoint
 
     let {
       w, h, rotation, radius,
-      box,
+      box, realRotation,
       flipHorizontal, flipVertical, center
     } = this.conf
     const {leftX, rightX, topY, bottomY,} = box
-    let r = this.getRotate()
-    if (r) {
+    if (realRotation) {
       /*
      * 翻转之后的角度与正常图形的角度并不匹配，但是不知道为什么masterGo和figma都是这样子设计的
      * 所以这里只需要负角度旋转回默认点就行了
      * */
-      let s2 = getRotatedPoint({x, y}, center, -r)
+      let s2 = getRotatedPoint({x, y}, center, -realRotation)
       x = s2.x
       y = s2.y
     }

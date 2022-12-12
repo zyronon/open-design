@@ -1486,8 +1486,8 @@ export const rects: any[] = [
       {
         children:[
           {
-            "x": 30,
-            "y": 50,
+            "x": 0,
+            "y": 0,
             "w": 100,
             "h": 50,
             "rotate": 0,

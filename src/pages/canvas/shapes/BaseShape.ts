@@ -46,6 +46,69 @@ export abstract class BaseShape {
     }) ?? []
   }
 
+  abstract render(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any
+
+  abstract renderHover(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any
+
+  abstract renderSelected(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any
+
+  abstract renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void
+
+  abstract renderEdit(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any
+
+  abstract childMouseDown(event: BaseEvent2, p: BaseShape[]): boolean
+
+  abstract childDbClick(event: BaseEvent2, p: BaseShape[]): boolean
+
+  abstract childMouseMove(mousePoint: P): boolean
+
+  abstract childMouseUp(): boolean
+
+  //判断是否hover在图形上
+  abstract isHoverIn(mousePoint: P, cu: CanvasUtil2): boolean
+
+  //当select时，判断是否在图形上
+  abstract isInOnSelect(p: P, cu: CanvasUtil2): boolean
+
+  /**
+   * @desc 判断是否在图形上，之前
+   * 用于子类的enter之类的变量判断
+   * 如果变量为ture，那么方法直接返回true，不用再走后续判断是否在图形上
+   * */
+  abstract beforeShapeIsIn(): boolean
+
+  resetHover() {
+    this.hoverL = false
+    this.hoverLT = false
+    this.hoverLTR = false
+    this.hoverRd1 = false
+    this.hoverR = false
+  }
+
+  resetEnter() {
+    this.enter = false
+    this.enterL = false
+    this.enterLT = false
+    this.enterLTR = false
+    this.enterRd1 = false
+    this.enterR = false
+  }
+
+  /**
+   * 事件向下传递的先决条件：有子级，自己没有父级
+   * 1、有子级
+   * 2、自己没有父级
+   * 3、类型为FRAME
+   * 再判断是否捕获、是否是设计模式
+   * */
+  canNext(cu: CanvasUtil2) {
+    if (this.conf.type === ShapeType.FRAME &&
+      this.children.length && !this.parent) {
+      return !this.isCapture || !cu.isDesignMode()
+    }
+    return false
+  }
+
   getStatus() {
     return `
     isSelect:${!!this.isSelect}
@@ -75,88 +138,44 @@ export abstract class BaseShape {
     `
   }
 
-  resetHover() {
-    this.hoverL = false
-    this.hoverLT = false
-    this.hoverLTR = false
-    this.hoverRd1 = false
-    this.hoverR = false
+  //获取缩放平移之后的x和y值
+  getXY(point: P) {
+    let {x, y} = point
+    let cu = CanvasUtil2.getInstance()
+    //修正当前鼠标点为变换过后的点，确保和图形同一transform
+    const {x: handX, y: handY} = cu.handMove
+    x = (x - handX) / cu.handScale
+    y = (y - handY) / cu.handScale
+    return {x, y, cu}
   }
 
-  resetEnter() {
-    this.enter = false
-    this.enterL = false
-    this.enterLT = false
-    this.enterLTR = false
-    this.enterRd1 = false
-    this.enterR = false
+  getState() {
+    return {
+      isHover: this.isHover,
+      isSelect: this.isSelect,
+      isSelectHover: this.isSelectHover,
+      isEdit: this.isEdit,
+      enterLT: this.enterLT,
+      enterL: this.enterL
+    }
   }
 
-  abstract render(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any
-
-  abstract renderHover(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any
-
-  abstract renderSelected(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any
-
-  abstract renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void
-
-  abstract renderEdit(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any
-
-  shapeRender(ctx: CanvasRenderingContext2D, parent?: BaseConfig, parent2?: BaseShape) {
-    ctx.save()
-    let {x, y} = draw.calcPosition(ctx, this.conf, this.original, this.getState(), parent, parent2)
-    const {isHover, isSelect, isEdit, isSelectHover} = this
-
-    if (isHover) {
-      this.render(ctx, {x, y}, parent,)
-      draw.hover(ctx, {...this.conf, x, y})
-    } else if (isSelect) {
-      this.render(ctx, {x, y}, parent,)
-      draw.selected(ctx, {...this.conf, x, y})
-      if (isSelectHover) {
-        this.renderSelectedHover(ctx, {...this.conf, x, y})
-      }
-    } else if (isEdit) {
-      this.renderEdit(ctx, {...this.conf, x, y})
-      // edit(ctx, {...this.config, x, y})
+  getRotate(conf = this.conf): number {
+    let {rotate, flipHorizontal, flipVertical} = conf
+    let r = rotate
+    if (flipHorizontal && flipVertical) {
+      r = (180 + rotate)
     } else {
-      this.render(ctx, {x, y}, parent,)
+      if (flipHorizontal) {
+        r = (rotate - 180)
+      }
     }
-
-    ctx.restore()
-    draw.drawRound(ctx, this.conf.topLeft)
-    draw.drawRound(ctx, this.conf.topRight)
-    draw.drawRound(ctx, this.conf.bottomLeft)
-    draw.drawRound(ctx, this.conf.bottomRight)
-    draw.drawRound(ctx, this.conf.center)
-    draw.drawRound(ctx, this.conf.original)
-    // ctx.save()
-    // let rect = this.config
-    // ctx.fillStyle = 'gray'
-    // ctx.font = `${rect.fontWeight} ${rect.fontSize}rem "${rect.fontFamily}", sans-serif`;
-    // ctx.textBaseline = 'top'
-    // ctx.fillText(rect.name, x, y - 18);
-    // ctx.restore()
-
-    // this.config = helper.getPath(this.config, undefined, parent)
-    for (let i = 0; i < this.children.length; i++) {
-      let shape = this.children[i]
-      shape.shapeRender(ctx, this.conf, this)
+    //这里要加上父组件旋转的角度
+    if (this.parent) {
+      r += this.parent.getRotate()
     }
+    return r
   }
-
-  //判断是否hover在图形上
-  abstract isHoverIn(mousePoint: P, cu: CanvasUtil2): boolean
-
-  //当select时，判断是否在图形上
-  abstract isInOnSelect(p: P, cu: CanvasUtil2): boolean
-
-  /**
-   * @desc 判断是否在图形上，之前
-   * 用于子类的enter之类的变量判断
-   * 如果变量为ture，那么方法直接返回true，不用再走后续判断是否在图形上
-   * */
-  abstract beforeShapeIsIn(): boolean
 
   /**
    * @desc 判断鼠标m是否在p点内
@@ -289,21 +308,48 @@ export abstract class BaseShape {
     return this.isHoverIn({x, y}, cu)
   }
 
-  /**
-   * 事件向下传递的先决条件：有子级，自己没有父级
-   * 1、有子级
-   * 2、自己没有父级
-   * 3、类型为FRAME
-   * 再判断是否捕获、是否是设计模式
-   * */
-  canNext(cu: CanvasUtil2) {
-    if (this.conf.type === ShapeType.FRAME &&
-      this.children.length && !this.parent) {
-      return !this.isCapture || !cu.isDesignMode()
-    }
-    return false
-  }
+  shapeRender(ctx: CanvasRenderingContext2D, parent?: BaseConfig, parent2?: BaseShape) {
+    ctx.save()
+    let {x, y} = draw.calcPosition(ctx, this.conf, this.original, this.getState(), parent, parent2)
+    const {isHover, isSelect, isEdit, isSelectHover} = this
 
+    if (isHover) {
+      this.render(ctx, {x, y}, parent,)
+      draw.hover(ctx, {...this.conf, x, y})
+    } else if (isSelect) {
+      this.render(ctx, {x, y}, parent,)
+      draw.selected(ctx, {...this.conf, x, y})
+      if (isSelectHover) {
+        this.renderSelectedHover(ctx, {...this.conf, x, y})
+      }
+    } else if (isEdit) {
+      this.renderEdit(ctx, {...this.conf, x, y})
+      // edit(ctx, {...this.config, x, y})
+    } else {
+      this.render(ctx, {x, y}, parent,)
+    }
+
+    ctx.restore()
+    draw.drawRound(ctx, this.conf.topLeft)
+    draw.drawRound(ctx, this.conf.topRight)
+    draw.drawRound(ctx, this.conf.bottomLeft)
+    draw.drawRound(ctx, this.conf.bottomRight)
+    draw.drawRound(ctx, this.conf.center)
+    draw.drawRound(ctx, this.conf.original)
+    // ctx.save()
+    // let rect = this.config
+    // ctx.fillStyle = 'gray'
+    // ctx.font = `${rect.fontWeight} ${rect.fontSize}rem "${rect.fontFamily}", sans-serif`;
+    // ctx.textBaseline = 'top'
+    // ctx.fillText(rect.name, x, y - 18);
+    // ctx.restore()
+
+    // this.config = helper.getPath(this.config, undefined, parent)
+    for (let i = 0; i < this.children.length; i++) {
+      let shape = this.children[i]
+      shape.shapeRender(ctx, this.conf, this)
+    }
+  }
 
   /** @desc 事件转发方法
    * @param event 合成的事件
@@ -368,17 +414,10 @@ export abstract class BaseShape {
     this[type]?.(event, p)
   }
 
-  abstract childMouseDown(event: BaseEvent2, p: BaseShape[]): boolean
-
-  abstract childDbClick(event: BaseEvent2, p: BaseShape[]): boolean
-
-  abstract childMouseMove(mousePoint: P): boolean
-
-  abstract childMouseUp(): boolean
-
   dblclick(event: BaseEvent2, parents: BaseShape[] = []) {
     console.log('on-dblclick',)
     if (this.childDbClick(event, parents)) return
+
     if (this.isEdit) {
       this.isSelect = this.isSelectHover = true
     } else {
@@ -568,6 +607,61 @@ export abstract class BaseShape {
 
     if (this.enterRd1) {
       return this.dragRd1(point)
+    }
+  }
+
+  mouseup(e: BaseEvent2, p: BaseShape[] = []) {
+    // if (e.capture) return
+    // console.log('mouseup')
+    if (this.childMouseUp()) return
+    this.resetEnter()
+  }
+
+  //移动图形
+  move(point: P, fromParent?: { dx: number, dy: number }) {
+    let dx: number, dy: number
+    if (fromParent) {
+      dx = fromParent.dx
+      dy = fromParent.dy
+    } else {
+      let {x, y, cu} = this.getXY(point)
+      dx = (x - cu.startX)
+      dy = (y - cu.startY)
+    }
+
+    this.conf.absolute = {
+      x: this.original.absolute.x + dx,
+      y: this.original.absolute.y + dy,
+    }
+    this.conf.original = {
+      x: this.original.original.x + dx,
+      y: this.original.original.y + dy,
+    }
+
+    this.conf.center.x = this.original.center.x + dx
+    this.conf.center.y = this.original.center.y + dy
+
+    let pRotate = this.parent?.getRotate()
+    //当有父级并且父级有角度时，特殊计算xy的值
+    if (this.parent && pRotate) {
+      /**
+       * 先把ab值，负回父角度的位置。（此时的ab值即父级未旋转时的值，一开始initConf的xy也是取的这个值）
+       * 然后把ab值和父级的original相减，就可以得出最新的xy值
+       * */
+      let rXy = getRotatedPoint(this.conf.absolute, this.parent.conf.center, -pRotate)
+      this.conf.x = rXy.x - this.parent.conf.original.x
+      this.conf.y = rXy.y - this.parent.conf.original.y
+    } else {
+      this.conf.x = this.original.x + dx
+      this.conf.y = this.original.y + dy
+    }
+    // this.conf = helper.calcPath(this.conf,)
+    this.children.map(shape => {
+      shape.move(helper.getXy(), {dx, dy})
+    })
+    if (!fromParent) {
+      let cu = CanvasUtil2.getInstance()
+      cu.render()
     }
   }
 
@@ -768,100 +862,6 @@ export abstract class BaseShape {
       this.conf = helper.getPath(this.conf, this.original)
     }
     cu.render()
-  }
-
-  //移动图形
-  move(point: P, fromParent?: { dx: number, dy: number }) {
-    let dx: number, dy: number
-    if (fromParent) {
-      dx = fromParent.dx
-      dy = fromParent.dy
-    } else {
-      let {x, y, cu} = this.getXY(point)
-      dx = (x - cu.startX)
-      dy = (y - cu.startY)
-    }
-
-    this.conf.absolute = {
-      x: this.original.absolute.x + dx,
-      y: this.original.absolute.y + dy,
-    }
-    this.conf.original = {
-      x: this.original.original.x + dx,
-      y: this.original.original.y + dy,
-    }
-
-    this.conf.center.x = this.original.center.x + dx
-    this.conf.center.y = this.original.center.y + dy
-
-    let pRotate = this.parent?.getRotate()
-    //当有父级并且父级有角度时，特殊计算xy的值
-    if (this.parent && pRotate) {
-      /**
-       * 先把ab值，负回父角度的位置。（此时的ab值即父级未旋转时的值，一开始initConf的xy也是取的这个值）
-       * 然后把ab值和父级的original相减，就可以得出最新的xy值
-       * */
-      let rXy = getRotatedPoint(this.conf.absolute, this.parent.conf.center, -pRotate)
-      this.conf.x = rXy.x - this.parent.conf.original.x
-      this.conf.y = rXy.y - this.parent.conf.original.y
-    } else {
-      this.conf.x = this.original.x + dx
-      this.conf.y = this.original.y + dy
-    }
-    // this.conf = helper.calcPath(this.conf,)
-    this.children.map(shape => {
-      shape.move(helper.getXy(), {dx, dy})
-    })
-    if (!fromParent) {
-      let cu = CanvasUtil2.getInstance()
-      cu.render()
-    }
-  }
-
-  mouseup(e: BaseEvent2, p: BaseShape[] = []) {
-    // if (e.capture) return
-    // console.log('mouseup')
-    this.childMouseUp()
-    this.resetEnter()
-  }
-
-  //获取缩放平移之后的x和y值
-  getXY(point: P) {
-    let {x, y} = point
-    let cu = CanvasUtil2.getInstance()
-    //修正当前鼠标点为变换过后的点，确保和图形同一transform
-    const {x: handX, y: handY} = cu.handMove
-    x = (x - handX) / cu.handScale
-    y = (y - handY) / cu.handScale
-    return {x, y, cu}
-  }
-
-  getState() {
-    return {
-      isHover: this.isHover,
-      isSelect: this.isSelect,
-      isSelectHover: this.isSelectHover,
-      isEdit: this.isEdit,
-      enterLT: this.enterLT,
-      enterL: this.enterL
-    }
-  }
-
-  getRotate(conf = this.conf): number {
-    let {rotate, flipHorizontal, flipVertical} = conf
-    let r = rotate
-    if (flipHorizontal && flipVertical) {
-      r = (180 + rotate)
-    } else {
-      if (flipHorizontal) {
-        r = (rotate - 180)
-      }
-    }
-    //这里要加上父组件旋转的角度
-    if (this.parent) {
-      r += this.parent.getRotate()
-    }
-    return r
   }
 
   flip(type: number) {

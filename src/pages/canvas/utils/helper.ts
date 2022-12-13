@@ -3,6 +3,7 @@ import {getRotatedPoint} from "../../../utils"
 // @ts-ignore
 import {v4 as uuid} from 'uuid'
 import {clone} from "lodash"
+import {P, ShapeType} from "./type"
 
 export default {
   /**
@@ -12,6 +13,16 @@ export default {
    * */
   getReversePoint(val: number, centerVal: number) {
     return centerVal + Math.abs(val - centerVal) * (val < centerVal ? 1 : -1)
+  },
+
+  /**
+   * @desc 获取翻转点
+   * @param point 要翻转的点
+   * @param center 中心点
+   * */
+  getHorizontalReversePoint(point: P, center: P) {
+    point.x = center.x + Math.abs(point.x - center.x) * (point.x < center.x ? 1 : -1)
+    return point
   },
   getPath(conf: BaseConfig, ctx?: any, pConf?: BaseConfig) {
     // console.log('getPath')
@@ -106,7 +117,6 @@ export default {
     }
     return conf
   },
-
   getRotate(conf: BaseConfig): number {
     let {rotation, flipHorizontal, flipVertical} = conf
     let r = rotation
@@ -114,68 +124,65 @@ export default {
       r = (180 + rotation)
     } else {
       if (flipHorizontal) {
-        r = (rotation - 180)
+        r = (180 - rotation)
       }
     }
     return r
   },
   initConf(conf: BaseConfig, ctx: CanvasRenderingContext2D, pConf?: BaseConfig) {
     // console.log('initConf')
+    if (conf.id) return conf
     let {
-      x, y, w, h,
+      x, y, w, h, flipHorizontal
     } = conf
-    if (!conf.id) {
+    if (conf.type === ShapeType.FRAME) {
       ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
       let m = ctx.measureText(conf.name)
       conf.nameWidth = m.width
-      conf.id = uuid()
+    }
+    conf.id = uuid()
+    let center = {x: x + (w / 2), y: y + (h / 2)}
+    conf.center = center
+    conf.percent = {x: 0, y: 0,}
+    conf.absolute = {x, y}
+    conf.original = clone(conf.absolute)
+    conf.realRotation = conf.rotation
 
-      //根据父级，计算出自己的绝对值x,y
-      if (pConf) {
-        conf.percent = {x: x / pConf.w, y: y / pConf.h,}
-        conf.absolute = {x: x + pConf.original.x, y: y + pConf.original.y,}
-        conf.original = clone(conf.absolute)
-        conf.realRotation = this.getRotate(conf) + pConf.realRotation
-      } else {
-        conf.percent = {x: 0, y: 0,}
-        conf.absolute = {x, y,}
-        conf.original = clone(conf.absolute)
-        conf.realRotation = this.getRotate(conf)
-      }
-      const {x: ax, y: ay} = conf.absolute
-      conf.center = {
-        x: ax + (w / 2),
-        y: ay + (h / 2)
-      }
-      conf.topLeft = {
-        x: ax,
-        y: ay
-      }
-      conf.topRight = {
-        x: ax + w,
-        y: ay
-      }
-      conf.bottomLeft = {
-        x: ax,
-        y: ay + h
-      }
-      conf.bottomRight = {
-        x: ax + w,
-        y: ay + h
-      }
-      if (conf.rotation) {
-        conf.topLeft = getRotatedPoint(conf.topLeft, conf.center, conf.rotation)
-        conf.topRight = getRotatedPoint(conf.topRight, conf.center, conf.rotation)
-        conf.bottomLeft = getRotatedPoint(conf.bottomLeft, conf.center, conf.rotation)
-        conf.bottomRight = getRotatedPoint(conf.bottomRight, conf.center, conf.rotation)
-        conf.absolute = conf.topLeft
-        conf.x = x + (conf.absolute.x - ax)
-        conf.y = y + (conf.absolute.y - ay)
-      }
+    const {x: ax, y: ay} = conf.absolute
+    conf.topLeft = {x: ax, y: ay}
+    conf.topRight = {x: ax + w, y: ay}
+    conf.bottomLeft = {x: ax, y: ay + h}
+    conf.bottomRight = {x: ax + w, y: ay + h}
 
-      /**
-       *如果父组件旋转了,那么子组件的ab值也要旋转
-       * */
+    /** @desc 水平翻转所有的点
+     * */
+    if (flipHorizontal) {
+      conf.topLeft = this.getHorizontalReversePoint(conf.topLeft, center)
+      conf.topRight = this.getHorizontalReversePoint(conf.topRight, center)
+      conf.bottomLeft = this.getHorizontalReversePoint(conf.bottomLeft, center)
+      conf.bottomRight = this.getHorizontalReversePoint(conf.bottomRight, center)
+      conf.absolute = this.getHorizontalReversePoint(conf.absolute, center)
+      conf.realRotation = -conf.rotation
+    }
+    /**
+     *如果父组件旋转了,那么子组件的ab值也要旋转
+     * */
+    if (pConf) {
+      //根据父级，计算出自己的0度绝对值x,y
+      const zeroAbsolute = {x: x + pConf.original.x, y: y + pConf.original.y,}
+      conf.original = clone(zeroAbsolute)
+      conf.absolute = getRotatedPoint(zeroAbsolute, conf.center, conf.realRotation)
+      //用旋转后的ab值，减去老的ab值，就是xy的偏移量。与原xy相加得到旋转后的xy值
+      conf.x = x + (conf.absolute.x - zeroAbsolute.x)
+      conf.y = y + (conf.absolute.y - zeroAbsolute.y)
+      conf.percent = {x: x / pConf.w, y: y / pConf.h,}
+
+      let rotation = conf.realRotation
+      conf.topLeft = getRotatedPoint(conf.topLeft, conf.center, rotation)
+      conf.topRight = getRotatedPoint(conf.topRight, conf.center, rotation)
+      conf.bottomLeft = getRotatedPoint(conf.bottomLeft, conf.center, rotation)
+      conf.bottomRight = getRotatedPoint(conf.bottomRight, conf.center, rotation)
+
       if (pConf?.realRotation) {
         conf.topLeft = getRotatedPoint(conf.topLeft, pConf.center, pConf.realRotation)
         conf.topRight = getRotatedPoint(conf.topRight, pConf.center, pConf.realRotation)
@@ -217,12 +224,27 @@ export default {
         conf.original = reverseXy
       }
 
-      conf.box = {
-        leftX: conf.center.x - w / 2,
-        rightX: conf.center.x + w / 2,
-        topY: conf.center.y - h / 2,
-        bottomY: conf.center.y + h / 2,
+      conf.realRotation = this.getRotate(conf) + pConf.realRotation
+
+    } else {
+      let rotation = conf.realRotation
+      if (rotation) {
+        conf.topLeft = getRotatedPoint(conf.topLeft, conf.center, rotation)
+        conf.topRight = getRotatedPoint(conf.topRight, conf.center, rotation)
+        conf.bottomLeft = getRotatedPoint(conf.bottomLeft, conf.center, rotation)
+        conf.bottomRight = getRotatedPoint(conf.bottomRight, conf.center, rotation)
+        conf.absolute = conf.topLeft
+        conf.x = conf.absolute.x
+        conf.y = conf.absolute.y
       }
+    }
+    conf.rotation = this.getRotate(conf)
+
+    conf.box = {
+      leftX: conf.center.x - w / 2,
+      rightX: conf.center.x + w / 2,
+      topY: conf.center.y - h / 2,
+      bottomY: conf.center.y + h / 2,
     }
     return conf
   },

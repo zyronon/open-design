@@ -24,6 +24,7 @@ export default {
       type, flipVertical, flipHorizontal, children,
       center,
       topLeft,
+      realRotation
     }
       = conf
     if (parent) {
@@ -85,20 +86,12 @@ export default {
         if (flipVertical) scaleY = -1
 
         ctx.translate(center.x, center.y)
-        if (flipHorizontal && flipVertical) {
-          ctx.rotate((180 + rotation) * Math.PI / 180)
-        } else {
-          if (flipHorizontal) {
-            ctx.rotate((rotation - 180) * Math.PI / 180)
-          } else {
-            ctx.rotate(rotation * Math.PI / 180)
-          }
-        }
+        ctx.rotate(realRotation * Math.PI / 180)
         ctx.scale(scaleX, scaleY)
         return {x: -w / 2, y: -h / 2}
       } else {
         ctx.translate2(absolute)
-        ctx.rotate(rotation * Math.PI / 180)
+        ctx.rotate(realRotation * Math.PI / 180)
         return {x: 0, y: 0}
       }
     }

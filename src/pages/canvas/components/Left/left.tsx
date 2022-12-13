@@ -84,9 +84,6 @@ export default memo((props: any) => {
   return (
     <div className="left-wrapper">
       <div className="temp">
-        <div className="component" onClick={() => props.init()}>
-          刷新
-        </div>
         <div className="component" onClick={() => props.navigate('/test')}>
           去test
         </div>
@@ -95,6 +92,9 @@ export default memo((props: any) => {
         </div>
         <div className="component" onClick={props.copy2}>
           复制2
+        </div>
+        <div className="component" onClick={() => props.init()}>
+          刷新
         </div>
       </div>
       <div className="tabs">

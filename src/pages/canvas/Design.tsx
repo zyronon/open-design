@@ -270,18 +270,18 @@ class Design extends React.Component<any, IState> {
                     <div className="base-info">
                       <div className="row">
                         <div className="col">
-                          <BaseInput value={selectRectConf?.x?.toFixed(0)} prefix={<span className={'gray'}>X</span>}/>
+                          <BaseInput value={selectRectConf?.x?.toFixed(2)} prefix={<span className={'gray'}>X</span>}/>
                         </div>
                         <div className="col">
-                          <BaseInput value={selectRectConf?.y?.toFixed(0)} prefix={<span className={'gray'}>Y</span>}/>
+                          <BaseInput value={selectRectConf?.y?.toFixed(2)} prefix={<span className={'gray'}>Y</span>}/>
                         </div>
                       </div>
                       <div className="row">
                         <div className="col">
-                          <BaseInput value={selectRectConf?.w?.toFixed(0)} prefix={<span className={'gray'}>W</span>}/>
+                          <BaseInput value={selectRectConf?.w?.toFixed(2)} prefix={<span className={'gray'}>W</span>}/>
                         </div>
                         <div className="col">
-                          <BaseInput value={selectRectConf?.h?.toFixed(0)} prefix={<span className={'gray'}>H</span>}/>
+                          <BaseInput value={selectRectConf?.h?.toFixed(2)} prefix={<span className={'gray'}>H</span>}/>
                         </div>
                         <div className="col">
                           <BaseIcon active={false}>

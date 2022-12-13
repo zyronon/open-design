@@ -112,30 +112,26 @@ export abstract class BaseShape {
 
   getStatus() {
     return `
-    isSelect:${!!this.isSelect}
-        <br/>
-    enter:${!!this.enter}    <br/>
-    isEdit:${!!this.isEdit}
     <div>
         realRotation:${this.conf.realRotation}
 </div>
     <div>
-        absoluteX:${this.conf.absolute.x.toFixed()}
+        absoluteX:${this.conf.absolute.x.toFixed(2)}
 </div>
     <div>
-        absoluteY:${this.conf.absolute.y.toFixed()}    
+        absoluteY:${this.conf.absolute.y.toFixed(2)}    
 </div>
     <div>
-        originalX:${this.conf.original.x.toFixed()}
+        originalX:${this.conf.original.x.toFixed(2)}
 </div>
     <div>
-        originalY:${this.conf.original.y.toFixed()}    
+        originalY:${this.conf.original.y.toFixed(2)}    
 </div>
     <div>
-        centerX:${this.conf.center.x.toFixed()}
+        centerX:${this.conf.center.x.toFixed(2)}
 </div>
     <div>
-        centerY:${this.conf.center.y.toFixed()}    
+        centerY:${this.conf.center.y.toFixed(2)}    
 </div>
 
     box:${JSON.stringify(this.conf.box)}
@@ -882,30 +878,29 @@ export abstract class BaseShape {
   flip(type: number) {
     const conf = this.conf
     let {
-      x, y, center, absolute
+      x, y, center, absolute, realRotation, rotation
     } = conf
-    let rotation = this.getRotate()
     console.log('r', rotation)
     if (type === 0) {
       conf.absolute.x = helper.getReversePoint(absolute.x, center.x)
-      let pRotate = this.parent?.getRotate()
-      if (this.parent && pRotate) {
-        let pConf = this.parent.conf
-        //逻辑同move一样
-        let rXy = getRotatedPoint(conf.absolute, pConf.center, -pRotate)
-        conf.x = rXy.x - pConf.original.x
-        conf.y = rXy.y - pConf.original.y
-      } else {
-        conf.x = helper.getReversePoint(x, center.x)
-      }
-
       if (rotation < 0) {
         conf.rotation = -rotation
       } else {
         conf.rotation = 180 - rotation
       }
+      conf.realRotation = -realRotation
+
+      if (this.parent) {
+        //逻辑同move一样
+        let pConf = this.parent.conf
+        let rXy = getRotatedPoint(conf.absolute, pConf.center, -pConf.realRotation)
+        conf.x = rXy.x - pConf.original.x
+        conf.y = rXy.y - pConf.original.y
+        conf.rotation -= pConf.rotation
+      } else {
+        conf.x = helper.getReversePoint(x, center.x)
+      }
       //减去父角度
-      conf.rotation -= (this.parent?.conf.rotation ?? 0)
       conf.flipHorizontal = !conf.flipHorizontal
     } else {
       conf.y = center.y + Math.abs(y - center.y) * (y < center.y ? 1 : -1)

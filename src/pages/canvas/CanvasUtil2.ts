@@ -435,4 +435,3 @@ export default class CanvasUtil2 {
     this.mode = mode
   }
 }
-

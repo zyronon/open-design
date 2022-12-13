@@ -197,7 +197,7 @@ export abstract class BaseShape {
       this.enterLTR) {
       return true
     }
-    if (this.beforeShapeIsIn())return true
+    if (this.beforeShapeIsIn()) return true
 
     let {x, y} = mousePoint
 
@@ -208,10 +208,11 @@ export abstract class BaseShape {
     } = this.conf
     const {leftX, rightX, topY, bottomY,} = box
     if (realRotation) {
-      /*
-     * 翻转之后的角度与正常图形的角度并不匹配，但是不知道为什么masterGo和figma都是这样子设计的
-     * 所以这里只需要负角度旋转回默认点就行了
-     * */
+      /**
+       * 翻转之后的角度与正常图形的角度并不匹配，但是不知道为什么masterGo和figma都是这样子设计的
+       * 所以这里只需要负角度旋转回默认点就行了
+       *
+       * */
       let s2 = getRotatedPoint({x, y}, center, -realRotation)
       x = s2.x
       y = s2.y
@@ -346,6 +347,17 @@ export abstract class BaseShape {
     // if (this.config.name === '父组件')debugger
     // console.log('event', this.config.name, `type：${type}`,)
     if (event.capture) return true
+    // 如果在操作中，那么就不要再向下传递事件啦，再向下传递事件，会导致子父冲突
+    if (this.enter ||
+      this.enterL ||
+      this.enterR ||
+      this.enterLT ||
+      this.enterLTR) {
+      /** @desc 把事件消费了，不然父级会使用
+       * */
+      event.stopPropagation()
+      return this.emit(event, parent)
+    }
 
     let cu = CanvasUtil2.getInstance()
     if (this.shapeIsIn(point, cu, parent?.[parent?.length - 1])) {
@@ -381,7 +393,7 @@ export abstract class BaseShape {
       // console.log('冒泡', this.config.name)
     } else {
       // console.log('out')
-      document.body.style.cursor = "default"
+      // document.body.style.cursor = "default"
       this.isSelectHover = this.isHover = false
       cu.setInShapeNull(this)
       for (let i = 0; i < this.children.length; i++) {
@@ -417,6 +429,8 @@ export abstract class BaseShape {
 
   mousedown(event: BaseEvent2, parents: BaseShape[] = []) {
     // console.log('mousedown', this.config)
+    EventBus.emit(EventMapTypes.onMouseDown, this)
+
     if (this.childMouseDown(event, parents)) return
 
     let {e, point: {x, y}, type} = event
@@ -536,7 +550,6 @@ export abstract class BaseShape {
     //默认选中以及拖动
     this.enter = true
     if (this.isSelect) return
-    EventBus.emit(EventMapTypes.onMouseDown, this)
     this.isSelect = true
     this.isSelectHover = true
     this.isCapture = true
@@ -578,6 +591,7 @@ export abstract class BaseShape {
     if (this.enterL) {
       return this.dragL(point)
     }
+
     if (this.enterR) {
       return this.dragR(point)
     }
@@ -679,31 +693,41 @@ export abstract class BaseShape {
       current.y = center.y + Math.abs(current.y - center.y) * (current.y < center.y ? 1 : -1)
     }
     // console.log('x-------', x, '          y--------', y)
-    let a = getAngle2(
-      this.original.center,
-      this.original.original,
-      current)
-    console.log('getAngle', a)
+    let newRotation = getAngle2(this.original.center, this.original.original, current)
 
-    let rotation = this.getRotate(this.original)
+    let newAbsolute = getRotatedPoint(this.original.original, this.original.center, newRotation)
+    this.conf.absolute = this.conf.topLeft = newAbsolute
 
-    let topLeft = getRotatedPoint(this.original.original, this.original.center, a)
-    this.conf.absolute = this.conf.topLeft = topLeft
-    this.conf.x = topLeft.x
-    this.conf.y = topLeft.y
+    let parentRealRotation = this.parent?.conf.realRotation
+    //当有父级并且父级有角度时，特殊计算xy的值
+    if (this.parent && parentRealRotation) {
+      /**
+       * 先把ab值，负回父角度的位置。（此时的ab值即父级未旋转时的值，一开始initConf的xy也是取的这个值）
+       * 然后把ab值和父级的original相减，就可以得出最新的xy值
+       * */
+      let rXy = getRotatedPoint(newAbsolute, this.parent.conf.center, -parentRealRotation)
+      this.conf.x = rXy.x - this.parent.conf.original.x
+      this.conf.y = rXy.y - this.parent.conf.original.y
+    } else {
+      this.conf.x = newAbsolute.x
+      this.conf.y = newAbsolute.y
+    }
+
     //这里要减去，父级的旋转角度
-    let endA = (a - (this.parent?.conf?.rotation ?? 0))
+    let endA = (newRotation - (this.parent?.conf?.realRotation ?? 0))
     this.conf.rotation = endA < 180 ? endA : endA - 360
+    this.conf.realRotation = newRotation
 
+    const oldRealRotation = this.original.realRotation
     this.children.map(shape => {
       let conf = shape.conf
       //absolute和center这两个点围着父组件的中心点转
-      let reverseTopLeft = getRotatedPoint(shape.original.absolute, this.original.center, -rotation)
-      let topLeft = getRotatedPoint(reverseTopLeft, this.original.center, a)
+      let reverseTopLeft = getRotatedPoint(shape.original.absolute, this.original.center, -oldRealRotation)
+      let topLeft = getRotatedPoint(reverseTopLeft, this.original.center, newRotation)
       conf.absolute = conf.topLeft = topLeft
 
-      reverseTopLeft = getRotatedPoint(shape.original.center, this.original.center, -rotation)
-      topLeft = getRotatedPoint(reverseTopLeft, this.original.center, a)
+      reverseTopLeft = getRotatedPoint(shape.original.center, this.original.center, -oldRealRotation)
+      topLeft = getRotatedPoint(reverseTopLeft, this.original.center, newRotation)
       conf.center = topLeft
       // shape.dragLTR(point)
     })

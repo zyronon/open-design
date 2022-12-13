@@ -83,7 +83,6 @@ export class Frame extends BaseShape {
     return false
   }
 
-
   render(ctx: CanvasRenderingContext2D, p: P, parent?: BaseConfig) {
     let {
       w, h, radius,

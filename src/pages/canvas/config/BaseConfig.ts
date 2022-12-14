@@ -12,9 +12,9 @@ interface Layout {
    * 其值等价于：Math.atan2(-relativeTransform[1][0], relativeTransform[0][0])
    * */
   rotation: number,
-  /** @desc 真实的显示旋转角度，渲染时使用此值
-   * 有父级的情况下，翻转的情况下
-   * 显示角度和真实的角度不同
+  /** @desc 真实的旋转角度，渲染时使用此值
+   * 1、有父级的情况下：显示角度和真实的角度不同
+   * 2、翻转的情况下：显示角度和真实的角度不同，但是不知道为什么masterGo和figma都是这样子设计的
    * */
   realRotation: number,
   w: number,
@@ -28,11 +28,11 @@ interface Layout {
     topY: number,
     rightX: number,
     bottomY: number,
+    topLeft: P,
+    topRight: P,
+    bottomLeft: P,
+    bottomRight: P,
   }
-  leftX: number,//废弃
-  topY: number,//废弃
-  rightX: number,//废弃
-  bottomY: number,//废弃
   radius: number,
   topLeft: P,//废弃
   topRight: P,//废弃

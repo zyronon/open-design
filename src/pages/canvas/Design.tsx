@@ -62,7 +62,6 @@ class Design extends React.Component<any, IState> {
       })
     })
     EventBus.on([EventTypes.onMouseDown, EventTypes.onMouseMove, EventTypes.onMouseUp], (val: any) => {
-      console.log('selectShape', val)
       this.setState({selectShape: val})
     })
     EventBus.on([EventTypes.onWheel], (val: any) => {

@@ -1345,7 +1345,7 @@ export const rects: any[] = [
     "y": 150,
     "w": 700,
     "h": 400,
-    "rotation": 20,
+    "rotation": 170,
     "lineWidth": 2,
     "type": "FRAME",
     "color": "gray",
@@ -1353,7 +1353,7 @@ export const rects: any[] = [
     "children": [],
     "borderColor": "rgb(216,216,216)",
     "fillColor": "white",
-    flipHorizontal: true
+    flipHorizontal: false
   },
 ]
 

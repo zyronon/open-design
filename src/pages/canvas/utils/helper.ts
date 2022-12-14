@@ -24,97 +24,8 @@ export default {
     point.x = center.x + Math.abs(point.x - center.x) * (point.x < center.x ? 1 : -1)
     return point
   },
+  //废弃
   getPath(conf: BaseConfig, ctx?: any, pConf?: BaseConfig) {
-    // console.log('getPath')
-    //根据老的config，计算出最新的rx,ry
-    let {
-      x, y, w, h, rotation,
-      center, flipHorizontal, flipVertical
-    } = conf
-
-    if (!conf.id) {
-      conf.id = uuid()
-
-      //根据父级，计算出自己的绝对值x,y
-      if (pConf) {
-        conf.percent = {x: x / pConf.w, y: y / pConf.h,}
-        conf.absolute = {x: x + pConf.original.x, y: y + pConf.original.y,}
-        conf.original = clone(conf.absolute)
-      } else {
-        conf.percent = {x: 0, y: 0,}
-        conf.absolute = {x, y,}
-        conf.original = clone(conf.absolute)
-      }
-      const {x: ax, y: ay} = conf.absolute
-      conf.center = {
-        x: ax + (w / 2),
-        y: ay + (h / 2)
-      }
-      conf.topLeft = {
-        x: ax,
-        y: ay
-      }
-      conf.topRight = {
-        x: ax + w,
-        y: ay
-      }
-      conf.bottomLeft = {
-        x: ax,
-        y: ay + h
-      }
-      conf.bottomRight = {
-        x: ax + w,
-        y: ay + h
-      }
-      if (rotation) {
-        conf.topLeft = getRotatedPoint(conf.absolute, conf.center, rotation)
-        conf.topRight = getRotatedPoint(conf.topRight, conf.center, rotation)
-        conf.bottomLeft = getRotatedPoint(conf.bottomLeft, conf.center, rotation)
-        conf.bottomRight = getRotatedPoint(conf.bottomRight, conf.center, rotation)
-        conf.absolute = conf.topLeft
-        conf.x = x + (conf.absolute.x - ax)
-        conf.y = y + (conf.absolute.y - ay)
-      }
-
-      /**
-       *如果父组件旋转了,那么子组件的ab值也要旋转
-       * */
-      if (pConf?.rotation) {
-        conf.topLeft = getRotatedPoint(conf.topLeft, pConf.center, pConf.rotation)
-        conf.topRight = getRotatedPoint(conf.topRight, pConf.center, pConf.rotation)
-        conf.bottomLeft = getRotatedPoint(conf.bottomLeft, pConf.center, pConf.rotation)
-        conf.bottomRight = getRotatedPoint(conf.bottomRight, pConf.center, pConf.rotation)
-        conf.absolute = conf.topLeft
-      }
-
-      let xs = [
-        conf.topLeft.x,
-        conf.topRight.x,
-        conf.bottomLeft.x,
-        conf.bottomRight.x,
-      ]
-      let ys = [
-        conf.topLeft.y,
-        conf.topRight.y,
-        conf.bottomLeft.y,
-        conf.bottomRight.y,
-      ]
-      let maxX = Math.max(...xs)
-      let minX = Math.min(...xs)
-      let maxY = Math.max(...ys)
-      let minY = Math.min(...ys)
-      conf.center = {
-        x: minX + (maxX - minX) / 2,
-        y: minY + (maxY - minY) / 2
-      }
-
-      conf.box = {
-        leftX: conf.center.x - w / 2,
-        rightX: conf.center.x + w / 2,
-        topY: conf.center.y - h / 2,
-        bottomY: conf.center.y + h / 2,
-      }
-    }
     return conf
   },
   getRotate(conf: BaseConfig): number {
@@ -140,27 +51,26 @@ export default {
       let m = ctx.measureText(conf.name)
       conf.nameWidth = m.width
     }
-    conf.id = uuid()
     let center = {x: x + (w / 2), y: y + (h / 2)}
-    conf.center = center
+    conf.id = uuid()
     conf.percent = {x: 0, y: 0,}
     conf.absolute = {x, y}
     conf.original = clone(conf.absolute)
     conf.realRotation = conf.rotation
 
     const {x: ax, y: ay} = conf.absolute
-    conf.topLeft = {x: ax, y: ay}
-    conf.topRight = {x: ax + w, y: ay}
-    conf.bottomLeft = {x: ax, y: ay + h}
-    conf.bottomRight = {x: ax + w, y: ay + h}
+    let topLeft = {x: ax, y: ay}
+    let topRight = {x: ax + w, y: ay}
+    let bottomLeft = {x: ax, y: ay + h}
+    let bottomRight = {x: ax + w, y: ay + h}
 
     /** @desc 水平翻转所有的点
      * */
     if (flipHorizontal) {
-      conf.topLeft = this.getHorizontalReversePoint(conf.topLeft, center)
-      conf.topRight = this.getHorizontalReversePoint(conf.topRight, center)
-      conf.bottomLeft = this.getHorizontalReversePoint(conf.bottomLeft, center)
-      conf.bottomRight = this.getHorizontalReversePoint(conf.bottomRight, center)
+      topLeft = this.getHorizontalReversePoint(topLeft, center)
+      topRight = this.getHorizontalReversePoint(topRight, center)
+      bottomLeft = this.getHorizontalReversePoint(bottomLeft, center)
+      bottomRight = this.getHorizontalReversePoint(bottomRight, center)
       conf.absolute = this.getHorizontalReversePoint(conf.absolute, center)
       conf.realRotation = -conf.rotation
     }
@@ -169,127 +79,118 @@ export default {
      * */
     if (pConf) {
       //根据父级，计算出自己的0度绝对值x,y
-      const zeroAbsolute = {x: x + pConf.original.x, y: y + pConf.original.y,}
-      conf.original = clone(zeroAbsolute)
-      conf.absolute = getRotatedPoint(zeroAbsolute, conf.center, conf.realRotation)
+      const zeroAb = {x: x + pConf.original.x, y: y + pConf.original.y,}
+      conf.original = clone(zeroAb)
+      let rotatedAb = getRotatedPoint(zeroAb, center, conf.realRotation)
       //用旋转后的ab值，减去老的ab值，就是xy的偏移量。与原xy相加得到旋转后的xy值
-      conf.x = x + (conf.absolute.x - zeroAbsolute.x)
-      conf.y = y + (conf.absolute.y - zeroAbsolute.y)
+      conf.x = x + (rotatedAb.x - zeroAb.x)
+      conf.y = y + (rotatedAb.y - zeroAb.y)
+      //TODO 可能计算不准确
       conf.percent = {x: x / pConf.w, y: y / pConf.h,}
 
       let rotation = conf.realRotation
-      conf.topLeft = getRotatedPoint(conf.topLeft, conf.center, rotation)
-      conf.topRight = getRotatedPoint(conf.topRight, conf.center, rotation)
-      conf.bottomLeft = getRotatedPoint(conf.bottomLeft, conf.center, rotation)
-      conf.bottomRight = getRotatedPoint(conf.bottomRight, conf.center, rotation)
+      topLeft = getRotatedPoint(topLeft, center, rotation)
+      topRight = getRotatedPoint(topRight, center, rotation)
+      bottomLeft = getRotatedPoint(bottomLeft, center, rotation)
+      bottomRight = getRotatedPoint(bottomRight, center, rotation)
 
-      if (pConf?.realRotation) {
-        conf.topLeft = getRotatedPoint(conf.topLeft, pConf.center, pConf.realRotation)
-        conf.topRight = getRotatedPoint(conf.topRight, pConf.center, pConf.realRotation)
-        conf.bottomLeft = getRotatedPoint(conf.bottomLeft, pConf.center, pConf.realRotation)
-        conf.bottomRight = getRotatedPoint(conf.bottomRight, pConf.center, pConf.realRotation)
-        conf.absolute = conf.topLeft
+      if (pConf.realRotation) {
+        topLeft = getRotatedPoint(topLeft, pConf.center, pConf.realRotation)
+        topRight = getRotatedPoint(topRight, pConf.center, pConf.realRotation)
+        bottomLeft = getRotatedPoint(bottomLeft, pConf.center, pConf.realRotation)
+        bottomRight = getRotatedPoint(bottomRight, pConf.center, pConf.realRotation)
+        conf.absolute = topLeft
 
-        let xs = [
-          conf.topLeft.x,
-          conf.topRight.x,
-          conf.bottomLeft.x,
-          conf.bottomRight.x,
-        ]
-        let ys = [
-          conf.topLeft.y,
-          conf.topRight.y,
-          conf.bottomLeft.y,
-          conf.bottomRight.y,
-        ]
+        let xs = [topLeft.x, topRight.x, bottomLeft.x, bottomRight.x,]
+        let ys = [topLeft.y, topRight.y, bottomLeft.y, bottomRight.y,]
         let maxX = Math.max(...xs)
         let minX = Math.min(...xs)
         let maxY = Math.max(...ys)
         let minY = Math.min(...ys)
+        //TODO 这里是否可以直接以父角度旋转老的中心点得到新的？
         /**
          * 父组件旋转了，那么中心点也要相应的偏移
          * 通过四个边点来确定中心点
          * */
-        conf.center = {
+        center = {
           x: minX + (maxX - minX) / 2,
           y: minY + (maxY - minY) / 2
         }
 
-        /**
-         *  父组件旋转了，那么original值应该重置为负的（自转角度加上父角度）后的absolute值。
-         *  因为旋转操作时， original点始终是0度的absolute点，
-         *  这样计算current和original以center点计算角度时，才会得到总的旋转角度（即包括父角度）
-         * */
-        let reverseXy = getRotatedPoint(conf.absolute, conf.center, -(conf.realRotation))
-        conf.original = reverseXy
+        // /**
+        //  *  父组件旋转了，那么original值应该重置为负的（自转角度加上父角度）后的absolute值。
+        //  *  因为旋转操作时， original点始终是0度的absolute点，
+        //  *  这样计算current和original以center点计算角度时，才会得到总的旋转角度（即包括父角度）
+        //  * */
+        // let reverseXy = getRotatedPoint(conf.absolute, center, -(conf.realRotation))
+        // conf.original = reverseXy
       }
-
       conf.realRotation = this.getRotate(conf) + pConf.realRotation
-
     } else {
       let rotation = conf.realRotation
       if (rotation) {
-        conf.topLeft = getRotatedPoint(conf.topLeft, conf.center, rotation)
-        conf.topRight = getRotatedPoint(conf.topRight, conf.center, rotation)
-        conf.bottomLeft = getRotatedPoint(conf.bottomLeft, conf.center, rotation)
-        conf.bottomRight = getRotatedPoint(conf.bottomRight, conf.center, rotation)
-        conf.absolute = conf.topLeft
+        topLeft = getRotatedPoint(topLeft, center, rotation)
+        topRight = getRotatedPoint(topRight, center, rotation)
+        bottomLeft = getRotatedPoint(bottomLeft, center, rotation)
+        bottomRight = getRotatedPoint(bottomRight, center, rotation)
+        conf.absolute = topLeft
         conf.x = conf.absolute.x
         conf.y = conf.absolute.y
       }
     }
     conf.rotation = this.getRotate(conf)
+    conf.center = center
 
     conf.box = {
       leftX: conf.center.x - w / 2,
       rightX: conf.center.x + w / 2,
       topY: conf.center.y - h / 2,
       bottomY: conf.center.y + h / 2,
+      topLeft,
+      topRight,
+      bottomLeft,
+      bottomRight,
     }
     return conf
   },
-  calcPath(conf: BaseConfig, rotation = conf.rotation, pConf?: BaseConfig) {
+  calcPath(conf: BaseConfig, pConf?: BaseConfig) {
     let {
       x, y, w, h,
-      center, flipHorizontal, flipVertical
+      center, flipHorizontal, flipVertical, realRotation
     } = conf
 
     //todo 计算original
 
+    if (pConf) {
+
+    } else {
+      conf.absolute = {x: conf.x, y: conf.y}
+    }
+
+    let reverseXy = conf.original = getRotatedPoint(conf.absolute, center, -realRotation)
+    const {x: ax, y: ay} = reverseXy
+    let topLeft = {x: ax, y: ay}
+    let topRight = {x: ax + w, y: ay}
+    let bottomLeft = {x: ax, y: ay + h}
+    let bottomRight = {x: ax + w, y: ay + h}
+    if (realRotation) {
+      topLeft = getRotatedPoint(topLeft, center, realRotation)
+      topRight = getRotatedPoint(topRight, center, realRotation)
+      bottomLeft = getRotatedPoint(bottomLeft, center, realRotation)
+      bottomRight = getRotatedPoint(bottomRight, center, realRotation)
+      // conf.absolute = conf.topLeft
+      // conf.x = x + (conf.absolute.x - ax)
+      // conf.y = y + (conf.absolute.y - ay)
+    }
     conf.box = {
       leftX: center.x - w / 2,
       rightX: center.x + w / 2,
       topY: center.y - h / 2,
       bottomY: center.y + h / 2,
-    }
-
-    // conf.absolute = {x, y}
-    let reverseXy = getRotatedPoint(conf.absolute, center, -rotation)
-    const {x: ax, y: ay} = reverseXy
-    conf.topLeft = {
-      x: ax,
-      y: ay
-    }
-    conf.topRight = {
-      x: ax + w,
-      y: ay
-    }
-    conf.bottomLeft = {
-      x: ax,
-      y: ay + h
-    }
-    conf.bottomRight = {
-      x: ax + w,
-      y: ay + h
-    }
-    if (rotation) {
-      conf.topLeft = getRotatedPoint(conf.topLeft, center, rotation)
-      conf.topRight = getRotatedPoint(conf.topRight, center, rotation)
-      conf.bottomLeft = getRotatedPoint(conf.bottomLeft, center, rotation)
-      conf.bottomRight = getRotatedPoint(conf.bottomRight, center, rotation)
-      // conf.absolute = conf.topLeft
-      // conf.x = x + (conf.absolute.x - ax)
-      // conf.y = y + (conf.absolute.y - ay)
+      topLeft,
+      topRight,
+      bottomLeft,
+      bottomRight,
     }
     return conf
   },

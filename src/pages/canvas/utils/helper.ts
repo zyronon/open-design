@@ -20,6 +20,17 @@ export default {
    * @param point 要翻转的点
    * @param center 中心点
    * */
+  getReversePoint2(point: P, center: P): P {
+    let x = center.x + Math.abs(point.x - center.x) * (point.x < center.x ? 1 : -1)
+    let y = center.y + Math.abs(point.y - center.y) * (point.y < center.y ? 1 : -1)
+    return {x, y}
+  },
+
+  /**
+   * @desc 获取翻转点
+   * @param point 要翻转的点
+   * @param center 中心点
+   * */
   getHorizontalReversePoint(point: P, center: P) {
     point.x = center.x + Math.abs(point.x - center.x) * (point.x < center.x ? 1 : -1)
     return point
@@ -153,7 +164,7 @@ export default {
     }
     return conf
   },
-  calcPath(conf: BaseConfig, pConf?: BaseConfig) {
+  calcConf(conf: BaseConfig, pConf?: BaseConfig) {
     let {
       x, y, w, h,
       center, flipHorizontal, flipVertical, realRotation

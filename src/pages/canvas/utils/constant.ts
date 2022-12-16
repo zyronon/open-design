@@ -1283,7 +1283,6 @@ const children = [
     ],
   }
 ]
-
 const rule = [
   {
     "x": 0,
@@ -1345,7 +1344,7 @@ export const rects: any[] = [
     "y": 150,
     "w": 700,
     "h": 400,
-    "rotation": 10,
+    "rotation": 0,
     "lineWidth": 2,
     "type": "FRAME",
     "color": "gray",
@@ -1353,7 +1352,7 @@ export const rects: any[] = [
     "children": [],
     "borderColor": "rgb(216,216,216)",
     "fillColor": "white",
-    flipHorizontal: true
+    flipHorizontal: false
   },
 ]
 

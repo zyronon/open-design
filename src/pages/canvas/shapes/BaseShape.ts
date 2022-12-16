@@ -12,14 +12,16 @@ import draw from "../utils/draw"
 export abstract class BaseShape {
   hoverRd1: boolean = false
   enterRd1: boolean = false
-  hoverL: boolean = false
-  enterL: boolean = false
-  hoverLT: boolean = false
-  enterLT: boolean = false
+  hoverLeft: boolean = false
+  enterLeft: boolean = false
+  hoverLeftTop: boolean = false
+  enterLeftTop: boolean = false
   hoverLTR: boolean = false
   enterLTR: boolean = false
-  hoverR: boolean = false
-  enterR: boolean = false
+  hoverRight: boolean = false
+  enterRight: boolean = false
+  hoverTop: boolean = false
+  enterTop: boolean = false
   public conf: BaseConfig
   children: BaseShape[] = []
   isHover: boolean = false
@@ -78,20 +80,22 @@ export abstract class BaseShape {
   abstract beforeShapeIsIn(): boolean
 
   resetHover() {
-    this.hoverL = false
-    this.hoverLT = false
+    this.hoverLeft = false
+    this.hoverTop = false
+    this.hoverLeftTop = false
     this.hoverLTR = false
     this.hoverRd1 = false
-    this.hoverR = false
+    this.hoverRight = false
   }
 
   resetEnter() {
     this.enter = false
-    this.enterL = false
-    this.enterLT = false
+    this.enterTop = false
+    this.enterLeft = false
+    this.enterLeftTop = false
     this.enterLTR = false
     this.enterRd1 = false
-    this.enterR = false
+    this.enterRight = false
   }
 
   /**
@@ -148,8 +152,8 @@ export abstract class BaseShape {
       isSelect: this.isSelect,
       isSelectHover: this.isSelectHover,
       isEdit: this.isEdit,
-      enterLT: this.enterLT,
-      enterL: this.enterL
+      enterLT: this.enterLeftTop,
+      enterL: this.enterLeft
     }
   }
 
@@ -191,9 +195,10 @@ export abstract class BaseShape {
   shapeIsIn(mousePoint: P, cu: CanvasUtil2, parent?: BaseShape): boolean {
     //如果操作中，那么永远返回ture，保持事件一直直接传递到当前图形上
     if (this.enter ||
-      this.enterL ||
-      this.enterR ||
-      this.enterLT ||
+      this.enterLeft ||
+      this.enterTop ||
+      this.enterRight ||
+      this.enterLeftTop ||
       this.enterLTR) {
       return true
     }
@@ -228,9 +233,16 @@ export abstract class BaseShape {
       ) {
         // console.log('hoverLeft')
         document.body.style.cursor = "col-resize"
-        this.hoverL = true
-
-        this.hoverLT = false
+        this.hoverLeft = true
+        return true
+      }
+      //左边
+      if ((leftX! + edge < x && x < rightX! - edge) &&
+        (topY! - edge < y && y < topY! + edge)
+      ) {
+        // console.log('hoverLeft')
+        document.body.style.cursor = "row-resize"
+        this.hoverTop = true
         return true
       }
 
@@ -240,7 +252,7 @@ export abstract class BaseShape {
       ) {
         // console.log('hoverR')
         document.body.style.cursor = "col-resize"
-        this.hoverR = true
+        this.hoverRight = true
         return true
       }
 
@@ -249,8 +261,8 @@ export abstract class BaseShape {
         (topY! - angle < y && y < topY! + angle)
       ) {
         // console.log('1', flipHorizontal)
-        this.hoverLT = true
-        this.hoverL = false
+        this.hoverLeftTop = true
+        this.hoverLeft = false
         document.body.style.cursor = "nwse-resize"
         return true
       }
@@ -261,8 +273,8 @@ export abstract class BaseShape {
       ) {
         this.hoverLTR = true
 
-        this.hoverLT = false
-        this.hoverL = false
+        this.hoverLeftTop = false
+        this.hoverLeft = false
         document.body.style.cursor = "pointer"
         return true
       }
@@ -344,9 +356,9 @@ export abstract class BaseShape {
     if (event.capture) return true
     // 如果在操作中，那么就不要再向下传递事件啦，再向下传递事件，会导致子父冲突
     if (this.enter ||
-      this.enterL ||
-      this.enterR ||
-      this.enterLT ||
+      this.enterLeft ||
+      this.enterRight ||
+      this.enterLeftTop ||
       this.enterLTR) {
       /** @desc 把事件消费了，不然父级会使用
        * */
@@ -444,7 +456,7 @@ export abstract class BaseShape {
     }
 
     //按下左边
-    if (this.hoverL) {
+    if (this.hoverLeft) {
       // console.log('config', cloneDeep(this.config))
       let {w, h, realRotation, center, flipHorizontal, flipVertical} = this.conf
       let lx = this.conf.x
@@ -470,12 +482,31 @@ export abstract class BaseShape {
         x: helper.getReversePoint(handlePoint.x, center.x),
         y: helper.getReversePoint(handlePoint.y, center.y),
       }
-      this.enterL = true
+      this.enterLeft = true
+      return
+    }
+
+    //按下上边
+    if (this.hoverTop) {
+      // console.log('config', cloneDeep(this.config))
+      let {w, h, realRotation, center, flipHorizontal, flipVertical} = this.conf
+      let currentHandLineCenterPoint = {
+        x: center.x,
+        y: center.y + (flipVertical ? (h / 2) : -(h / 2))
+      }
+      //根据当前角度，转回来。得到的点就是当前鼠标按住那条边的中间点（当前角度），非鼠标点
+      let handlePoint = getRotatedPoint(
+        currentHandLineCenterPoint,
+        center, realRotation)
+      this.handlePoint = handlePoint
+      //翻转得到对面的点
+      this.diagonal = helper.getReversePoint2(handlePoint, center)
+      this.enterTop = true
       return
     }
 
     //按下左边
-    if (this.hoverR) {
+    if (this.hoverRight) {
       // console.log('config', cloneDeep(this.config))
       let {w, h, absolute, center, flipHorizontal, flipVertical} = this.conf
       const rotation = this.getRotate()
@@ -500,17 +531,17 @@ export abstract class BaseShape {
         x: helper.getReversePoint(handlePoint.x, center.x),
         y: helper.getReversePoint(handlePoint.y, center.y),
       }
-      this.enterR = true
+      this.enterRight = true
       return
     }
 
     //按下左上
-    if (this.hoverLT) {
+    if (this.hoverLeftTop) {
       // console.log('config', cloneDeep(this.config))
       let {w, h, absolute, realRotation, original, center, flipHorizontal, flipVertical} = this.conf
       this.handlePoint = absolute
       this.diagonal = helper.getReversePoint2(this.handlePoint, center)
-      this.enterLT = true
+      this.enterLeftTop = true
       return
     }
 
@@ -568,15 +599,18 @@ export abstract class BaseShape {
       return this.move(point)
     }
 
-    if (this.enterL) {
+    if (this.enterLeft) {
       return this.dragL(point)
     }
+    if (this.enterTop) {
+      return this.dragTop(point)
+    }
 
-    if (this.enterR) {
+    if (this.enterRight) {
       return this.dragR(point)
     }
 
-    if (this.enterLT) {
+    if (this.enterLeftTop) {
       return this.dragLT(point)
     }
 
@@ -768,7 +802,46 @@ export abstract class BaseShape {
       conf.x = (x - cu.offsetX)
       conf.w = this.original.box.rightX - this.conf.x
       conf.center.x = this.conf.x + this.conf.w / 2
-      conf = helper.getPath(this.conf, this.original)
+    }
+    this.conf = helper.calcConf(conf, this.parent?.conf)
+    cu.render()
+  }
+
+  //拖动上边
+  dragTop(point: P) {
+    // console.log('拖动上边')
+    let {x, y,} = point
+    let cu = CanvasUtil2.getInstance()
+    let conf = this.conf
+    const {flipHorizontal, flipVertical, realRotation} = conf
+    if (realRotation || flipHorizontal || flipVertical) {
+      const current = {x, y}
+      const handlePoint = this.handlePoint
+      const zeroAngleCurrentPoint = getRotatedPoint(current, handlePoint, -realRotation)
+      const zeroAngleMovePoint = {x: zeroAngleCurrentPoint.x, y: handlePoint.y}
+      const currentAngleMovePoint = getRotatedPoint(zeroAngleMovePoint, handlePoint, realRotation)
+      const newWidth = Math.hypot(currentAngleMovePoint.x - this.diagonal.x, currentAngleMovePoint.y - this.diagonal.y)
+      const newCenter = {
+        x: this.diagonal.x + (currentAngleMovePoint.x - this.diagonal.x) / 2,
+        y: this.diagonal.y + (currentAngleMovePoint.y - this.diagonal.y) / 2
+      }
+      conf.w = newWidth
+      conf.center = newCenter
+
+      /*变化：非水平翻转时需要处理*/
+      if (!flipHorizontal) {
+        let zeroAngleXy = getRotatedPoint(this.original, newCenter, -realRotation)
+        /*变化：x减去多的宽度*/
+        zeroAngleXy.x -= (newWidth - this.original.w)
+        let angleXy = getRotatedPoint(zeroAngleXy, newCenter, realRotation)
+        conf.x = angleXy.x
+        conf.y = angleXy.y
+      }
+
+    } else {
+      conf.y = (y - cu.offsetY)
+      conf.h = this.original.box.bottomY - conf.y
+      conf.center.y = conf.y + conf.h / 2
     }
     this.conf = helper.calcConf(conf, this.parent?.conf)
     cu.render()

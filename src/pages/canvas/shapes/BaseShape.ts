@@ -223,7 +223,7 @@ export abstract class BaseShape {
       * 同上原因，判断是否在图形内，不需要翻转点。
       * */
       if (flipHorizontal) x = helper.getReversePoint(x, center.x)
-      // if (flipVertical) y = helper.getReversePoint(y, center.y)
+      if (flipVertical) y = helper.getReversePoint(y, center.y)
       let edge = 10
       let angle = 7
       let rotation = 27
@@ -492,7 +492,7 @@ export abstract class BaseShape {
       let {w, h, realRotation, center, flipHorizontal, flipVertical} = this.conf
       let handLineCenterPoint = {
         x: center.x,
-        y: center.y + (flipVertical ? -(h / 2) : (h / 2))
+        y: center.y + (flipVertical ? (h / 2) : -(h / 2))
       }
       //根据当前角度，转回来。得到的点就是当前鼠标按住那条边的中间点（当前角度），非鼠标点
       this.handlePoint = getRotatedPoint(handLineCenterPoint, center, realRotation)
@@ -815,15 +815,11 @@ export abstract class BaseShape {
       conf.h = newHeight
       conf.center = newCenter
 
-      /*变化*/
-      if (!flipHorizontal) {
-        let zeroAngleXy = getRotatedPoint(this.original, newCenter, -realRotation)
-        /*变化*/
-        zeroAngleXy.y -= (newHeight - this.original.h)
-        let angleXy = getRotatedPoint(zeroAngleXy, newCenter, realRotation)
-        conf.x = angleXy.x
-        conf.y = angleXy.y
-      }
+      let zeroAngleXy = getRotatedPoint(this.original, newCenter, -realRotation)
+      zeroAngleXy.y -= (newHeight - this.original.h)
+      let angleXy = getRotatedPoint(zeroAngleXy, newCenter, realRotation)
+      conf.x = angleXy.x
+      conf.y = angleXy.y
     } else {
       conf.y = (y - cu.offsetY)
       conf.h = this.original.box.bottomY - conf.y

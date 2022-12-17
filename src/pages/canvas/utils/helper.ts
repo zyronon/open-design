@@ -21,8 +21,8 @@ export default {
    * @param center 中心点
    * */
   getReversePoint2(point: P, center: P): P {
-    let x = center.x + Math.abs(point.x - center.x) * (point.x < center.x ? 1 : -1)
-    let y = center.y + Math.abs(point.y - center.y) * (point.y < center.y ? 1 : -1)
+    let x = this.getReversePoint(point.x, center.x)
+    let y = this.getReversePoint(point.y, center.y)
     return {x, y}
   },
 
@@ -32,7 +32,7 @@ export default {
    * @param center 中心点
    * */
   getHorizontalReversePoint(point: P, center: P) {
-    point.x = center.x + Math.abs(point.x - center.x) * (point.x < center.x ? 1 : -1)
+    point.x = this.getReversePoint(point.x, center.x)
     return point
   },
   //废弃

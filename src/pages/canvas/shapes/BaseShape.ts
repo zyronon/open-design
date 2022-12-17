@@ -1,6 +1,6 @@
 import {BaseEvent2, P, ShapeProps, ShapeType} from "../utils/type"
 import CanvasUtil2 from "../CanvasUtil2"
-import {cloneDeep} from "lodash"
+import {clone, cloneDeep} from "lodash"
 import getCenterPoint, {getAngle2, getRotatedPoint} from "../../../utils"
 import {getShapeFromConfig} from "../utils/common"
 import EventBus from "../../../utils/event-bus"
@@ -490,17 +490,14 @@ export abstract class BaseShape {
     if (this.hoverTop) {
       // console.log('config', cloneDeep(this.config))
       let {w, h, realRotation, center, flipHorizontal, flipVertical} = this.conf
-      let currentHandLineCenterPoint = {
+      let handLineCenterPoint = {
         x: center.x,
-        y: center.y + (flipVertical ? (h / 2) : -(h / 2))
+        y: center.y + (flipVertical ? -(h / 2) : (h / 2))
       }
       //根据当前角度，转回来。得到的点就是当前鼠标按住那条边的中间点（当前角度），非鼠标点
-      let handlePoint = getRotatedPoint(
-        currentHandLineCenterPoint,
-        center, realRotation)
-      this.handlePoint = handlePoint
+      this.handlePoint = getRotatedPoint(handLineCenterPoint, center, realRotation)
       //翻转得到对面的点
-      this.diagonal = helper.getReversePoint2(handlePoint, center)
+      this.diagonal = helper.getReversePoint2(this.handlePoint, center)
       this.enterTop = true
       return
     }
@@ -508,29 +505,20 @@ export abstract class BaseShape {
     //按下左边
     if (this.hoverRight) {
       // console.log('config', cloneDeep(this.config))
-      let {w, h, absolute, center, flipHorizontal, flipVertical} = this.conf
-      const rotation = this.getRotate()
-      //反转当前xy到0度
-      let reverseXy = getRotatedPoint(absolute, center, -rotation)
+      let {w, h, absolute, center, realRotation, flipHorizontal, flipVertical} = this.conf
       /**
        * 根据flipHorizontal、flipVertical计算出当前按的那条边的中间点
        * 如果水平翻转：x在左边，直接使用。未翻转：x加上宽度
        * 如果垂直翻转：y在下边，要减去高度的一半。未翻转：y加上高度的一半
        * */
-      let currentHandLineCenterPoint = {
-        x: reverseXy.x + (flipHorizontal ? 0 : w),
-        y: reverseXy.y + (flipVertical ? -(h / 2) : (h / 2))
+      let handLineCenterPoint = {
+        x: center.x + (flipHorizontal ? -(w / 2) : (w / 2)),
+        y: center.y
       }
       //根据当前角度，转回来。得到的点就是当前鼠标按住那条边的中间点（当前角度），非鼠标点
-      let handlePoint = getRotatedPoint(
-        currentHandLineCenterPoint,
-        center, rotation)
-      this.handlePoint = handlePoint
+      this.handlePoint = getRotatedPoint(handLineCenterPoint, center, realRotation)
       //翻转得到对面的点
-      this.diagonal = {
-        x: helper.getReversePoint(handlePoint.x, center.x),
-        y: helper.getReversePoint(handlePoint.y, center.y),
-      }
+      this.diagonal = helper.getReversePoint2(this.handlePoint, center)
       this.enterRight = true
       return
     }
@@ -600,18 +588,18 @@ export abstract class BaseShape {
     }
 
     if (this.enterLeft) {
-      return this.dragL(point)
+      return this.dragLeft(point)
     }
     if (this.enterTop) {
       return this.dragTop(point)
     }
 
     if (this.enterRight) {
-      return this.dragR(point)
+      return this.dragRight(point)
     }
 
     if (this.enterLeftTop) {
-      return this.dragLT(point)
+      return this.dragLeftTop(point)
     }
 
     if (this.enterLTR) {
@@ -744,7 +732,7 @@ export abstract class BaseShape {
   }
 
   //拖动左上
-  dragLT(point: P) {
+  dragLeftTop(point: P) {
     let {x, y,} = point
     let cu = CanvasUtil2.getInstance()
     const conf = this.conf
@@ -768,7 +756,7 @@ export abstract class BaseShape {
   }
 
   //拖动左边
-  dragL(point: P) {
+  dragLeft(point: P) {
     // console.log('拖动左边')
     let {x, y,} = point
     let cu = CanvasUtil2.getInstance()
@@ -797,7 +785,6 @@ export abstract class BaseShape {
         conf.x = angleXy.x
         conf.y = angleXy.y
       }
-
     } else {
       conf.x = (x - cu.offsetX)
       conf.w = this.original.box.rightX - this.conf.x
@@ -818,26 +805,25 @@ export abstract class BaseShape {
       const current = {x, y}
       const handlePoint = this.handlePoint
       const zeroAngleCurrentPoint = getRotatedPoint(current, handlePoint, -realRotation)
-      const zeroAngleMovePoint = {x: zeroAngleCurrentPoint.x, y: handlePoint.y}
+      const zeroAngleMovePoint = {x: handlePoint.x, y: zeroAngleCurrentPoint.y}
       const currentAngleMovePoint = getRotatedPoint(zeroAngleMovePoint, handlePoint, realRotation)
-      const newWidth = Math.hypot(currentAngleMovePoint.x - this.diagonal.x, currentAngleMovePoint.y - this.diagonal.y)
+      const newHeight = Math.hypot(currentAngleMovePoint.x - this.diagonal.x, currentAngleMovePoint.y - this.diagonal.y)
       const newCenter = {
         x: this.diagonal.x + (currentAngleMovePoint.x - this.diagonal.x) / 2,
         y: this.diagonal.y + (currentAngleMovePoint.y - this.diagonal.y) / 2
       }
-      conf.w = newWidth
+      conf.h = newHeight
       conf.center = newCenter
 
-      /*变化：非水平翻转时需要处理*/
+      /*变化*/
       if (!flipHorizontal) {
         let zeroAngleXy = getRotatedPoint(this.original, newCenter, -realRotation)
-        /*变化：x减去多的宽度*/
-        zeroAngleXy.x -= (newWidth - this.original.w)
+        /*变化*/
+        zeroAngleXy.y -= (newHeight - this.original.h)
         let angleXy = getRotatedPoint(zeroAngleXy, newCenter, realRotation)
         conf.x = angleXy.x
         conf.y = angleXy.y
       }
-
     } else {
       conf.y = (y - cu.offsetY)
       conf.h = this.original.box.bottomY - conf.y
@@ -847,10 +833,9 @@ export abstract class BaseShape {
     cu.render()
   }
 
-
   //拖动右边
-  dragR(point: P) {
-    // console.log('拖动右边')
+  dragRight(point: P) {
+    console.log('拖动右边')
     let {x, y,} = point
     let cu = CanvasUtil2.getInstance()
     const {flipHorizontal, flipVertical, realRotation} = this.conf

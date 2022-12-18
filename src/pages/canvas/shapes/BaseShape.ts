@@ -855,7 +855,7 @@ export abstract class BaseShape {
       conf.w = newWidth
       conf.center = newCenter
       //如果水平了翻转，那么xy值在右边，但是拖动的也是右边，所以要重新计算xy值
-      if (flipHorizontal) {
+      if (false) {
         //0度的xy
         let zeroAngleXy = getRotatedPoint(this.original, newCenter, -realRotation)
         //0度的x，加上当前移动的距离（新宽度减去原始宽度）
@@ -898,20 +898,22 @@ export abstract class BaseShape {
   }
 
   flip(type: number) {
-    const conf = this.conf
+    let conf = this.conf
     let {
-      x, y, center, absolute, realRotation, rotation
+      x, y, center, absolute, realRotation, rotation,flipVertical
     } = conf
     console.log('r', rotation)
     if (type === 0) {
       conf.absolute.x = helper.getReversePoint(absolute.x, center.x)
-      if (rotation < 0) {
-        conf.rotation = -rotation
-      } else {
-        conf.rotation = 180 - rotation
-      }
-      conf.realRotation = -realRotation
+      if (flipVertical){
 
+      }else {
+        if (rotation < 0) {
+          conf.rotation = -rotation
+        } else {
+          conf.rotation = 180 - rotation
+        }
+      }
       if (this.parent) {
         //逻辑同move一样
         let pConf = this.parent.conf
@@ -925,9 +927,21 @@ export abstract class BaseShape {
       //减去父角度
       conf.flipHorizontal = !conf.flipHorizontal
     } else {
-      conf.y = center.y + Math.abs(y - center.y) * (y < center.y ? 1 : -1)
+      conf.absolute = helper.verticalReversePoint(absolute, center)
       conf.rotation = -conf.rotation
+      if (this.parent) {
+        //逻辑同move一样
+        let pConf = this.parent.conf
+        let rXy = getRotatedPoint(conf.absolute, pConf.center, -pConf.realRotation)
+        conf.x = rXy.x - pConf.original.x
+        conf.y = rXy.y - pConf.original.y
+        conf.rotation -= pConf.rotation
+      } else {
+        conf = helper.verticalReversePoint(conf, center)
+      }
       conf.flipVertical = !conf.flipVertical
     }
+    conf.realRotation = -realRotation
+    this.conf = helper.calcConf(conf,this.parent?.conf)
   }
 }

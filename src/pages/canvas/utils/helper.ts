@@ -14,24 +14,22 @@ export default {
   getReversePoint(val: number, centerVal: number) {
     return centerVal + Math.abs(val - centerVal) * (val < centerVal ? 1 : -1)
   },
-
   /**
    * @desc 获取翻转点
    * @param point 要翻转的点
    * @param center 中心点
    * */
-  getReversePoint2(point: P, center: P): P {
+  getReversePoint2(point: any, center: P): P {
     let x = this.getReversePoint(point.x, center.x)
     let y = this.getReversePoint(point.y, center.y)
     return {x, y}
   },
-
   /**
    * @desc 水平翻转点
    * @param point 要翻转的点
    * @param center 中心点
    * */
-  horizontalReversePoint(point: P, center: P) {
+  horizontalReversePoint(point: any, center: P) {
     point.x = this.getReversePoint(point.x, center.x)
     return point
   },
@@ -55,7 +53,11 @@ export default {
       r = (180 + rotation)
     } else {
       if (flipHorizontal) {
-        r = (180 - rotation)
+        if (rotation <= 0) {
+          r = -180 - rotation
+        } else {
+          r = 180 - rotation
+        }
       }
     }
     return r
@@ -64,7 +66,7 @@ export default {
     // console.log('initConf')
     if (conf.id) return conf
     let {
-      x, y, w, h, flipHorizontal
+      x, y, w, h, flipHorizontal,flipVertical
     } = conf
     if (conf.type === ShapeType.FRAME) {
       ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
@@ -91,7 +93,17 @@ export default {
       topRight = this.horizontalReversePoint(topRight, center)
       bottomLeft = this.horizontalReversePoint(bottomLeft, center)
       bottomRight = this.horizontalReversePoint(bottomRight, center)
+      conf = this.horizontalReversePoint(conf, center)
       conf.absolute = this.horizontalReversePoint(conf.absolute, center)
+      conf.realRotation = -conf.rotation
+    }
+    if (flipVertical) {
+      topLeft = this.verticalReversePoint(topLeft, center)
+      topRight = this.verticalReversePoint(topRight, center)
+      bottomLeft = this.verticalReversePoint(bottomLeft, center)
+      bottomRight = this.verticalReversePoint(bottomRight, center)
+      conf = this.verticalReversePoint(conf, center)
+      conf.absolute = this.verticalReversePoint(conf.absolute, center)
       conf.realRotation = -conf.rotation
     }
     /**
@@ -189,11 +201,12 @@ export default {
 
     let reverseXy = getRotatedPoint(conf.absolute, center, -realRotation)
     if (flipHorizontal) {
-      conf.original = reverseXy = this.horizontalReversePoint(reverseXy, center)
+      reverseXy = this.horizontalReversePoint(reverseXy, center)
     }
     if (flipVertical) {
-      conf.original = reverseXy = this.verticalReversePoint(reverseXy, center)
+      reverseXy = this.verticalReversePoint(reverseXy, center)
     }
+    conf.original = reverseXy
     const {x: ax, y: ay} = reverseXy
     let topLeft = {x: ax, y: ay}
     let topRight = {x: ax + w, y: ay}

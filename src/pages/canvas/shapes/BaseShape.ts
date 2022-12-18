@@ -834,9 +834,9 @@ export abstract class BaseShape {
     console.log('拖动右边')
     let {x, y,} = point
     let cu = CanvasUtil2.getInstance()
-    const {flipHorizontal, flipVertical, realRotation} = this.conf
     let conf = this.conf
-    if (realRotation || flipHorizontal || flipVertical) {
+    const {flipHorizontal, realRotation} = conf
+    if (realRotation) {
       const current = {x, y}
       const handlePoint = this.handlePoint
       //0度的当前点：以当前边中间点为圆心，负角度偏转当前点，得到0度的当前点
@@ -854,44 +854,14 @@ export abstract class BaseShape {
       }
       conf.w = newWidth
       conf.center = newCenter
-      //如果水平了翻转，那么xy值在右边，但是拖动的也是右边，所以要重新计算xy值
-      if (false) {
-        //0度的xy
-        let zeroAngleXy = getRotatedPoint(this.original, newCenter, -realRotation)
-        //0度的x，加上当前移动的距离（新宽度减去原始宽度）
-        zeroAngleXy.x += (newWidth - this.original.w)
-        //再偏转回去
-        let angleXy = getRotatedPoint(zeroAngleXy, newCenter, realRotation)
-        conf.x = angleXy.x
-        conf.y = angleXy.y
-      }
-
-      if (false) {
-        let reverseXy = getRotatedPoint(conf.absolute, newCenter, -realRotation)
-        conf.box.topLeft = {
-          x: reverseXy.x,
-          y: reverseXy.y
-        }
-        conf.topRight = {
-          x: reverseXy.x + conf.w,
-          y: reverseXy.y
-        }
-        // }
-        if (realRotation) {
-          conf.box.topLeft = getRotatedPoint(conf.box.topLeft, newCenter, realRotation)
-          conf.topRight = getRotatedPoint(conf.topRight, newCenter, realRotation)
-          // conf.bottomLeft = getRotatedPoint(conf.bottomLeft, center, realRotation)
-          // conf.bottomRight = getRotatedPoint(conf.bottomRight, center, realRotation)
-          // conf.absolute = conf.box.topLeft
-          // conf.x = x + (conf.absolute.x - ax)
-          // conf.y = y + (conf.absolute.y - ay)
-        }
-      }
     } else {
       let dx = (x - cu.startX)
+      /** 如果水平翻转，那么移动距离取反*/
+      if (flipHorizontal) dx = -dx
       conf.w = this.original.w + dx
-      conf.center.x = this.conf.x + this.conf.w / 2
-      conf = helper.getPath(this.conf, this.original)
+      let w2 = conf.w / 2
+      /** 同上*/
+      conf.center.x = this.conf.x + (flipHorizontal ? -w2 : w2)
     }
     this.conf = helper.calcConf(conf, this.parent?.conf)
     cu.render()
@@ -900,19 +870,15 @@ export abstract class BaseShape {
   flip(type: number) {
     let conf = this.conf
     let {
-      x, y, center, absolute, realRotation, rotation,flipVertical
+      center, absolute, realRotation, rotation,
     } = conf
     console.log('r', rotation)
     if (type === 0) {
-      conf.absolute.x = helper.getReversePoint(absolute.x, center.x)
-      if (flipVertical){
-
-      }else {
-        if (rotation < 0) {
-          conf.rotation = -rotation
-        } else {
-          conf.rotation = 180 - rotation
-        }
+      conf.absolute = helper.horizontalReversePoint(conf.absolute, center)
+      if (rotation <= 0) {
+        conf.rotation = -180 - rotation
+      } else {
+        conf.rotation = 180 - rotation
       }
       if (this.parent) {
         //逻辑同move一样
@@ -922,9 +888,8 @@ export abstract class BaseShape {
         conf.y = rXy.y - pConf.original.y
         conf.rotation -= pConf.rotation
       } else {
-        conf.x = helper.getReversePoint(x, center.x)
+        conf = helper.horizontalReversePoint(conf, center)
       }
-      //减去父角度
       conf.flipHorizontal = !conf.flipHorizontal
     } else {
       conf.absolute = helper.verticalReversePoint(absolute, center)
@@ -942,6 +907,6 @@ export abstract class BaseShape {
       conf.flipVertical = !conf.flipVertical
     }
     conf.realRotation = -realRotation
-    this.conf = helper.calcConf(conf,this.parent?.conf)
+    this.conf = helper.calcConf(conf, this.parent?.conf)
   }
 }

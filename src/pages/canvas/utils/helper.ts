@@ -46,27 +46,30 @@ export default {
   getPath(conf: BaseConfig, ctx?: any, pConf?: BaseConfig) {
     return conf
   },
-  getRotate(conf: BaseConfig): number {
-    let {rotation, flipHorizontal, flipVertical} = conf
-    let r = rotation
-    if (flipHorizontal && flipVertical) {
-      r = (180 + rotation)
+  getRotationByFlipHorizontal(rotation: number): number {
+    if (rotation <= 0) {
+      return -180 - rotation
     } else {
-      if (flipHorizontal) {
-        if (rotation <= 0) {
-          r = -180 - rotation
-        } else {
-          r = 180 - rotation
-        }
-      }
+      return 180 - rotation
     }
+  },
+  getRotationByFlipVertical(rotation: number): number {
+    return -rotation
+  },
+  /** 根据翻转方向来获取，最终要显示的角度
+   * */
+  getRotationByConfig(conf: BaseConfig, rotation?: number): number {
+    let {flipHorizontal, flipVertical} = conf
+    let r = rotation || conf.rotation
+    if (flipHorizontal) r = this.getRotationByFlipHorizontal(r)
+    if (flipVertical) r = this.getRotationByFlipVertical(r)
     return r
   },
   initConf(conf: BaseConfig, ctx: CanvasRenderingContext2D, pConf?: BaseConfig) {
     // console.log('initConf')
     if (conf.id) return conf
     let {
-      x, y, w, h, flipHorizontal,flipVertical
+      x, y, w, h, flipHorizontal, flipVertical
     } = conf
     if (conf.type === ShapeType.FRAME) {
       ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
@@ -95,7 +98,7 @@ export default {
       bottomRight = this.horizontalReversePoint(bottomRight, center)
       conf = this.horizontalReversePoint(conf, center)
       conf.absolute = this.horizontalReversePoint(conf.absolute, center)
-      conf.realRotation = -conf.rotation
+      conf.realRotation = -conf.realRotation
     }
     if (flipVertical) {
       topLeft = this.verticalReversePoint(topLeft, center)
@@ -104,7 +107,7 @@ export default {
       bottomRight = this.verticalReversePoint(bottomRight, center)
       conf = this.verticalReversePoint(conf, center)
       conf.absolute = this.verticalReversePoint(conf.absolute, center)
-      conf.realRotation = -conf.rotation
+      conf.realRotation = -conf.realRotation
     }
     /**
      *如果父组件旋转了,那么子组件的ab值也要旋转
@@ -157,7 +160,7 @@ export default {
         // let reverseXy = getRotatedPoint(conf.absolute, center, -(conf.realRotation))
         // conf.original = reverseXy
       }
-      conf.realRotation = this.getRotate(conf) + pConf.realRotation
+      conf.realRotation = this.getRotationByConfig(conf) + pConf.realRotation
     } else {
       let rotation = conf.realRotation
       if (rotation) {
@@ -170,7 +173,7 @@ export default {
         conf.y = conf.absolute.y
       }
     }
-    conf.rotation = this.getRotate(conf)
+    conf.rotation = this.getRotationByConfig(conf)
     conf.center = center
 
     conf.box = {

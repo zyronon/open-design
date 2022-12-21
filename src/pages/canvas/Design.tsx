@@ -101,7 +101,7 @@ class Design extends React.Component<any, IState> {
     console.log(this.state.cu.print2())
     navigator.clipboard.writeText(JSON.stringify(this.state.cu.print2(), null, 2))
       .then(() => {
-        message.success('复制成功2')
+        message.success('复制成功,带id')
       })
 
   }

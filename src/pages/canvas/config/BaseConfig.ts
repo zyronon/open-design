@@ -96,8 +96,8 @@ export interface BaseConfig extends Layout, Geometry {
   fillColor: string,
   borderColor: string,
   children: any[],
-  flipVertical?: boolean,
-  flipHorizontal?: boolean,
+  flipVertical: boolean,
+  flipHorizontal: boolean,
   points: any[],
   /**
    * @desc 是否是自定义图形

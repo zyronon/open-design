@@ -164,7 +164,11 @@ export abstract class BaseShape {
       r = (180 + rotation)
     } else {
       if (flipHorizontal) {
-        r = (rotation - 180)
+        if (rotation <= 0) {
+          r = -180 - rotation
+        } else {
+          r = 180 - rotation
+        }
       }
     }
     //这里要加上父组件旋转的角度
@@ -831,11 +835,11 @@ export abstract class BaseShape {
 
   //拖动右边
   dragRight(point: P) {
-    console.log('拖动右边')
+    // console.log('拖动右边')
     let {x, y,} = point
     let cu = CanvasUtil2.getInstance()
     let conf = this.conf
-    const {flipHorizontal, realRotation} = conf
+    const {flipHorizontal, realRotation, absolute} = conf
     if (realRotation) {
       const current = {x, y}
       const handlePoint = this.handlePoint
@@ -857,11 +861,42 @@ export abstract class BaseShape {
     } else {
       let dx = (x - cu.startX)
       /** 如果水平翻转，那么移动距离取反*/
-      if (flipHorizontal) dx = -dx
+      if (this.original.flipHorizontal) dx = -dx
       conf.w = this.original.w + dx
+
+      /** 是否要反转w值，因为反向拉动会使w值，越来越小，小于0之后就是负值了
+       * 所以当拉动的距离Math.abs(dx)大于 原始的original.w时
+       * 证明，有可能需要反转w值了，但存在图形原本就已经翻转的情况
+       * 所以，用x 与 absolute.x 相比较，判断不同翻转状态下，是否同向还是反向拉伸
+       * */
+      let isReverseW = false
+      if (this.original.w < Math.abs(dx)) {
+        if (this.original.flipHorizontal) {
+          if (x > absolute.x) {
+            isReverseW = true
+          }
+        } else {
+          if (x < absolute.x) {
+            isReverseW = true
+          }
+        }
+      }
+      console.log('isReverseW',isReverseW)
+      /** 如果反向拉伸，w取反，图形水平翻转
+       * 反之，图形保持和原图形一样的翻转
+       * */
+      if (isReverseW) {
+        conf.flipHorizontal = !this.original.flipHorizontal
+        conf.w = -conf.w
+        conf.rotation = helper.getRotationByFlipHorizontal(this.original.rotation)
+      } else {
+        conf.flipHorizontal = this.original.flipHorizontal
+        conf.rotation = this.original.rotation
+      }
+
       let w2 = conf.w / 2
       /** 同上*/
-      conf.center.x = this.conf.x + (flipHorizontal ? -w2 : w2)
+      conf.center.x = this.conf.x + (conf.flipHorizontal ? -w2 : w2)
     }
     this.conf = helper.calcConf(conf, this.parent?.conf)
     cu.render()
@@ -875,6 +910,8 @@ export abstract class BaseShape {
     console.log('r', rotation)
     if (type === 0) {
       conf.absolute = helper.horizontalReversePoint(conf.absolute, center)
+      conf.flipHorizontal = !conf.flipHorizontal
+      // conf.rotation = helper.getRotationByFlipConfig(conf)
       if (rotation <= 0) {
         conf.rotation = -180 - rotation
       } else {
@@ -890,9 +927,10 @@ export abstract class BaseShape {
       } else {
         conf = helper.horizontalReversePoint(conf, center)
       }
-      conf.flipHorizontal = !conf.flipHorizontal
     } else {
       conf.absolute = helper.verticalReversePoint(absolute, center)
+      conf.flipVertical = !conf.flipVertical
+      // conf.rotation = helper.getRotationByFlipConfig(conf)
       conf.rotation = -conf.rotation
       if (this.parent) {
         //逻辑同move一样
@@ -904,7 +942,6 @@ export abstract class BaseShape {
       } else {
         conf = helper.verticalReversePoint(conf, center)
       }
-      conf.flipVertical = !conf.flipVertical
     }
     conf.realRotation = -realRotation
     this.conf = helper.calcConf(conf, this.parent?.conf)

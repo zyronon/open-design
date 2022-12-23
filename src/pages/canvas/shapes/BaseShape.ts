@@ -881,7 +881,7 @@ export abstract class BaseShape {
           }
         }
       }
-      console.log('isReverseW',isReverseW)
+      // console.log('isReverseW',isReverseW)
       /** 如果反向拉伸，w取反，图形水平翻转
        * 反之，图形保持和原图形一样的翻转
        * */
@@ -893,7 +893,6 @@ export abstract class BaseShape {
         conf.flipHorizontal = this.original.flipHorizontal
         conf.rotation = this.original.rotation
       }
-
       let w2 = conf.w / 2
       /** 同上*/
       conf.center.x = this.conf.x + (conf.flipHorizontal ? -w2 : w2)
@@ -907,7 +906,6 @@ export abstract class BaseShape {
     let {
       center, absolute, realRotation, rotation,
     } = conf
-    console.log('r', rotation)
     if (type === 0) {
       conf.absolute = helper.horizontalReversePoint(conf.absolute, center)
       conf.flipHorizontal = !conf.flipHorizontal

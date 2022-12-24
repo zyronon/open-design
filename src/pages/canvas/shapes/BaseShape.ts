@@ -856,6 +856,9 @@ export abstract class BaseShape {
         x: this.diagonal.x + (currentAngleMovePoint.x - this.diagonal.x) / 2,
         y: this.diagonal.y + (currentAngleMovePoint.y - this.diagonal.y) / 2
       }
+
+      // console.log(currentAngleMovePoint.x, this.diagonal.x)
+
       conf.w = newWidth
       conf.center = newCenter
     } else {
@@ -863,23 +866,14 @@ export abstract class BaseShape {
       /** 如果水平翻转，那么移动距离取反*/
       if (this.original.flipHorizontal) dx = -dx
       conf.w = this.original.w + dx
+      console.log('  dx', dx)
 
       /** 是否要反转w值，因为反向拉动会使w值，越来越小，小于0之后就是负值了
-       * 所以当拉动的距离Math.abs(dx)大于 原始的original.w时
-       * 证明，有可能需要反转w值了，但存在图形原本就已经翻转的情况
-       * 所以，用x 与 absolute.x 相比较，判断不同翻转状态下，是否同向还是反向拉伸
+       * 判断拖动距离 加上 宽度是否小于0就完事了
        * */
       let isReverseW = false
-      if (this.original.w < Math.abs(dx)) {
-        if (this.original.flipHorizontal) {
-          if (x > absolute.x) {
-            isReverseW = true
-          }
-        } else {
-          if (x < absolute.x) {
-            isReverseW = true
-          }
-        }
+      if (this.original.w + dx < 0) {
+        isReverseW = true
       }
       // console.log('isReverseW',isReverseW)
       /** 如果反向拉伸，w取反，图形水平翻转

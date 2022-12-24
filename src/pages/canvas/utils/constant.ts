@@ -967,7 +967,7 @@ export const rects: any[] = [
     "children": [],
     "borderColor": "rgb(216,216,216)",
     "fillColor": "white",
-    flipHorizontal: true,
+    flipHorizontal: false,
     flipVertical: false
   },
 ]

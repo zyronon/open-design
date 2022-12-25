@@ -15,7 +15,6 @@ export default {
     original: any,
     status: any,
     parent?: BaseConfig,
-    parent2?: BaseShape
   ) {
     const {isHover, isSelect, enterL, enterLT} = status
     let {
@@ -34,8 +33,9 @@ export default {
     ctx.lineWidth = lineWidth
     ctx.fillStyle = fillColor
     ctx.strokeStyle = borderColor
-    if (parent) {
-      let pR = parent2?.getRotate() ?? 0
+    let a = false
+    if (parent && a) {
+      let pR = parent?.realRotation
       if (flipHorizontal || flipVertical) {
         /*
         * 渲染翻转后的图形，把canvas的起点移到中心点（要保证图形中心点的正确）

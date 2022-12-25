@@ -1,12 +1,20 @@
 import {BaseShape} from "./BaseShape"
 import CanvasUtil2 from "../CanvasUtil2"
-import {BaseEvent2, P, ShapeType} from "../utils/type"
+import {BaseEvent2, P, ShapeProps, ShapeType} from "../utils/type"
 import {drawSelectedHover} from "./Ellipse/draw"
 import {BaseConfig} from "../config/BaseConfig"
 import draw from "../utils/draw"
 import {getRotatedPoint} from "../../../utils"
 
 export class Frame extends BaseShape {
+
+  constructor(props: ShapeProps) {
+    super(props)
+    let cu = CanvasUtil2.getInstance()
+    cu.ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
+    let m = cu.ctx.measureText(this.conf.name)
+    this.conf.nameWidth = m.width
+  }
 
   /** @desc 只能在名字那里hover
    * */
@@ -115,8 +123,6 @@ export class Frame extends BaseShape {
       ctx.fill()
       ctx.strokeStyle = borderColor
       ctx.stroke()
-
-
     }
   }
 

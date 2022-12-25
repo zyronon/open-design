@@ -4,6 +4,7 @@ import {getRotatedPoint} from "../../../utils"
 import {v4 as uuid} from 'uuid'
 import {clone} from "lodash"
 import {P, ShapeType} from "./type"
+import CanvasUtil2 from "../CanvasUtil2"
 
 export default {
   //废弃
@@ -67,23 +68,25 @@ export default {
     if (flipVertical) r = this.getRotationByFlipVertical(r)
     return r
   },
-  initConf(conf: BaseConfig, ctx: CanvasRenderingContext2D, pConf?: BaseConfig) {
+  initConf(conf: BaseConfig, pConf?: BaseConfig) {
     // console.log('initConf')
     if (conf.id) return conf
     let {
       layout: {x, y, w, h}, flipHorizontal, flipVertical
     } = conf
-    if (conf.type === ShapeType.FRAME) {
-      ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
-      let m = ctx.measureText(conf.name)
-      conf.nameWidth = m.width
-    }
-    let center = {x: x + (w / 2), y: y + (h / 2)}
     conf.id = uuid()
-    conf.percent = {x: 0, y: 0,}
-    conf.absolute = {x, y}
+
+    if (pConf) {
+      conf.percent = {x: x / pConf.layout.w, y: y / pConf.layout.h,}
+      conf.absolute = {x: pConf.layout.x + x, y: pConf.layout.y + y}
+    } else {
+      conf.percent = {x: 0, y: 0,}
+      conf.absolute = {x, y}
+    }
+
     conf.original = clone(conf.absolute)
     conf.realRotation = conf.rotation
+    let center = {x: conf.absolute.x + (w / 2), y: conf.absolute.y + (h / 2)}
 
     const {x: ax, y: ay} = conf.absolute
     let topLeft = {x: ax, y: ay}
@@ -119,17 +122,18 @@ export default {
       const zeroAb = {x: x + pConf.original.x, y: y + pConf.original.y,}
       conf.original = clone(zeroAb)
       let rotatedAb = getRotatedPoint(zeroAb, center, conf.realRotation)
+      conf.absolute = rotatedAb
       //用旋转后的ab值，减去老的ab值，就是xy的偏移量。与原xy相加得到旋转后的xy值
-      conf.x = x + (rotatedAb.x - zeroAb.x)
-      conf.y = y + (rotatedAb.y - zeroAb.y)
-      //TODO 可能计算不准确
-      conf.percent = {x: x / pConf.w, y: y / pConf.h,}
+      conf.layout.x = x + (rotatedAb.x - zeroAb.x)
+      conf.layout.y = y + (rotatedAb.y - zeroAb.y)
 
       let rotation = conf.realRotation
-      topLeft = getRotatedPoint(topLeft, center, rotation)
-      topRight = getRotatedPoint(topRight, center, rotation)
-      bottomLeft = getRotatedPoint(bottomLeft, center, rotation)
-      bottomRight = getRotatedPoint(bottomRight, center, rotation)
+      if (rotation) {
+        topLeft = getRotatedPoint(topLeft, center, rotation)
+        topRight = getRotatedPoint(topRight, center, rotation)
+        bottomLeft = getRotatedPoint(bottomLeft, center, rotation)
+        bottomRight = getRotatedPoint(bottomRight, center, rotation)
+      }
 
       if (pConf.realRotation) {
         topLeft = getRotatedPoint(topLeft, pConf.center, pConf.realRotation)

@@ -1,4 +1,4 @@
-import {BaseEvent2, P, ShapeProps, ShapeType} from "../utils/type"
+import {BaseEvent2, MouseOptionType, P, ShapeProps, ShapeType} from "../utils/type"
 import CanvasUtil2 from "../CanvasUtil2"
 import {clone, cloneDeep, merge} from "lodash"
 import getCenterPoint, {getAngle2, getRotatedPoint} from "../../../utils"
@@ -22,6 +22,8 @@ export abstract class BaseShape {
   enterRight: boolean = false
   hoverTop: boolean = false
   enterTop: boolean = false
+  hoverType: MouseOptionType = MouseOptionType.None
+  enterType: MouseOptionType = MouseOptionType.None
   public conf: BaseConfig
   children: BaseShape[] = []
   isHover: boolean = false
@@ -39,12 +41,12 @@ export abstract class BaseShape {
 
   constructor(props: ShapeProps) {
     // console.log('props', clone(props))
-    this.conf = helper.initConf(props.conf, props.ctx, props.parent?.conf,)
+    this.conf = helper.initConf(props.conf, props.parent?.conf)
     this.parent = props.parent
     this.original = cloneDeep(this.conf)
     // console.log('config', clone(this.config))
     this.children = this.conf.children?.map((conf: BaseConfig) => {
-      return getShapeFromConfig({conf, parent: this, ctx: props.ctx})
+      return getShapeFromConfig({conf, parent: this})
     }) ?? []
   }
 
@@ -305,9 +307,9 @@ export abstract class BaseShape {
     return this.isHoverIn({x, y}, cu)
   }
 
-  shapeRender(ctx: CanvasRenderingContext2D, parent?: BaseConfig, parent2?: BaseShape) {
+  shapeRender(ctx: CanvasRenderingContext2D, parent?: BaseConfig) {
     ctx.save()
-    let {x, y} = draw.calcPosition(ctx, this.conf, this.original, this.getState(), parent, parent2)
+    let {x, y} = draw.calcPosition(ctx, this.conf, this.original, this.getState(), parent)
     const {isHover, isSelect, isEdit, isSelectHover} = this
 
     let newConf = merge(cloneDeep(this.conf), {layout: {x, y}})
@@ -345,7 +347,7 @@ export abstract class BaseShape {
     // this.config = helper.getPath(this.config, undefined, parent)
     for (let i = 0; i < this.children.length; i++) {
       let shape = this.children[i]
-      shape.shapeRender(ctx, this.conf, this)
+      shape.shapeRender(ctx, this.conf)
     }
   }
 

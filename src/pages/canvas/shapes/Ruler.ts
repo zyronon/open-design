@@ -49,7 +49,7 @@ export class Ruler extends BaseShape {
               direction: this.conf.data?.direction
             }
           } as any,
-          parent: undefined, ctx: cu.ctx
+          parent: undefined
         },)
         cu.children.push(cu.newShape)
       }

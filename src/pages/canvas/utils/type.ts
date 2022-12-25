@@ -94,7 +94,6 @@ export enum ShapeType {
 export interface ShapeProps {
   conf: BaseConfig,
   parent?: BaseShape,
-  ctx: any
 }
 
 export enum FontWeight {
@@ -200,4 +199,20 @@ export type ShapeState = {
   isEdit: boolean,
   enterLT: boolean,
   enterL: boolean
+}
+
+export enum MouseOptionType {
+  None = 0,
+  Top = 1,
+  Left = 2,
+  Bottom = 3,
+  Right = 4,
+  TopLeft = 5,
+  TopRight = 6,
+  BottomLeft = 7,
+  BottomRight = 8,
+  TopLeftRotation = 9,
+  TopRightRotation = 10,
+  BottomLeftRotation = 11,
+  BottomRightRotation = 12,
 }

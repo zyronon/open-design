@@ -105,7 +105,8 @@ export function getAngle2(center: P, one: P, two: P) {
  * nx = cosθ * (ax - cx) - sinθ * (ay - cy) + cx
  * ny = sinθ * (ax - cx) + cosθ * (ay - cy) + cy
  */
-export function getRotatedPoint(point: any, center: any, rotate: any) {
+export function getRotatedPoint(point: any, center: any, rotate: number) {
+  if (rotate === 0) return point
   return {
     x: (point.x - center.x) * Math.cos(jiaodu2hudu(rotate)) - (point.y - center.y) * Math.sin(jiaodu2hudu(rotate)) + center.x,
     y: (point.x - center.x) * Math.sin(jiaodu2hudu(rotate)) + (point.y - center.y) * Math.cos(jiaodu2hudu(rotate)) + center.y
@@ -118,7 +119,7 @@ export function getRotatedPoint(point: any, center: any, rotate: any) {
  * @param  {Object} p2 点2的坐标
  * @return {Object}    中点坐标
  */
-export default function getCenterPoint(p1: any, p2: any) {
+export default function getCenterPoint(p1: P, p2: P) {
   return {
     x: p1.x + ((p2.x - p1.x) / 2),
     y: p1.y + ((p2.y - p1.y) / 2)

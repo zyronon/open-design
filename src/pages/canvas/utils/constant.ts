@@ -955,11 +955,11 @@ const rule = [
 export const rects: any[] = [
   {
     "name": "容器",
-    "x": 800,
-    "y": 250,
+    "x": 400,
+    "y": 100,
     "w": 500,
     "h": 400,
-    "rotation": 0,
+    "rotation": 10,
     "lineWidth": 2,
     "type": "FRAME",
     "color": "gray",
@@ -967,7 +967,7 @@ export const rects: any[] = [
     "children": [],
     "borderColor": "rgb(216,216,216)",
     "fillColor": "white",
-    flipHorizontal: false,
+    flipHorizontal: true,
     flipVertical: false
   },
 ]

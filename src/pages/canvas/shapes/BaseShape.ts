@@ -857,7 +857,26 @@ export abstract class BaseShape {
         y: this.diagonal.y + (currentAngleMovePoint.y - this.diagonal.y) / 2
       }
 
-      // console.log(currentAngleMovePoint.x, this.diagonal.x)
+      console.log(currentAngleMovePoint.x, this.diagonal.x)
+
+      let isReverseW = false
+      if (this.original.flipHorizontal) {
+        if (currentAngleMovePoint.x > this.diagonal.x) {
+          isReverseW = true
+        }
+      } else {
+        if (currentAngleMovePoint.x < this.diagonal.x) {
+          isReverseW = true
+        }
+      }
+
+      if (isReverseW) {
+        conf.flipHorizontal = !this.original.flipHorizontal
+        conf.rotation = helper.getRotationByFlipHorizontal(this.original.rotation)
+      } else {
+        conf.flipHorizontal = this.original.flipHorizontal
+        conf.rotation = this.original.rotation
+      }
 
       conf.w = newWidth
       conf.center = newCenter

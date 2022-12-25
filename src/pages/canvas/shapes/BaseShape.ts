@@ -463,7 +463,7 @@ export abstract class BaseShape {
     //按下左边
     if (this.hoverLeft) {
       // console.log('config', cloneDeep(this.config))
-      let {w, h, realRotation, center, flipHorizontal, flipVertical} = this.conf
+      let {layout: {w, h,}, absolute, center, realRotation, flipHorizontal, flipVertical} = this.conf
       let lx = this.conf.layout.x
       let ly = this.conf.layout.y
       //反转当前xy到0度
@@ -494,7 +494,7 @@ export abstract class BaseShape {
     //按下上边
     if (this.hoverTop) {
       // console.log('config', cloneDeep(this.config))
-      let {w, h, realRotation, center, flipHorizontal, flipVertical} = this.conf
+      let {layout: {w, h,}, absolute, center, realRotation, flipHorizontal, flipVertical} = this.conf
       let handLineCenterPoint = {
         x: center.x,
         y: center.y + (flipVertical ? (h / 2) : -(h / 2))
@@ -510,7 +510,7 @@ export abstract class BaseShape {
     //按下左边
     if (this.hoverRight) {
       // console.log('config', cloneDeep(this.config))
-      let {w, h, absolute, center, realRotation, flipHorizontal, flipVertical} = this.conf
+      let {layout: {w, h,}, absolute, center, realRotation, flipHorizontal, flipVertical} = this.conf
       /**
        * 根据flipHorizontal、flipVertical计算出当前按的那条边的中间点
        * 如果水平翻转：x在左边，直接使用。未翻转：x加上宽度
@@ -531,7 +531,7 @@ export abstract class BaseShape {
     //按下左上
     if (this.hoverLeftTop) {
       // console.log('config', cloneDeep(this.config))
-      let {w, h, absolute, realRotation, original, center, flipHorizontal, flipVertical} = this.conf
+      let {layout: {w, h,}, absolute, center, realRotation, flipHorizontal, flipVertical} = this.conf
       this.handlePoint = absolute
       this.diagonal = helper.reversePoint(this.handlePoint, center)
       this.enterLeftTop = true

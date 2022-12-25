@@ -85,7 +85,8 @@ export class Frame extends BaseShape {
 
   render(ctx: CanvasRenderingContext2D, p: P, parent?: BaseConfig) {
     let {
-      w, h, radius,
+      layout: {w, h},
+      radius,
       fillColor, borderColor, rotation, lineWidth,
       type, flipVertical, flipHorizontal, children,
       name
@@ -126,7 +127,7 @@ export class Frame extends BaseShape {
   }
 
   renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void {
-    drawSelectedHover(ctx, conf)
+    // drawSelectedHover(ctx, conf)
   }
 
   renderEdit(ctx: CanvasRenderingContext2D, p: P, parent?: BaseConfig): void {

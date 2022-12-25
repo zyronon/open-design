@@ -6,12 +6,16 @@ import {clone} from "lodash"
 import {P, ShapeType} from "./type"
 
 export default {
+  //废弃
+  getPath(conf: BaseConfig, ctx?: any, pConf?: BaseConfig) {
+    return conf
+  },
   /**
-   * @desc 获取翻转点
+   * @desc 翻转点
    * @param val 要翻转的点
    * @param centerVal 中心点
    * */
-  getReversePoint(val: number, centerVal: number) {
+  _reversePoint(val: number, centerVal: number) {
     return centerVal + Math.abs(val - centerVal) * (val < centerVal ? 1 : -1)
   },
   /**
@@ -19,9 +23,9 @@ export default {
    * @param point 要翻转的点
    * @param center 中心点
    * */
-  getReversePoint2(point: any, center: P): P {
-    let x = this.getReversePoint(point.x, center.x)
-    let y = this.getReversePoint(point.y, center.y)
+  reversePoint(point: any, center: P): P {
+    let x = this._reversePoint(point.x, center.x)
+    let y = this._reversePoint(point.y, center.y)
     return {x, y}
   },
   /**
@@ -30,7 +34,7 @@ export default {
    * @param center 中心点
    * */
   horizontalReversePoint(point: any, center: P) {
-    point.x = this.getReversePoint(point.x, center.x)
+    point.x = this._reversePoint(point.x, center.x)
     return point
   },
   /**
@@ -39,12 +43,8 @@ export default {
    * @param center 中心点
    * */
   verticalReversePoint<T>(point: any, center: P): T {
-    point.y = this.getReversePoint(point.y, center.y)
+    point.y = this._reversePoint(point.y, center.y)
     return point
-  },
-  //废弃
-  getPath(conf: BaseConfig, ctx?: any, pConf?: BaseConfig) {
-    return conf
   },
   getRotationByFlipHorizontal(rotation: number): number {
     if (rotation <= 0) {
@@ -56,9 +56,11 @@ export default {
   getRotationByFlipVertical(rotation: number): number {
     return -rotation
   },
-  /** 根据翻转方向来获取，最终要显示的角度
+  /** 根据初始配置，翻转方向来获取，最终要显示的角度
+   * flipHorizontal 为false时，方法不会执行。不适合实时计算。
+   * 只适合初始化是计算角度
    * */
-  getRotationByConfig(conf: BaseConfig, rotation?: number): number {
+  getRotationByInitConf(conf: BaseConfig, rotation?: number): number {
     let {flipHorizontal, flipVertical} = conf
     let r = rotation || conf.rotation
     if (flipHorizontal) r = this.getRotationByFlipHorizontal(r)
@@ -69,7 +71,7 @@ export default {
     // console.log('initConf')
     if (conf.id) return conf
     let {
-      x, y, w, h, flipHorizontal, flipVertical
+      layout: {x, y, w, h}, flipHorizontal, flipVertical
     } = conf
     if (conf.type === ShapeType.FRAME) {
       ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
@@ -96,7 +98,7 @@ export default {
       topRight = this.horizontalReversePoint(topRight, center)
       bottomLeft = this.horizontalReversePoint(bottomLeft, center)
       bottomRight = this.horizontalReversePoint(bottomRight, center)
-      conf = this.horizontalReversePoint(conf, center)
+      conf.layout = this.horizontalReversePoint(conf.layout, center)
       conf.absolute = this.horizontalReversePoint(conf.absolute, center)
       conf.realRotation = -conf.realRotation
     }
@@ -105,7 +107,7 @@ export default {
       topRight = this.verticalReversePoint(topRight, center)
       bottomLeft = this.verticalReversePoint(bottomLeft, center)
       bottomRight = this.verticalReversePoint(bottomRight, center)
-      conf = this.verticalReversePoint(conf, center)
+      conf.layout = this.verticalReversePoint(conf.layout, center)
       conf.absolute = this.verticalReversePoint(conf.absolute, center)
       conf.realRotation = -conf.realRotation
     }
@@ -160,7 +162,7 @@ export default {
         // let reverseXy = getRotatedPoint(conf.absolute, center, -(conf.realRotation))
         // conf.original = reverseXy
       }
-      conf.realRotation = this.getRotationByConfig(conf) + pConf.realRotation
+      conf.realRotation = this.getRotationByInitConf(conf) + pConf.realRotation
     } else {
       let rotation = conf.realRotation
       if (rotation) {
@@ -169,11 +171,11 @@ export default {
         bottomLeft = getRotatedPoint(bottomLeft, center, rotation)
         bottomRight = getRotatedPoint(bottomRight, center, rotation)
         conf.absolute = topLeft
-        conf.x = conf.absolute.x
-        conf.y = conf.absolute.y
+        conf.layout.x = conf.absolute.x
+        conf.layout.y = conf.absolute.y
       }
     }
-    conf.rotation = this.getRotationByConfig(conf)
+    conf.rotation = this.getRotationByInitConf(conf)
     conf.center = center
 
     conf.box = {
@@ -190,7 +192,7 @@ export default {
   },
   calcConf(conf: BaseConfig, pConf?: BaseConfig): BaseConfig {
     let {
-      x, y, w, h,
+      layout: {x, y, w, h},
       center, flipHorizontal, flipVertical, realRotation
     } = conf
 
@@ -199,7 +201,7 @@ export default {
     if (pConf) {
 
     } else {
-      conf.absolute = {x: conf.x, y: conf.y}
+      conf.absolute = {x, y}
     }
 
     let reverseXy = getRotatedPoint(conf.absolute, center, -realRotation)
@@ -439,6 +441,4 @@ export default {
   getXy() {
     return {x: 0, y: 0}
   }
-
-
 }

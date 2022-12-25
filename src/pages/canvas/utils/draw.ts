@@ -1,5 +1,5 @@
 import {IState, P, P2, ShapeType} from "./type"
-import {BaseConfig} from "../config/BaseConfig"
+import {BaseConfig, Rect} from "../config/BaseConfig"
 import {Colors} from "./constant"
 import {jiaodu2hudu} from "../../../utils"
 import {BaseShape} from "../shapes/BaseShape"
@@ -19,11 +19,11 @@ export default {
   ) {
     const {isHover, isSelect, enterL, enterLT} = status
     let {
-      x, y, w, h, radius, absolute,
+      layout: {x, y, w, h,},
+      radius, absolute,
       fillColor, borderColor, rotation, lineWidth,
-      type, flipVertical, flipHorizontal, children,
+      flipVertical, flipHorizontal,
       center,
-      topLeft,
       realRotation
     }
       = conf
@@ -69,7 +69,7 @@ export default {
           ctx.rotate(rotation * Math.PI / 180)
           return {x: 0, y: 0}
         } else {
-          ctx.translate(parent.center.x, parent.center.y)
+          ctx.translate2(parent.center)
           ctx.rotate(pR * Math.PI / 180)
           return {x: x - parent.w / 2, y: y - parent.h / 2}
         }
@@ -85,7 +85,7 @@ export default {
         if (flipHorizontal) scaleX = -1
         if (flipVertical) scaleY = -1
 
-        ctx.translate(center.x, center.y)
+        ctx.translate2(center)
         ctx.rotate(realRotation * Math.PI / 180)
         ctx.scale(scaleX, scaleY)
         return {x: -w / 2, y: -h / 2}
@@ -183,22 +183,13 @@ export default {
     ctx.rotate(rotation * Math.PI / 180)
     return {x, y}
   },
-  clearAll(state: IState) {
-    this.clear({
-      x: 0,
-      y: 0,
-      w: state.canvas.width,
-      h: state.canvas.height
-    }, state.ctx)
-    // this.state.ctx.fillStyle = 'black'
-    // this.state.ctx.fillRect(0, 0, this.state.canvas.width, this.state.canvas.height)
-  },
-  clear(x: any, ctx: any) {
-    ctx.clearRect(x.x, x.y, x.w, x.h)
+  clear(rect: Rect, ctx: any) {
+    ctx.clearRect(rect.x, rect.y, rect.w, rect.h)
   },
   selected(ctx: CanvasRenderingContext2D, config: any) {
     let {
-      x, y, w, h, radius,
+      layout: {x, y, w, h,},
+      radius,
       fillColor, borderColor, rotation,
       type, flipVertical, flipHorizontal, children,
     } = config
@@ -274,9 +265,7 @@ export default {
   },
   edit(ctx: CanvasRenderingContext2D, config: any) {
     let {
-      x, y, w, h, radius,
-      fillColor, borderColor, rotation,
-      type, flipVertical, flipHorizontal, children,
+      layout: {x, y, w, h,},
     } = config
     ctx.strokeStyle = 'rgb(139,80,255)'
 
@@ -357,7 +346,8 @@ export default {
   },
   hover(ctx: CanvasRenderingContext2D, config: any) {
     let {
-      x, y, w, h, radius,
+      layout: {x, y, w, h,},
+      radius,
       fillColor, borderColor, rotation,
       type, flipVertical, flipHorizontal, children,
     } = config

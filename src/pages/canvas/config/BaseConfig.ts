@@ -6,7 +6,9 @@ interface Layout {
   relativeTransform: Transform//图层节点相对于它的父级节点的位置，作为变换矩阵呈现。
   x: number,//图层节点的位置，等价于 relativeTransform[0][2]。
   y: number,//图层节点的位置，等价于 relativeTransform[1][2]。
-  bound: Rect//图层节点的 rect。
+  w: number,
+  h: number,
+  layout: Rect//图层节点的 rect。
   /** @desc 显示旋转角度
    *  图层节点的旋转角度.值域为 [-180, 180]。
    * 其值等价于：Math.atan2(-relativeTransform[1][0], relativeTransform[0][0])
@@ -17,8 +19,6 @@ interface Layout {
    * 2、翻转的情况下：显示角度和真实的角度不同，但是不知道为什么masterGo和figma都是这样子设计的
    * */
   realRotation: number,
-  w: number,
-  h: number,
   percent: P,//相对于父级的百分比坐标
   absolute: P,//坐标绝对值
   original: P,//坐标未翻转、旋转的值
@@ -127,11 +127,11 @@ export interface BaseConfig extends Layout, Geometry {
   effects: any[]//返回一个特效数组，具体数据结构可以查看 Effect。
 }
 
-interface Rect {
+export interface Rect {
   x: number
   y: number
-  width: number
-  height: number
+  w: number
+  h: number
 }
 
 type Transform = [[number, number, number], [number, number, number]]

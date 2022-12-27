@@ -785,7 +785,9 @@ export abstract class BaseShape {
     } else {
       /**dx和dragRight相反*/
       let dx = (cu.startX - x)
+      /** x要减去dx，w是要加上dx*/
       conf.layout.x = this.original.layout.x - dx
+
       if (this.original.flipHorizontal) dx = -dx
       conf.layout.w = this.original.layout.w + dx
 

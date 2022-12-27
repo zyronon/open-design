@@ -709,45 +709,6 @@ export abstract class BaseShape {
     cu.render()
   }
 
-  //拖动左边
-  dragLeft(point: P) {
-    console.log('拖动左边')
-    let {x, y,} = point
-    let cu = CanvasUtil2.getInstance()
-    let conf = this.conf
-    const {flipHorizontal, flipVertical, realRotation} = conf
-    if (realRotation) {
-      const current = {x, y}
-      const handlePoint = this.handlePoint
-      const zeroAngleCurrentPoint = getRotatedPoint(current, handlePoint, -realRotation)
-      const zeroAngleMovePoint = {x: zeroAngleCurrentPoint.x, y: handlePoint.y}
-      const currentAngleMovePoint = getRotatedPoint(zeroAngleMovePoint, handlePoint, realRotation)
-      const newWidth = Math.hypot(currentAngleMovePoint.x - this.diagonal.x, currentAngleMovePoint.y - this.diagonal.y)
-      const newCenter = {
-        x: this.diagonal.x + (currentAngleMovePoint.x - this.diagonal.x) / 2,
-        y: this.diagonal.y + (currentAngleMovePoint.y - this.diagonal.y) / 2
-      }
-      conf.layout.w = newWidth
-      conf.center = newCenter
-
-      /*变化：非水平翻转时需要处理*/
-      if (!flipHorizontal) {
-        let zeroAngleXy = getRotatedPoint(this.original, newCenter, -realRotation)
-        /*变化：x减去多的宽度*/
-        zeroAngleXy.x -= (newWidth - this.original.layout.w)
-        let angleXy = getRotatedPoint(zeroAngleXy, newCenter, realRotation)
-        conf.layout.x = angleXy.x
-        conf.layout.y = angleXy.y
-      }
-    } else {
-      conf.layout.x = (x - cu.offsetX)
-      conf.layout.w = this.original.box.rightX - this.conf.layout.x
-      conf.center.x = this.conf.layout.x + this.conf.layout.w / 2
-    }
-    this.conf = helper.calcConf(conf, this.parent?.conf)
-    cu.render()
-  }
-
   //拖动上边
   dragTop(point: P) {
     // console.log('拖动上边')
@@ -778,6 +739,70 @@ export abstract class BaseShape {
       conf.layout.y = (y - cu.offsetY)
       conf.layout.h = this.original.box.bottomY - conf.layout.y
       conf.center.y = conf.layout.y + conf.layout.h / 2
+    }
+    this.conf = helper.calcConf(conf, this.parent?.conf)
+    cu.render()
+  }
+
+  //拖动左边
+  dragLeft(point: P) {
+    // console.log('拖动左边')
+    let {x, y,} = point
+    let cu = CanvasUtil2.getInstance()
+    let conf = this.conf
+    const {flipHorizontal, flipVertical, realRotation} = conf
+    if (realRotation) {
+      const current = {x, y}
+      const handlePoint = this.handlePoint
+      const zeroAngleCurrentPoint = getRotatedPoint(current, handlePoint, -realRotation)
+      const zeroAngleMovePoint = {x: zeroAngleCurrentPoint.x, y: handlePoint.y}
+      const currentAngleMovePoint = getRotatedPoint(zeroAngleMovePoint, handlePoint, realRotation)
+      const newWidth = Math.hypot(currentAngleMovePoint.x - this.diagonal.x, currentAngleMovePoint.y - this.diagonal.y)
+      const newCenter = {
+        x: this.diagonal.x + (currentAngleMovePoint.x - this.diagonal.x) / 2,
+        y: this.diagonal.y + (currentAngleMovePoint.y - this.diagonal.y) / 2
+      }
+      let isReverseW = false
+      if (this.original.flipHorizontal) {
+        if (currentAngleMovePoint.x > this.diagonal.x) {
+          isReverseW = true
+        }
+      } else {
+        if (currentAngleMovePoint.x < this.diagonal.x) {
+          isReverseW = true
+        }
+      }
+
+      if (isReverseW) {
+        conf.flipHorizontal = !this.original.flipHorizontal
+        conf.rotation = helper.getRotationByFlipHorizontal(this.original.rotation)
+      } else {
+        conf.flipHorizontal = this.original.flipHorizontal
+        conf.rotation = this.original.rotation
+      }
+      conf.layout.w = newWidth
+      conf.center = newCenter
+    } else {
+      /**dx和dragRight相反*/
+      let dx = (cu.startX - x)
+      conf.layout.x = this.original.layout.x - dx
+      if (this.original.flipHorizontal) dx = -dx
+      conf.layout.w = this.original.layout.w + dx
+
+      let isReverseW = false
+      if (this.original.layout.w + dx < 0) {
+        isReverseW = true
+      }
+      if (isReverseW) {
+        conf.flipHorizontal = !this.original.flipHorizontal
+        conf.layout.w = -conf.layout.w
+        conf.rotation = helper.getRotationByFlipHorizontal(this.original.rotation)
+      } else {
+        conf.flipHorizontal = this.original.flipHorizontal
+        conf.rotation = this.original.rotation
+      }
+      let w2 = conf.layout.w / 2
+      conf.center.x = this.conf.layout.x + (conf.flipHorizontal ? -w2 : w2)
     }
     this.conf = helper.calcConf(conf, this.parent?.conf)
     cu.render()

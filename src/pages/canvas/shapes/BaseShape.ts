@@ -764,11 +764,11 @@ export abstract class BaseShape {
       }
       let isReverseW = false
       if (this.original.flipHorizontal) {
-        if (currentAngleMovePoint.x > this.diagonal.x) {
+        if (currentAngleMovePoint.x < this.diagonal.x) {
           isReverseW = true
         }
       } else {
-        if (currentAngleMovePoint.x < this.diagonal.x) {
+        if (currentAngleMovePoint.x > this.diagonal.x) {
           isReverseW = true
         }
       }
@@ -782,6 +782,13 @@ export abstract class BaseShape {
       }
       conf.layout.w = newWidth
       conf.center = newCenter
+
+      let start = {
+        x: conf.center.x - newWidth / 2,
+        y: conf.center.y - conf.layout.h / 2,
+      }
+      let a = getRotatedPoint(start, newCenter, realRotation)
+      conf.layout = {...conf.layout, ...a}
     } else {
       /**dx和dragRight相反*/
       let dx = (cu.startX - x)

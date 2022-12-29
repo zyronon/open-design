@@ -428,33 +428,17 @@ export abstract class BaseShape {
     let handLineCenterPoint
     switch (this.hoverType) {
       case MouseOptionType.Left:
-        // console.log('config', cloneDeep(this.config))
-        let lx = this.conf.layout.x
-        let ly = this.conf.layout.y
-        //反转当前xy到0度
-        let reverseXy = getRotatedPoint({x: lx, y: ly}, center, -realRotation)
-        /**
-         * 根据flipHorizontal、flipVertical计算出当前按的那条边的中间点
-         * 如果水平翻转：x在左边，直接使用。未翻转：x加上宽度
-         * 如果垂直翻转：y在下边，要减去高度的一半。未翻转：y加上高度的一半
-         * */
-        let currentHandLineCenterPoint = {
-          x: reverseXy.x + (flipHorizontal ? -w : 0),
-          y: reverseXy.y + (flipVertical ? -(h / 2) : (h / 2))
+        // console.log('Left')
+        /** 这里的x的值与Right的计算相反*/
+        handLineCenterPoint = {
+          x: center.x + (flipHorizontal ? (w / 2) : -(w / 2)),
+          y: center.y
         }
-        //根据当前角度，转回来。得到的点就是当前鼠标按住那条边的中间点（当前角度），非鼠标点
-        let handlePoint = getRotatedPoint(
-          currentHandLineCenterPoint,
-          center, realRotation)
-        this.handlePoint = handlePoint
-        //翻转得到对面的点
-        this.diagonal = {
-          x: helper._reversePoint(handlePoint.x, center.x),
-          y: helper._reversePoint(handlePoint.y, center.y),
-        }
+        this.handlePoint = getRotatedPoint(handLineCenterPoint, center, realRotation)
+        this.diagonal = helper.reversePoint(this.handlePoint, center)
         return
       case MouseOptionType.Right:
-        // console.log('config', cloneDeep(this.config))
+        // console.log('Right')
         /**
          * 根据flipHorizontal、flipVertical计算出当前按的那条边的中间点
          * 如果水平翻转：x在左边，直接使用。未翻转：x加上宽度
@@ -750,7 +734,7 @@ export abstract class BaseShape {
     let {x, y,} = point
     let cu = CanvasUtil2.getInstance()
     let conf = this.conf
-    const {flipHorizontal, flipVertical, realRotation} = conf
+    const {realRotation} = conf
     if (realRotation) {
       const current = {x, y}
       const handlePoint = this.handlePoint
@@ -783,8 +767,10 @@ export abstract class BaseShape {
       conf.layout.w = newWidth
       conf.center = newCenter
 
+      /** 与Right不一样的地方*/
+      let w2 = newWidth / 2
       let start = {
-        x: conf.center.x - newWidth / 2,
+        x: conf.center.x - (conf.flipHorizontal ? -w2 : w2),
         y: conf.center.y - conf.layout.h / 2,
       }
       let a = getRotatedPoint(start, newCenter, realRotation)
@@ -813,6 +799,15 @@ export abstract class BaseShape {
       let w2 = conf.layout.w / 2
       conf.center.x = this.conf.layout.x + (conf.flipHorizontal ? -w2 : w2)
     }
+    let dx = this.original.layout.x - this.conf.layout.x
+
+    this.children.map((shape: BaseShape) => {
+      shape.conf.layout.x = shape.original.layout.x - dx
+      shape.conf.absolute.x = shape.original.absolute.x - dx
+      // console.log('shape.original.absolute',shape.original.absolute)
+      console.log('sh',shape.conf)
+      // shape.conf = helper.calcConf(shape.conf, this.parent?.conf)
+    })
     this.conf = helper.calcConf(conf, this.parent?.conf)
     cu.render()
   }

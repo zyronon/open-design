@@ -1,6 +1,7 @@
 //获取斜边长度
 //给一个圆心点和其他点
 import {P, P2} from "../pages/canvas/utils/type"
+import {clone} from "lodash"
 
 export function getHypotenuse(one: number[], two: number[]) {
   let [oneX, oneY] = one
@@ -106,7 +107,7 @@ export function getAngle2(center: P, one: P, two: P) {
  * ny = sinθ * (ax - cx) + cosθ * (ay - cy) + cy
  */
 export function getRotatedPoint(point: any, center: any, rotate: number) {
-  if (rotate === 0) return point
+  if (rotate === 0) return clone(point)
   return {
     x: (point.x - center.x) * Math.cos(jiaodu2hudu(rotate)) - (point.y - center.y) * Math.sin(jiaodu2hudu(rotate)) + center.x,
     y: (point.x - center.x) * Math.sin(jiaodu2hudu(rotate)) + (point.y - center.y) * Math.cos(jiaodu2hudu(rotate)) + center.y

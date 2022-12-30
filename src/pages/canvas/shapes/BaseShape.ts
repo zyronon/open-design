@@ -796,17 +796,26 @@ export abstract class BaseShape {
         conf.flipHorizontal = this.original.flipHorizontal
         conf.rotation = this.original.rotation
       }
-      let w2 = conf.layout.w / 2
-      conf.center.x = this.conf.layout.x + (conf.flipHorizontal ? -w2 : w2)
+      let dx2 = dx / 2
+      conf.center.x = this.original.center.x + (this.original.flipHorizontal ? dx2 : -dx2)
     }
-    let dx = this.original.layout.x - this.conf.layout.x
 
-    this.children.map((shape: BaseShape) => {
+    let dx = this.original.layout.x - this.conf.layout.x
+    this.calcConf((shape: BaseShape) => {
       shape.conf.center.x = shape.original.center.x - dx
-      shape.conf = helper.calcConf(shape.conf, this.conf)
+      return shape
     })
-    this.conf = helper.calcConf(conf, this.parent?.conf)
     cu.render()
+  }
+
+  calcConf(cb: Function) {
+    this.conf = helper.calcConf(this.conf, this.parent?.conf)
+    this.children.map((shape: BaseShape) => {
+      if (cb) {
+        shape = cb(shape)
+      }
+      shape.calcConf(cb)
+    })
   }
 
   //拖动右边

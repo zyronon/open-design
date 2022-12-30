@@ -802,11 +802,8 @@ export abstract class BaseShape {
     let dx = this.original.layout.x - this.conf.layout.x
 
     this.children.map((shape: BaseShape) => {
-      shape.conf.layout.x = shape.original.layout.x - dx
-      shape.conf.absolute.x = shape.original.absolute.x - dx
-      // console.log('shape.original.absolute',shape.original.absolute)
-      console.log('sh',shape.conf)
-      // shape.conf = helper.calcConf(shape.conf, this.parent?.conf)
+      shape.conf.center.x = shape.original.center.x - dx
+      shape.conf = helper.calcConf(shape.conf, this.conf)
     })
     this.conf = helper.calcConf(conf, this.parent?.conf)
     cu.render()

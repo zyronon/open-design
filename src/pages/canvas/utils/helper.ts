@@ -203,7 +203,10 @@ export default {
     //todo 计算original
 
     if (pConf) {
-
+      conf.absolute = {
+        x: pConf.absolute.x + x,
+        y: pConf.absolute.y + y,
+      }
     } else {
       conf.absolute = {x, y}
     }

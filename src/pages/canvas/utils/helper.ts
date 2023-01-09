@@ -78,7 +78,7 @@ export default {
 
     if (pConf) {
       conf.percent = {x: x / pConf.layout.w, y: y / pConf.layout.h,}
-      conf.absolute = {x: pConf.layout.x + x, y: pConf.layout.y + y}
+      conf.absolute = {x: pConf.original.x + x, y: pConf.original.y + y}
     } else {
       conf.percent = {x: 0, y: 0,}
       conf.absolute = {x, y}

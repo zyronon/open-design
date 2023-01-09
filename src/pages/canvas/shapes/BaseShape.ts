@@ -738,14 +738,20 @@ export abstract class BaseShape {
     if (realRotation) {
       const current = {x, y}
       const handlePoint = this.handlePoint
+      //0度的当前点：以当前边中间点为圆心，负角度偏转当前点，得到0度的当前点
       const zeroAngleCurrentPoint = getRotatedPoint(current, handlePoint, -realRotation)
+      //0度的移动点：x取其0度的当前点的，y取当前边中间点的（保证在一条直线上，因为只能拖动x，y不需要变动）
       const zeroAngleMovePoint = {x: zeroAngleCurrentPoint.x, y: handlePoint.y}
+      // 当前角度的移动点：以当前边中间点为圆心，正角度偏转
       const currentAngleMovePoint = getRotatedPoint(zeroAngleMovePoint, handlePoint, realRotation)
+      //最新宽度：利用勾股定理求出斜边(不能直接zeroAngleMovePoint.x - this.diagonal.x相减，会有细微的差别)
       const newWidth = Math.hypot(currentAngleMovePoint.x - this.diagonal.x, currentAngleMovePoint.y - this.diagonal.y)
+      //最新中心点：
       const newCenter = {
         x: this.diagonal.x + (currentAngleMovePoint.x - this.diagonal.x) / 2,
         y: this.diagonal.y + (currentAngleMovePoint.y - this.diagonal.y) / 2
       }
+      // console.log(currentAngleMovePoint.x, this.diagonal.x)
       let isReverseW = false
       if (this.original.flipHorizontal) {
         if (currentAngleMovePoint.x < this.diagonal.x) {
@@ -780,14 +786,20 @@ export abstract class BaseShape {
       let dx = (cu.startX - x)
       /** x要减去dx，w是要加上dx*/
       conf.layout.x = this.original.layout.x - dx
-
+      /** 如果水平翻转，那么移动距离取反*/
       if (this.original.flipHorizontal) dx = -dx
       conf.layout.w = this.original.layout.w + dx
-
+      /** 是否要反转w值，因为反向拉动会使w值，越来越小，小于0之后就是负值了
+       * 判断拖动距离 加上 宽度是否小于0就完事了
+       * */
       let isReverseW = false
       if (this.original.layout.w + dx < 0) {
         isReverseW = true
       }
+      // console.log('isReverseW',isReverseW)
+      /** 如果反向拉伸，w取反，图形水平翻转
+       * 反之，图形保持和原图形一样的翻转
+       * */
       if (isReverseW) {
         conf.flipHorizontal = !this.original.flipHorizontal
         conf.layout.w = -conf.layout.w
@@ -797,6 +809,7 @@ export abstract class BaseShape {
         conf.rotation = this.original.rotation
       }
       let dx2 = dx / 2
+      /** 同上*/
       conf.center.x = this.original.center.x + (this.original.flipHorizontal ? dx2 : -dx2)
     }
 

@@ -1,4 +1,5 @@
 import {P, P2} from "../pages/canvas/utils/type"
+import {cloneDeep} from "lodash"
 
 export {}
 
@@ -19,6 +20,10 @@ declare global {
 
   interface Math {
     decimal(val: number): number
+  }
+
+  interface Console {
+    d(v: any): void
   }
 }
 
@@ -46,4 +51,8 @@ for (const key in Context2D) {
 
 Math.decimal = (num: number) => {
   return num - Math.trunc(num)
+}
+
+console.d = function (v: any) {
+  console.log(cloneDeep(v))
 }

@@ -26,75 +26,22 @@ export default {
       realRotation
     }
       = conf
-    if (parent) {
-      // x += parent.x
-      // y += parent.y
-    }
     ctx.lineWidth = lineWidth
     ctx.fillStyle = fillColor
     ctx.strokeStyle = borderColor
-    let a = false
-    if (parent && a) {
-      let pR = parent?.realRotation
-      if (flipHorizontal || flipVertical) {
-        /*
-        * 渲染翻转后的图形，把canvas的起点移到中心点（要保证图形中心点的正确）
-        * 返回x为-w/2，y同理 ，直接从左上角开始渲染就行了
-        * */
-        let scaleX = 1
-        let scaleY = 1
-        if (flipHorizontal) scaleX = -1
-        if (flipVertical) scaleY = -1
-        let r = rotation
-        ctx.translate(center.x, center.y)
-        if (flipHorizontal && flipVertical) {
-          r = (180 + rotation)
-          r += parent.rotation
-          ctx.rotate(r * Math.PI / 180)
-        } else {
-          if (flipHorizontal) {
-            r = (rotation - 180)
-            r += parent.rotation
-            ctx.rotate(r * Math.PI / 180)
-          } else {
-            ctx.rotate(rotation * Math.PI / 180)
-          }
-        }
-        ctx.scale(scaleX, scaleY)
-        return {x: -w / 2, y: -h / 2}
-      } else {
-        if (rotation) {
-          rotation += pR
-          ctx.translate2(absolute)
-          ctx.rotate(rotation * Math.PI / 180)
-          return {x: 0, y: 0}
-        } else {
-          ctx.translate2(parent.center)
-          ctx.rotate(pR * Math.PI / 180)
-          return {x: x - parent.w / 2, y: y - parent.h / 2}
-        }
-      }
-    } else {
-      if (flipHorizontal || flipVertical) {
-        /*
-        * 渲染翻转后的图形，把canvas的起点移到中心点（要保证图形中心点的正确）
-        * 返回x为-w/2，y同理 ，直接从左上角开始渲染就行了
-        * */
-        let scaleX = 1
-        let scaleY = 1
-        if (flipHorizontal) scaleX = -1
-        if (flipVertical) scaleY = -1
+    /*
+     * 渲染翻转后的图形，把canvas的起点移到中心点（要保证图形中心点的正确）
+     * 返回x为-w/2，y同理 ，直接从左上角开始渲染就行了
+     * */
+    let scaleX = 1
+    let scaleY = 1
+    if (flipHorizontal) scaleX = -1
+    if (flipVertical) scaleY = -1
 
-        ctx.translate2(center)
-        ctx.rotate(realRotation * Math.PI / 180)
-        ctx.scale(scaleX, scaleY)
-        return {x: -w / 2, y: -h / 2}
-      } else {
-        ctx.translate2(absolute)
-        ctx.rotate(realRotation * Math.PI / 180)
-        return {x: 0, y: 0}
-      }
-    }
+    ctx.translate2(center)
+    ctx.rotate(realRotation * Math.PI / 180)
+    ctx.scale(scaleX, scaleY)
+    return {x: -w / 2, y: -h / 2}
   },
   calcPosition2(
     ctx: CanvasRenderingContext2D,

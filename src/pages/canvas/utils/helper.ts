@@ -68,7 +68,7 @@ export default {
     if (flipVertical) r = this.getRotationByFlipVertical(r)
     return r
   },
-  initConf(conf: BaseConfig, pConf?: BaseConfig) {
+  initConf2(conf: BaseConfig, pConf?: BaseConfig) {
     // console.log('initConf')
     if (conf.id) return conf
     let {
@@ -76,17 +76,23 @@ export default {
     } = conf
     conf.id = uuid()
 
+    /*默认中心点*/
+    let center = {x: x + (w / 2), y: y + (h / 2)}
+
     if (pConf) {
+      conf.realRotation = pConf.realRotation + conf.rotation
       conf.percent = {x: x / pConf.layout.w, y: y / pConf.layout.h,}
       conf.absolute = {x: pConf.original.x + x, y: pConf.original.y + y}
+      /*如果有父级，那么中心点加要上自己的xy和父级的original的xy值*/
+      center = {x: conf.absolute.x + (w / 2), y: conf.absolute.y + (h / 2)}
+      /*根据父级的角度旋转，就是最终的中心点*/
+      center = getRotatedPoint(center, pConf.center, pConf.realRotation)
     } else {
       conf.percent = {x: 0, y: 0,}
       conf.absolute = {x, y}
+      conf.realRotation = conf.rotation
     }
-
     conf.original = clone(conf.absolute)
-    conf.realRotation = conf.rotation
-    let center = {x: conf.absolute.x + (w / 2), y: conf.absolute.y + (h / 2)}
 
     const {x: ax, y: ay} = conf.absolute
     let topLeft = {x: ax, y: ay}
@@ -118,14 +124,11 @@ export default {
      *如果父组件旋转了,那么子组件的ab值也要旋转
      * */
     if (pConf) {
-      //根据父级，计算出自己的0度绝对值x,y
-      const zeroAb = {x: x + pConf.original.x, y: y + pConf.original.y,}
-      conf.original = clone(zeroAb)
-      let rotatedAb = getRotatedPoint(zeroAb, center, conf.realRotation)
+      let rotatedAb = getRotatedPoint(conf.original, center, conf.realRotation)
       conf.absolute = rotatedAb
       //用旋转后的ab值，减去老的ab值，就是xy的偏移量。与原xy相加得到旋转后的xy值
-      conf.layout.x = x + (rotatedAb.x - zeroAb.x)
-      conf.layout.y = y + (rotatedAb.y - zeroAb.y)
+      conf.layout.x = x + (rotatedAb.x - conf.original.x)
+      conf.layout.y = y + (rotatedAb.y - conf.original.y)
 
       let rotation = conf.realRotation
       if (rotation) {
@@ -187,6 +190,93 @@ export default {
       rightX: conf.center.x + w / 2,
       topY: conf.center.y - h / 2,
       bottomY: conf.center.y + h / 2,
+      topLeft,
+      topRight,
+      bottomLeft,
+      bottomRight,
+    }
+    return conf
+  },
+  initConf(conf: BaseConfig, pConf?: BaseConfig) {
+    // console.log('initConf')
+    if (conf.id) return conf
+    let {
+      layout: {x, y, w, h}, flipHorizontal, flipVertical
+    } = conf
+    conf.id = uuid()
+    const w2 = w / 2
+    const h2 = h / 2
+
+    /*默认中心点*/
+    let center = {x: x + (w / 2), y: y + (h / 2)}
+
+    if (pConf) {
+      conf.realRotation = pConf.realRotation + conf.rotation
+      conf.percent = {x: x / pConf.layout.w, y: y / pConf.layout.h,}
+      conf.absolute = {x: pConf.original.x + x, y: pConf.original.y + y}
+      /*如果有父级，那么中心点加要上自己的xy和父级的original的xy值*/
+      center = {x: conf.absolute.x + (w / 2), y: conf.absolute.y + (h / 2)}
+      /*根据父级的角度旋转，就是最终的中心点*/
+      center = getRotatedPoint(center, pConf.center, pConf.realRotation)
+
+    } else {
+      conf.percent = {x: 0, y: 0,}
+      conf.absolute = {x, y}
+      conf.realRotation = conf.rotation
+    }
+
+    const {x: cx, y: cy} = center
+    let topLeft = conf.absolute = {x: cx - w2, y: cy - h2}
+    let topRight = {x: cx + w2, y: cy - h2}
+    let bottomLeft = {x: cx - w2, y: cy + h2}
+    let bottomRight = {x: cx + w2, y: cy + h2}
+    conf.original = clone(conf.absolute)
+
+    /** @desc 水平翻转所有的点
+     * */
+    if (flipHorizontal) {
+      topLeft = this.horizontalReversePoint(topLeft, center)
+      topRight = this.horizontalReversePoint(topRight, center)
+      bottomLeft = this.horizontalReversePoint(bottomLeft, center)
+      bottomRight = this.horizontalReversePoint(bottomRight, center)
+      conf.layout = this.horizontalReversePoint(conf.layout, center)
+      conf.absolute = this.horizontalReversePoint(conf.absolute, center)
+      conf.realRotation = -conf.realRotation
+    }
+    if (flipVertical) {
+      topLeft = this.verticalReversePoint(topLeft, center)
+      topRight = this.verticalReversePoint(topRight, center)
+      bottomLeft = this.verticalReversePoint(bottomLeft, center)
+      bottomRight = this.verticalReversePoint(bottomRight, center)
+      conf.layout = this.verticalReversePoint(conf.layout, center)
+      conf.absolute = this.verticalReversePoint(conf.absolute, center)
+      conf.realRotation = -conf.realRotation
+    }
+
+    let rotation = conf.realRotation
+    if (rotation) {
+      topLeft = getRotatedPoint(topLeft, center, rotation)
+      topRight = getRotatedPoint(topRight, center, rotation)
+      bottomLeft = getRotatedPoint(bottomLeft, center, rotation)
+      bottomRight = getRotatedPoint(bottomRight, center, rotation)
+      conf.absolute = topLeft
+      if (pConf) {
+        //用旋转后的ab值，减去老的ab值，就是xy的偏移量。与原xy相加得到旋转后的xy值
+        conf.layout.x = x + (conf.absolute.x - conf.original.x)
+        conf.layout.y = y + (conf.absolute.y - conf.original.y)
+      } else {
+        conf.layout.x = conf.absolute.x
+        conf.layout.y = conf.absolute.y
+      }
+    }
+    conf.rotation = this.getRotationByInitConf(conf)
+    conf.center = center
+
+    conf.box = {
+      leftX: center.x - w2,
+      rightX: center.x + w2,
+      topY: center.y - h2,
+      bottomY: center.y + h2,
       topLeft,
       topRight,
       bottomLeft,

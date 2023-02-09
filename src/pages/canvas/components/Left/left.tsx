@@ -82,7 +82,7 @@ export default memo((props: any) => {
     }
   ]
   return (
-    <div className="left-wrapper" style={{opacity: props.visible ? 1 : 0}}>
+    <div className={cx('left-wrapper', {'hide': props.hide})}>
       <div className="temp">
         <div className="component" onClick={() => props.navigate('/test')}>
           去test

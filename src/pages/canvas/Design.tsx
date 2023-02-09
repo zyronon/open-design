@@ -130,10 +130,10 @@ class Design extends React.Component<any, IState> {
     // console.log('selectRectConf', selectRectConf?.fontFamily)
     // @ts-ignore
     const selectRectConf: BaseConfig = selectShape?.conf
-    const isWhite = true
+    const hide = true
 
     return <>
-      <div className={cx('design', {'white': isWhite})}>
+      <div className={cx('design', {'white': hide})}>
         <div className="header">
           <div className={'fps'}>
             FPS:<Fps/>
@@ -142,7 +142,7 @@ class Design extends React.Component<any, IState> {
         </div>
         <div className="content">
           <Left
-            visible={!isWhite}
+            hide={hide}
             init={() => this.init()}
             navigate={() => this.props.navigate('/test')}
             copy={this.copy}

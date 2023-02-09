@@ -570,16 +570,21 @@ export abstract class BaseShape {
     this.conf.center.x = this.original.center.x + dx
     this.conf.center.y = this.original.center.y + dy
 
-    /*如果来自父级的平移时，不改动xy值*/
+    //如果来自父级的平移时，不改动xy值
     if (!fromParent) {
       let pRotate = this.parent?.conf?.realRotation
       //当有父级并且父级有角度时，特殊计算xy的值
       if (this.parent && pRotate) {
+        let pCenter = this.parent.conf.center
         /**
-         * 先把ab值，负回父角度的位置。（此时的ab值即父级未旋转时的值，一开始initConf的xy也是取的这个值）
-         * 然后把ab值和父级的original相减，就可以得出最新的xy值
+         * 直接将ab值以父中心点父角度负回去。这样ab值就是0度的（此时的ab值即父级未旋转时的值，一开始initConf的xy也是取的这个值）
+         * 然后减去父original值，就是自己离父级的xy值
+         * 2023-2-9注：
+         * 不用把ab按自己的中心点负回去，再以父中心点父角度负回去。这样子计算出来不正确
+         * // let rXy = getRotatedPoint(this.conf.absolute, this.conf.center, -this.conf.realRotation)
+         * // rXy = getRotatedPoint(rXy, pCenter, -pRotate)
          * */
-        let rXy = getRotatedPoint(this.conf.absolute, this.parent.conf.center, -pRotate)
+        let rXy = getRotatedPoint(this.conf.absolute, pCenter, -pRotate)
         this.conf.layout.x = rXy.x - this.parent.conf.original.x
         this.conf.layout.y = rXy.y - this.parent.conf.original.y
       } else {
@@ -588,7 +593,7 @@ export abstract class BaseShape {
       }
     }
 
-    this.conf = helper.calcConf(this.conf, this.parent?.conf)
+    this.conf = helper.calcConfMove(this.conf, this.parent?.conf)
     this.children.map(shape => {
       shape.move(helper.getXy(), {dx, dy})
     })
@@ -773,7 +778,7 @@ export abstract class BaseShape {
       conf.layout.w = newWidth
       conf.center = newCenter
 
-      /** 与Right不一样的地方*/
+      //Right不一样的地方
       let w2 = newWidth / 2
       let start = {
         x: conf.center.x - (conf.flipHorizontal ? -w2 : w2),
@@ -782,24 +787,20 @@ export abstract class BaseShape {
       let a = getRotatedPoint(start, newCenter, realRotation)
       conf.layout = {...conf.layout, ...a}
     } else {
-      /**dx和dragRight相反*/
+      //dx和dragRight相反
       let dx = (cu.startX - x)
-      /** x要减去dx，w是要加上dx*/
+      //x要减去dx，w是要加上dx
       conf.layout.x = this.original.layout.x - dx
-      /** 如果水平翻转，那么移动距离取反*/
+      //如果水平翻转，那么移动距离取反
       if (this.original.flipHorizontal) dx = -dx
       conf.layout.w = this.original.layout.w + dx
-      /** 是否要反转w值，因为反向拉动会使w值，越来越小，小于0之后就是负值了
-       * 判断拖动距离 加上 宽度是否小于0就完事了
-       * */
+      //是否要反转w值，因为反向拉动会使w值，越来越小，小于0之后就是负值了,判断拖动距离 加上 宽度是否小于0就完事了
       let isReverseW = false
       if (this.original.layout.w + dx < 0) {
         isReverseW = true
       }
       // console.log('isReverseW',isReverseW)
-      /** 如果反向拉伸，w取反，图形水平翻转
-       * 反之，图形保持和原图形一样的翻转
-       * */
+      //如果反向拉伸，w取反，图形水平翻转,反之，图形保持和原图形一样的翻转
       if (isReverseW) {
         conf.flipHorizontal = !this.original.flipHorizontal
         conf.layout.w = -conf.layout.w
@@ -809,7 +810,7 @@ export abstract class BaseShape {
         conf.rotation = this.original.rotation
       }
       let dx2 = dx / 2
-      /** 同上*/
+      //同上
       conf.center.x = this.original.center.x + (this.original.flipHorizontal ? dx2 : -dx2)
     }
 

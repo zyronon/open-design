@@ -956,12 +956,12 @@ export const rects: any[] = [
   {
     "name": "容器",
     layout:{
-      "x": 800,
+      "x": 400,
       "y": 200,
       "w": 500,
       "h": 400,
     },
-    "rotation": 10,
+    "rotation": 0,
     "lineWidth": 2,
     "type": "FRAME",
     "color": "gray",

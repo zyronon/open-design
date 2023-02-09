@@ -5,7 +5,7 @@ import {jiaodu2hudu} from "../../../utils"
 import {BaseShape} from "../shapes/BaseShape"
 
 export default {
-  /** @desc 修改位置
+  /** @desc 计算位置
    * canvas默认起点，在左上角
    * 翻转、旋转后，需要把起始点设置为图形的正中心，把x,y设置为图形的左上角
    * */

@@ -8,7 +8,7 @@
 
   &.white {
     .tool-bar {
-      background: white !important;
+      opacity: 0;
     }
 
     .header {
@@ -21,7 +21,34 @@
       }
 
       & > .right {
-        opacity: 0;
+        //opacity: 0;
+        background: white;
+
+        .base-info {
+          &:first-child {
+            //opacity: 0;
+            .d-input {
+              background: white;
+              color: black !important;
+            }
+          }
+
+          .d-button, .d-icon {
+            opacity: 0;
+          }
+
+          &:nth-child(3) {
+            opacity: 0;
+          }
+
+          &:nth-child(4) {
+            opacity: 0;
+          }
+        }
+
+        .config-wrapper {
+          color: black !important;
+        }
       }
     }
   }
@@ -137,7 +164,7 @@
         width: 100%;
         height: calc(100% - #{$header-height});
         position: relative;
-        background: rgb(229, 229, 229);
+        //background: rgb(229, 229, 229);
 
         #canvas {
           position: absolute;

@@ -130,8 +130,10 @@ class Design extends React.Component<any, IState> {
     // console.log('selectRectConf', selectRectConf?.fontFamily)
     // @ts-ignore
     const selectRectConf: BaseConfig = selectShape?.conf
+    const isWhite = true
+
     return <>
-      <div className={'design'}>
+      <div className={cx('design', {'white': isWhite})}>
         <div className="header">
           <div className={'fps'}>
             FPS:<Fps/>
@@ -140,6 +142,7 @@ class Design extends React.Component<any, IState> {
         </div>
         <div className="content">
           <Left
+            visible={!isWhite}
             init={() => this.init()}
             navigate={() => this.props.navigate('/test')}
             copy={this.copy}
@@ -269,18 +272,22 @@ class Design extends React.Component<any, IState> {
                     <div className="base-info">
                       <div className="row">
                         <div className="col">
-                          <BaseInput value={selectRectConf?.layout?.x?.toFixed(2)} prefix={<span className={'gray'}>X</span>}/>
+                          <BaseInput value={selectRectConf?.layout?.x?.toFixed(2)}
+                                     prefix={<span className={'gray'}>X</span>}/>
                         </div>
                         <div className="col">
-                          <BaseInput value={selectRectConf?.layout?.y?.toFixed(2)} prefix={<span className={'gray'}>Y</span>}/>
+                          <BaseInput value={selectRectConf?.layout?.y?.toFixed(2)}
+                                     prefix={<span className={'gray'}>Y</span>}/>
                         </div>
                       </div>
                       <div className="row">
                         <div className="col">
-                          <BaseInput value={selectRectConf?.layout?.w?.toFixed(2)} prefix={<span className={'gray'}>W</span>}/>
+                          <BaseInput value={selectRectConf?.layout?.w?.toFixed(2)}
+                                     prefix={<span className={'gray'}>W</span>}/>
                         </div>
                         <div className="col">
-                          <BaseInput value={selectRectConf?.layout?.h?.toFixed(2)} prefix={<span className={'gray'}>H</span>}/>
+                          <BaseInput value={selectRectConf?.layout?.h?.toFixed(2)}
+                                     prefix={<span className={'gray'}>H</span>}/>
                         </div>
                         <div className="col">
                           <BaseIcon active={false}>

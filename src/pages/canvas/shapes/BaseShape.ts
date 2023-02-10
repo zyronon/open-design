@@ -815,19 +815,17 @@ export abstract class BaseShape {
     }
 
     let dx = this.original.layout.x - this.conf.layout.x
+    this.conf = helper.calcConf(this.conf, this.parent?.conf)
     this.calcConf((shape: BaseShape) => {
-      shape.conf.center.x = shape.original.center.x - dx
+      shape.conf = helper.calcConfCenter(shape.conf, this.conf)
       return shape
     })
     cu.render()
   }
 
   calcConf(cb: Function) {
-    this.conf = helper.calcConf(this.conf, this.parent?.conf)
     this.children.map((shape: BaseShape) => {
-      if (cb) {
-        shape = cb(shape)
-      }
+      if (cb) shape = cb(shape)
       shape.calcConf(cb)
     })
   }

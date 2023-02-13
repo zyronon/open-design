@@ -570,35 +570,29 @@ export abstract class BaseShape {
     this.conf.center.x = this.original.center.x + dx
     this.conf.center.y = this.original.center.y + dy
 
-    //如果来自父级的平移时，不改动xy值
-    if (!fromParent) {
-      let pRotate = this.parent?.conf?.realRotation
-      //当有父级并且父级有角度时，特殊计算xy的值
-      if (this.parent && pRotate) {
-        let pCenter = this.parent.conf.center
-        /**
-         * 直接将ab值以父中心点父角度负回去。这样ab值就是0度的（此时的ab值即父级未旋转时的值，一开始initConf的xy也是取的这个值）
-         * 然后减去父original值，就是自己离父级的xy值
-         * 2023-2-9注：
-         * 不用把ab按自己的中心点负回去，再以父中心点父角度负回去。这样子计算出来不正确
-         * // let rXy = getRotatedPoint(this.conf.absolute, this.conf.center, -this.conf.realRotation)
-         * // rXy = getRotatedPoint(rXy, pCenter, -pRotate)
-         * */
-        let rXy = getRotatedPoint(this.conf.absolute, pCenter, -pRotate)
-        this.conf.layout.x = rXy.x - this.parent.conf.original.x
-        this.conf.layout.y = rXy.y - this.parent.conf.original.y
-      } else {
-        this.conf.layout.x = this.original.layout.x + dx
-        this.conf.layout.y = this.original.layout.y + dy
-      }
+    let pRotate = this.parent?.conf?.realRotation
+    //当有父级并且父级有角度时，特殊计算xy的值
+    if (this.parent && pRotate) {
+      let pCenter = this.parent.conf.center
+      /**
+       * 直接将ab值以父中心点父角度负回去。这样ab值就是0度的（此时的ab值即父级未旋转时的值，一开始initConf的xy也是取的这个值）
+       * 然后减去父original值，就是自己离父级的xy值
+       * 2023-2-9注：
+       * 不用把ab按自己的中心点负回去，再以父中心点父角度负回去。这样子计算出来不正确
+       * // let rXy = getRotatedPoint(this.conf.absolute, this.conf.center, -this.conf.realRotation)
+       * // rXy = getRotatedPoint(rXy, pCenter, -pRotate)
+       * */
+      let rXy = getRotatedPoint(this.conf.absolute, pCenter, -pRotate)
+      this.conf.layout.x = rXy.x - this.parent.conf.original.x
+      this.conf.layout.y = rXy.y - this.parent.conf.original.y
+    } else {
+      this.conf.layout.x = this.original.layout.x + dx
+      this.conf.layout.y = this.original.layout.y + dy
     }
 
     this.conf = helper.calcConf(this.conf, this.parent?.conf)
     this.calcConf()
-    if (!fromParent) {
-      let cu = CanvasUtil2.getInstance()
-      cu.render()
-    }
+    CanvasUtil2.getInstance().render()
   }
 
   //拖动左上，改变圆角按钮
@@ -706,7 +700,7 @@ export abstract class BaseShape {
       conf.layout.h = newHeight
       conf.center = newCenter
 
-      let zeroAngleXy = getRotatedPoint(this.original, newCenter, -realRotation)
+      let zeroAngleXy = getRotatedPoint(this.original.layout, newCenter, -realRotation)
       zeroAngleXy.y -= (newHeight - this.original.layout.h)
       let angleXy = getRotatedPoint(zeroAngleXy, newCenter, realRotation)
       conf.layout.x = angleXy.x

@@ -281,41 +281,56 @@ export default {
   calcConf(conf: BaseConfig, pConf?: BaseConfig): BaseConfig {
     let {
       layout: {x, y, w, h},
+      absolute,
       center, flipHorizontal, flipVertical, realRotation
     } = conf
+    const w2 = w / 2, h2 = h / 2
 
-    if (pConf) {
-      conf.absolute = {
-        x: pConf.absolute.x + x,
-        y: pConf.absolute.y + y,
-      }
-    } else {
-      conf.absolute = {x, y}
-    }
+    // let reverseXy = getRotatedPoint(absolute, center, -realRotation)
+    // if (flipHorizontal) {
+    //   reverseXy = this.horizontalReversePoint(reverseXy, center)
+    // }
+    // if (flipVertical) {
+    //   reverseXy = this.verticalReversePoint(reverseXy, center)
+    // }
 
-    let reverseXy = getRotatedPoint(conf.absolute, center, -realRotation)
+    const {x: cx, y: cy} = center
+    let topLeft = {x: cx - w2, y: cy - h2}
+    let topRight = {x: cx + w2, y: cy - h2}
+    let bottomLeft = {x: cx - w2, y: cy + h2}
+    let bottomRight = {x: cx + w2, y: cy + h2}
+    conf.original = clone(topLeft)
+
+    //水平翻转所有的点
     if (flipHorizontal) {
-      reverseXy = this.horizontalReversePoint(reverseXy, center)
+      topLeft = this.horizontalReversePoint(topLeft, center)
+      topRight = this.horizontalReversePoint(topRight, center)
+      bottomLeft = this.horizontalReversePoint(bottomLeft, center)
+      bottomRight = this.horizontalReversePoint(bottomRight, center)
+      // conf.layout = this.horizontalReversePoint(conf.layout, center)
+      // conf.absolute = this.horizontalReversePoint(conf.absolute, center)
+      // conf.realRotation = -conf.realRotation
     }
     if (flipVertical) {
-      reverseXy = this.verticalReversePoint(reverseXy, center)
+      topLeft = this.verticalReversePoint(topLeft, center)
+      topRight = this.verticalReversePoint(topRight, center)
+      bottomLeft = this.verticalReversePoint(bottomLeft, center)
+      bottomRight = this.verticalReversePoint(bottomRight, center)
+      // conf.layout = this.verticalReversePoint(conf.layout, center)
+      // conf.absolute = this.verticalReversePoint(conf.absolute, center)
+      // conf.realRotation = -conf.realRotation
     }
-    conf.original = reverseXy
-    const {x: ax, y: ay} = reverseXy
-    let topLeft = {x: ax, y: ay}
-    let topRight = {x: ax + w, y: ay}
-    let bottomLeft = {x: ax, y: ay + h}
-    let bottomRight = {x: ax + w, y: ay + h}
 
-    if (realRotation) {
-      topLeft = getRotatedPoint(topLeft, center, realRotation)
-      topRight = getRotatedPoint(topRight, center, realRotation)
-      bottomLeft = getRotatedPoint(bottomLeft, center, realRotation)
-      bottomRight = getRotatedPoint(bottomRight, center, realRotation)
-      // conf.absolute = conf.topLeft
-      // conf.x = x + (conf.absolute.x - ax)
-      // conf.y = y + (conf.absolute.y - ay)
+
+    let rotation = conf.realRotation
+    if (rotation) {
+      topLeft = getRotatedPoint(topLeft, center, rotation)
+      topRight = getRotatedPoint(topRight, center, rotation)
+      bottomLeft = getRotatedPoint(bottomLeft, center, rotation)
+      bottomRight = getRotatedPoint(bottomRight, center, rotation)
+      // conf.absolute = topLeft
     }
+
     conf.box = {
       leftX: center.x - w / 2,
       rightX: center.x + w / 2,
@@ -328,49 +343,7 @@ export default {
     }
     return conf
   },
-  calcConfMove(conf: BaseConfig, pConf?: BaseConfig): BaseConfig {
-    let {
-      layout: {x, y, w, h},
-      center, flipHorizontal, flipVertical, realRotation
-    } = conf
-
-    const w2 = w / 2, h2 = h / 2
-
-    let reverseXy = getRotatedPoint(conf.absolute, center, -realRotation)
-    if (flipHorizontal) {
-      reverseXy = this.horizontalReversePoint(reverseXy, center)
-    }
-    if (flipVertical) {
-      reverseXy = this.verticalReversePoint(reverseXy, center)
-    }
-    conf.original = clone(reverseXy)
-    const {x: cx, y: cy} = center
-    let topLeft = {x: cx - w2, y: cy - h2}
-    let topRight = {x: cx + w2, y: cy - h2}
-    let bottomLeft = {x: cx - w2, y: cy + h2}
-    let bottomRight = {x: cx + w2, y: cy + h2}
-
-    let rotation = conf.realRotation
-    if (rotation) {
-      topLeft = getRotatedPoint(topLeft, center, rotation)
-      topRight = getRotatedPoint(topRight, center, rotation)
-      bottomLeft = getRotatedPoint(bottomLeft, center, rotation)
-      bottomRight = getRotatedPoint(bottomRight, center, rotation)
-    }
-
-    conf.box = {
-      leftX: center.x - w2,
-      rightX: center.x + w2,
-      topY: center.y - h2,
-      bottomY: center.y + h2,
-      topLeft,
-      topRight,
-      bottomLeft,
-      bottomRight,
-    }
-    return conf
-  },
-  calcConfCenter(conf: BaseConfig, pConf?: BaseConfig): BaseConfig {
+  calcConfByParent(conf: BaseConfig, pConf?: BaseConfig): BaseConfig {
     let {
       layout: {x, y, w, h},
       flipHorizontal, flipVertical, realRotation
@@ -380,6 +353,7 @@ export default {
 
     let center = {x: x + w2, y: y + h2}
     if (pConf) {
+      conf.realRotation = pConf.realRotation + conf.rotation
       //如果有父级，那么中心点加要上自己的xy和父级的original的xy值
       center = {x: (pConf.original.x + x) + w2, y: (pConf.original.y + y) + h2}
       //根据父级的角度旋转，就是最终的中心点
@@ -391,8 +365,8 @@ export default {
     let topRight = {x: cx + w2, y: cy - h2}
     let bottomLeft = {x: cx - w2, y: cy + h2}
     let bottomRight = {x: cx + w2, y: cy + h2}
+    conf.original = clone(topLeft)
     conf.absolute = topLeft
-    conf.original = clone(conf.absolute)
 
     //水平翻转所有的点
     if (flipHorizontal) {
@@ -427,7 +401,7 @@ export default {
       conf.layout.x = conf.absolute.x
       conf.layout.y = conf.absolute.y
     }
-    conf.rotation = this.getRotationByInitConf(conf)
+    // conf.rotation = this.getRotationByInitConf(conf)
     conf.center = center
 
     conf.box = {
@@ -442,7 +416,6 @@ export default {
     }
     return conf
   },
-
 
   /**
    * @description 根据长度（即T）获取对应的点

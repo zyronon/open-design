@@ -593,10 +593,8 @@ export abstract class BaseShape {
       }
     }
 
-    this.conf = helper.calcConfMove(this.conf, this.parent?.conf)
-    this.children.map(shape => {
-      shape.move(helper.getXy(), {dx, dy})
-    })
+    this.conf = helper.calcConf(this.conf, this.parent?.conf)
+    this.calcConf()
     if (!fromParent) {
       let cu = CanvasUtil2.getInstance()
       cu.render()
@@ -615,6 +613,7 @@ export abstract class BaseShape {
 
   //拖动左上旋转
   dragTopLeftRotation(point: P) {
+    // console.log('dragTopLeftRotation')
     let {x, y,} = point
     let cu = CanvasUtil2.getInstance()
     let rect = this.original
@@ -655,27 +654,14 @@ export abstract class BaseShape {
     let endA = (newRotation - (this.parent?.conf?.realRotation ?? 0))
     this.conf.rotation = endA < 180 ? endA : endA - 360
     this.conf.realRotation = newRotation
-
-    const oldRealRotation = this.original.realRotation
-
     this.conf = helper.calcConf(this.conf, this.parent?.conf)
-    this.children.map(shape => {
-      let conf = shape.conf
-      //absolute和center这两个点围着父组件的中心点转
-      let reverseTopLeft = getRotatedPoint(shape.original.absolute, this.original.center, -oldRealRotation)
-      let topLeft = getRotatedPoint(reverseTopLeft, this.original.center, newRotation)
-      conf.absolute = conf.box.topLeft = topLeft
-
-      reverseTopLeft = getRotatedPoint(shape.original.center, this.original.center, -oldRealRotation)
-      topLeft = getRotatedPoint(reverseTopLeft, this.original.center, newRotation)
-      conf.center = topLeft
-      // shape.dragLTR(point)
-    })
+    this.calcConf()
     cu.render()
   }
 
   //拖动左上
   dragTopLeft(point: P) {
+    // console.log('dragTopLeft')
     let {x, y,} = point
     let cu = CanvasUtil2.getInstance()
     const conf = this.conf
@@ -695,6 +681,7 @@ export abstract class BaseShape {
     conf.center = newCenter
     // console.log(conf)
     this.conf = helper.calcConf(conf, this.parent?.conf)
+    this.calcConf()
     cu.render()
   }
 
@@ -730,6 +717,7 @@ export abstract class BaseShape {
       conf.center.y = conf.layout.y + conf.layout.h / 2
     }
     this.conf = helper.calcConf(conf, this.parent?.conf)
+    this.calcConf()
     cu.render()
   }
 
@@ -819,15 +807,6 @@ export abstract class BaseShape {
     cu.render()
   }
 
-  calcConf(cb?: Function) {
-    this.children.map((shape: BaseShape) => {
-      if (cb) shape = cb(shape)
-      else {
-        shape.conf = helper.calcConfCenter(shape.conf, shape?.parent?.conf)
-      }
-      shape.calcConf(cb)
-    })
-  }
 
   //拖动右边
   dragRight(point: P) {
@@ -906,6 +885,16 @@ export abstract class BaseShape {
     }
     this.conf = helper.calcConf(conf, this.parent?.conf)
     cu.render()
+  }
+
+  calcConf(cb?: Function) {
+    this.children.map((shape: BaseShape) => {
+      if (cb) shape = cb(shape)
+      else {
+        shape.conf = helper.calcConfByParent(shape.conf, shape?.parent?.conf)
+      }
+      shape.calcConf(cb)
+    })
   }
 
   flip(type: number) {

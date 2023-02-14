@@ -127,6 +127,12 @@ export abstract class BaseShape {
     <div>
         centerY:${this.conf.center.y.toFixed(2)}    
 </div>
+    <div>
+        relativeCenterX:${this.conf.relativeCenter?.x.toFixed(2)}
+</div>
+    <div>
+        relativeCenterY:${this.conf.relativeCenter?.y.toFixed(2)}    
+</div>
     `
   }
 
@@ -556,32 +562,36 @@ export abstract class BaseShape {
 
   //移动图形
   move(point: P) {
-    let dx: number, dy: number
-    let {x, y,} = point
     let cu = CanvasUtil2.getInstance()
-    dx = (x - cu.startX)
-    dy = (y - cu.startY)
+    let {x, y,} = point
+    let dx = (x - cu.startX)
+    let dy = (y - cu.startY)
 
     this.conf.absolute.x = this.original.absolute.x + dx
     this.conf.absolute.y = this.original.absolute.y + dy
     this.conf.center.x = this.original.center.x + dx
     this.conf.center.y = this.original.center.y + dy
 
-    let pRotate = this.parent?.conf?.realRotation
     //当有父级并且父级有角度时，特殊计算xy的值
-    if (this.parent && pRotate) {
+    if (this.parent) {
       let pConf = this.parent.conf
-      /**
-       * 直接将ab值以父中心点父角度负回去。这样ab值就是0度的（此时的ab值即父级未旋转时的值，一开始initConf的xy也是取的这个值）
-       * 然后减去父original值，就是自己离父级的xy值
-       * 2023-2-9注：
-       * 不用把ab按自己的中心点负回去，再以父中心点父角度负回去。这样子计算出来不正确
-       * // let rXy = getRotatedPoint(this.conf.absolute, this.conf.center, -this.conf.realRotation)
-       * // rXy = getRotatedPoint(rXy, pCenter, -pRotate)
-       * */
-      let rXy = getRotatedPoint(this.conf.absolute, pConf.center, -pRotate)
-      this.conf.layout.x = rXy.x - pConf.original.x
-      this.conf.layout.y = rXy.y - pConf.original.y
+      this.conf.relativeCenter.x = this.conf.center.x - pConf.original.x
+      this.conf.relativeCenter.y = this.conf.center.y - pConf.original.y
+
+      let pRotate = this.parent?.conf?.realRotation
+      if (pRotate) {
+        /**
+         * 直接将ab值以父中心点父角度负回去。这样ab值就是0度的（此时的ab值即父级未旋转时的值，一开始initConf的xy也是取的这个值）
+         * 然后减去父original值，就是自己离父级的xy值
+         * 2023-2-9注：
+         * 不用把ab按自己的中心点负回去，再以父中心点父角度负回去。这样子计算出来不正确
+         * // let rXy = getRotatedPoint(this.conf.absolute, this.conf.center, -this.conf.realRotation)
+         * // rXy = getRotatedPoint(rXy, pCenter, -pRotate)
+         * */
+        let rXy = getRotatedPoint(this.conf.absolute, pConf.center, -pRotate)
+        this.conf.layout.x = rXy.x - pConf.original.x
+        this.conf.layout.y = rXy.y - pConf.original.y
+      }
     } else {
       this.conf.layout.x = this.original.layout.x + dx
       this.conf.layout.y = this.original.layout.y + dy

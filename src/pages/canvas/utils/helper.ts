@@ -215,8 +215,12 @@ export default {
       center = {x: (pConf.original.x + x) + w2, y: (pConf.original.y + y) + h2}
       //根据父级的角度旋转，就是最终的中心点
       center = getRotatedPoint(center, pConf.center, pConf.realRotation)
+      conf.relativeCenter = {
+        x: center.x - pConf.original.x,
+        y: center.y - pConf.original.y,
+      }
     } else {
-      conf.percent = {x: 0, y: 0,}
+      conf.relativeCenter = conf.percent = {x: 0, y: 0,}
       conf.realRotation = conf.rotation
     }
 
@@ -348,6 +352,7 @@ export default {
       layout: {x, y, w, h},
       original,
       center,
+      relativeCenter,
       flipHorizontal, flipVertical, realRotation
     } = conf
 
@@ -360,10 +365,10 @@ export default {
         // y = this._reversePoint(y, center.y)
         // const {x, y} = this.horizontalReversePoint(conf.layout, pConf.center)
       }
+
       conf.realRotation = pConf.realRotation + conf.rotation
       //如果有父级，那么中心点加要上自己的xy和父级的original的xy值
-      center = {x: (pConf.original.x + x) + w2, y: (pConf.original.y + y) + h2}
-      // center = {x: (ox - pConf.original.x) + w2, y: (oy - pConf.original.y) + h2}
+      center = {x: pConf.original.x + relativeCenter.x, y: pConf.original.y + relativeCenter.y}
       //根据父级的角度旋转，就是最终的中心点
       center = getRotatedPoint(center, pConf.center, pConf.realRotation)
     }

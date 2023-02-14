@@ -23,6 +23,7 @@ interface Layout {
   absolute: P,//坐标绝对值
   original: P,//坐标未翻转、旋转的值
   center: P,//中心点坐标
+  relativeCenter: P,//相对于父级左上角的中心点坐标
   box: {
     leftX: number,
     topY: number,

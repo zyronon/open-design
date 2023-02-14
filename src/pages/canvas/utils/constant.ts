@@ -955,7 +955,7 @@ const rule = [
 export const rects: any[] = [
   {
     "name": "容器",
-    layout:{
+    layout: {
       "x": 400,
       "y": 200,
       "w": 500,
@@ -966,10 +966,11 @@ export const rects: any[] = [
     "type": "FRAME",
     "color": "gray",
     "radius": 0,
+    children1: [],
     "children": [
       {
         "name": "容器2",
-        layout:{
+        layout: {
           "x": 80,
           "y": 20,
           "w": 250,
@@ -980,10 +981,11 @@ export const rects: any[] = [
         "type": "FRAME",
         "color": "gray",
         "radius": 0,
+        children1: [],
         "children": [
           {
             "name": "容器3",
-            layout:{
+            layout: {
               "x": 40,
               "y": 40,
               "w": 150,

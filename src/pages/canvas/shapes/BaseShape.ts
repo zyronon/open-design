@@ -1,6 +1,6 @@
 import {BaseEvent2, MouseOptionType, P, ShapeProps, ShapeType} from "../utils/type"
 import CanvasUtil2 from "../CanvasUtil2"
-import {cloneDeep, merge} from "lodash"
+import {clone, cloneDeep, merge} from "lodash"
 import getCenterPoint, {getAngle2, getRotatedPoint} from "../../../utils"
 import {getShapeFromConfig} from "../utils/common"
 import EventBus from "../../../utils/event-bus"
@@ -8,6 +8,8 @@ import {EventMapTypes} from "../../canvas20221111/type"
 import {BaseConfig} from "../config/BaseConfig"
 import helper from "../utils/helper"
 import draw from "../utils/draw"
+import {ShapeConfig} from "../../canvas-20221124/type"
+import {getPath} from "../../canvas-20221124/utils"
 
 export abstract class BaseShape {
   hoverRd1: boolean = false
@@ -553,17 +555,12 @@ export abstract class BaseShape {
   }
 
   //移动图形
-  move(point: P, fromParent?: { dx: number, dy: number }) {
+  move(point: P) {
     let dx: number, dy: number
-    if (fromParent) {
-      dx = fromParent.dx
-      dy = fromParent.dy
-    } else {
-      let {x, y,} = point
-      let cu = CanvasUtil2.getInstance()
-      dx = (x - cu.startX)
-      dy = (y - cu.startY)
-    }
+    let {x, y,} = point
+    let cu = CanvasUtil2.getInstance()
+    dx = (x - cu.startX)
+    dy = (y - cu.startY)
 
     this.conf.absolute.x = this.original.absolute.x + dx
     this.conf.absolute.y = this.original.absolute.y + dy
@@ -573,7 +570,7 @@ export abstract class BaseShape {
     let pRotate = this.parent?.conf?.realRotation
     //当有父级并且父级有角度时，特殊计算xy的值
     if (this.parent && pRotate) {
-      let pCenter = this.parent.conf.center
+      let pConf = this.parent.conf
       /**
        * 直接将ab值以父中心点父角度负回去。这样ab值就是0度的（此时的ab值即父级未旋转时的值，一开始initConf的xy也是取的这个值）
        * 然后减去父original值，就是自己离父级的xy值
@@ -582,17 +579,16 @@ export abstract class BaseShape {
        * // let rXy = getRotatedPoint(this.conf.absolute, this.conf.center, -this.conf.realRotation)
        * // rXy = getRotatedPoint(rXy, pCenter, -pRotate)
        * */
-      let rXy = getRotatedPoint(this.conf.absolute, pCenter, -pRotate)
-      this.conf.layout.x = rXy.x - this.parent.conf.original.x
-      this.conf.layout.y = rXy.y - this.parent.conf.original.y
+      let rXy = getRotatedPoint(this.conf.absolute, pConf.center, -pRotate)
+      this.conf.layout.x = rXy.x - pConf.original.x
+      this.conf.layout.y = rXy.y - pConf.original.y
     } else {
       this.conf.layout.x = this.original.layout.x + dx
       this.conf.layout.y = this.original.layout.y + dy
     }
-
     this.conf = helper.calcConf(this.conf, this.parent?.conf)
     this.calcConf()
-    CanvasUtil2.getInstance().render()
+    cu.render()
   }
 
   //拖动左上，改变圆角按钮
@@ -801,7 +797,6 @@ export abstract class BaseShape {
     cu.render()
   }
 
-
   //拖动右边
   dragRight(point: P) {
     // console.log('拖动右边')
@@ -891,7 +886,7 @@ export abstract class BaseShape {
     })
   }
 
-  flip(type: number) {
+  flip2(type: number) {
     let conf = this.conf
     let {
       center, absolute, realRotation, rotation,
@@ -933,5 +928,69 @@ export abstract class BaseShape {
     }
     conf.realRotation = -realRotation
     this.conf = helper.calcConf(conf, this.parent?.conf)
+  }
+
+  flip(type: number) {
+    let conf = this.conf
+    let {
+      center, absolute, realRotation, rotation,
+    } = conf
+    if (type === 0) {
+      conf.absolute = helper.horizontalReversePoint(absolute, center)
+      conf.flipHorizontal = !conf.flipHorizontal
+      // conf.rotation = helper.getRotationByFlipConfig(conf)
+      // if (rotation <= 0) {
+      //   conf.rotation = -180 - rotation
+      // } else {
+      //   conf.rotation = 180 - rotation
+      // }
+      if (this.parent) {
+        //逻辑同move一样
+        let pConf = this.parent.conf
+        let rXy = getRotatedPoint(conf.absolute, pConf.center, -pConf.realRotation)
+        conf.layout.x = rXy.x - pConf.original.x
+        conf.layout.y = rXy.y - pConf.original.y
+        // conf.rotation -= pConf.rotation
+      } else {
+        conf.layout = helper.horizontalReversePoint(conf.layout, center)
+      }
+    } else {
+      conf.absolute = helper.verticalReversePoint(absolute, center)
+      conf.flipVertical = !conf.flipVertical
+      // conf.rotation = helper.getRotationByFlipConfig(conf)
+      conf.rotation = -conf.rotation
+      if (this.parent) {
+        //逻辑同move一样
+        let pConf = this.parent.conf
+        let rXy = getRotatedPoint(conf.absolute, pConf.center, -pConf.realRotation)
+        conf.layout.x = rXy.x - pConf.original.x
+        conf.layout.y = rXy.y - pConf.original.y
+        conf.rotation -= pConf.rotation
+      } else {
+        conf.layout = helper.verticalReversePoint(conf.layout, center)
+      }
+    }
+    conf.realRotation = -realRotation
+    conf.rotation = -rotation
+    this.conf = helper.calcConf(conf, this.parent?.conf)
+    this.changeChildrenFlip(type, this.conf.center)
+    CanvasUtil2.getInstance().render()
+  }
+
+  changeChildrenFlip(type: number, center: P) {
+    this.children.forEach(item => {
+      if (type === 0) {
+        item.conf.absolute = helper.horizontalReversePoint(item.conf.absolute, center)
+        item.conf.center = helper.horizontalReversePoint(item.conf.center, center)
+        item.conf.flipHorizontal = !item.conf.flipHorizontal
+      } else {
+        item.conf.absolute = helper.verticalReversePoint(item.conf.absolute, center)
+        item.conf.center = helper.verticalReversePoint(item.conf.center, center)
+        item.conf.flipVertical = !item.conf.flipVertical
+      }
+      item.conf.realRotation = -item.conf.realRotation
+      item.conf = helper.calcConf(item.conf)
+      item.changeChildrenFlip(type, center)
+    })
   }
 }

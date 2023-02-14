@@ -198,7 +198,6 @@ export default {
     return conf
   },
   initConf(conf: BaseConfig, pConf?: BaseConfig) {
-    console.log('initConf')
     if (conf.id) return conf
     let {
       layout: {x, y, w, h}, flipHorizontal, flipVertical
@@ -226,7 +225,7 @@ export default {
     let topRight = {x: cx + w2, y: cy - h2}
     let bottomLeft = {x: cx - w2, y: cy + h2}
     let bottomRight = {x: cx + w2, y: cy + h2}
-    conf.absolute = topLeft
+    conf.absolute = clone(topLeft)
     conf.original = clone(conf.absolute)
 
     //水平翻转所有的点
@@ -275,6 +274,7 @@ export default {
       bottomLeft,
       bottomRight,
     }
+    console.log('initConf',conf)
     return conf
   },
 

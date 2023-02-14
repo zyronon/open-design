@@ -2,7 +2,7 @@ import {BaseConfig} from "../config/BaseConfig"
 import {getRotatedPoint} from "../../../utils"
 // @ts-ignore
 import {v4 as uuid} from 'uuid'
-import {clone} from "lodash"
+import {cloneDeep} from "lodash"
 import {P, ShapeType} from "./type"
 import CanvasUtil2 from "../CanvasUtil2"
 
@@ -92,7 +92,7 @@ export default {
       conf.absolute = {x, y}
       conf.realRotation = conf.rotation
     }
-    conf.original = clone(conf.absolute)
+    conf.original = cloneDeep(conf.absolute)
 
     const {x: ax, y: ay} = conf.absolute
     let topLeft = {x: ax, y: ay}
@@ -225,8 +225,8 @@ export default {
     let topRight = {x: cx + w2, y: cy - h2}
     let bottomLeft = {x: cx - w2, y: cy + h2}
     let bottomRight = {x: cx + w2, y: cy + h2}
-    conf.absolute = clone(topLeft)
-    conf.original = clone(conf.absolute)
+    conf.absolute = cloneDeep(topLeft)
+    conf.original = cloneDeep(conf.absolute)
 
     //水平翻转所有的点
     if (flipHorizontal) {
@@ -274,7 +274,7 @@ export default {
       bottomLeft,
       bottomRight,
     }
-    console.log('initConf',conf)
+    console.log('initConf', conf)
     return conf
   },
 
@@ -299,7 +299,7 @@ export default {
     let topRight = {x: cx + w2, y: cy - h2}
     let bottomLeft = {x: cx - w2, y: cy + h2}
     let bottomRight = {x: cx + w2, y: cy + h2}
-    conf.original = clone(topLeft)
+    conf.original = cloneDeep(topLeft)
 
     //水平翻转所有的点
     if (flipHorizontal) {
@@ -346,16 +346,24 @@ export default {
   calcConfByParent(conf: BaseConfig, pConf?: BaseConfig): BaseConfig {
     let {
       layout: {x, y, w, h},
+      original,
+      center,
       flipHorizontal, flipVertical, realRotation
     } = conf
 
     const w2 = w / 2, h2 = h / 2
 
-    let center = {x: x + w2, y: y + h2}
+    // let center = {x: x + w2, y: x + h2}
     if (pConf) {
+      if (flipHorizontal) {
+        x = this._reversePoint(x, center.x)
+        // y = this._reversePoint(y, center.y)
+        // const {x, y} = this.horizontalReversePoint(conf.layout, pConf.center)
+      }
       conf.realRotation = pConf.realRotation + conf.rotation
       //如果有父级，那么中心点加要上自己的xy和父级的original的xy值
       center = {x: (pConf.original.x + x) + w2, y: (pConf.original.y + y) + h2}
+      // center = {x: (ox - pConf.original.x) + w2, y: (oy - pConf.original.y) + h2}
       //根据父级的角度旋转，就是最终的中心点
       center = getRotatedPoint(center, pConf.center, pConf.realRotation)
     }
@@ -365,7 +373,7 @@ export default {
     let topRight = {x: cx + w2, y: cy - h2}
     let bottomLeft = {x: cx - w2, y: cy + h2}
     let bottomRight = {x: cx + w2, y: cy + h2}
-    conf.original = clone(topLeft)
+    conf.original = cloneDeep(topLeft)
     conf.absolute = topLeft
 
     //水平翻转所有的点
@@ -374,7 +382,7 @@ export default {
       topRight = this.horizontalReversePoint(topRight, center)
       bottomLeft = this.horizontalReversePoint(bottomLeft, center)
       bottomRight = this.horizontalReversePoint(bottomRight, center)
-      conf.layout = this.horizontalReversePoint(conf.layout, center)
+      // conf.layout = this.horizontalReversePoint(conf.layout, center)
       conf.absolute = this.horizontalReversePoint(conf.absolute, center)
       conf.realRotation = -conf.realRotation
     }
@@ -383,7 +391,7 @@ export default {
       topRight = this.verticalReversePoint(topRight, center)
       bottomLeft = this.verticalReversePoint(bottomLeft, center)
       bottomRight = this.verticalReversePoint(bottomRight, center)
-      conf.layout = this.verticalReversePoint(conf.layout, center)
+      // conf.layout = this.verticalReversePoint(conf.layout, center)
       conf.absolute = this.verticalReversePoint(conf.absolute, center)
       conf.realRotation = -conf.realRotation
     }
@@ -414,6 +422,7 @@ export default {
       bottomLeft,
       bottomRight,
     }
+    console.log('calcConfByParent', cloneDeep(conf))
     return conf
   },
 

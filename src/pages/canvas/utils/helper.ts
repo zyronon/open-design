@@ -360,12 +360,6 @@ export default {
 
     // let center = {x: x + w2, y: x + h2}
     if (pConf) {
-      if (flipHorizontal) {
-        x = this._reversePoint(x, center.x)
-        // y = this._reversePoint(y, center.y)
-        // const {x, y} = this.horizontalReversePoint(conf.layout, pConf.center)
-      }
-
       conf.realRotation = pConf.realRotation + conf.rotation
       //如果有父级，那么中心点加要上自己的xy和父级的original的xy值
       center = {x: pConf.original.x + relativeCenter.x, y: pConf.original.y + relativeCenter.y}

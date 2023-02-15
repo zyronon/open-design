@@ -8,7 +8,6 @@ interface Layout {
   y: number,//图层节点的位置，等价于 relativeTransform[1][2]。
   w: number,
   h: number,
-  layout: Rect//图层节点的 rect。
   /** @desc 显示旋转角度
    *  图层节点的旋转角度.值域为 [-180, 180]。
    * 其值等价于：Math.atan2(-relativeTransform[1][0], relativeTransform[0][0])
@@ -18,12 +17,13 @@ interface Layout {
    * 1、有父级的情况下：显示角度和真实的角度不同
    * 2、翻转的情况下：显示角度和真实的角度不同，但是不知道为什么masterGo和figma都是这样子设计的
    * */
+  layout: Rect//图层节点的 rect。
   realRotation: number,
-  percent: P,//相对于父级的百分比坐标
-  absolute: P,//坐标绝对值
-  original: P,//坐标未翻转、旋转的值
+  absolute: P,//左上角坐标绝对值
+  original: P,//左上角坐标未翻转、旋转的值
   center: P,//中心点坐标
   relativeCenter: P,//相对于父级左上角的中心点坐标
+  percent: P,//相对于父级的百分比坐标
   box: {
     leftX: number,
     topY: number,

@@ -564,40 +564,12 @@ export abstract class BaseShape {
   move(point: P) {
     let cu = CanvasUtil2.getInstance()
     let {x, y,} = point
-    let dx = (x - cu.startX)
-    let dy = (y - cu.startY)
 
-    this.conf.absolute.x = this.original.absolute.x + dx
-    this.conf.absolute.y = this.original.absolute.y + dy
-    this.conf.center.x = this.original.center.x + dx
-    this.conf.center.y = this.original.center.y + dy
+    this.conf.center.x = this.original.center.x + (x - cu.startX)
+    this.conf.center.y = this.original.center.y + (y - cu.startY)
 
-    //当有父级并且父级有角度时，特殊计算xy的值
-    if (this.parent) {
-      let pConf = this.parent.conf
-      this.conf.relativeCenter.x = this.conf.center.x - pConf.original.x
-      this.conf.relativeCenter.y = this.conf.center.y - pConf.original.y
-
-      let pRotate = this.parent?.conf?.realRotation
-      if (pRotate) {
-        /**
-         * 直接将ab值以父中心点父角度负回去。这样ab值就是0度的（此时的ab值即父级未旋转时的值，一开始initConf的xy也是取的这个值）
-         * 然后减去父original值，就是自己离父级的xy值
-         * 2023-2-9注：
-         * 不用把ab按自己的中心点负回去，再以父中心点父角度负回去。这样子计算出来不正确
-         * // let rXy = getRotatedPoint(this.conf.absolute, this.conf.center, -this.conf.realRotation)
-         * // rXy = getRotatedPoint(rXy, pCenter, -pRotate)
-         * */
-        let rXy = getRotatedPoint(this.conf.absolute, pConf.center, -pRotate)
-        this.conf.layout.x = rXy.x - pConf.original.x
-        this.conf.layout.y = rXy.y - pConf.original.y
-      }
-    } else {
-      this.conf.layout.x = this.original.layout.x + dx
-      this.conf.layout.y = this.original.layout.y + dy
-    }
     this.conf = helper.calcConf(this.conf, this.parent?.conf)
-    this.calcConf()
+    this.calcChildrenConf()
     cu.render()
   }
 
@@ -632,30 +604,12 @@ export abstract class BaseShape {
     // console.log('x-------', x, '          y--------', y)
     let newRotation = getAngle2(this.original.center, this.original.original, current)
 
-    let newAbsolute = getRotatedPoint(this.original.original, this.original.center, newRotation)
-    this.conf.absolute = this.conf.box.topLeft = newAbsolute
-
-    let parentRealRotation = this.parent?.conf.realRotation
-    //当有父级并且父级有角度时，特殊计算xy的值
-    if (this.parent && parentRealRotation) {
-      /**
-       * 先把ab值，负回父角度的位置。（此时的ab值即父级未旋转时的值，一开始initConf的xy也是取的这个值）
-       * 然后把ab值和父级的original相减，就可以得出最新的xy值
-       * */
-      let rXy = getRotatedPoint(newAbsolute, this.parent.conf.center, -parentRealRotation)
-      this.conf.layout.x = rXy.x - this.parent.conf.original.x
-      this.conf.layout.y = rXy.y - this.parent.conf.original.y
-    } else {
-      this.conf.layout.x = newAbsolute.x
-      this.conf.layout.y = newAbsolute.y
-    }
-
     //这里要减去，父级的旋转角度
     let endA = (newRotation - (this.parent?.conf?.realRotation ?? 0))
     this.conf.rotation = endA < 180 ? endA : endA - 360
     this.conf.realRotation = newRotation
     this.conf = helper.calcConf(this.conf, this.parent?.conf)
-    this.calcConf()
+    this.calcChildrenConf()
     cu.render()
   }
 
@@ -681,7 +635,7 @@ export abstract class BaseShape {
     conf.center = newCenter
     // console.log(conf)
     this.conf = helper.calcConf(conf, this.parent?.conf)
-    this.calcConf()
+    this.calcChildrenConf()
     cu.render()
   }
 
@@ -717,7 +671,7 @@ export abstract class BaseShape {
       conf.center.y = conf.layout.y + conf.layout.h / 2
     }
     this.conf = helper.calcConf(conf, this.parent?.conf)
-    this.calcConf()
+    this.calcChildrenConf()
     cu.render()
   }
 
@@ -755,7 +709,6 @@ export abstract class BaseShape {
           isReverseW = true
         }
       }
-
       if (isReverseW) {
         conf.flipHorizontal = !this.original.flipHorizontal
         conf.rotation = helper.getRotationByFlipHorizontal(this.original.rotation)
@@ -765,20 +718,9 @@ export abstract class BaseShape {
       }
       conf.layout.w = newWidth
       conf.center = newCenter
-
-      //Right不一样的地方
-      let w2 = newWidth / 2
-      let start = {
-        x: conf.center.x - (conf.flipHorizontal ? -w2 : w2),
-        y: conf.center.y - conf.layout.h / 2,
-      }
-      let a = getRotatedPoint(start, newCenter, realRotation)
-      conf.layout = {...conf.layout, ...a}
     } else {
       //dx和dragRight相反
       let dx = (cu.startX - x)
-      //x要减去dx，w是要加上dx
-      conf.layout.x = this.original.layout.x - dx
       //如果水平翻转，那么移动距离取反
       if (this.original.flipHorizontal) dx = -dx
       conf.layout.w = this.original.layout.w + dx
@@ -803,7 +745,7 @@ export abstract class BaseShape {
     }
 
     this.conf = helper.calcConf(this.conf, this.parent?.conf)
-    this.calcConf()
+    this.calcChildrenConf()
     cu.render()
   }
 
@@ -886,13 +828,14 @@ export abstract class BaseShape {
     cu.render()
   }
 
-  calcConf(cb?: Function) {
+  //计算子组件的配置
+  calcChildrenConf(cb?: Function) {
     this.children.map((shape: BaseShape) => {
       if (cb) shape = cb(shape)
       else {
         shape.conf = helper.calcConfByParent(shape.conf, shape?.parent?.conf)
       }
-      shape.calcConf(cb)
+      shape.calcChildrenConf(cb)
     })
   }
 

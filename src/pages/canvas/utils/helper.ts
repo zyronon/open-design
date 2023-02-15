@@ -363,6 +363,7 @@ export default {
       bottomLeft,
       bottomRight,
     }
+    console.log('calcConf', conf)
     return conf
   },
 

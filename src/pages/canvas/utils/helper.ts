@@ -363,7 +363,7 @@ export default {
       bottomLeft,
       bottomRight,
     }
-    console.log('calcConf', conf)
+    console.log('calcConf', cloneDeep(conf))
     return conf
   },
 

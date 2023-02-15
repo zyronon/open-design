@@ -602,15 +602,18 @@ export abstract class BaseShape {
       current.y = center.y + Math.abs(current.y - center.y) * (current.y < center.y ? 1 : -1)
     }
     // console.log('x-------', x, '          y--------', y)
-    let newRotation = getAngle2(this.original.center, this.original.original, current)
+    let newRotation = getAngle2(old.center, old.original, current)
 
+    console.log('newRotation', newRotation, old)
     //这里要减去，父级的旋转角度
     let endA = (newRotation - (this.parent?.conf?.realRotation ?? 0))
     this.conf.rotation = endA < 180 ? endA : endA - 360
     this.conf.realRotation = newRotation
-    this.conf = helper.calcConf(this.conf, this.parent?.conf)
-    this.calcChildrenConf()
-    cu.render()
+
+    console.log('dragTopLeftRotation', this.conf)
+    // this.conf = helper.calcConf(this.conf, this.parent?.conf)
+    // this.calcChildrenConf()
+    // cu.render()
   }
 
   //拖动左上

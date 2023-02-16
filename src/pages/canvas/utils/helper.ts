@@ -290,7 +290,6 @@ export default {
   calcConf(conf: BaseConfig, pConf?: BaseConfig): BaseConfig {
     let {
       layout: {x, y, w, h},
-      absolute,
       center, flipHorizontal, flipVertical, realRotation
     } = conf
     const w2 = w / 2, h2 = h / 2
@@ -308,7 +307,6 @@ export default {
       topRight = this.horizontalReversePoint(topRight, center)
       bottomLeft = this.horizontalReversePoint(bottomLeft, center)
       bottomRight = this.horizontalReversePoint(bottomRight, center)
-      // conf.layout = this.horizontalReversePoint(conf.layout, center)
       conf.absolute = this.horizontalReversePoint(conf.absolute, center)
     }
     if (flipVertical) {
@@ -316,7 +314,6 @@ export default {
       topRight = this.verticalReversePoint(topRight, center)
       bottomLeft = this.verticalReversePoint(bottomLeft, center)
       bottomRight = this.verticalReversePoint(bottomRight, center)
-      // conf.layout = this.verticalReversePoint(conf.layout, center)
       conf.absolute = this.verticalReversePoint(conf.absolute, center)
     }
 
@@ -343,8 +340,6 @@ export default {
       conf.layout.y = rXy.y - pConf.original.y
 
       let rCenter = getRotatedPoint(center, pConf.center, -pConf.realRotation)
-      // conf.relativeCenter.x = center.x - pConf.absolute.x
-      // conf.relativeCenter.y = center.y - pConf.absolute.y
       conf.relativeCenter.x = rCenter.x - pConf.original.x
       conf.relativeCenter.y = rCenter.y - pConf.original.y
     } else {
@@ -404,7 +399,7 @@ export default {
       bottomRight = this.horizontalReversePoint(bottomRight, center)
       // conf.layout = this.horizontalReversePoint(conf.layout, center)
       conf.absolute = this.horizontalReversePoint(conf.absolute, center)
-      conf.realRotation = -conf.realRotation
+      // conf.realRotation = -conf.realRotation
     }
     if (flipVertical) {
       topLeft = this.verticalReversePoint(topLeft, center)
@@ -413,7 +408,7 @@ export default {
       bottomRight = this.verticalReversePoint(bottomRight, center)
       // conf.layout = this.verticalReversePoint(conf.layout, center)
       conf.absolute = this.verticalReversePoint(conf.absolute, center)
-      conf.realRotation = -conf.realRotation
+      // conf.realRotation = -conf.realRotation
     }
 
     let rotation = conf.realRotation

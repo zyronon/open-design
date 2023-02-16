@@ -588,32 +588,30 @@ export abstract class BaseShape {
     // console.log('dragTopLeftRotation')
     let {x, y,} = point
     let cu = CanvasUtil2.getInstance()
-    let rect = this.original
-    let old = this.original
-    let center = {
-      x: old.x + (old.w / 2),
-      y: old.y + (old.h / 2)
-    }
+    let {center, original, flipHorizontal, flipVertical} = this.conf
+
     let current = {x, y}
-    if (rect.flipHorizontal) {
-      current.x = center.x + Math.abs(current.x - center.x) * (current.x < center.x ? 1 : -1)
+    if (flipHorizontal) {
+      original = helper.horizontalReversePoint(original, center)
     }
-    if (rect.flipVertical) {
-      current.y = center.y + Math.abs(current.y - center.y) * (current.y < center.y ? 1 : -1)
+    if (flipVertical) {
+      original = helper.verticalReversePoint(original, center)
     }
     // console.log('x-------', x, '          y--------', y)
-    let newRotation = getAngle2(old.center, old.original, current)
+    let newRotation = getAngle2(center, original, current)
 
-    console.log('newRotation', newRotation, old)
     //这里要减去，父级的旋转角度
-    let endA = (newRotation - (this.parent?.conf?.realRotation ?? 0))
-    this.conf.rotation = endA < 180 ? endA : endA - 360
-    this.conf.realRotation = newRotation
+    let newRotation1 = (newRotation < 180 ? newRotation : newRotation - 360).toFixed2(2)
 
-    console.log('dragTopLeftRotation', this.conf)
-    // this.conf = helper.calcConf(this.conf, this.parent?.conf)
-    // this.calcChildrenConf()
-    // cu.render()
+    console.log('旋转角度', newRotation1)
+    let endA = (newRotation1 - (this.parent?.conf?.realRotation ?? 0))
+    this.conf.rotation = endA
+    this.conf.realRotation = newRotation1
+
+    // console.log('dragTopLeftRotation', this.conf)
+    this.conf = helper.calcConf(this.conf, this.parent?.conf)
+    this.calcChildrenConf()
+    cu.render()
   }
 
   //拖动左上
@@ -889,42 +887,12 @@ export abstract class BaseShape {
   flip(type: number) {
     let conf = this.conf
     let {
-      center, absolute, realRotation, rotation,
+      realRotation, rotation,
     } = conf
     if (type === 0) {
-      conf.absolute = helper.horizontalReversePoint(absolute, center)
       conf.flipHorizontal = !conf.flipHorizontal
-      // conf.rotation = helper.getRotationByFlipConfig(conf)
-      // if (rotation <= 0) {
-      //   conf.rotation = -180 - rotation
-      // } else {
-      //   conf.rotation = 180 - rotation
-      // }
-      if (this.parent) {
-        //逻辑同move一样
-        let pConf = this.parent.conf
-        let rXy = getRotatedPoint(conf.absolute, pConf.center, -pConf.realRotation)
-        conf.layout.x = rXy.x - pConf.original.x
-        conf.layout.y = rXy.y - pConf.original.y
-        // conf.rotation -= pConf.rotation
-      } else {
-        conf.layout = helper.horizontalReversePoint(conf.layout, center)
-      }
     } else {
-      conf.absolute = helper.verticalReversePoint(absolute, center)
       conf.flipVertical = !conf.flipVertical
-      // conf.rotation = helper.getRotationByFlipConfig(conf)
-      conf.rotation = -conf.rotation
-      if (this.parent) {
-        //逻辑同move一样
-        let pConf = this.parent.conf
-        let rXy = getRotatedPoint(conf.absolute, pConf.center, -pConf.realRotation)
-        conf.layout.x = rXy.x - pConf.original.x
-        conf.layout.y = rXy.y - pConf.original.y
-        conf.rotation -= pConf.rotation
-      } else {
-        conf.layout = helper.verticalReversePoint(conf.layout, center)
-      }
     }
     conf.realRotation = -realRotation
     conf.rotation = -rotation

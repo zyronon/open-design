@@ -22,6 +22,10 @@ declare global {
     decimal(val: number): number
   }
 
+  interface Number {
+    toFixed2(digits: number): number
+  }
+
   interface Console {
     d(v: any): void
   }
@@ -51,6 +55,9 @@ for (const key in Context2D) {
 
 Math.decimal = (num: number) => {
   return num - Math.trunc(num)
+}
+Number.prototype.toFixed2 = function (digits = 2) {
+  return Number(this.toFixed(digits))
 }
 
 console.d = function (v: any) {

@@ -956,8 +956,8 @@ export const rects: any[] = [
   {
     "name": "容器",
     layout: {
-      "x": 300,
-      "y": 100,
+      "x": 800,
+      "y": 150,
       "w": 400,
       "h": 300,
     },
@@ -971,7 +971,7 @@ export const rects: any[] = [
       {
         "name": "容器2",
         layout: {
-          "x": 80,
+          "x": 20,
           "y": 20,
           "w": 250,
           "h": 200,
@@ -1014,6 +1014,159 @@ export const rects: any[] = [
     flipHorizontal: false,
     flipVertical: false
   },
+]
+export const rects3: any[] = [
+  {
+    "name": "容器",
+    "layout": {
+      "x": 670.914323952402,
+      "y": 117.54920151478274,
+      "w": 400,
+      "h": 300
+    },
+    "rotation": -10,
+    "lineWidth": 2,
+    "type": "FRAME",
+    "color": "gray",
+    "radius": 0,
+    "children1": [],
+    "children": [
+      {
+        "name": "容器2",
+        "layout": {
+          "x": 595.602667264764,
+          "y": 151.13721078838134,
+          "w": 250,
+          "h": 200
+        },
+        "rotation": 0,
+        "lineWidth": 2,
+        "type": "FRAME",
+        "color": "gray",
+        "radius": 0,
+        "children": [],
+        "children2": [
+          {
+            "name": "容器3",
+            "layout": {
+              "x": 40,
+              "y": 40,
+              "w": 150,
+              "h": 100
+            },
+            "rotation": 0,
+            "lineWidth": 2,
+            "type": "FRAME",
+            "color": "gray",
+            "radius": 0,
+            "children": [],
+            "borderColor": "rgb(216,216,216)",
+            "fillColor": "#e1e1e1",
+            "flipHorizontal": false,
+            "flipVertical": false
+          }
+        ],
+        "borderColor": "rgb(216,216,216)",
+        "fillColor": "rgb(241,238,238)",
+        "flipHorizontal": true,
+        "flipVertical": false,
+        "id": "abb6724a-6cba-4d1a-9aba-34ae83776a1c",
+        "realRotation": -10,
+        "percent": {
+          "x": 0.2,
+          "y": 0.06666666666666667
+        },
+        "relativeCenter": {
+          "x": 205,
+          "y": 120
+        },
+        "absolute": {
+          "x": 595.602667264764,
+          "y": 151.13721078838134
+        },
+        "original": {
+          "x": 364.8665159049311,
+          "y": 171.32400829796842
+        },
+        "center": {
+          "x": 489.8665159049311,
+          "y": 271.3240082979684
+        },
+        "box": {
+          "leftX": 364.8665159049311,
+          "rightX": 614.866515904931,
+          "topY": 171.32400829796842,
+          "bottomY": 371.3240082979684,
+          "topLeft": {
+            "x": 595.602667264764,
+            "y": 151.13721078838134
+          },
+          "topRight": {
+            "x": 349.4007290117121,
+            "y": 194.5492552051139
+          },
+          "bottomLeft": {
+            "x": 630.3323027981501,
+            "y": 348.0987613908229
+          },
+          "bottomRight": {
+            "x": 384.13036454509813,
+            "y": 391.51080580755547
+          }
+        },
+        "nameWidth": 46.5556640625
+      }
+    ],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "white",
+    "flipHorizontal": true,
+    "flipVertical": false,
+    "id": "f366b809-fbb4-443f-8b4a-0817db2c72cc",
+    "percent": {
+      "x": 0,
+      "y": 0
+    },
+    "relativeCenter": {
+      "x": 0,
+      "y": 0
+    },
+    "realRotation": -10,
+    "absolute": {
+      "x": 670.914323952402,
+      "y": 117.54920151478274
+    },
+    "original": {
+      "x": 300,
+      "y": 150
+    },
+    "center": {
+      "x": 500,
+      "y": 300
+    },
+    "box": {
+      "leftX": 300,
+      "rightX": 700,
+      "topY": 150,
+      "bottomY": 450,
+      "topLeft": {
+        "x": 670.914323952402,
+        "y": 117.54920151478274
+      },
+      "topRight": {
+        "x": 276.9912227475188,
+        "y": 187.00847258155488
+      },
+      "bottomLeft": {
+        "x": 723.0087772524812,
+        "y": 412.9915274184451
+      },
+      "bottomRight": {
+        "x": 329.085676047598,
+        "y": 482.45079848521726
+      }
+    },
+    "nameWidth": 36
+  }
 ]
 
 const defaultCurrentMat = [

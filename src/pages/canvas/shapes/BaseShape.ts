@@ -301,23 +301,18 @@ export abstract class BaseShape {
     } else {
       this.render(ctx, {x, y}, parent,)
     }
-
+    // ctx.clip()
     ctx.restore()
-    draw.drawRound(ctx, this.conf.box.topLeft)
-    draw.drawRound(ctx, this.conf.box.topRight)
-    draw.drawRound(ctx, this.conf.box.bottomLeft)
-    draw.drawRound(ctx, this.conf.box.bottomRight)
-    draw.drawRound(ctx, this.conf.center)
-    draw.drawRound(ctx, this.conf.original)
-    // ctx.save()
-    // let rect = this.config
-    // ctx.fillStyle = 'gray'
-    // ctx.font = `${rect.fontWeight} ${rect.fontSize}rem "${rect.fontFamily}", sans-serif`;
-    // ctx.textBaseline = 'top'
-    // ctx.fillText(rect.name, x, y - 18);
-    // ctx.restore()
 
-    // this.config = helper.getPath(this.config, undefined, parent)
+    if (false){
+      draw.drawRound(ctx, this.conf.box.topLeft)
+      draw.drawRound(ctx, this.conf.box.topRight)
+      draw.drawRound(ctx, this.conf.box.bottomLeft)
+      draw.drawRound(ctx, this.conf.box.bottomRight)
+      draw.drawRound(ctx, this.conf.center)
+      draw.drawRound(ctx, this.conf.original)
+    }
+
     for (let i = 0; i < this.children.length; i++) {
       let shape = this.children[i]
       shape.shapeRender(ctx, this.conf)
@@ -701,11 +696,13 @@ export abstract class BaseShape {
         }
       }
       if (isReverseW) {
-        conf.flipHorizontal = !this.original.flipHorizontal
-        conf.rotation = helper.getRotationByFlipHorizontal(this.original.rotation)
+        if (conf.flipHorizontal === this.original.flipHorizontal) {
+          this.flip(0, false)
+        }
       } else {
-        conf.flipHorizontal = this.original.flipHorizontal
-        conf.rotation = this.original.rotation
+        if (conf.flipHorizontal !== this.original.flipHorizontal) {
+          this.flip(0, false)
+        }
       }
       conf.layout.w = newWidth
       conf.center = newCenter
@@ -830,14 +827,14 @@ export abstract class BaseShape {
     })
   }
 
-  flip(type: number) {
+  flip(type: number, isCalcRotation: boolean = true) {
     let conf = this.conf
-    let {
-      realRotation,
-    } = conf
-    conf.realRotation = -realRotation
-    conf.rotation = (conf.realRotation - (this.parent?.conf?.realRotation ?? 0)).toFixed2(2)
 
+    if (isCalcRotation) {
+      let {realRotation,} = conf
+      conf.realRotation = -realRotation
+      conf.rotation = (conf.realRotation - (this.parent?.conf?.realRotation ?? 0)).toFixed2(2)
+    }
     if (type === 0) {
       conf.flipHorizontal = !conf.flipHorizontal
     } else {

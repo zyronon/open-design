@@ -284,7 +284,7 @@ export default {
       bottomLeft,
       bottomRight,
     }
-    console.log('initConf', conf)
+    // console.log('initConf', conf)
     return conf
   },
 
@@ -361,7 +361,7 @@ export default {
       bottomLeft,
       bottomRight,
     }
-    console.log('calcConf', cloneDeep(conf))
+    // console.log('calcConf', cloneDeep(conf))
     return conf
   },
 
@@ -446,7 +446,7 @@ export default {
       bottomLeft,
       bottomRight,
     }
-    console.log('calcConfByParent', cloneDeep(conf))
+    // console.log('calcConfByParent', cloneDeep(conf))
     return conf
   },
 

@@ -103,6 +103,7 @@ export class Rectangle extends BaseShape {
     return super.isInBox(mousePoint)
   }
 
+  //TODO 可以用roundRect方法
   render(ctx: CanvasRenderingContext2D, p: P, parent?: BaseConfig) {
     let {
       w, h, radius,

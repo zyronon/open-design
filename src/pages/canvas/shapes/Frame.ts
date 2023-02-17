@@ -34,7 +34,7 @@ export class Frame extends BaseShape {
 
   isInName(mousePoint: P, isReverse = false) {
     let {x, y} = mousePoint
-    const {original, nameWidth,} = this.conf
+    const {original, nameWidth, flipHorizontal, flipVertical} = this.conf
     if (isReverse) {
       const {realRotation, center} = this.conf
       if (realRotation) {
@@ -43,6 +43,18 @@ export class Frame extends BaseShape {
         x = s2.x
         y = s2.y
       }
+    }
+    if (flipHorizontal && flipVertical) {
+      return original.x > x && x > original.x - nameWidth
+        && original.y < y && y < original.y + 18
+    }
+    if (flipHorizontal) {
+      return original.x > x && x > original.x - nameWidth
+        && original.y > y && y > original.y - 18
+    }
+    if (flipVertical) {
+      return original.x < x && x < original.x + nameWidth
+        && original.y < y && y < original.y + 18
     }
     return original.x < x && x < original.x + nameWidth
       && original.y > y && y > original.y - 18
@@ -54,7 +66,6 @@ export class Frame extends BaseShape {
     }
     return super.isInBox(mousePoint)
   }
-
 
   childDbClick(event: BaseEvent2, parents: BaseShape[]): boolean {
     console.log('childDbClick')

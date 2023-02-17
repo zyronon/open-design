@@ -234,8 +234,6 @@ export default {
     let topRight = {x: cx + w2, y: cy - h2}
     let bottomLeft = {x: cx - w2, y: cy + h2}
     let bottomRight = {x: cx + w2, y: cy + h2}
-    conf.absolute = cloneDeep(topLeft)
-    conf.original = cloneDeep(conf.absolute)
 
     //水平翻转所有的点
     if (flipHorizontal) {
@@ -256,6 +254,9 @@ export default {
       conf.absolute = this.verticalReversePoint(conf.absolute, center)
       conf.realRotation = -conf.realRotation
     }
+
+    conf.absolute = cloneDeep(topLeft)
+    conf.original = cloneDeep(topLeft)
 
     let rotation = conf.realRotation
     if (rotation) {
@@ -299,7 +300,6 @@ export default {
     let topRight = {x: cx + w2, y: cy - h2}
     let bottomLeft = {x: cx - w2, y: cy + h2}
     let bottomRight = {x: cx + w2, y: cy + h2}
-    conf.original = cloneDeep(topLeft)
 
     //水平翻转所有的点
     if (flipHorizontal) {
@@ -316,6 +316,7 @@ export default {
       bottomRight = this.verticalReversePoint(bottomRight, center)
       conf.absolute = this.verticalReversePoint(conf.absolute, center)
     }
+    conf.original = cloneDeep(topLeft)
 
     let rotation = realRotation
     if (rotation) {
@@ -342,6 +343,8 @@ export default {
       let rCenter = getRotatedPoint(center, pConf.center, -pConf.realRotation)
       conf.relativeCenter.x = rCenter.x - pConf.original.x
       conf.relativeCenter.y = rCenter.y - pConf.original.y
+
+      conf.realRotation = (pConf.realRotation + conf.rotation).toFixed2()
     } else {
       //如果没有父级，那么layout的xy和ab的xy一样
       conf.layout.x = conf.absolute.x
@@ -376,9 +379,14 @@ export default {
     // let center = {x: x + w2, y: x + h2}
     if (pConf) {
       conf.realRotation = pConf.realRotation + conf.rotation
-      //如果有父级，那么中心点加要上自己的xy和父级的original的xy值
-      // center = {x: pConf.absolute.x + relativeCenter.x, y: pConf.absolute.y + relativeCenter.y}
-      center = {x: pConf.original.x + relativeCenter.x, y: pConf.original.y + relativeCenter.y}
+      let pOriginal = pConf.original
+      // if (pConf.flipHorizontal) {
+      //   pOriginal = this.horizontalReversePoint(pOriginal, pConf.center)
+      // }
+      // if (pConf.flipVertical) {
+      //   pOriginal = this.verticalReversePoint(pOriginal, pConf.center)
+      // }
+      center = {x: pOriginal.x + relativeCenter.x, y: pOriginal.y + relativeCenter.y}
       //根据父级的角度旋转 ，就是最终的中心点
       center = getRotatedPoint(center, pConf.center, pConf.realRotation)
     }
@@ -388,8 +396,6 @@ export default {
     let topRight = {x: cx + w2, y: cy - h2}
     let bottomLeft = {x: cx - w2, y: cy + h2}
     let bottomRight = {x: cx + w2, y: cy + h2}
-    conf.original = cloneDeep(topLeft)
-    conf.absolute = topLeft
 
     //水平翻转所有的点
     if (flipHorizontal) {
@@ -411,13 +417,16 @@ export default {
       // conf.realRotation = -conf.realRotation
     }
 
+    conf.absolute = cloneDeep(topLeft)
+    conf.original = cloneDeep(topLeft)
+
     let rotation = conf.realRotation
     if (rotation) {
       topLeft = getRotatedPoint(topLeft, center, rotation)
       topRight = getRotatedPoint(topRight, center, rotation)
       bottomLeft = getRotatedPoint(bottomLeft, center, rotation)
       bottomRight = getRotatedPoint(bottomRight, center, rotation)
-      conf.absolute = topLeft
+      conf.absolute = cloneDeep(topLeft)
     }
     //如果没有父级，那么layout的xy和ab的xy一样
     if (!pConf) {

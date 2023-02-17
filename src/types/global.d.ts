@@ -23,7 +23,7 @@ declare global {
   }
 
   interface Number {
-    toFixed2(digits: number): number
+    toFixed2(digits?: number): number
   }
 
   interface Console {
@@ -56,7 +56,7 @@ for (const key in Context2D) {
 Math.decimal = (num: number) => {
   return num - Math.trunc(num)
 }
-Number.prototype.toFixed2 = function (digits = 2) {
+Number.prototype.toFixed2 = function (digits? = 2) {
   return Number(this.toFixed(digits))
 }
 

@@ -19,7 +19,9 @@ interface Layout {
    * */
   layout: Rect//图层节点的 rect。
   realRotation: number,
-  absolute: P,//左上角坐标绝对值
+  // start: P,//起点
+  absolute: P,//起点坐标绝对值
+  // originalAbsolute: P,//起点坐标未旋转的值
   original: P,//左上角坐标未翻转、旋转的值
   center: P,//中心点坐标
   relativeCenter: P,//相对于父级左上角的中心点坐标

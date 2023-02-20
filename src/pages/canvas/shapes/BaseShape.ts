@@ -281,7 +281,8 @@ export abstract class BaseShape {
   }
 
   shapeRender(ctx: CanvasRenderingContext2D, parent?: BaseConfig) {
-    ctx.save()
+    // ctx.setTransform(1, 0, 0, 1, 0, 0);
+    // ctx.save()
     let {x, y} = draw.calcPosition(ctx, this.conf, this.original, this.getState(), parent)
     const {isHover, isSelect, isEdit, isSelectHover} = this
 
@@ -301,10 +302,14 @@ export abstract class BaseShape {
     } else {
       this.render(ctx, {x, y}, parent,)
     }
-    // ctx.clip()
-    ctx.restore()
+    ctx.clip()
+    // ctx.globalCompositeOperation = 'source-atop'
+    // ctx.resetTransform()
+    // ctx.restore()
+    let nv = CanvasUtil2.getInstance().storedTransform
+    ctx.setTransform(nv.a, nv.b, nv.c, nv.d, nv.e, nv.f)
 
-    if (false){
+    if (false) {
       draw.drawRound(ctx, this.conf.box.topLeft)
       draw.drawRound(ctx, this.conf.box.topRight)
       draw.drawRound(ctx, this.conf.box.bottomLeft)
@@ -317,6 +322,8 @@ export abstract class BaseShape {
       let shape = this.children[i]
       shape.shapeRender(ctx, this.conf)
     }
+
+    // ctx.restore()
   }
 
   /** @desc 事件转发方法

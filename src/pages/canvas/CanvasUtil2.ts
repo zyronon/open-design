@@ -38,7 +38,8 @@ export default class CanvasUtil2 {
   public canvasRect: DOMRect
   private dpr: number = 0
   public children: BaseShape[] = []
-  private currentMat: any = new Float32Array(config.currentMat)
+  public currentMat: any = new Float32Array(config.currentMat)
+  public storedTransform: any = new Float32Array(config.currentMat)
   handScale: number = config.handScale
   handMove: P = config.handMove
   //当hover时，只向hover那个图形传递事件。不用递归整个树去判断isIn
@@ -168,13 +169,15 @@ export default class CanvasUtil2 {
     draw.clear({x: 0, y: 0, w: this.canvas.width, h: this.canvas.height}, this.ctx)
     this.ctx.save()
     if (this.currentMat) {
-      // console.log('平移：', currentMat[12], currentMat[13])
       // console.log('缩放：', currentMat[0], currentMat[5])
       let nv = this.currentMat
+      // console.log('平移：', nv)
+      // this.ctx.setTransform(nv[0], nv[4], nv[1], nv[5], nv[12], nv[13])
       this.ctx.transform(nv[0], nv[4], nv[1], nv[5], nv[12], nv[13])
       // ctx.translate(currentMat[12], currentMat[13])
       // ctx.scale(currentMat[0], currentMat[5])
     }
+    this.storedTransform = this.ctx.getTransform()
     this.ctx.lineCap = 'round'
     // console.log('this.children,', this.children)
     //不能用map或者forEach，因为里面await 不生效

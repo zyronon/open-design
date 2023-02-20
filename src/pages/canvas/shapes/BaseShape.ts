@@ -302,7 +302,9 @@ export abstract class BaseShape {
     } else {
       this.render(ctx, {x, y}, parent,)
     }
-    ctx.clip()
+    if (!parent){
+      ctx.clip()
+    }
     // ctx.globalCompositeOperation = 'source-atop'
     // ctx.resetTransform()
     // ctx.restore()

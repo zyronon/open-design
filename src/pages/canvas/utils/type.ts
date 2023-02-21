@@ -216,3 +216,11 @@ export enum MouseOptionType {
   BottomLeftRotation = 11,
   BottomRightRotation = 12,
 }
+
+export enum ShapeStatus {
+  Normal = 'Normal',
+  Hover = 'Hover',
+  Select = 'Select',
+  SelectHover = 'SelectHover',
+  Edit = 'Edit'
+}

@@ -121,6 +121,7 @@ export class Frame extends BaseShape {
       ctx.lineTo(x, y + h)
       ctx.lineTo(x, y)
       ctx.closePath()
+
       ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
       let text = `${w.toFixed(2)} x ${h.toFixed(2)}`
       let m = ctx.measureText(text)
@@ -134,6 +135,9 @@ export class Frame extends BaseShape {
       ctx.fill()
       ctx.strokeStyle = borderColor
       ctx.stroke()
+      if (!parent) {
+        ctx.clip()
+      }
     }
   }
 

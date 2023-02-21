@@ -1,4 +1,4 @@
-import {BaseEvent2, MouseOptionType, P, ShapeProps, ShapeType} from "../utils/type"
+import {BaseEvent2, MouseOptionType, P, ShapeProps, ShapeStatus, ShapeType} from "../utils/type"
 import CanvasUtil2 from "../CanvasUtil2"
 import {clone, cloneDeep, merge} from "lodash"
 import getCenterPoint, {getAngle2, getRotatedPoint} from "../../../utils"
@@ -18,6 +18,7 @@ export abstract class BaseShape {
   enterType: MouseOptionType = MouseOptionType.None
   public conf: BaseConfig
   children: BaseShape[] = []
+  status: ShapeStatus = ShapeStatus.Normal
   isHover: boolean = false
   isSelect: boolean = false
   isSelectHover: boolean = false //是否选中之后hover
@@ -282,29 +283,12 @@ export abstract class BaseShape {
 
   shapeRender(ctx: CanvasRenderingContext2D, parent?: BaseConfig) {
     // ctx.setTransform(1, 0, 0, 1, 0, 0);
-    // ctx.save()
+    ctx.save()
     let {x, y} = draw.calcPosition(ctx, this.conf, this.original, this.getState(), parent)
-    const {isHover, isSelect, isEdit, isSelectHover} = this
+    // console.log(`isHover:${isHover},isSelect:${isSelect},isEdit:${isEdit},isSelectHover:${isSelectHover},name:${this.conf.name}`)
+    // console.log('------------')
+    this.render(ctx, {x, y}, parent,)
 
-    let newConf = merge(cloneDeep(this.conf), {layout: {x, y}})
-    if (isHover) {
-      this.render(ctx, {x, y}, parent,)
-      draw.hover(ctx, newConf)
-    } else if (isSelect) {
-      this.render(ctx, {x, y}, parent,)
-      draw.selected(ctx, newConf)
-      if (isSelectHover) {
-        this.renderSelectedHover(ctx, newConf)
-      }
-    } else if (isEdit) {
-      this.renderEdit(ctx, newConf)
-      // edit(ctx, {...this.config, x, y})
-    } else {
-      this.render(ctx, {x, y}, parent,)
-    }
-    if (!parent){
-      ctx.clip()
-    }
     // ctx.globalCompositeOperation = 'source-atop'
     // ctx.resetTransform()
     // ctx.restore()
@@ -324,8 +308,25 @@ export abstract class BaseShape {
       let shape = this.children[i]
       shape.shapeRender(ctx, this.conf)
     }
-
-    // ctx.restore()
+    ctx.restore()
+    ctx.save()
+    draw.calcPosition(ctx, this.conf, this.original, this.getState(), parent)
+    const {isHover, isSelect, isEdit, isSelectHover} = this
+    let newConf = merge(cloneDeep(this.conf), {layout: {x, y}})
+    if (isHover) {
+      draw.hover(ctx, newConf)
+    } else if (isSelect) {
+      // console.log('select', this.conf.name)
+      draw.selected(ctx, newConf)
+      if (isSelectHover) {
+        this.renderSelectedHover(ctx, newConf)
+      }
+    } else if (isEdit) {
+      this.renderEdit(ctx, newConf)
+      // edit(ctx, {...this.config, x, y})
+    } else {
+    }
+    ctx.restore()
   }
 
   /** @desc 事件转发方法
@@ -350,7 +351,6 @@ export abstract class BaseShape {
     if (this.shapeIsIn(point, cu, parent?.[parent?.length - 1])) {
       // console.log('in')
       // return true
-
       // console.log('捕获', this.config.name)
       if (this.canNext(cu)) {
         // if (true) {

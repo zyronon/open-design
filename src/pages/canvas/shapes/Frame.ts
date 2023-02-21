@@ -60,9 +60,9 @@ export class Frame extends BaseShape {
   }
 
   isHoverIn(mousePoint: P, cu: CanvasUtil2): boolean {
-    if (this.isOnlyHoverInName()) {
-      return this.isInName(mousePoint) || super.isInBox(mousePoint)
-    }
+    // if (this.isOnlyHoverInName()) {
+    //   return this.isInName(mousePoint) || super.isInBox(mousePoint)
+    // }
     return super.isInBox(mousePoint)
   }
 
@@ -107,7 +107,7 @@ export class Frame extends BaseShape {
       radius,
       fillColor, borderColor, rotation, lineWidth,
       type, flipVertical, flipHorizontal, children,
-      name
+      name,clip
     } = this.conf
     const {x, y} = p
     if (radius) {
@@ -134,7 +134,7 @@ export class Frame extends BaseShape {
       ctx.fill()
       ctx.strokeStyle = borderColor
       ctx.stroke()
-      if (!parent) {
+      if (clip) {
         ctx.clip()
       }
     }

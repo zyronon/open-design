@@ -961,6 +961,7 @@ export const rects: any[] = [
       "w": 400,
       "h": 300,
     },
+    clip: false,
     "rotation": 10,
     "lineWidth": 2,
     "type": "FRAME",
@@ -981,8 +982,8 @@ export const rects: any[] = [
         "type": "FRAME",
         "color": "gray",
         "radius": 0,
-        children2: [],
-        "children": [
+        children: [],
+        "children2": [
           {
             "name": "容器3",
             layout: {

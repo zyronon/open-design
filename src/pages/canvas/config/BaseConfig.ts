@@ -41,6 +41,7 @@ interface Layout {
   topRight: P,//废弃
   bottomLeft: P,//废弃
   bottomRight: P,//废弃
+  clip: boolean
 }
 
 interface Geometry {

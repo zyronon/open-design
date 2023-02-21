@@ -16,8 +16,7 @@ export abstract class BaseShape {
   enterType: MouseOptionType = MouseOptionType.None
   public conf: BaseConfig
   children: BaseShape[] = []
-  // status: ShapeStatus = ShapeStatus.Normal
-  _status: ShapeStatus = ShapeStatus.Normal
+  status: ShapeStatus = ShapeStatus.Normal
   isSelectHover: boolean = false
   isCapture: boolean = true//是否捕获事件，为true不会再往下传递事件
   enter: boolean = false
@@ -27,15 +26,6 @@ export abstract class BaseShape {
   diagonal: P = {x: 0, y: 0}//对面的点（和handlePoint相反的点），如果handlePoint是中间点，那么这个也是中间点
   handlePoint: P = {x: 0, y: 0}//鼠标按住那条边的中间点（当前角度），非鼠标点
   parent?: BaseShape
-
-  get status(): any {
-    return this._status as any
-  }
-
-  set status(val) {
-    console.log('set', val, 'name', this.conf.name)
-    this._status = val
-  }
 
   constructor(props: ShapeProps) {
     // console.log('props', clone(props))
@@ -78,15 +68,6 @@ export abstract class BaseShape {
    * 如果变量为ture，那么方法直接返回true，不用再走后续判断是否在图形上
    * */
   abstract beforeShapeIsIn(): boolean
-
-  resetHover() {
-    this.hoverType = MouseOptionType.None
-  }
-
-  resetEnter() {
-    this.enterType = MouseOptionType.None
-    this.enter = false
-  }
 
   /**
    * 事件向下传递的先决条件：有子级，自己没有父级
@@ -160,6 +141,55 @@ export abstract class BaseShape {
       && rect.box.topY < y && y < rect.box.bottomY
   }
 
+  shapeRender(ctx: CanvasRenderingContext2D, parent?: BaseConfig) {
+    // ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.save()
+    let {x, y} = draw.calcPosition(ctx, this.conf, this.original,)
+    this.render(ctx, {x, y}, parent,)
+    // ctx.globalCompositeOperation = 'source-atop'
+    let nv = CanvasUtil2.getInstance().storedTransform
+    ctx.setTransform(nv.a, nv.b, nv.c, nv.d, nv.e, nv.f)
+
+    if (false) {
+      draw.drawRound(ctx, this.conf.box.topLeft)
+      draw.drawRound(ctx, this.conf.box.topRight)
+      draw.drawRound(ctx, this.conf.box.bottomLeft)
+      draw.drawRound(ctx, this.conf.box.bottomRight)
+      draw.drawRound(ctx, this.conf.center)
+      draw.drawRound(ctx, this.conf.original)
+    }
+
+    for (let i = 0; i < this.children.length; i++) {
+      let shape = this.children[i]
+      shape.shapeRender(ctx, this.conf)
+    }
+    ctx.restore()
+
+    if (this.status !== ShapeStatus.Normal) {
+      CanvasUtil2.getInstance().waitRenderOtherStatusFunc.push(() => this.renderOtherStatus(ctx, {x, y}))
+    }
+    // this.renderOtherStatus(ctx, {x, y})
+  }
+
+  renderOtherStatus(ctx: CanvasRenderingContext2D, {x, y}: any) {
+    ctx.save()
+    draw.calcPosition(ctx, this.conf, this.original,)
+    let newConf = merge(cloneDeep(this.conf), {layout: {x, y}})
+    if (this.status === ShapeStatus.Hover) {
+      draw.hover(ctx, newConf)
+    }
+    if (this.status === ShapeStatus.Select) {
+      draw.selected(ctx, newConf)
+      if (this.isSelectHover) {
+        this.renderSelectedHover(ctx, newConf)
+      }
+    }
+    if (this.status === ShapeStatus.Edit) {
+      this.renderEdit(ctx, newConf)
+    }
+    ctx.restore()
+  }
+
   shapeIsIn(mousePoint: P, cu: CanvasUtil2, parent?: BaseShape): boolean {
     //如果操作中，那么永远返回ture，保持事件一直直接传递到当前图形上
     if (this.enter || this.enterType !== MouseOptionType.None) {
@@ -181,7 +211,7 @@ export abstract class BaseShape {
       y = s2.y
     }
 
-    if ([ShapeStatus.Select].includes(this.status)) {
+    if (this.status === ShapeStatus.Select) {
       /*
       * 同上原因，判断是否在图形内，不需要翻转点。
       * */
@@ -251,62 +281,9 @@ export abstract class BaseShape {
 
       //未命中 点
       document.body.style.cursor = "default"
-      this.resetHover()
+      this.hoverType = MouseOptionType.None
     }
     return this.isHoverIn({x, y}, cu)
-  }
-
-  shapeRender(ctx: CanvasRenderingContext2D, parent?: BaseConfig) {
-    // ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.save()
-    let {x, y} = draw.calcPosition(ctx, this.conf, this.original,)
-    // console.log(`:${},:${},:${},:${},name:${this.conf.name}`)
-    // console.log('------------')
-    this.render(ctx, {x, y}, parent,)
-    // ctx.globalCompositeOperation = 'source-atop'
-    // ctx.resetTransform()
-    // ctx.restore()
-    let nv = CanvasUtil2.getInstance().storedTransform
-    ctx.setTransform(nv.a, nv.b, nv.c, nv.d, nv.e, nv.f)
-
-    if (false) {
-      draw.drawRound(ctx, this.conf.box.topLeft)
-      draw.drawRound(ctx, this.conf.box.topRight)
-      draw.drawRound(ctx, this.conf.box.bottomLeft)
-      draw.drawRound(ctx, this.conf.box.bottomRight)
-      draw.drawRound(ctx, this.conf.center)
-      draw.drawRound(ctx, this.conf.original)
-    }
-
-    for (let i = 0; i < this.children.length; i++) {
-      let shape = this.children[i]
-      shape.shapeRender(ctx, this.conf)
-    }
-    ctx.restore()
-
-    if (this.status !== ShapeStatus.Normal) {
-      CanvasUtil2.getInstance().waitRenderOtherStatusFunc.push(() => this.renderOtherStatus(ctx, {x, y}))
-    }
-    // this.renderOtherStatus(ctx, {x, y})
-  }
-
-  renderOtherStatus(ctx: CanvasRenderingContext2D, {x, y}: any) {
-    ctx.save()
-    draw.calcPosition(ctx, this.conf, this.original,)
-    let newConf = merge(cloneDeep(this.conf), {layout: {x, y}})
-    if (this.status === ShapeStatus.Hover) {
-      draw.hover(ctx, newConf)
-    }
-    if (this.status === ShapeStatus.Select) {
-      draw.selected(ctx, newConf)
-      if (this.isSelectHover) {
-        this.renderSelectedHover(ctx, newConf)
-      }
-    }
-    if (this.status === ShapeStatus.Edit) {
-      this.renderEdit(ctx, newConf)
-    }
-    ctx.restore()
   }
 
   /** @desc 事件转发方法
@@ -314,7 +291,7 @@ export abstract class BaseShape {
    * @param parent 父级链
    * @param isParentDbClick 是否是来自父级双击，是的话，不用转发事件
    * */
-  event(event: BaseEvent2, parent?: BaseShape[], isParentDbClick?: boolean) {
+  event2(event: BaseEvent2, parent?: BaseShape[], isParentDbClick?: boolean) {
     let {e, point, type} = event
     // if (this.config.name === '父组件')debugger
     // console.log('event', this.config.name, `type：${type}`,)
@@ -367,14 +344,58 @@ export abstract class BaseShape {
         this.isSelectHover = false
       }
       cu.setInShapeNull(this)
-      for (let i = 0; i < this.children.length; i++) {
-        let shape = this.children[i]
-        let isBreak = shape.event(event, parent?.concat([this]))
-        if (isBreak) break
+      // for (let i = 0; i < this.children.length; i++) {
+      //   let shape = this.children[i]
+      //   let isBreak = shape.event(event, parent?.concat([this]))
+      //   if (isBreak) break
+      // }
+    }
+    return false
+  }
+
+  log(val: string) {
+    console.log(this.conf.name, ':', val)
+  }
+
+  event(event: BaseEvent2, parent?: BaseShape[], isParentDbClick?: boolean): boolean {
+    let {e, point, type} = event
+
+    // 如果在操作中，那么就不要再向下传递事件啦，再向下传递事件，会导致子父冲突
+    if (this.enterType !== MouseOptionType.None || this.enter) {
+      this.emit(event, parent)
+      /** @desc 把事件消费了，不然父级会使用
+       * */
+      event.stopPropagation()
+      return true
+    }
+    let cu = CanvasUtil2.getInstance()
+    if (this.shapeIsIn(point, cu, parent?.[parent?.length - 1])) {
+      // this.log('in')
+      if (this.canNext(cu)) {
+        // if (true) {
+        for (let i = 0; i < this.children.length; i++) {
+          this.children[i].event(event, parent?.concat([this]))
+          //如果事件被子组件消费了，就不往下执行了
+          if (event.capture) return true
+        }
+      }
+      this.emit(event, parent)
+      event.stopPropagation()
+    } else {
+      // this.log('noin')
+      if (this.status === ShapeStatus.Hover) this.status = ShapeStatus.Normal
+      if (this.isSelectHover) this.isSelectHover = false
+      cu.setInShapeNull(this)
+      if (!this.conf.clip) {
+        for (let i = 0; i < this.children.length; i++) {
+          this.children[i].event(event, parent?.concat([this]))
+          if (event.capture) return true
+        }
       }
     }
     return false
   }
+
 
   emit(event: BaseEvent2, p: BaseShape[] = []) {
     let {e, point, type} = event
@@ -482,7 +503,7 @@ export abstract class BaseShape {
 
     //默认选中以及拖动
     this.enter = true
-    if ([ShapeStatus.Select].includes(this.status)) return
+    if (this.status === ShapeStatus.Select) return
     this.status = ShapeStatus.Select
     this.isCapture = true
     //如果当前选中的图形不是自己，那么把那个图形设为未选中
@@ -542,7 +563,8 @@ export abstract class BaseShape {
     // if (e.capture) return
     // console.log('mouseup')
     if (this.childMouseUp(event, parents)) return
-    this.resetEnter()
+    this.enterType = MouseOptionType.None
+    this.enter = false
   }
 
   //移动图形

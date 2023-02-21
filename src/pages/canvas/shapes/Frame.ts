@@ -1,7 +1,6 @@
 import {BaseShape} from "./BaseShape"
 import CanvasUtil2 from "../CanvasUtil2"
-import {BaseEvent2, P, ShapeProps, ShapeType} from "../utils/type"
-import {drawSelectedHover} from "./Ellipse/draw"
+import {BaseEvent2, P, ShapeProps, ShapeStatus} from "../utils/type"
 import {BaseConfig} from "../config/BaseConfig"
 import draw from "../utils/draw"
 import {getRotatedPoint} from "../../../utils"
@@ -78,7 +77,7 @@ export class Frame extends BaseShape {
   }
 
   childMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean {
-    if (this.isSelect) return false
+    if (this.status === ShapeStatus.Select) return false
 
     if (this.isOnlyHoverInName()) {
       return !this.isInName(event.point, true)
@@ -87,7 +86,7 @@ export class Frame extends BaseShape {
   }
 
   childMouseMove(event: BaseEvent2, parents: BaseShape[]) {
-    if (this.isSelect) return false
+    if (this.status === ShapeStatus.Select) return false
     if (this.isOnlyHoverInName()) {
       return !this.isInName(event.point, true)
     }

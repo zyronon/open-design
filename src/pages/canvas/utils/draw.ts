@@ -13,10 +13,9 @@ export default {
     ctx: CanvasRenderingContext2D,
     conf: BaseConfig,
     original: any,
-    status: any,
+    status?: any,
     parent?: BaseConfig,
   ) {
-    const {isHover, isSelect, enterL, enterLT} = status
     let {
       layout: {x, y, w, h,},
       radius, absolute,

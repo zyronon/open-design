@@ -221,6 +221,6 @@ export enum ShapeStatus {
   Normal = 'Normal',
   Hover = 'Hover',
   Select = 'Select',
-  SelectHover = 'SelectHover',
+  // SelectHover = 'SelectHover',
   Edit = 'Edit'
 }

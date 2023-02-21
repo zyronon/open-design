@@ -1,6 +1,6 @@
 import {BaseShape} from "./shapes/BaseShape"
 import EventBus from "../../utils/event-bus"
-import {BaseEvent2, EventTypes, P, ShapeType} from "./utils/type"
+import {BaseEvent2, EventTypes, P, ShapeStatus, ShapeType} from "./utils/type"
 import {cloneDeep, throttle} from "lodash"
 import {config} from "./utils/constant"
 import {mat4} from "gl-matrix"
@@ -67,6 +67,7 @@ export default class CanvasUtil2 {
   cursor: string = 'default'
   _data: any = {}
   private renderTime: any = undefined
+  waitRenderOtherStatusFunc: any[] = []
 
   constructor(canvas: HTMLCanvasElement) {
     this.init(canvas)
@@ -112,7 +113,9 @@ export default class CanvasUtil2 {
     if (this.inShape !== shape) {
       // console.log('shape', shape?.config?.name)
       if (this.inShape) {
-        this.inShape.isHover = false
+        if (this.inShape.status === ShapeStatus.Hover) {
+          this.inShape.status = ShapeStatus.Normal
+        }
       }
       this.inShape = shape
       this.render()
@@ -122,7 +125,7 @@ export default class CanvasUtil2 {
   //设置选中的Shape
   setSelectShape(shape: BaseShape, parent?: BaseShape[]) {
     if (this.selectedShape && this.selectedShape !== shape) {
-      this.selectedShape.isSelect = this.selectedShape.isEdit = false
+      this.selectedShape.status = ShapeStatus.Normal
     }
     this.selectedShapeParent.map((shape: BaseShape) => shape.isCapture = true)
     this.selectedShapeParent = parent
@@ -185,6 +188,8 @@ export default class CanvasUtil2 {
       let shape = this.children[i]
       shape.shapeRender(this.ctx)
     }
+    this.waitRenderOtherStatusFunc.map(cb => cb())
+    this.waitRenderOtherStatusFunc = []
     this.ctx.restore()
   }
 
@@ -267,8 +272,7 @@ export default class CanvasUtil2 {
     if (e.capture) return
     console.log('cu-onDbClick', e)
     if (this.editShape) {
-      this.editShape.isEdit = false
-      this.editShape.isSelect = true
+      this.editShape.status = ShapeStatus.Select
       this.editShape = null
       this.render()
     }
@@ -280,7 +284,7 @@ export default class CanvasUtil2 {
     // console.log('cu-onMouseDown', e)
     this.selectedShapeParent.map((shape: BaseShape) => shape.isCapture = true)
     if (this.selectedShape) {
-      this.selectedShape.isEdit = this.selectedShape.isSelect = false
+      this.selectedShape.status = ShapeStatus.Normal
       this.render()
     }
     if (!this.isDesignMode()) {
@@ -307,7 +311,7 @@ export default class CanvasUtil2 {
             }
             //太小了select都看不见
             if (w > 10) {
-              this.newShape.isSelect = true
+              this.newShape.status = ShapeStatus.Select
             }
             // EventBus.emit(EventMapTypes.onMouseMove, this.newShape)
             this.newShape.conf = helper.getPath(this.newShape.conf)
@@ -431,7 +435,6 @@ export default class CanvasUtil2 {
   print2() {
     return this.printO(cloneDeep(this.children), true)
   }
-
 
   setMode(mode: ShapeType) {
     console.log('mode', mode)

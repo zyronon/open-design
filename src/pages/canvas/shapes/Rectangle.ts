@@ -1,6 +1,6 @@
 import {BaseShape} from "./BaseShape"
 import CanvasUtil2 from "../CanvasUtil2"
-import {BaseEvent2, BezierPoint, BezierPointType, getP2, LineType, P, P2, ShapeType} from "../utils/type"
+import {BaseEvent2, BezierPoint, BezierPointType, getP2, LineType, P, P2, ShapeStatus, ShapeType} from "../utils/type"
 import {jiaodu2hudu} from "../../../utils"
 import {Colors} from "../utils/constant"
 import {BaseConfig} from "../config/BaseConfig"
@@ -46,7 +46,7 @@ export class Rectangle extends BaseShape {
 
   childMouseDown(event: BaseEvent2, parents: BaseShape[]) {
     // console.log('childMouseDown', this.hoverPointIndex)
-    if (this.isEdit) {
+    if (this.status === ShapeStatus.Edit) {
       this._config.isCustom = true
       this.enter = true
       return true
@@ -56,7 +56,7 @@ export class Rectangle extends BaseShape {
 
   childMouseMove(event: BaseEvent2, parents: BaseShape[]) {
     // console.log('childMouseMove', this.hoverPointIndex)
-    if (this.isEdit) {
+    if (this.status === ShapeStatus.Edit) {
       if (this.hoverPointIndex < 0 || !this.enter) return false
       let {x, y,} = event.point
       let cu = CanvasUtil2.getInstance()
@@ -85,7 +85,7 @@ export class Rectangle extends BaseShape {
   }
 
   isHoverIn(mousePoint: P, cu: CanvasUtil2): boolean {
-    if (this.isEdit) {
+    if (this.status === ShapeStatus.Edit) {
       let {x, y, w, h, points} = this._config
       this.hoverPointIndex = -1
       mousePoint.x = mousePoint.x - x - w / 2

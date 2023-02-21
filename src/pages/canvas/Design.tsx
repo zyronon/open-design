@@ -83,6 +83,14 @@ class Design extends React.Component<any, IState> {
     this.state.cu.render()
   }
 
+  clip = () => {
+    if (this.state.selectShape) {
+      this.state.selectShape.conf.clip = !this.state.selectShape.conf.clip
+    }
+    this.setState({selectShape: this.state.selectShape})
+    this.state.cu.render()
+  }
+
 
   onContextMenu = (e: any) => {
     e.preventDefault()
@@ -130,7 +138,7 @@ class Design extends React.Component<any, IState> {
     // console.log('selectRectConf', selectRectConf?.fontFamily)
     // @ts-ignore
     const selectRectConf: BaseConfig = selectShape?.conf
-    const hide = true
+    const hide = false
 
     return <>
       <div className={cx('design', {'white': hide})}>
@@ -290,7 +298,9 @@ class Design extends React.Component<any, IState> {
                                      prefix={<span className={'gray'}>H</span>}/>
                         </div>
                         <div className="col">
-                          <BaseIcon active={false}>
+                          <BaseIcon active={selectRectConf.clip}
+                                    onClick={this.clip}
+                          >
                             <Unlock theme="outline" size="16" fill="#929596"/>
                           </BaseIcon>
                         </div>

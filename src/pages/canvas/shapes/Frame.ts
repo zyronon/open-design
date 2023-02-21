@@ -60,9 +60,9 @@ export class Frame extends BaseShape {
   }
 
   isHoverIn(mousePoint: P, cu: CanvasUtil2): boolean {
-    // if (this.isOnlyHoverInName()) {
-    //   return this.isInName(mousePoint) || super.isInBox(mousePoint)
-    // }
+    if (this.isOnlyHoverInName()) {
+      return this.isInName(mousePoint) || super.isInBox(mousePoint)
+    }
     return super.isInBox(mousePoint)
   }
 
@@ -78,9 +78,14 @@ export class Frame extends BaseShape {
 
   childMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean {
     if (this.status === ShapeStatus.Select) return false
-
     if (this.isOnlyHoverInName()) {
-      return !this.isInName(event.point, true)
+      if (this.isInName(event.point, true)) {
+        return false
+      }
+      if (super.isInBox(event.point,)) {
+        event.cancelStopPropagation()
+      }
+      return true
     }
     return false
   }
@@ -107,7 +112,7 @@ export class Frame extends BaseShape {
       radius,
       fillColor, borderColor, rotation, lineWidth,
       type, flipVertical, flipHorizontal, children,
-      name,clip
+      name, clip
     } = this.conf
     const {x, y} = p
     if (radius) {

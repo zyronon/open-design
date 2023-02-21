@@ -1,11 +1,13 @@
-import {memo} from "react";
+import {memo} from "react"
 import './index.scss'
-import cx from "classnames";
+import cx from "classnames"
 
 export default memo((props: any) => {
-  const {active} = props
+  const {active, ...reset} = props
   return (
-    <div className={cx('d-icon', active && 'active')}>
+    <div
+      {...reset}
+      className={cx('d-icon', active && 'active')}>
       {props.children}
     </div>
   )

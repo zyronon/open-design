@@ -14,7 +14,7 @@ export abstract class BaseShape {
   enterRd1: boolean = false
   hoverType: MouseOptionType = MouseOptionType.None
   enterType: MouseOptionType = MouseOptionType.None
-  public conf: BaseConfig
+  conf: BaseConfig
   children: BaseShape[] = []
   status: ShapeStatus = ShapeStatus.Normal
   isSelectHover: boolean = false
@@ -69,22 +69,6 @@ export abstract class BaseShape {
    * */
   abstract beforeShapeIsIn(): boolean
 
-  /**
-   * 事件向下传递的先决条件：有子级，自己没有父级
-   * 1、有子级
-   * 2、自己没有父级
-   * 3、类型为FRAME
-   * 再判断是否捕获、是否是设计模式
-   * */
-  canNext(cu: CanvasUtil2): boolean {
-    if (this.conf.type === ShapeType.FRAME) {
-      if (this.children.length && !this.parent) {
-        return true
-      }
-    }
-    return !this.isCapture || !cu.isDesignMode()
-  }
-
   getStatus() {
     return `
     <div>
@@ -121,6 +105,22 @@ export abstract class BaseShape {
         relativeCenterY:${this.conf.relativeCenter?.y.toFixed(2)}    
 </div>
     `
+  }
+
+  /**
+   * 事件向下传递的先决条件：有子级，自己没有父级
+   * 1、有子级
+   * 2、自己没有父级
+   * 3、类型为FRAME
+   * 再判断是否捕获、是否是设计模式
+   * */
+  canNext(cu: CanvasUtil2): boolean {
+    if (this.conf.type === ShapeType.FRAME) {
+      if (this.children.length && !this.parent) {
+        return true
+      }
+    }
+    return !this.isCapture || !cu.isDesignMode()
   }
 
   /**
@@ -362,10 +362,9 @@ export abstract class BaseShape {
 
     // 如果在操作中，那么就不要再向下传递事件啦，再向下传递事件，会导致子父冲突
     if (this.enterType !== MouseOptionType.None || this.enter) {
-      this.emit(event, parent)
-      /** @desc 把事件消费了，不然父级会使用
-       * */
+      //把事件消费了，不然父级会使用
       event.stopPropagation()
+      this.emit(event, parent)
       return true
     }
     let cu = CanvasUtil2.getInstance()
@@ -379,8 +378,9 @@ export abstract class BaseShape {
           if (event.capture) return true
         }
       }
-      this.emit(event, parent)
+      //顺序不能反，先消费事件。因为emit里面可能会恢复事件。
       event.stopPropagation()
+      this.emit(event, parent)
     } else {
       // this.log('noin')
       if (this.status === ShapeStatus.Hover) this.status = ShapeStatus.Normal
@@ -395,7 +395,6 @@ export abstract class BaseShape {
     }
     return false
   }
-
 
   emit(event: BaseEvent2, p: BaseShape[] = []) {
     let {e, point, type} = event

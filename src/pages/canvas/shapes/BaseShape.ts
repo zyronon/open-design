@@ -670,13 +670,9 @@ export abstract class BaseShape {
       // console.log(currentAngleMovePoint.x, this.diagonal.x)
       let isReverseW = false
       if (this.original.flipHorizontal) {
-        if (currentAngleMovePoint.x < this.diagonal.x) {
-          isReverseW = true
-        }
+        if (currentAngleMovePoint.x < this.diagonal.x) isReverseW = true
       } else {
-        if (currentAngleMovePoint.x > this.diagonal.x) {
-          isReverseW = true
-        }
+        if (currentAngleMovePoint.x > this.diagonal.x) isReverseW = true
       }
       if (isReverseW) {
         if (conf.flipHorizontal === this.original.flipHorizontal) {
@@ -809,18 +805,20 @@ export abstract class BaseShape {
 
   flip(type: number, isCalcRotation: boolean = true) {
     let conf = this.conf
-    if (isCalcRotation) {
-      let {realRotation,} = conf
-      conf.realRotation = -realRotation
-      conf.rotation = (conf.realRotation - (this.parent?.conf?.realRotation ?? 0)).toFixed2(2)
-    }
     if (type === 0) {
       conf.flipHorizontal = !conf.flipHorizontal
     } else {
       conf.flipVertical = !conf.flipVertical
     }
+    if (isCalcRotation) {
+      let {realRotation,} = conf
+      conf.realRotation = -realRotation
+      conf.rotation = (conf.realRotation - (this.parent?.conf?.realRotation ?? 0)).toFixed2(2)
+    }
     this.conf = helper.calcConf(conf, this.parent?.conf)
-    this.changeChildrenFlip(type, this.conf.center)
+    if (isCalcRotation){
+      this.changeChildrenFlip(type, this.conf.center)
+    }
     CanvasUtil2.getInstance().render()
   }
 

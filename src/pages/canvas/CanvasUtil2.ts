@@ -231,20 +231,25 @@ export default class CanvasUtil2 {
       }
     }
     if (this.isDesignMode()) {
-      // if (this.selectedShape) {
-      //   this.selectedShape.event(event, this.selectedShapeParent)
-      // } else
-      if (this.editShape) {
-        this.editShape.event(event, [])
-      } else if (this.inShape) {
-        this.inShape.event(event, this.inShapeParent)
+      if (this.selectedShape?.event(event, this.selectedShapeParent)) {
+        if (this.inShape) {
+          this.inShape.event(event, this.inShapeParent)
+        }
       } else {
-        for (let i = 0; i < this.children.length; i++) {
-          let shape = this.children[i]
-          shape.event(event, [])
-          if (event.capture) break
+        if (this.inShape) {
+          this.inShape.event(event, this.inShapeParent)
+        } else {
+          for (let i = 0; i < this.children.length; i++) {
+            let shape = this.children[i]
+            shape.event(event, [])
+            if (event.capture) break
+          }
         }
       }
+
+      // if (this.editShape) {
+      //   this.editShape.event(event, [])
+      // } else
     }
 
     if (event.type === EventTypes.onMouseMove) {
@@ -280,6 +285,8 @@ export default class CanvasUtil2 {
     if (this.selectedShape) {
       this.selectedShape.status = ShapeStatus.Normal
       this.render()
+      this.selectedShapeParent = []
+      this.selectedShape = null
     }
     if (!this.isDesignMode()) {
       this.startX = e.point.x

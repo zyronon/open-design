@@ -319,7 +319,7 @@ export abstract class BaseShape {
     }
     let cu = CanvasUtil2.getInstance()
     if (this.shapeIsIn(point, cu, parents?.[parents?.length - 1])) {
-      this.log('in:' + cu.inShape?.conf?.name)
+      // this.log('in:' + cu.inShape?.conf?.name)
       if (
         //如果是容器，并且裁剪了、或者父级不裁剪
         (this.conf.clip && this.conf.type === ShapeType.FRAME)
@@ -337,8 +337,9 @@ export abstract class BaseShape {
       //顺序不能反，先消费事件。因为emit里面可能会恢复事件。
       event.stopPropagation()
       this.emit(event, parents)
+      return true
     } else {
-      this.log('noin')
+      // this.log('noin')
       if (this.status === ShapeStatus.Hover) this.status = ShapeStatus.Normal
       if (this.isSelectHover) this.isSelectHover = false
       cu.setInShapeNull(this)
@@ -360,8 +361,8 @@ export abstract class BaseShape {
           if (event.capture) break
         }
       }
+      return false
     }
-    return false
   }
 
   emit(event: BaseEvent2, p: BaseShape[] = []) {

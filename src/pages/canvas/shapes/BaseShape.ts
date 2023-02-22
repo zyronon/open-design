@@ -16,7 +16,7 @@ export abstract class BaseShape {
   enterType: MouseOptionType = MouseOptionType.None
   conf: BaseConfig
   children: BaseShape[] = []
-  status: ShapeStatus = ShapeStatus.Normal
+  _status: ShapeStatus = ShapeStatus.Normal
   isSelectHover: boolean = false
   isCapture: boolean = true//是否捕获事件，为true不会再往下传递事件
   enter: boolean = false
@@ -26,6 +26,15 @@ export abstract class BaseShape {
   diagonal: P = {x: 0, y: 0}//对面的点（和handlePoint相反的点），如果handlePoint是中间点，那么这个也是中间点
   handlePoint: P = {x: 0, y: 0}//鼠标按住那条边的中间点（当前角度），非鼠标点
   parent?: BaseShape
+
+  get status() {
+    return this._status
+  }
+
+  set status(val) {
+    this._status = val
+    CanvasUtil2.getInstance().render()
+  }
 
   constructor(props: ShapeProps) {
     // console.log('props', clone(props))
@@ -108,13 +117,15 @@ export abstract class BaseShape {
   }
 
   /**
-   * 事件向下传递的先决条件：有子级，自己没有父级
+   * 事件向下传递的先决条件
    * 1、有子级
    * 2、自己没有父级
    * 3、类型为FRAME
+   * 4、当前hoverType等于空
    * 再判断是否捕获、是否是设计模式
    * */
   canNext(cu: CanvasUtil2): boolean {
+    if (this.hoverType !== MouseOptionType.None) return false
     if (this.conf.type === ShapeType.FRAME) {
       if (this.children.length && !this.parent) {
         return true
@@ -286,110 +297,67 @@ export abstract class BaseShape {
     return this.isHoverIn({x, y}, cu)
   }
 
-  /** @desc 事件转发方法
-   * @param event 合成的事件
-   * @param parent 父级链
-   * @param isParentDbClick 是否是来自父级双击，是的话，不用转发事件
-   * */
-  event2(event: BaseEvent2, parent?: BaseShape[], isParentDbClick?: boolean) {
-    let {e, point, type} = event
-    // if (this.config.name === '父组件')debugger
-    // console.log('event', this.config.name, `type：${type}`,)
-    if (event.capture) return true
-    // 如果在操作中，那么就不要再向下传递事件啦，再向下传递事件，会导致子父冲突
-    if (this.enterType !== MouseOptionType.None || this.enter) {
-      /** @desc 把事件消费了，不然父级会使用
-       * */
-      event.stopPropagation()
-      return this.emit(event, parent)
-    }
-
-    let cu = CanvasUtil2.getInstance()
-    if (this.shapeIsIn(point, cu, parent?.[parent?.length - 1])) {
-      // console.log('in')
-      // return true
-      // console.log('捕获', this.config.name)
-      if (this.canNext(cu)) {
-        // if (true) {
-        for (let i = 0; i < this.children.length; i++) {
-          let shape = this.children[i]
-          let isBreak = shape.event(event, parent?.concat([this]))
-          if (isBreak) break
-        }
-      }
-
-      if (event.capture) return true
-
-      if (isParentDbClick) {
-        //这需要mousedown把图形选中，和链设置好
-        this.mousedown(event, parent)
-        //手动重置一个enter，不然会跟手
-        this.mouseup(event, parent)
-      } else {
-        // if (!eventIsNext) {
-        if (true) {
-          this.emit(event, parent)
-        }
-      }
-      event.stopPropagation()
-      return true
-      // console.log('冒泡', this.config.name)
-    } else {
-      // console.log('out')
-      // document.body.style.cursor = "default"
-      if (this.status === ShapeStatus.Hover) {
-        this.status = ShapeStatus.Normal
-      }
-      if (this.isSelectHover) {
-        this.isSelectHover = false
-      }
-      cu.setInShapeNull(this)
-      // for (let i = 0; i < this.children.length; i++) {
-      //   let shape = this.children[i]
-      //   let isBreak = shape.event(event, parent?.concat([this]))
-      //   if (isBreak) break
-      // }
-    }
-    return false
-  }
 
   log(val: string) {
     console.log(this.conf.name, ':', val)
   }
 
-  event(event: BaseEvent2, parent?: BaseShape[], isParentDbClick?: boolean): boolean {
+  /** @desc 事件转发方法
+   * @param event 合成的事件
+   * @param parents 父级链
+   * @param isParentDbClick 是否是来自父级双击，是的话，不用转发事件
+   * */
+  event(event: BaseEvent2, parents?: BaseShape[], isParentDbClick?: boolean): boolean {
     let {e, point, type} = event
 
     // 如果在操作中，那么就不要再向下传递事件啦，再向下传递事件，会导致子父冲突
     if (this.enterType !== MouseOptionType.None || this.enter) {
       //把事件消费了，不然父级会使用
       event.stopPropagation()
-      this.emit(event, parent)
+      this.emit(event, parents)
       return true
     }
     let cu = CanvasUtil2.getInstance()
-    if (this.shapeIsIn(point, cu, parent?.[parent?.length - 1])) {
-      // this.log('in')
+    if (this.shapeIsIn(point, cu, parents?.[parents?.length - 1])) {
+      this.log('in:' + cu.inShape?.conf?.name)
+      if (
+        //如果是容器，并且裁剪了、或者父级不裁剪
+        (this.conf.clip && this.conf.type === ShapeType.FRAME)
+        || !this.parent?.conf.clip
+      ) {
+        cu.setInShape(this, parents)
+      }
       if (this.canNext(cu)) {
-        // if (true) {
         for (let i = 0; i < this.children.length; i++) {
-          this.children[i].event(event, parent?.concat([this]))
+          this.children[i].event(event, parents?.concat([this]))
           //如果事件被子组件消费了，就不往下执行了
           if (event.capture) return true
         }
       }
       //顺序不能反，先消费事件。因为emit里面可能会恢复事件。
       event.stopPropagation()
-      this.emit(event, parent)
+      this.emit(event, parents)
     } else {
-      // this.log('noin')
+      this.log('noin')
       if (this.status === ShapeStatus.Hover) this.status = ShapeStatus.Normal
       if (this.isSelectHover) this.isSelectHover = false
       cu.setInShapeNull(this)
-      if (!this.conf.clip) {
+      if (this.conf.clip) {
+        //如果裁剪，自己已经不在容器内。那么要把子组件状态重置（适用于，子组件有一半在父组件外面的情况）
+        this.children.map(item => {
+          if (item.status === ShapeStatus.Hover) item.status = ShapeStatus.Normal
+        })
+        //状态等于选中的子组件。还是要向下传递事件，以触发对应4个角的hover
         for (let i = 0; i < this.children.length; i++) {
-          this.children[i].event(event, parent?.concat([this]))
-          if (event.capture) return true
+          if (this.children[i].status === ShapeStatus.Select) {
+            this.children[i].event(event, parents?.concat([this]))
+            if (event.capture) break
+          }
+        }
+      } else {
+        for (let i = 0; i < this.children.length; i++) {
+          this.children[i].event(event, parents?.concat([this]))
+          if (event.capture) break
         }
       }
     }
@@ -421,7 +389,6 @@ export abstract class BaseShape {
   mousedown(event: BaseEvent2, parents: BaseShape[] = []) {
     // console.log('mousedown', this.conf.name, this.enterType, this.hoverType)
     EventBus.emit(EventMapTypes.onMouseDown, this)
-
     if (this.childMouseDown(event, parents)) return
 
     let {e, point: {x, y}, type} = event
@@ -518,17 +485,16 @@ export abstract class BaseShape {
     if (this.status !== ShapeStatus.Edit) {
       if (this.status === ShapeStatus.Normal) {
         this.status = ShapeStatus.Hover
+        if (this.parent) {
+          if (this.parent.status === ShapeStatus.Hover) {
+            this.parent.status = ShapeStatus.Normal
+          }
+        }
       }
       if (this.status === ShapeStatus.Select) {
         this.isSelectHover = true
       }
     }
-    //设置当前的inShape为自己，这位的位置很重要，当前的inShape是唯一的
-    //如果放在e.capture前面，那么会被子组件给覆盖。所以放在e.capture后面
-    //子组件isSelect或者isHover之后会stopPropagation，那么父组件就不会往
-    //下执行了
-    let cu = CanvasUtil2.getInstance()
-    cu.setInShape(this, parents)
 
     switch (this.enterType) {
       case MouseOptionType.Left:

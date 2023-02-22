@@ -50,7 +50,7 @@ export default class CanvasUtil2 {
   //选中图形
   selectedShape: any
   //选中图形的父级链，选中新的图形时，需要把老的父级链的isCapture全部设为ture,
-  //原因：选中新图形后，hover老图形时依然能hover中，所以需要把老的低级链isCapture全部设为ture
+  //原因：选中新图形后，hover老图形时依然能hover中，所以需要把老的父级链isCapture全部设为ture
   //屏蔽事件向下传递
   selectedShapeParent: any = []
   editShape: any
@@ -106,19 +106,19 @@ export default class CanvasUtil2 {
   }
 
   //设置inShape
-  setInShape(shape: BaseShape, parent?: BaseShape[]) {
+  setInShape(target: BaseShape, parent?: BaseShape[]) {
     if (this.inShapeParent !== parent) {
       this.inShapeParent = parent
     }
-    if (this.inShape !== shape) {
-      // console.log('shape', shape?.config?.name)
-      if (this.inShape) {
-        if (this.inShape.status === ShapeStatus.Hover) {
-          this.inShape.status = ShapeStatus.Normal
-        }
-      }
-      this.inShape = shape
-      this.render()
+    if (this.inShape !== target) {
+      this.inShape = target
+    }
+  }
+
+  //设置inShape为null
+  setInShapeNull(target: BaseShape) {
+    if (this.inShape === target) {
+      this.inShape = null
     }
   }
 
@@ -132,14 +132,6 @@ export default class CanvasUtil2 {
     this.selectedShapeParent.map((shape: BaseShape) => shape.isCapture = false)
     this.selectedShape = shape
     this.render()
-  }
-
-  //设置inShape为null
-  setInShapeNull(target: BaseShape) {
-    if (this.inShape === target) {
-      this.inShape = null
-      this.render()
-    }
   }
 
   /**
@@ -239,17 +231,18 @@ export default class CanvasUtil2 {
       }
     }
     if (this.isDesignMode()) {
+      // if (this.selectedShape) {
+      //   this.selectedShape.event(event, this.selectedShapeParent)
+      // } else
       if (this.editShape) {
         this.editShape.event(event, [])
+      } else if (this.inShape) {
+        this.inShape.event(event, this.inShapeParent)
       } else {
-        if (this.inShape) {
-          this.inShape.event(event, this.inShapeParent)
-        } else {
-          for (let i = 0; i < this.children.length; i++) {
-            let shape = this.children[i]
-            let isBreak = await shape.event(event, [])
-            if (isBreak) break
-          }
+        for (let i = 0; i < this.children.length; i++) {
+          let shape = this.children[i]
+          shape.event(event, [])
+          if (event.capture) break
         }
       }
     }
@@ -280,7 +273,7 @@ export default class CanvasUtil2 {
 
   onMouseDown(e: BaseEvent2,) {
     if (e.capture) return
-    console.log('onMouseDown',e)
+    console.log('onMouseDown', e)
     if (this.editShape) return
     // console.log('cu-onMouseDown', e)
     this.selectedShapeParent.map((shape: BaseShape) => shape.isCapture = true)

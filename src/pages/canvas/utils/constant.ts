@@ -958,11 +958,11 @@ export const rects: any[] = [
     layout: {
       "x": 600,
       "y": 150,
-      "w": 400,
+      "w": 600,
       "h": 300,
     },
     clip: true,
-    "rotation": 10,
+    "rotation": 0,
     "lineWidth": 2,
     "type": "FRAME",
     "color": "gray",
@@ -982,10 +982,50 @@ export const rects: any[] = [
         "type": "FRAME",
         "color": "gray",
         "radius": 0,
-        children: [],
-        "children2": [
+        children2: [],
+        "children": [
           {
             "name": "容器3",
+            layout: {
+              "x": 40,
+              "y": 40,
+              "w": 150,
+              "h": 100,
+            },
+            "rotation": 0,
+            "lineWidth": 2,
+            "type": "FRAME",
+            "color": "gray",
+            "radius": 0,
+            "children": [],
+            "borderColor": "rgb(216,216,216)",
+            "fillColor": "#e1e1e1",
+            flipHorizontal: false,
+            flipVertical: false
+          },
+        ],
+        "borderColor": "rgb(216,216,216)",
+        "fillColor": "rgb(241,238,238)",
+        flipHorizontal: false,
+        flipVertical: false
+      },
+      {
+        "name": "容器2-1",
+        layout: {
+          "x": 200,
+          "y": 40,
+          "w": 250,
+          "h": 200,
+        },
+        "rotation": 0,
+        "lineWidth": 2,
+        "type": "FRAME",
+        "color": "gray",
+        "radius": 0,
+        children2: [],
+        "children": [
+          {
+            "name": "容器3-1",
             layout: {
               "x": 40,
               "y": 40,

@@ -69,14 +69,14 @@ export class Frame extends BaseShape {
   childDbClick(event: BaseEvent2, parents: BaseShape[]): boolean {
     console.log('childDbClick')
     for (let i = 0; i < this.children.length; i++) {
-      let shape = this.children[i]
-      let isBreak = shape.event(event, parents?.concat([this]), true)
-      if (isBreak) break
+      this.children[i].event(event, parents?.concat([this]), true)
+      if (event.capture) break
     }
     return true
   }
 
   childMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean {
+    return false
     if (this.status === ShapeStatus.Select) return false
     if (this.isOnlyHoverInName()) {
       if (this.isInName(event.point, true)) {

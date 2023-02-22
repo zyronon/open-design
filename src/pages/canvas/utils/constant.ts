@@ -956,13 +956,13 @@ export const rects: any[] = [
   {
     "name": "容器",
     layout: {
-      "x": 600,
+      "x": 200,
       "y": 150,
       "w": 600,
       "h": 300,
     },
-    clip: true,
-    "rotation": 0,
+    clip: false,
+    "rotation": 10,
     "lineWidth": 2,
     "type": "FRAME",
     "color": "gray",
@@ -973,7 +973,7 @@ export const rects: any[] = [
         "name": "容器2",
         layout: {
           "x": -100,
-          "y": 40,
+          "y": 80,
           "w": 250,
           "h": 200,
         },

@@ -297,7 +297,6 @@ export abstract class BaseShape {
     return this.isHoverIn({x, y}, cu)
   }
 
-
   log(val: string) {
     console.log(this.conf.name, ':', val)
   }
@@ -327,16 +326,23 @@ export abstract class BaseShape {
       ) {
         cu.setInShape(this, parents)
       }
-      if (this.canNext(cu)) {
-        for (let i = 0; i < this.children.length; i++) {
-          this.children[i].event(event, parents?.concat([this]))
-          //如果事件被子组件消费了，就不往下执行了
-          if (event.capture) return true
+      if (isParentDbClick) {
+        //这需要mousedown把图形选中，和链设置好
+        this.mousedown(event, parents)
+        //手动重置一个enter，不然会跟手
+        this.mouseup(event, parents)
+      } else {
+        if (this.canNext(cu)) {
+          for (let i = 0; i < this.children.length; i++) {
+            this.children[i].event(event, parents?.concat([this]))
+            //如果事件被子组件消费了，就不往下执行了
+            if (event.capture) return true
+          }
         }
+        //顺序不能反，先消费事件。因为emit里面可能会恢复事件。
+        event.stopPropagation()
+        this.emit(event, parents)
       }
-      //顺序不能反，先消费事件。因为emit里面可能会恢复事件。
-      event.stopPropagation()
-      this.emit(event, parents)
       return true
     } else {
       // this.log('noin')
@@ -381,10 +387,7 @@ export abstract class BaseShape {
       this.status = ShapeStatus.Normal
     }
     let cu = CanvasUtil2.getInstance()
-    this.status = ShapeStatus.Select
     cu.editShape = this
-    //节省一次刷新，放上面也可以
-    cu.render()
   }
 
   mousedown(event: BaseEvent2, parents: BaseShape[] = []) {
@@ -662,6 +665,8 @@ export abstract class BaseShape {
         x: this.diagonal.x + (currentAngleMovePoint.x - this.diagonal.x) / 2,
         y: this.diagonal.y + (currentAngleMovePoint.y - this.diagonal.y) / 2
       }
+      conf.layout.w = newWidth
+      conf.center = newCenter
       // console.log(currentAngleMovePoint.x, this.diagonal.x)
       let isReverseW = false
       if (this.original.flipHorizontal) {
@@ -682,8 +687,6 @@ export abstract class BaseShape {
           this.flip(0, false)
         }
       }
-      conf.layout.w = newWidth
-      conf.center = newCenter
     } else {
       //dx和dragRight相反
       let dx = (cu.startX - x)
@@ -721,7 +724,7 @@ export abstract class BaseShape {
     let {x, y,} = point
     let cu = CanvasUtil2.getInstance()
     let conf = this.conf
-    const {flipHorizontal, realRotation, absolute} = conf
+    const {realRotation} = conf
     if (realRotation) {
       const current = {x, y}
       const handlePoint = this.handlePoint
@@ -786,9 +789,8 @@ export abstract class BaseShape {
         conf.flipHorizontal = this.original.flipHorizontal
         conf.rotation = this.original.rotation
       }
-      let w2 = conf.layout.w / 2
-      /** 同上*/
-      conf.center.x = this.conf.layout.x + (conf.flipHorizontal ? -w2 : w2)
+      let dx2 = dx / 2
+      conf.center.x = this.original.center.x + (this.original.flipHorizontal ? -dx2 : dx2)
     }
     this.conf = helper.calcConf(conf, this.parent?.conf)
     cu.render()
@@ -807,7 +809,6 @@ export abstract class BaseShape {
 
   flip(type: number, isCalcRotation: boolean = true) {
     let conf = this.conf
-
     if (isCalcRotation) {
       let {realRotation,} = conf
       conf.realRotation = -realRotation

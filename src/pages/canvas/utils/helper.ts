@@ -317,6 +317,7 @@ export default {
       conf.absolute = this.verticalReversePoint(conf.absolute, center)
     }
     conf.original = cloneDeep(topLeft)
+    conf.absolute = cloneDeep(topLeft)
 
     let rotation = realRotation
     if (rotation) {

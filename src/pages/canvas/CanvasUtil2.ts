@@ -281,7 +281,7 @@ export default class CanvasUtil2 {
 
   onMouseDown(e: BaseEvent2,) {
     if (e.capture) return
-    console.log('onMouseDown', e)
+    // console.log('onMouseDown', e)
     if (this.editShape) return
     // console.log('cu-onMouseDown', e)
     this.selectedShapeParent.map((shape: BaseShape) => shape.isCapture = true)
@@ -417,6 +417,8 @@ export default class CanvasUtil2 {
     this.handScale = config.handScale
     this.handMove = config.handMove
     this.currentMat = new Float32Array(config.currentMat)
+    this.selectedShape = null
+    this.inShape = null
     this.children = []
   }
 

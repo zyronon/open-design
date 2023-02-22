@@ -231,11 +231,14 @@ export default class CanvasUtil2 {
       }
     }
     if (this.isDesignMode()) {
+      //如果有选中的，优先传递。选中组件是脱离父组件裁剪的。所以须单独传递事件
       if (this.selectedShape?.event(event, this.selectedShapeParent)) {
+        //容器的子组件也会hover被设置为inShape
         if (this.inShape) {
           this.inShape.event(event, this.inShapeParent)
         }
       } else {
+        //有inShape就单传，没有遍历所有组件
         if (this.inShape) {
           this.inShape.event(event, this.inShapeParent)
         } else {

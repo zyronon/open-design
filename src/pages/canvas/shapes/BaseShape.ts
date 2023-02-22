@@ -816,13 +816,31 @@ export abstract class BaseShape {
       conf.rotation = (conf.realRotation - (this.parent?.conf?.realRotation ?? 0)).toFixed2(2)
     }
     this.conf = helper.calcConf(conf, this.parent?.conf)
-    if (isCalcRotation){
+    if (isCalcRotation) {
       this.changeChildrenFlip(type, this.conf.center)
+    } else {
+      this.changeChildrenFlip2(type, this.conf.center)
     }
     CanvasUtil2.getInstance().render()
   }
 
   changeChildrenFlip(type: number, center: P) {
+    this.children.forEach(item => {
+      item.conf.realRotation = -item.conf.realRotation
+      if (type === 0) {
+        item.conf.center = helper.horizontalReversePoint(item.conf.center, center)
+        item.conf.flipHorizontal = !item.conf.flipHorizontal
+      } else {
+        item.conf.center = helper.verticalReversePoint(item.conf.center, center)
+        item.conf.flipVertical = !item.conf.flipVertical
+      }
+      item.conf = helper.calcConf(item.conf, item.parent?.conf)
+      item.changeChildrenFlip(type, center)
+    })
+  }
+
+
+  changeChildrenFlip2(type: number, center: P) {
     this.children.forEach(item => {
       item.conf.realRotation = -item.conf.realRotation
       if (type === 0) {

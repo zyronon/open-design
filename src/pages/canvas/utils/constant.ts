@@ -962,7 +962,7 @@ export const rects: any[] = [
       "h": 300,
     },
     clip: false,
-    "rotation": 10,
+    "rotation": 0,
     "lineWidth": 2,
     "type": "FRAME",
     "color": "gray",
@@ -1048,7 +1048,7 @@ export const rects: any[] = [
         "fillColor": "rgb(241,238,238)",
         flipHorizontal: false,
         flipVertical: false
-      },
+      }
     ],
     "borderColor": "rgb(216,216,216)",
     "fillColor": "#e1e1e1",

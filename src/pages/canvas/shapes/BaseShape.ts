@@ -642,9 +642,9 @@ export abstract class BaseShape {
     cu.render()
   }
 
-  //拖动左边
+  //拖动左边，最完整的
   dragLeft(point: P) {
-    console.log('拖动左边')
+    // console.log('拖动左边')
     let {x, y,} = point
     let cu = CanvasUtil2.getInstance()
     let conf = this.conf
@@ -689,6 +689,9 @@ export abstract class BaseShape {
       //如果水平翻转，那么移动距离取反
       if (this.original.flipHorizontal) dx = -dx
       conf.layout.w = this.original.layout.w + dx
+      let dx2 = dx / 2
+      //同上
+      conf.center.x = this.original.center.x + (this.original.flipHorizontal ? dx2 : -dx2)
       //是否要反转w值，因为反向拉动会使w值，越来越小，小于0之后就是负值了,判断拖动距离 加上 宽度是否小于0就完事了
       let isReverseW = false
       if (this.original.layout.w + dx < 0) {
@@ -697,18 +700,16 @@ export abstract class BaseShape {
       // console.log('isReverseW',isReverseW)
       //如果反向拉伸，w取反，图形水平翻转,反之，图形保持和原图形一样的翻转
       if (isReverseW) {
-        conf.flipHorizontal = !this.original.flipHorizontal
         conf.layout.w = -conf.layout.w
-        conf.rotation = helper.getRotationByFlipHorizontal(this.original.rotation)
+        if (conf.flipHorizontal === this.original.flipHorizontal) {
+          this.flip(0, false)
+        }
       } else {
-        conf.flipHorizontal = this.original.flipHorizontal
-        conf.rotation = this.original.rotation
+        if (conf.flipHorizontal !== this.original.flipHorizontal) {
+          this.flip(0, false)
+        }
       }
-      let dx2 = dx / 2
-      //同上
-      conf.center.x = this.original.center.x + (this.original.flipHorizontal ? dx2 : -dx2)
     }
-
     this.conf = helper.calcConf(this.conf, this.parent?.conf)
     this.calcChildrenConf()
     cu.render()
@@ -819,7 +820,7 @@ export abstract class BaseShape {
     if (isCalcRotation) {
       this.changeChildrenFlip(type, this.conf.center)
     } else {
-      this.changeChildrenFlip2(type, this.conf.center)
+      this.changeChildrenFlip2(type, this.conf)
     }
     CanvasUtil2.getInstance().render()
   }
@@ -839,19 +840,21 @@ export abstract class BaseShape {
     })
   }
 
-
-  changeChildrenFlip2(type: number, center: P) {
+  //拉伸一边到另一边。导致的翻转（不是水平翻转，是对角翻转）
+  //TODO 翻转后的relativeCenter有个小问题，有一些偏差，先凑合着吧
+  changeChildrenFlip2(type: number, conf: BaseConfig) {
     this.children.forEach(item => {
-      item.conf.realRotation = -item.conf.realRotation
       if (type === 0) {
-        item.conf.center = helper.horizontalReversePoint(item.conf.center, center)
+        item.conf.center = helper.horizontalReversePoint(item.conf.center, conf.center)
+        item.conf.center = helper.getRotatedPoint(item.conf.center, conf.center, 2 * conf.realRotation)
         item.conf.flipHorizontal = !item.conf.flipHorizontal
       } else {
-        item.conf.center = helper.verticalReversePoint(item.conf.center, center)
+        item.conf.center = helper.verticalReversePoint(item.conf.center, conf.center)
+        item.conf.center = helper.getRotatedPoint(item.conf.center, conf.center, 2 * conf.realRotation)
         item.conf.flipVertical = !item.conf.flipVertical
       }
       item.conf = helper.calcConf(item.conf, item.parent?.conf)
-      item.changeChildrenFlip(type, center)
+      item.changeChildrenFlip2(type, conf)
     })
   }
 }

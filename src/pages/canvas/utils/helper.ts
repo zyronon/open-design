@@ -1,8 +1,8 @@
 import {BaseConfig} from "../config/BaseConfig"
-import {getRotatedPoint} from "../../../utils"
+import {getRotatedPoint, jiaodu2hudu} from "../../../utils"
 // @ts-ignore
 import {v4 as uuid} from 'uuid'
-import {cloneDeep} from "lodash"
+import {clone, cloneDeep} from "lodash"
 import {P, ShapeType} from "./type"
 import CanvasUtil2 from "../CanvasUtil2"
 
@@ -651,5 +651,24 @@ export default {
   },
   getXy() {
     return {x: 0, y: 0}
+  },
+  /**
+   * @desc 点绕中心坐标点旋转一定角度后点的坐标
+   * 参考：https://blog.csdn.net/sinat_32560085/article/details/106389000，这个易理解
+   * 参考：https://blog.csdn.net/qq_27278957/article/details/120080648
+   * 旋转公式：
+   *  点a(x, y)
+   *  旋转中心c(x, y)
+   *  旋转后点n(x, y)
+   *  旋转角度θ
+   * nx = cosθ * (ax - cx) - sinθ * (ay - cy) + cx
+   * ny = sinθ * (ax - cx) + cosθ * (ay - cy) + cy
+   */
+  getRotatedPoint(point: any, center: any, rotate: number) {
+    if (rotate === 0) return clone(point)
+    return {
+      x: (point.x - center.x) * Math.cos(jiaodu2hudu(rotate)) - (point.y - center.y) * Math.sin(jiaodu2hudu(rotate)) + center.x,
+      y: (point.x - center.x) * Math.sin(jiaodu2hudu(rotate)) + (point.y - center.y) * Math.cos(jiaodu2hudu(rotate)) + center.y
+    }
   }
 }

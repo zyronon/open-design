@@ -693,13 +693,9 @@ export abstract class BaseShape {
     }
     //如果反向拉伸，图形水平翻转,反之，图形保持和原图形一样的翻转
     if (isReverseW) {
-      if (conf.flipHorizontal === this.original.flipHorizontal) {
-        this.flip(0, 'Diagonal')
-      }
+      if (conf.flipHorizontal === this.original.flipHorizontal) this.flip(0, 'Diagonal')
     } else {
-      if (conf.flipHorizontal !== this.original.flipHorizontal) {
-        this.flip(0, 'Diagonal')
-      }
+      if (conf.flipHorizontal !== this.original.flipHorizontal) this.flip(0, 'Diagonal')
     }
     this.conf = helper.calcConf(this.conf, this.parent?.conf)
     this.calcChildrenConf()
@@ -802,13 +798,13 @@ export abstract class BaseShape {
     } else {
       conf.flipVertical = !conf.flipVertical
     }
-    if (flipType) {
+    if (flipType === 'Symmetric') {
       let {realRotation,} = conf
       conf.realRotation = -realRotation
       conf.rotation = (conf.realRotation - (this.parent?.conf?.realRotation ?? 0)).toFixed2(2)
     }
     this.conf = helper.calcConf(conf, this.parent?.conf)
-    if (flipType) {
+    if (flipType === 'Symmetric') {
       this.childrenSymmetricFlip(type, this.conf.center)
       CanvasUtil2.getInstance().render()
     } else {

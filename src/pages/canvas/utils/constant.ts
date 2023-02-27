@@ -972,7 +972,7 @@ export const rects: any[] = [
       {
         "name": "容器2",
         layout: {
-          "x": -100,
+          "x": 100,
           "y": 80,
           "w": 250,
           "h": 200,
@@ -1052,7 +1052,7 @@ export const rects: any[] = [
     ],
     "borderColor": "rgb(216,216,216)",
     "fillColor": "#e1e1e1",
-    flipHorizontal: false,
+    flipHorizontal: true,
     flipVertical: false
   },
 ]

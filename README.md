@@ -2,7 +2,7 @@
 
 ## Preview Demo
 
-[Online Demo](https://ttentau.github.io/ttentau/design)
+[Online Demo](http://design-v2.ttentau.top)
 
 ## Open-Design
 

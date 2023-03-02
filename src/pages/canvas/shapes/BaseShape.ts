@@ -669,7 +669,6 @@ export abstract class BaseShape {
       }
       conf.layout.w = newWidth
       conf.center = newCenter
-      // console.log(currentAngleMovePoint.x, this.diagonal.x)
       if (this.original.flipHorizontal) {
         if (currentAngleMovePoint.x < this.diagonal.x) isReverseW = true
       } else {
@@ -709,6 +708,8 @@ export abstract class BaseShape {
     let cu = CanvasUtil2.getInstance()
     let conf = this.conf
     const {realRotation} = conf
+    let isReverseW = false
+
     if (realRotation) {
       const current = {x, y}
       const handlePoint = this.handlePoint
@@ -725,58 +726,32 @@ export abstract class BaseShape {
         x: this.diagonal.x + (currentAngleMovePoint.x - this.diagonal.x) / 2,
         y: this.diagonal.y + (currentAngleMovePoint.y - this.diagonal.y) / 2
       }
-      // console.log(currentAngleMovePoint.x, this.diagonal.x)
-      let isReverseW = false
-      if (this.original.flipHorizontal) {
-        if (currentAngleMovePoint.x > this.diagonal.x) {
-          isReverseW = true
-        }
-      } else {
-        if (currentAngleMovePoint.x < this.diagonal.x) {
-          isReverseW = true
-        }
-      }
-
-      if (isReverseW) {
-        conf.flipHorizontal = !this.original.flipHorizontal
-        conf.rotation = helper.getRotationByFlipHorizontal(this.original.rotation)
-      } else {
-        conf.flipHorizontal = this.original.flipHorizontal
-        conf.rotation = this.original.rotation
-      }
-
       conf.layout.w = newWidth
       conf.center = newCenter
+      if (this.original.flipHorizontal) {
+        if (currentAngleMovePoint.x < this.diagonal.x) isReverseW = true
+      } else {
+        if (currentAngleMovePoint.x > this.diagonal.x) isReverseW = true
+      }
     } else {
       let dx = (x - cu.startX)
-      /** 如果水平翻转，那么移动距离取反*/
       if (this.original.flipHorizontal) dx = -dx
+      //这里不同
       conf.layout.w = this.original.layout.w + dx
       console.log('  dx', dx)
-
-      /** 是否要反转w值，因为反向拉动会使w值，越来越小，小于0之后就是负值了
-       * 判断拖动距离 加上 宽度是否小于0就完事了
-       * */
-      let isReverseW = false
-      if (this.original.layout.w + dx < 0) {
-        isReverseW = true
-      }
-      // console.log('isReverseW',isReverseW)
-      /** 如果反向拉伸，w取反，图形水平翻转
-       * 反之，图形保持和原图形一样的翻转
-       * */
-      if (isReverseW) {
-        conf.flipHorizontal = !this.original.flipHorizontal
-        conf.layout.w = -conf.layout.w
-        conf.rotation = helper.getRotationByFlipHorizontal(this.original.rotation)
-      } else {
-        conf.flipHorizontal = this.original.flipHorizontal
-        conf.rotation = this.original.rotation
-      }
       let dx2 = dx / 2
       conf.center.x = this.original.center.x + (this.original.flipHorizontal ? -dx2 : dx2)
+      if (conf.layout.w < 0) {
+        isReverseW = true
+      }
+    }
+    if (isReverseW) {
+      if (conf.flipHorizontal === this.original.flipHorizontal) this.flip(0, 'Diagonal')
+    } else {
+      if (conf.flipHorizontal !== this.original.flipHorizontal) this.flip(0, 'Diagonal')
     }
     this.conf = helper.calcConf(conf, this.parent?.conf)
+    this.calcChildrenConf()
     cu.render()
   }
 

@@ -157,7 +157,11 @@ export abstract class BaseShape {
     ctx.save()
     let {x, y} = draw.calcPosition(ctx, this.conf, this.original,)
     this.render(ctx, {x, y}, parent,)
+
     // ctx.globalCompositeOperation = 'source-atop'
+    //恢复本次图形渲染前的矩阵变换。
+    //可以用ctx.restore() 来恢复，但那样会导致clip方法裁剪的区域也被恢复（即仅作用于本组件）。
+    //导致后续绘制子组件时，如果超出父组件边界时，无法被裁剪。
     let nv = CanvasUtil2.getInstance().storedTransform
     ctx.setTransform(nv.a, nv.b, nv.c, nv.d, nv.e, nv.f)
 

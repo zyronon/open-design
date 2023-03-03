@@ -24,7 +24,7 @@ export abstract class BaseShape {
   startY: number = 0
   original: BaseConfig
   diagonal: P = {x: 0, y: 0}//对面的点（和handlePoint相反的点），如果handlePoint是中间点，那么这个也是中间点
-  handlePoint: P = {x: 0, y: 0}//鼠标按住那条边的中间点（当前角度），非鼠标点
+  handLineCenterPoint: P = {x: 0, y: 0}//鼠标按住那条边的中间点（当前角度），非鼠标点
   parent?: BaseShape
 
   get status() {
@@ -81,7 +81,7 @@ export abstract class BaseShape {
   getStatus() {
     return `
     <div>
-        handlePoint:${this.handlePoint.x.toFixed(2)},${this.handlePoint.y.toFixed(2)}
+        handlePoint:${this.handLineCenterPoint.x.toFixed(2)},${this.handLineCenterPoint.y.toFixed(2)}
 </div>
     <div>
         diagonal:${this.diagonal.x.toFixed(2)},${this.diagonal.y.toFixed(2)}
@@ -243,7 +243,16 @@ export abstract class BaseShape {
         this.hoverType = MouseOptionType.Left
         return true
       }
-      //左边
+      //右边
+      if ((rightX! - edge < x && x < rightX! + edge) &&
+        (topY! + edge < y && y < bottomY! - edge)
+      ) {
+        document.body.style.cursor = "col-resize"
+        this.hoverType = MouseOptionType.Right
+        return true
+      }
+
+      //上边
       if ((leftX! + edge < x && x < rightX! - edge) &&
         (topY! - edge < y && y < topY! + edge)
       ) {
@@ -252,12 +261,12 @@ export abstract class BaseShape {
         return true
       }
 
-      //右边
-      if ((rightX! - edge < x && x < rightX! + edge) &&
-        (topY! + edge < y && y < bottomY! - edge)
+      //下边
+      if ((leftX! + edge < x && x < rightX! - edge) &&
+        (bottomY! - edge < y && y < bottomY! + edge)
       ) {
-        document.body.style.cursor = "col-resize"
-        this.hoverType = MouseOptionType.Right
+        document.body.style.cursor = "row-resize"
+        this.hoverType = MouseOptionType.Bottom
         return true
       }
 
@@ -416,48 +425,40 @@ export abstract class BaseShape {
 
     this.enterType = this.hoverType
     let {layout: {w, h,}, absolute, center, realRotation, flipHorizontal, flipVertical} = this.conf
-    let handLineCenterPoint
+    //按住那条线0度时的中间点
+    let handLineZeroDegreesCenterPoint
+    let w2 = w / 2
+    let h2 = h / 2
     switch (this.hoverType) {
       case MouseOptionType.Left:
         // console.log('Left')
-        /** 这里的x的值与Right的计算相反*/
-        handLineCenterPoint = {
-          x: center.x + (flipHorizontal ? (w / 2) : -(w / 2)),
-          y: center.y
-        }
-        this.handlePoint = getRotatedPoint(handLineCenterPoint, center, realRotation)
-        this.diagonal = helper.reversePoint(this.handlePoint, center)
+        handLineZeroDegreesCenterPoint = {x: center.x + (flipHorizontal ? w2 : -w2), y: center.y}
+        //根据当前角度，转回来。得到的点就是当前鼠标按住那条边当前角度的中间点，非鼠标点
+        this.handLineCenterPoint = getRotatedPoint(handLineZeroDegreesCenterPoint, center, realRotation)
+        //翻转得到对面的点
+        this.diagonal = helper.reversePoint(this.handLineCenterPoint, center)
         return
       case MouseOptionType.Right:
         // console.log('Right')
-        /**
-         * 根据flipHorizontal、flipVertical计算出当前按的那条边的中间点
-         * 如果水平翻转：x在左边，直接使用。未翻转：x加上宽度
-         * 如果垂直翻转：y在下边，要减去高度的一半。未翻转：y加上高度的一半
-         * */
-        handLineCenterPoint = {
-          x: center.x + (flipHorizontal ? -(w / 2) : (w / 2)),
-          y: center.y
-        }
-        //根据当前角度，转回来。得到的点就是当前鼠标按住那条边的中间点（当前角度），非鼠标点
-        this.handlePoint = getRotatedPoint(handLineCenterPoint, center, realRotation)
-        //翻转得到对面的点
-        this.diagonal = helper.reversePoint(this.handlePoint, center)
+        /** 这里的x的值与Right的计算相反*/
+        handLineZeroDegreesCenterPoint = {x: center.x + (flipHorizontal ? -w2 : w2), y: center.y}
+        this.handLineCenterPoint = getRotatedPoint(handLineZeroDegreesCenterPoint, center, realRotation)
+        this.diagonal = helper.reversePoint(this.handLineCenterPoint, center)
         return
       case MouseOptionType.Top:
-        handLineCenterPoint = {
-          x: center.x,
-          y: center.y + (flipVertical ? (h / 2) : -(h / 2))
-        }
-        //根据当前角度，转回来。得到的点就是当前鼠标按住那条边的中间点（当前角度），非鼠标点
-        this.handlePoint = getRotatedPoint(handLineCenterPoint, center, realRotation)
-        //翻转得到对面的点
-        this.diagonal = helper.reversePoint(this.handlePoint, center)
+        handLineZeroDegreesCenterPoint = {x: center.x, y: center.y + (flipVertical ? h2 : -h2)}
+        this.handLineCenterPoint = getRotatedPoint(handLineZeroDegreesCenterPoint, center, realRotation)
+        this.diagonal = helper.reversePoint(this.handLineCenterPoint, center)
         return
       case MouseOptionType.Bottom:
+        /** 这里的y的值与Top的计算相反*/
+        handLineZeroDegreesCenterPoint = {x: center.x, y: center.y + (flipVertical ? -h2 : h2)}
+        this.handLineCenterPoint = getRotatedPoint(handLineZeroDegreesCenterPoint, center, realRotation)
+        this.diagonal = helper.reversePoint(this.handLineCenterPoint, center)
+        return
       case MouseOptionType.TopLeft:
-        this.handlePoint = absolute
-        this.diagonal = helper.reversePoint(this.handlePoint, center)
+        this.handLineCenterPoint = absolute
+        this.diagonal = helper.reversePoint(this.handLineCenterPoint, center)
         return
       case MouseOptionType.TopRight:
       case MouseOptionType.BottomLeft:
@@ -512,6 +513,7 @@ export abstract class BaseShape {
       case MouseOptionType.Top:
         return this.dragTop(point)
       case MouseOptionType.Bottom:
+        return this.dragBottom(point)
       case MouseOptionType.TopLeft:
         return this.dragTopLeft(point)
       case MouseOptionType.TopRight:
@@ -617,10 +619,10 @@ export abstract class BaseShape {
     let cu = CanvasUtil2.getInstance()
     let conf = this.conf
     let isReverseW = false
-    const {flipHorizontal, flipVertical, realRotation} = conf
+    const {realRotation} = conf
     if (realRotation) {
       const current = {x, y}
-      const handlePoint = this.handlePoint
+      const handlePoint = this.handLineCenterPoint
       const zeroAngleCurrentPoint = getRotatedPoint(current, handlePoint, -realRotation)
       const zeroAngleMovePoint = {x: handlePoint.x, y: zeroAngleCurrentPoint.y}
       const currentAngleMovePoint = getRotatedPoint(zeroAngleMovePoint, handlePoint, realRotation)
@@ -631,12 +633,11 @@ export abstract class BaseShape {
       }
       conf.layout.h = newHeight
       conf.center = newCenter
-
-      let zeroAngleXy = getRotatedPoint(this.original.layout, newCenter, -realRotation)
-      zeroAngleXy.y -= (newHeight - this.original.layout.h)
-      let angleXy = getRotatedPoint(zeroAngleXy, newCenter, realRotation)
-      conf.layout.x = angleXy.x
-      conf.layout.y = angleXy.y
+      if (this.original.flipVertical) {
+        if (currentAngleMovePoint.y < this.diagonal.y) isReverseW = true
+      } else {
+        if (currentAngleMovePoint.y > this.diagonal.y) isReverseW = true
+      }
     } else {
       // conf.layout.y = (y - cu.offsetY)
       // conf.layout.h = this.original.box.bottomY - conf.layout.y
@@ -650,10 +651,57 @@ export abstract class BaseShape {
         isReverseW = true
       }
       conf.layout.h = Math.abs(conf.layout.h)
-      console.log(isReverseW)
-
     }
+    if (isReverseW) {
+      if (conf.flipVertical === this.original.flipVertical) this.flip(1, 'Diagonal')
+    } else {
+      if (conf.flipVertical !== this.original.flipVertical) this.flip(1, 'Diagonal')
+    }
+    this.conf = helper.calcConf(conf, this.parent?.conf)
+    this.calcChildrenConf()
+    cu.render()
+  }
 
+  //拖动下边
+  dragBottom(point: P) {
+    // console.log('拖动下边')
+    let {x, y,} = point
+    let cu = CanvasUtil2.getInstance()
+    let conf = this.conf
+    let isReverseW = false
+    const {realRotation} = conf
+    if (realRotation) {
+      const current = {x, y}
+      const handlePoint = this.handLineCenterPoint
+      const zeroAngleCurrentPoint = getRotatedPoint(current, handlePoint, -realRotation)
+      const zeroAngleMovePoint = {x: handlePoint.x, y: zeroAngleCurrentPoint.y}
+      const currentAngleMovePoint = getRotatedPoint(zeroAngleMovePoint, handlePoint, realRotation)
+      const newHeight = Math.hypot(currentAngleMovePoint.x - this.diagonal.x, currentAngleMovePoint.y - this.diagonal.y)
+      const newCenter = {
+        x: this.diagonal.x + (currentAngleMovePoint.x - this.diagonal.x) / 2,
+        y: this.diagonal.y + (currentAngleMovePoint.y - this.diagonal.y) / 2
+      }
+      conf.layout.h = newHeight
+      conf.center = newCenter
+      if (this.original.flipVertical) {
+        if (currentAngleMovePoint.y > this.diagonal.y) isReverseW = true
+      } else {
+        if (currentAngleMovePoint.y < this.diagonal.y) isReverseW = true
+      }
+    } else {
+      // conf.layout.y = (y - cu.offsetY)
+      // conf.layout.h = this.original.box.bottomY - conf.layout.y
+      // conf.center.y = conf.layout.y + conf.layout.h / 2
+      let d = y - cu.startY
+      if (this.original.flipVertical) d = -d
+      conf.layout.h = this.original.layout.h + d
+      let d2 = d / 2
+      conf.center.y = this.original.center.y + (this.original.flipVertical ? -d2 : d2)
+      if (conf.layout.h < 0) {
+        isReverseW = true
+      }
+      conf.layout.h = Math.abs(conf.layout.h)
+    }
     if (isReverseW) {
       if (conf.flipVertical === this.original.flipVertical) this.flip(1, 'Diagonal')
     } else {
@@ -672,10 +720,9 @@ export abstract class BaseShape {
     let conf = this.conf
     const {realRotation} = conf
     let isReverseW = false
-
     if (realRotation) {
       const current = {x, y}
-      const handlePoint = this.handlePoint
+      const handlePoint = this.handLineCenterPoint
       //0度的当前点：以当前边中间点为圆心，负角度偏转当前点，得到0度的当前点
       const zeroAngleCurrentPoint = getRotatedPoint(current, handlePoint, -realRotation)
       //0度的移动点：x取其0度的当前点的，y取当前边中间点的（保证在一条直线上，因为只能拖动x，y不需要变动）
@@ -734,7 +781,7 @@ export abstract class BaseShape {
 
     if (realRotation) {
       const current = {x, y}
-      const handlePoint = this.handlePoint
+      const handlePoint = this.handLineCenterPoint
       const zeroAngleCurrentPoint = getRotatedPoint(current, handlePoint, -realRotation)
       const zeroAngleMovePoint = {x: zeroAngleCurrentPoint.x, y: handlePoint.y}
       const currentAngleMovePoint = getRotatedPoint(zeroAngleMovePoint, handlePoint, realRotation)
@@ -753,12 +800,12 @@ export abstract class BaseShape {
         if (currentAngleMovePoint.x < this.diagonal.x) isReverseW = true
       }
     } else {
-      let dx = (x - cu.startX)
-      if (this.original.flipHorizontal) dx = -dx
+      let d = x - cu.startX
+      if (this.original.flipHorizontal) d = -d
       //这里不同，left是减去dx
-      conf.layout.w = this.original.layout.w + dx
-      let dx2 = dx / 2
-      conf.center.x = this.original.center.x + (this.original.flipHorizontal ? -dx2 : dx2)
+      conf.layout.w = this.original.layout.w + d
+      let d2 = d / 2
+      conf.center.x = this.original.center.x + (this.original.flipHorizontal ? -d2 : d2)
       if (conf.layout.w < 0) {
         isReverseW = true
       }

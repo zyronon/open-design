@@ -962,7 +962,7 @@ export const rects: any[] = [
       "h": 300,
     },
     clip: false,
-    "rotation": 0,
+    "rotation": 10,
     "lineWidth": 2,
     "type": "FRAME",
     "color": "gray",

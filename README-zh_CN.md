@@ -2,7 +2,10 @@
 
 ## 预览
 
-[在线预览DEMO](http://design-v2.ttentau.top/)
+[稳定版在线预览DEMO](http://design-v2.ttentau.top)
+
+[开发版在线预览DEMO](http://design.ttentau.top)
+
 
 ## Open-Design
 

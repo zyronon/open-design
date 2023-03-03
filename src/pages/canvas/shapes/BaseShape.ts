@@ -616,8 +616,9 @@ export abstract class BaseShape {
     let {x, y,} = point
     let cu = CanvasUtil2.getInstance()
     let conf = this.conf
+    let isReverseW = false
     const {flipHorizontal, flipVertical, realRotation} = conf
-    if (realRotation || flipHorizontal || flipVertical) {
+    if (realRotation) {
       const current = {x, y}
       const handlePoint = this.handlePoint
       const zeroAngleCurrentPoint = getRotatedPoint(current, handlePoint, -realRotation)
@@ -637,9 +638,26 @@ export abstract class BaseShape {
       conf.layout.x = angleXy.x
       conf.layout.y = angleXy.y
     } else {
-      conf.layout.y = (y - cu.offsetY)
-      conf.layout.h = this.original.box.bottomY - conf.layout.y
-      conf.center.y = conf.layout.y + conf.layout.h / 2
+      // conf.layout.y = (y - cu.offsetY)
+      // conf.layout.h = this.original.box.bottomY - conf.layout.y
+      // conf.center.y = conf.layout.y + conf.layout.h / 2
+      let d = y - cu.startY
+      if (this.original.flipVertical) d = -d
+      conf.layout.h = this.original.layout.h - d
+      let d2 = d / 2
+      conf.center.y = this.original.center.y + (this.original.flipVertical ? -d2 : d2)
+      if (conf.layout.h < 0) {
+        isReverseW = true
+      }
+      conf.layout.h = Math.abs(conf.layout.h)
+      console.log(isReverseW)
+
+    }
+
+    if (isReverseW) {
+      if (conf.flipVertical === this.original.flipVertical) this.flip(1, 'Diagonal')
+    } else {
+      if (conf.flipVertical !== this.original.flipVertical) this.flip(1, 'Diagonal')
     }
     this.conf = helper.calcConf(conf, this.parent?.conf)
     this.calcChildrenConf()
@@ -680,13 +698,13 @@ export abstract class BaseShape {
       }
     } else {
       //dx和dragRight相反
-      let dx = x - cu.startX
+      let d = x - cu.startX
       //如果水平翻转，那么移动距离取反
-      if (this.original.flipHorizontal) dx = -dx
+      if (this.original.flipHorizontal) d = -d
       //原始值，加或减去移动的值
-      conf.layout.w = this.original.layout.w - dx
-      let dx2 = dx / 2
-      conf.center.x = this.original.center.x + (this.original.flipHorizontal ? -dx2 : dx2)
+      conf.layout.w = this.original.layout.w - d
+      let d2 = d / 2
+      conf.center.x = this.original.center.x + (this.original.flipHorizontal ? -d2 : d2)
       //是否要反转w值，因为反向拉动会使w值，越来越小，小于0之后就是负值了
       if (conf.layout.w < 0) {
         isReverseW = true
@@ -717,15 +735,10 @@ export abstract class BaseShape {
     if (realRotation) {
       const current = {x, y}
       const handlePoint = this.handlePoint
-      //0度的当前点：以当前边中间点为圆心，负角度偏转当前点，得到0度的当前点
       const zeroAngleCurrentPoint = getRotatedPoint(current, handlePoint, -realRotation)
-      //0度的移动点：x取其0度的当前点的，y取当前边中间点的（保证在一条直线上，因为只能拖动x，y不需要变动）
       const zeroAngleMovePoint = {x: zeroAngleCurrentPoint.x, y: handlePoint.y}
-      // 当前角度的移动点：以当前边中间点为圆心，正角度偏转
       const currentAngleMovePoint = getRotatedPoint(zeroAngleMovePoint, handlePoint, realRotation)
-      //最新宽度：利用勾股定理求出斜边(不能直接zeroAngleMovePoint.x - this.diagonal.x相减，会有细微的差别)
       const newWidth = Math.hypot(currentAngleMovePoint.x - this.diagonal.x, currentAngleMovePoint.y - this.diagonal.y)
-      //最新中心点：
       const newCenter = {
         x: this.diagonal.x + (currentAngleMovePoint.x - this.diagonal.x) / 2,
         y: this.diagonal.y + (currentAngleMovePoint.y - this.diagonal.y) / 2
@@ -733,21 +746,23 @@ export abstract class BaseShape {
       conf.layout.w = newWidth
       conf.center = newCenter
       if (this.original.flipHorizontal) {
-        if (currentAngleMovePoint.x < this.diagonal.x) isReverseW = true
-      } else {
+        //这里判断和left不同
         if (currentAngleMovePoint.x > this.diagonal.x) isReverseW = true
+      } else {
+        //这里判断和left不同
+        if (currentAngleMovePoint.x < this.diagonal.x) isReverseW = true
       }
     } else {
       let dx = (x - cu.startX)
       if (this.original.flipHorizontal) dx = -dx
-      //这里不同
+      //这里不同，left是减去dx
       conf.layout.w = this.original.layout.w + dx
-      console.log('  dx', dx)
       let dx2 = dx / 2
       conf.center.x = this.original.center.x + (this.original.flipHorizontal ? -dx2 : dx2)
       if (conf.layout.w < 0) {
         isReverseW = true
       }
+      conf.layout.w = Math.abs(conf.layout.w)
     }
     if (isReverseW) {
       if (conf.flipHorizontal === this.original.flipHorizontal) this.flip(0, 'Diagonal')

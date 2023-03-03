@@ -595,6 +595,8 @@ export abstract class BaseShape {
     let cu = CanvasUtil2.getInstance()
     const conf = this.conf
     let {realRotation} = conf
+    let isReverseW = false
+    let isReverseH = false
     let current = {x, y}
     let newCenter = getCenterPoint(current, this.diagonal)
     let zeroDegreeTopLeft = getRotatedPoint(current, newCenter, -realRotation)
@@ -606,6 +608,35 @@ export abstract class BaseShape {
     conf.layout.w = Math.abs(newWidth)
     conf.layout.h = Math.abs(newHeight)
     conf.center = newCenter
+
+    if (this.original.flipHorizontal) {
+      if (zeroDegreeTopLeft.x < this.diagonal.x) {
+        isReverseW = true
+      }
+    } else {
+      if (zeroDegreeTopLeft.x > this.diagonal.x) {
+        isReverseW = true
+      }
+    }
+    if (this.original.flipVertical) {
+      if (zeroDegreeTopLeft.y < this.diagonal.y) {
+        isReverseH = true
+      }
+    } else {
+      if (zeroDegreeTopLeft.y > this.diagonal.y) {
+        isReverseH = true
+      }
+    }
+    if (isReverseW) {
+      if (conf.flipHorizontal === this.original.flipHorizontal) this.flip(0, 'Diagonal')
+    } else {
+      if (conf.flipHorizontal !== this.original.flipHorizontal) this.flip(0, 'Diagonal')
+    }
+    if (isReverseH) {
+      if (conf.flipVertical === this.original.flipVertical) this.flip(1, 'Diagonal')
+    } else {
+      if (conf.flipVertical !== this.original.flipVertical) this.flip(1, 'Diagonal')
+    }
     // console.log(conf)
     this.conf = helper.calcConf(conf, this.parent?.conf)
     this.calcChildrenConf()

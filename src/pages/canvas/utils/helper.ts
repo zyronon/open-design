@@ -3,8 +3,7 @@ import {getRotatedPoint, jiaodu2hudu} from "../../../utils"
 // @ts-ignore
 import {v4 as uuid} from 'uuid'
 import {clone, cloneDeep} from "lodash"
-import {P, ShapeType} from "./type"
-import CanvasUtil2 from "../CanvasUtil2"
+import {P} from "./type"
 
 export default {
   //废弃
@@ -530,5 +529,35 @@ export default {
       x: (point.x - center.x) * Math.cos(jiaodu2hudu(rotate)) - (point.y - center.y) * Math.sin(jiaodu2hudu(rotate)) + center.x,
       y: (point.x - center.x) * Math.sin(jiaodu2hudu(rotate)) + (point.y - center.y) * Math.cos(jiaodu2hudu(rotate)) + center.y
     }
+  },
+  /**
+   * 获取两点之间连线后的中点坐标
+   * @param  {Object} p1 点1的坐标
+   * @param  {Object} p2 点2的坐标
+   * @return {Object}    中点坐标
+   */
+  getCenterPoint(p1: P, p2: P) {
+    return {
+      x: p1.x + ((p2.x - p1.x) / 2),
+      y: p1.y + ((p2.y - p1.y) / 2)
+    }
+  },
+  //获取两点之间角度
+  getDegree(center: P, one: P, two: P) {
+    let {x: cx, y: cy} = center
+    let {x: x1, y: y1} = one
+    let {x: x2, y: y2} = two
+    //2个点之间的角度获取
+    let c1 = Math.atan2(y1 - cy, x1 - cx) * 180 / (Math.PI)
+    let c2 = Math.atan2(y2 - cy, x2 - cx) * 180 / (Math.PI)
+    let angle
+    c1 = c1 <= -90 ? (360 + c1) : c1
+    c2 = c2 <= -90 ? (360 + c2) : c2
+
+    //夹角获取
+    // angle = Math.floor(c2 - c1);
+    angle = c2 - c1
+    angle = angle < 0 ? angle + 360 : angle
+    return angle
   }
 }

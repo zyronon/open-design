@@ -2,19 +2,19 @@ import {
   BezierPoint,
   BezierPointType,
   getDefaultPoint,
-  IState, LineType,
+  IState,
+  LineType,
   Point2,
   Shape,
   ShapeConfig,
   ShapeType,
   TextAlign
-} from "./type";
-import {store} from "./store";
+} from "./type"
+import {store} from "./store"
 // @ts-ignore
-import {v4 as uuid} from 'uuid';
-import {Colors} from "./constant";
-import {CanvasUtil} from "./utils/CanvasUtil";
-import {getHypotenuse2, jiaodu2hudu} from "../../utils";
+import {v4 as uuid} from 'uuid'
+import {Colors} from "./constant"
+import {jiaodu2hudu} from "../../utils"
 
 export function renderCanvas(
   rect: Shape,

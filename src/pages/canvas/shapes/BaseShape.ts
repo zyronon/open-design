@@ -1,7 +1,7 @@
 import {BaseEvent2, MouseOptionType, P, ShapeProps, ShapeStatus, ShapeType} from "../utils/type"
 import CanvasUtil2 from "../CanvasUtil2"
 import {cloneDeep, merge} from "lodash"
-import getCenterPoint, {getAngle2, getRotatedPoint} from "../../../utils"
+import {getRotatedPoint} from "../../../utils"
 import {getShapeFromConfig} from "../utils/common"
 import EventBus from "../../../utils/event-bus"
 import {EventMapTypes} from "../../canvas20221111/type"
@@ -573,7 +573,7 @@ export abstract class BaseShape {
     let {center, original,} = this.conf
     let current = {x, y}
     // console.log('x-------', x, '          y--------', y)
-    let newRotation = getAngle2(center, original, current)
+    let newRotation = helper.getDegree(center, original, current)
 
     //这里要减去，父级的旋转角度
     let realRotation = (newRotation < 180 ? newRotation : newRotation - 360)
@@ -598,7 +598,7 @@ export abstract class BaseShape {
     let isReverseW = false
     let isReverseH = false
     let current = {x, y}
-    let newCenter = getCenterPoint(current, this.diagonal)
+    let newCenter = helper.getCenterPoint(current, this.diagonal)
     let zeroDegreeTopLeft = getRotatedPoint(current, newCenter, -realRotation)
     let zeroDegreeBottomRight = getRotatedPoint(this.diagonal, newCenter, -realRotation)
 

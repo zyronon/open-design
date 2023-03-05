@@ -115,14 +115,49 @@ export class Frame extends BaseShape {
       type, flipVertical, flipHorizontal, children,
       name, clip, strokeAlign
     } = this.conf
-    const {x, y} = p
+    let {x, y} = p
 
     ctx.lineWidth = lineWidth ?? defaultConfig.lineWidth
     let lineWidth2 = ctx.lineWidth / 2
     ctx.fillStyle = fillColor
     ctx.strokeStyle = borderColor
     if (radius) {
-      draw.roundRect(ctx, {x, y, w, h}, radius)
+      let r = radius
+      ctx.beginPath()
+      let w2 = w / 2, h2 = h / 2
+      ctx.moveTo(x + w2, y)
+      ctx.arcTo(x + w, y, x + w, y + h2, r)
+      ctx.arcTo(x + w, y + h, x + w2, y + h, r)
+      ctx.arcTo(x, y + h, x, y + h2, r)
+      ctx.arcTo(x, y, x + w2, y, r)
+      ctx.closePath()
+      ctx.fill()
+      ctx.beginPath()
+      let path = new Path2D()
+      //后续绘制文字时，还要使用xywh这些。所以这里还是复制一个来改比较好
+      let w1 = w, h1 = h, x1 = x, y1 = y, r1 = r
+      if (strokeAlign === StrokeAlign.INSIDE) {
+        w1 -= lineWidth2 * 2
+        h1 -= lineWidth2 * 2
+        x1 += lineWidth2
+        y1 += lineWidth2
+        r1 -= lineWidth2
+      } else if (strokeAlign === StrokeAlign.OUTSIDE) {
+        w1 += lineWidth2 * 2
+        h1 += lineWidth2 * 2
+        x1 -= lineWidth2
+        y1 -= lineWidth2
+        r1 += lineWidth2
+      }
+      let w2_1 = w1 / 2
+      let h2_1 = h1 / 2
+      path.moveTo(x1 + w2_1, y1)
+      path.arcTo(x1 + w1, y1, x1 + w1, y1 + h2_1, r1)
+      path.arcTo(x1 + w1, y1 + h1, x1 + w2_1, y1 + h1, r1)
+      path.arcTo(x1, y1 + h1, x1, y1 + h2_1, r1)
+      path.arcTo(x1, y1, x1 + w2_1, y1, r1)
+      path.closePath()
+      ctx.stroke(path)
     } else {
       ctx.beginPath()
       ctx.rect(x, y, w, h)

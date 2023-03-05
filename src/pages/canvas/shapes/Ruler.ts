@@ -95,7 +95,7 @@ export class Ruler extends BaseShape {
     return false
   }
 
-  render(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {
+  drawShape(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {
     let cu = CanvasUtil2.getInstance()
     if (this.isHorizontal()) {
       ctx.rect(0, 0, cu.canvasRect.width, 20)
@@ -105,16 +105,16 @@ export class Ruler extends BaseShape {
     ctx.fill()
   }
 
-  renderEdit(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {
+  drawEdit(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {
   }
 
-  renderHover(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {
+  drawHover(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {
   }
 
-  renderSelected(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {
+  drawSelected(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {
   }
 
-  renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void {
+  drawSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void {
   }
 
 }

@@ -2,7 +2,7 @@ import {BaseShape} from "./shapes/BaseShape"
 import EventBus from "../../utils/event-bus"
 import {BaseEvent2, EventTypes, P, ShapeStatus, ShapeType} from "./utils/type"
 import {cloneDeep, throttle} from "lodash"
-import {config} from "./utils/constant"
+import {defaultConfig} from "./utils/constant"
 import {mat4} from "gl-matrix"
 import {getShapeFromConfig} from "./utils/common"
 import {Rectangle} from "./shapes/Rectangle"
@@ -38,10 +38,10 @@ export default class CanvasUtil2 {
   public canvasRect: DOMRect
   private dpr: number = 0
   public children: BaseShape[] = []
-  public currentMat: any = new Float32Array(config.currentMat)
-  public storedTransform: any = new Float32Array(config.currentMat)
-  handScale: number = config.handScale
-  handMove: P = config.handMove
+  public currentMat: any = new Float32Array(defaultConfig.currentMat)
+  public storedTransform: any = new Float32Array(defaultConfig.currentMat)
+  handScale: number = defaultConfig.handScale
+  handMove: P = defaultConfig.handMove
   //当hover时，只向hover那个图形传递事件。不用递归整个树去判断isIn
   inShape: any
   //因为当hover只向hover图形传递事件，所以无法获得父级链，这里用个变量保存起来
@@ -178,7 +178,7 @@ export default class CanvasUtil2 {
     //不能用map或者forEach，因为里面await 不生效
     for (let i = 0; i < this.children.length; i++) {
       let shape = this.children[i]
-      shape.shapeRender(this.ctx)
+      shape.render(this.ctx)
     }
     this.waitRenderOtherStatusFunc.map(cb => cb())
     this.waitRenderOtherStatusFunc = []
@@ -414,9 +414,9 @@ export default class CanvasUtil2 {
   }
 
   clear() {
-    this.handScale = config.handScale
-    this.handMove = config.handMove
-    this.currentMat = new Float32Array(config.currentMat)
+    this.handScale = defaultConfig.handScale
+    this.handMove = defaultConfig.handMove
+    this.currentMat = new Float32Array(defaultConfig.currentMat)
     this.selectedShape = null
     this.inShape = null
     this.children = []
@@ -439,6 +439,7 @@ export default class CanvasUtil2 {
   }
 
   print2() {
+    console.log(this.currentMat, this.handScale, this.handMove)
     return this.printO(cloneDeep(this.children), true)
   }
 

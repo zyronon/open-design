@@ -58,9 +58,9 @@ export function drawSelectedHover(ctx: CanvasRenderingContext2D, config: any) {
   // renderRound(endTop, r, ctx, ShapeType.SELECT)
   // renderRound(endBottom, r, ctx, ShapeType.SELECT)
 
-  draw.renderRound(topLeft, r2, ctx, ShapeType.SELECT)
-  draw.renderRound(topRight, r2, ctx, ShapeType.SELECT)
-  draw.renderRound(bottomLeft, r2, ctx, ShapeType.SELECT)
-  draw.renderRound(bottomRight, r2, ctx, ShapeType.SELECT)
+  draw.round(topLeft, r2, ctx, ShapeType.SELECT)
+  draw.round(topRight, r2, ctx, ShapeType.SELECT)
+  draw.round(bottomLeft, r2, ctx, ShapeType.SELECT)
+  draw.round(bottomRight, r2, ctx, ShapeType.SELECT)
   ctx.restore()
 }

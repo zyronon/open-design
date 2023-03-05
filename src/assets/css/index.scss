@@ -1,16 +1,28 @@
 @import "variable";
-@import "font";
+//@import "font";
 @import '@icon-park/react/styles/index.css';
+@import 'antd/dist/antd.css';
 
-body {
-  font-family: 'SourceHanSansCN', serif;
+html, body {
+  margin: 0;
+  padding: 0;
+  font-size: 6.25%;
+  height: 100%;
+  width: 100%;
+  //font-family: 'SourceHanSansCN', serif;
   font-weight: normal;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
 }
 
 .canvas-text-input {
   position: fixed;
   z-index: 1000;
 }
+
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);

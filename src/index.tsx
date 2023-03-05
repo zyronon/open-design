@@ -1,8 +1,7 @@
 import * as React from "react"
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom"
-import "./index.css"
+import '@/assets/css/index.scss'
 import 'moment/locale/zh-cn'
-import 'antd/dist/antd.css'
 import {createRoot} from "react-dom/client"
 import {store} from './store/store'
 import {Provider} from "react-redux"

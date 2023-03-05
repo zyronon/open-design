@@ -1,5 +1,6 @@
 import {P, P2} from "../pages/canvas/utils/type"
 import {cloneDeep} from "lodash"
+import {Rect} from "../pages/canvas/config/BaseConfig"
 
 export {}
 
@@ -16,6 +17,8 @@ declare global {
     lineTo2(cp1: P | P2): void
 
     translate2(p: P): void
+
+    rect2(p: Rect): void
   }
 
   interface Math {
@@ -46,6 +49,9 @@ let Context2D: CanvasRenderingContext2D = {
   },
   translate2: function (p) {
     this.translate(p.x, p.y)
+  },
+  rect2: function (p) {
+    this.rect(p.x, p.y, p.w, p.h)
   }
 }
 

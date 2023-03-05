@@ -1,9 +1,10 @@
 import {BaseShape} from "./BaseShape"
 import CanvasUtil2 from "../CanvasUtil2"
-import {BaseEvent2, P, ShapeProps, ShapeStatus} from "../utils/type"
+import {BaseEvent2, P, ShapeProps, ShapeStatus, StrokeAlign} from "../utils/type"
 import {BaseConfig} from "../config/BaseConfig"
 import draw from "../utils/draw"
 import {getRotatedPoint} from "../../../utils"
+import {defaultConfig} from "../utils/constant"
 
 export class Frame extends BaseShape {
 
@@ -106,55 +107,63 @@ export class Frame extends BaseShape {
     return false
   }
 
-  render(ctx: CanvasRenderingContext2D, p: P, parent?: BaseConfig) {
+  drawShape(ctx: CanvasRenderingContext2D, p: P, parent?: BaseConfig) {
     let {
       layout: {w, h},
       radius,
       fillColor, borderColor, rotation, lineWidth,
       type, flipVertical, flipHorizontal, children,
-      name, clip
+      name, clip, strokeAlign
     } = this.conf
     const {x, y} = p
+
+    ctx.lineWidth = lineWidth ?? defaultConfig.lineWidth
+    ctx.fillStyle = fillColor
+    ctx.strokeStyle = borderColor
     if (radius) {
-      draw.renderRoundRect({x, y, w, h}, radius, ctx)
+      draw.roundRect(ctx, {x, y, w, h}, radius)
     } else {
       ctx.beginPath()
-      ctx.moveTo(x, y)
-      ctx.lineTo(x + w, y)
-      ctx.lineTo(x + w, y + h)
-      ctx.lineTo(x, y + h)
-      ctx.lineTo(x, y)
+      ctx.rect(x, y, w, h)
       ctx.closePath()
-
-      ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
-      let text = `${w.toFixed(2)} x ${h.toFixed(2)}`
-      let m = ctx.measureText(text)
-      let lX = x + w / 2 - m.width / 2
-      ctx.textBaseline = 'top'
-      ctx.fillText(text, lX, y + h + 5)
-      ctx.textBaseline = 'bottom'
-      ctx.fillText(name, x, y)
-
-      ctx.fillStyle = fillColor
       ctx.fill()
-      ctx.strokeStyle = borderColor
-      ctx.stroke()
-      if (clip) {
-        ctx.clip()
+      let path = new Path2D()
+      if (strokeAlign === StrokeAlign.INSIDE) {
+        path.rect(x + ctx.lineWidth / 2, y + ctx.lineWidth / 2, w, h)
+      } else if (strokeAlign === StrokeAlign.OUTSIDE) {
+        path.rect(x - ctx.lineWidth / 2, y - ctx.lineWidth / 2, w, h)
+      } else {
+        path.rect(x, y, w, h)
       }
+      ctx.stroke(path)
+    }
+    ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
+    let text = `${w.toFixed(2)} x ${h.toFixed(2)}`
+    let m = ctx.measureText(text)
+    let lX = x + w / 2 - m.width / 2
+    ctx.textBaseline = 'top'
+    ctx.fillText(text, lX, y + h + 5)
+    ctx.textBaseline = 'bottom'
+    ctx.fillText(name, x, y)
+
+    if (clip) {
+      //需要路径。上面不能用fillRect()和strokeRect()
+      ctx.clip()
     }
   }
 
-  renderHover(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): void {
+  drawHover(ctx: CanvasRenderingContext2D, conf: BaseConfig): void {
+    draw.hover(ctx, conf)
   }
 
-  renderSelected(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): void {
+  drawSelected(ctx: CanvasRenderingContext2D, conf: BaseConfig): void {
+    draw.selected(ctx, conf)
   }
 
-  renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void {
+  drawSelectedHover(ctx: CanvasRenderingContext2D, conf: BaseConfig): void {
     // drawSelectedHover(ctx, conf)
   }
 
-  renderEdit(ctx: CanvasRenderingContext2D, p: P, parent?: BaseConfig): void {
+  drawEdit(ctx: CanvasRenderingContext2D, conf: BaseConfig): void {
   }
 }

@@ -27,15 +27,6 @@ export abstract class BaseShape {
   handLineCenterPoint: P = {x: 0, y: 0}//鼠标按住那条边的中间点（当前角度），非鼠标点
   parent?: BaseShape
 
-  get status() {
-    return this._status
-  }
-
-  set status(val) {
-    this._status = val
-    CanvasUtil2.getInstance().render()
-  }
-
   constructor(props: ShapeProps) {
     // console.log('props', clone(props))
     this.conf = helper.initConf(props.conf, props.parent?.conf)
@@ -47,15 +38,24 @@ export abstract class BaseShape {
     }) ?? []
   }
 
-  abstract render(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any
+  get status() {
+    return this._status
+  }
 
-  abstract renderHover(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any
+  set status(val) {
+    this._status = val
+    CanvasUtil2.getInstance().render()
+  }
 
-  abstract renderSelected(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any
+  abstract drawShape(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any
 
-  abstract renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void
+  abstract drawHover(ctx: CanvasRenderingContext2D, conf: BaseConfig): any
 
-  abstract renderEdit(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any
+  abstract drawSelected(ctx: CanvasRenderingContext2D, conf: BaseConfig): any
+
+  abstract drawSelectedHover(ctx: CanvasRenderingContext2D, conf: BaseConfig): void
+
+  abstract drawEdit(ctx: CanvasRenderingContext2D, conf: BaseConfig): any
 
   abstract childMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean
 
@@ -152,12 +152,10 @@ export abstract class BaseShape {
       && rect.box.topY < y && y < rect.box.bottomY
   }
 
-  shapeRender(ctx: CanvasRenderingContext2D, parent?: BaseConfig) {
-    // ctx.setTransform(1, 0, 0, 1, 0, 0);
+  render(ctx: CanvasRenderingContext2D, parent?: BaseConfig) {
     ctx.save()
     let {x, y} = draw.calcPosition(ctx, this.conf, this.original,)
-    this.render(ctx, {x, y}, parent,)
-
+    this.drawShape(ctx, {x, y}, parent,)
     // ctx.globalCompositeOperation = 'source-atop'
     //恢复本次图形渲染前的矩阵变换。
     //可以用ctx.restore() 来恢复，但那样会导致clip方法裁剪的区域也被恢复（即仅作用于本组件）。
@@ -165,7 +163,7 @@ export abstract class BaseShape {
     let nv = CanvasUtil2.getInstance().storedTransform
     ctx.setTransform(nv.a, nv.b, nv.c, nv.d, nv.e, nv.f)
 
-    if (false) {
+    if (true) {
       draw.drawRound(ctx, this.conf.box.topLeft)
       draw.drawRound(ctx, this.conf.box.topRight)
       draw.drawRound(ctx, this.conf.box.bottomLeft)
@@ -176,7 +174,7 @@ export abstract class BaseShape {
 
     for (let i = 0; i < this.children.length; i++) {
       let shape = this.children[i]
-      shape.shapeRender(ctx, this.conf)
+      shape.render(ctx, this.conf)
     }
     ctx.restore()
 
@@ -187,20 +185,22 @@ export abstract class BaseShape {
   }
 
   renderOtherStatus(ctx: CanvasRenderingContext2D, {x, y}: any) {
+    let cu = CanvasUtil2.getInstance()
     ctx.save()
     draw.calcPosition(ctx, this.conf, this.original,)
+    ctx.lineWidth = 2 / cu.handScale
     let newConf = merge(cloneDeep(this.conf), {layout: {x, y}})
     if (this.status === ShapeStatus.Hover) {
-      draw.hover(ctx, newConf)
+      this.drawHover(ctx, newConf)
     }
     if (this.status === ShapeStatus.Select) {
-      draw.selected(ctx, newConf)
+      this.drawSelected(ctx, newConf)
       if (this.isSelectHover) {
-        this.renderSelectedHover(ctx, newConf)
+        this.drawSelectedHover(ctx, newConf)
       }
     }
     if (this.status === ShapeStatus.Edit) {
-      this.renderEdit(ctx, newConf)
+      this.drawEdit(ctx, newConf)
     }
     ctx.restore()
   }

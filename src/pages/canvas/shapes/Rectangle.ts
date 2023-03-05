@@ -104,7 +104,7 @@ export class Rectangle extends BaseShape {
   }
 
   //TODO 可以用roundRect方法
-  render(ctx: CanvasRenderingContext2D, p: P, parent?: BaseConfig) {
+  drawShape(ctx: CanvasRenderingContext2D, p: P, parent?: BaseConfig) {
     let {
       w, h, radius,
       fillColor, borderColor, rotate, lineWidth,
@@ -114,7 +114,7 @@ export class Rectangle extends BaseShape {
     const {x, y} = p
     ctx.save()
     if (radius) {
-      draw.renderRoundRect({x, y, w, h}, radius, ctx)
+      draw.roundRect( ctx,{x, y, w, h}, radius,)
     } else {
       ctx.beginPath()
       ctx.moveTo(x, y)
@@ -136,13 +136,13 @@ export class Rectangle extends BaseShape {
     ctx.restore()
   }
 
-  renderHover(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): void {
+  drawHover(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): void {
   }
 
-  renderSelected(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): void {
+  drawSelected(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): void {
   }
 
-  renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void {
+  drawSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void {
     let {
       x, y, w, h, radius,
       fillColor, borderColor, rotate,
@@ -198,14 +198,14 @@ export class Rectangle extends BaseShape {
     // draw.renderRound(endTop, r, ctx, ShapeType.SELECT)
     // draw.renderRound(endBottom, r, ctx, ShapeType.SELECT)
 
-    draw.renderRound(topLeft, r2, ctx, ShapeType.SELECT)
-    draw.renderRound(topRight, r2, ctx, ShapeType.SELECT)
-    draw.renderRound(bottomLeft, r2, ctx, ShapeType.SELECT)
-    draw.renderRound(bottomRight, r2, ctx, ShapeType.SELECT)
+    draw.round(topLeft, r2, ctx, ShapeType.SELECT)
+    draw.round(topRight, r2, ctx, ShapeType.SELECT)
+    draw.round(bottomLeft, r2, ctx, ShapeType.SELECT)
+    draw.round(bottomRight, r2, ctx, ShapeType.SELECT)
     ctx.restore()
   }
 
-  renderEdit(ctx: CanvasRenderingContext2D, conf: any): void {
+  drawEdit(ctx: CanvasRenderingContext2D, conf: any): void {
     let {
       x, y, w, h, radius,
       fillColor, borderColor, rotate,
@@ -306,8 +306,8 @@ export class Rectangle extends BaseShape {
 
     bezierCps.map((currentPoint: BezierPoint) => {
       draw.drawRound(ctx, currentPoint.center)
-      if (currentPoint.cp1.use) draw.drawCp(ctx, currentPoint.cp1, currentPoint.center)
-      if (currentPoint.cp2.use) draw.drawCp(ctx, currentPoint.cp2, currentPoint.center)
+      if (currentPoint.cp1.use) draw.controlPoint(ctx, currentPoint.cp1, currentPoint.center)
+      if (currentPoint.cp2.use) draw.controlPoint(ctx, currentPoint.cp2, currentPoint.center)
     })
     ctx.restore()
 

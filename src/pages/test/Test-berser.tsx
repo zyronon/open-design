@@ -346,7 +346,7 @@ class T extends Component<any, any> {
 
     bezierCps.map((currentPoint: BezierPoint) => {
       // draw.drawRound(ctx, currentPoint.center)
-      if (currentPoint.cp1.use) draw.drawCp(ctx, currentPoint.cp1, currentPoint.center)
+      if (currentPoint.cp1.use) draw.controlPoint(ctx, currentPoint.cp1, currentPoint.center)
       // if (currentPoint.cp2.use) draw.drawCp(ctx, currentPoint.cp2, currentPoint.center)
     })
 

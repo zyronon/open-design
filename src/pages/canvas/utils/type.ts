@@ -224,3 +224,9 @@ export enum ShapeStatus {
   // SelectHover = 'SelectHover',
   Edit = 'Edit'
 }
+
+export enum StrokeAlign {
+  CENTER = 'CENTER',
+  INSIDE = 'INSIDE',
+  OUTSIDE = 'OUTSIDE',
+}

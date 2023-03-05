@@ -3,7 +3,7 @@ import {getRotatedPoint, jiaodu2hudu} from "../../../utils"
 // @ts-ignore
 import {v4 as uuid} from 'uuid'
 import {clone, cloneDeep} from "lodash"
-import {P} from "./type"
+import {P, StrokeAlign} from "./type"
 
 export default {
   //废弃
@@ -146,6 +146,7 @@ export default {
       bottomLeft,
       bottomRight,
     }
+    conf.strokeAlign = StrokeAlign.INSIDE
     // console.log('initConf', conf)
     return conf
   },

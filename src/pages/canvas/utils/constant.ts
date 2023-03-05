@@ -1,4 +1,4 @@
-import {FontWeight, ShapeType} from "./type"
+import {FontWeight, ShapeType, StrokeAlign} from "./type"
 import {FontFamily} from "../config/TextConfig"
 
 export const fontFamilies = [
@@ -967,8 +967,8 @@ export const rects: any[] = [
     "type": "FRAME",
     "color": "gray",
     "radius": 0,
-    children1: [],
-    "children": [
+    children: [],
+    "children1": [
       {
         "name": "容器2",
         layout: {
@@ -1050,7 +1050,7 @@ export const rects: any[] = [
         flipVertical: false
       }
     ],
-    "borderColor": "rgb(216,216,216)",
+    "borderColor": "rgb(107,107,107)",
     "fillColor": "#e1e1e1",
     flipHorizontal: false,
     flipVertical: false
@@ -1262,12 +1262,17 @@ const defaultCurrentMat = [
   0, 0, 0, 1,
 ]
 const defaultHandMove = {x: 0, y: 0}
-export const config = {
-  // handScale: 1.25,
-  // handMove: {x: -216.5, y: -93.25},
-  // currentMat: [1.25, 0, 0, 0, 0, 1.25, 0, 0, 0, 0, 1, 0, -216.5, -93.25, 0, 1],
-  handScale: 1,
-  currentMat: defaultCurrentMat,
-  handMove: defaultHandMove,
-  shapes: rects
+export const defaultConfig = {
+  // handScale: 3.0517578125,
+  // handMove: {x: -1201.48828125, y: -872.4208984375},
+  // currentMat: [3.0517578125, 0, 0, 0, 0, 3.0517578125, 0, 0, 0, 0, 1, 0, -1201.48828125, -872.4208984375, 0, 1],
+  handScale: 28.421709060668945,
+  handMove: {x: -13739.63671875, y: -8159.6513671875},
+  currentMat: [28.421709060668945, 0, 0, 0, 0, 28.421709060668945, 0, 0, 0, 0, 1, 0, -13739.63671875, -8159.6513671875, 0, 1],
+  // handScale: 1,
+  // currentMat: defaultCurrentMat,
+  // handMove: defaultHandMove,
+  shapes: rects,
+  lineWidth: 2,
+  strokeStyle: Colors.Primary
 }

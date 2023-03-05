@@ -10,7 +10,7 @@ import AngleIcon from "../../assets/icon/AngleIcon"
 import {withRouter} from "../../components/WithRouter"
 import Fps from "../../components/Fps"
 import {BaseOption, BaseSelect} from "../../components/BaseSelect2"
-import {config, rects} from "./utils/constant"
+import {defaultConfig, rects} from "./utils/constant"
 import {EventTypes, IState, RectColorType, ShapeType} from "./utils/type"
 import BaseSlotButton from "../../components/BaseSlotButton"
 import Icon from '@icon-park/react/es/all'
@@ -32,7 +32,7 @@ class Design extends React.Component<any, IState> {
     rectColor: null,
     rectColorType: null,
     drawCount: 0,
-    handScale: config.handScale,
+    handScale: defaultConfig.handScale,
     selectShape: undefined,
     selectDrawType: 'drawType',
     drawType: ShapeType.SELECT,

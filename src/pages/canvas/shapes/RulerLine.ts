@@ -48,7 +48,7 @@ export class RulerLine extends BaseShape {
     return this.conf.data?.direction === 'horizontal'
   }
 
-  render(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {
+  drawShape(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {
     let cu = CanvasUtil2.getInstance()
     if (this.isHorizontal()) {
       ctx.rect(xy.x, xy.y, cu.canvasRect.width, 1)
@@ -58,16 +58,16 @@ export class RulerLine extends BaseShape {
     ctx.fill()
   }
 
-  renderEdit(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {
+  drawEdit(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {
   }
 
-  renderHover(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {
+  drawHover(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {
   }
 
-  renderSelected(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {
+  drawSelected(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {
   }
 
-  renderSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void {
+  drawSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void {
   }
 
 }

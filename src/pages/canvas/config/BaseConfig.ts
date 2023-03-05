@@ -1,5 +1,5 @@
 //属性参考：https://developers.mastergo.com/apis/node-frame.html
-import {P, P2, ShapeType} from "../utils/type"
+import {P, P2, ShapeType, StrokeAlign} from "../utils/type"
 
 interface Layout {
   absoluteTransform: Transform//图层节点相对于包含它的页面的位置，以变换矩阵的方式呈现。
@@ -17,8 +17,8 @@ interface Layout {
    * 1、有父级的情况下：显示角度和真实的角度不同
    * 2、翻转的情况下：显示角度和真实的角度不同，但是不知道为什么masterGo和figma都是这样子设计的
    * */
-  layout: Rect//图层节点的 rect。
   realRotation: number,
+  layout: Rect//图层节点的 rect。
   start: P,//起点，即左上角
   absolute: P,//起点坐标绝对值
   // originalAbsolute: P,//起点坐标未旋转的值
@@ -37,10 +37,6 @@ interface Layout {
     bottomRight: P,
   }
   radius: number,
-  topLeft: P,//废弃
-  topRight: P,//废弃
-  bottomLeft: P,//废弃
-  bottomRight: P,//废弃
   clip: boolean
 }
 
@@ -63,7 +59,7 @@ interface Geometry {
    * 'INSIDE': 内部。
    * 'OUTSIDE': 外部。
    * */
-  strokeAlign: 'CENTER' | 'INSIDE' | 'OUTSIDE'
+  strokeAlign: StrokeAlign
   /** @desc 端点的装饰。
    * 'NONE': 正常。
    * 'ROUND': 圆角。

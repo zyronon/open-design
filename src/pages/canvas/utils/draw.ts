@@ -1,8 +1,9 @@
 import {IState, P, P2, ShapeType} from "./type"
 import {BaseConfig, Rect} from "../config/BaseConfig"
-import {Colors} from "./constant"
+import {Colors, defaultConfig} from "./constant"
 import {jiaodu2hudu} from "../../../utils"
 import {BaseShape} from "../shapes/BaseShape"
+import CanvasUtil2 from "../CanvasUtil2"
 
 export default {
   /** @desc 计算位置
@@ -132,98 +133,77 @@ export default {
   clear(rect: Rect, ctx: any) {
     ctx.clearRect(rect.x, rect.y, rect.w, rect.h)
   },
+  hover(ctx: CanvasRenderingContext2D, config: any) {
+    let {
+      layout, radius
+    } = config
+    ctx.strokeStyle = defaultConfig.strokeStyle
+    if (radius) {
+      this.roundRect(ctx, layout, radius,)
+    } else {
+      ctx.beginPath()
+      ctx.rect2(layout)
+      ctx.closePath()
+      ctx.stroke()
+    }
+  },
   selected(ctx: CanvasRenderingContext2D, config: any) {
     let {
       layout: {x, y, w, h,},
       radius,
-      fillColor, borderColor, rotation,
-      type, flipVertical, flipHorizontal, children,
     } = config
-    ctx.strokeStyle = 'rgb(139,80,255)'
+    ctx.strokeStyle = defaultConfig.strokeStyle
 
     if (radius) {
-      this.renderRoundRect({x, y, w, h}, radius, ctx)
+      this.roundRect(ctx, {x, y, w, h}, radius,)
+    } else {
+      ctx.beginPath()
+      ctx.rect(x, y, w, h)
+      ctx.closePath()
+      ctx.stroke()
     }
-    ctx.beginPath()
-    ctx.moveTo(x, y)
-    ctx.lineTo(x + w, y)
-    ctx.lineTo(x + w, y + h)
-    ctx.lineTo(x, y + h)
-    ctx.lineTo(x, y)
-    ctx.closePath()
-    ctx.stroke()
-    let d = 4
-    this.clear({
-      x: x - d,
-      y: y - d,
-      w: 2 * d,
-      h: 2 * d
-    }, ctx)
-    this.clear({
-      x: x + w - d,
-      y: y - d,
-      w: 2 * d,
-      h: 2 * d
-    }, ctx)
-    this.clear({
-      x: x + w - d,
-      y: y + h - d,
-      w: 2 * d,
-      h: 2 * d
-    }, ctx)
-    this.clear({
-      x: x - d,
-      y: y + h - d,
-      w: 2 * d,
-      h: 2 * d
-    }, ctx)
 
-    let r = 3
-    let lineWidth = 1.5
-    this.renderRoundRect({
+    let cu = CanvasUtil2.getInstance()
+    let d = 4 / cu.handScale
+    let r = 3 / cu.handScale
+    ctx.fillStyle = 'white'
+    this.roundRect(ctx, {
       x: x - d,
       y: y - d,
       w: 2 * d,
       h: 2 * d,
-      lineWidth
-    }, r, ctx)
-    this.renderRoundRect({
+    }, r,)
+    this.roundRect(ctx, {
       x: x + w - d,
       y: y - d,
       w: 2 * d,
       h: 2 * d,
-      lineWidth
-    }, r, ctx)
-    this.renderRoundRect({
+    }, r,)
+    this.roundRect(ctx, {
       x: x + w - d,
       y: y + h - d,
       w: 2 * d,
       h: 2 * d,
-      lineWidth
-    }, r, ctx)
-    this.renderRoundRect({
+    }, r,)
+    this.roundRect(ctx, {
       x: x - d,
       y: y + h - d,
       w: 2 * d,
       h: 2 * d,
-      lineWidth
-    }, r, ctx)
+    }, r,)
   },
   edit(ctx: CanvasRenderingContext2D, config: any) {
     let {
       layout: {x, y, w, h,},
     } = config
-    ctx.strokeStyle = 'rgb(139,80,255)'
+    ctx.strokeStyle = defaultConfig.strokeStyle
 
     ctx.beginPath()
-    ctx.moveTo(x, y)
-    ctx.lineTo(x + w, y)
-    ctx.lineTo(x + w, y + h)
-    ctx.lineTo(x, y + h)
-    ctx.lineTo(x, y)
+    ctx.rect(x, y, w, h)
     ctx.closePath()
     ctx.stroke()
-    let d = 4
+    let cu = CanvasUtil2.getInstance()
+    let d = 4 / cu.handScale
     this.clear({
       x: x - d,
       y: y - d,
@@ -251,34 +231,34 @@ export default {
 
     let r = 3
     let lineWidth = 1.5
-    this.renderRoundRect({
+    this.roundRect(ctx, {
       x: x - d,
       y: y - d,
       w: 2 * d,
       h: 2 * d,
       lineWidth
-    }, r, ctx)
-    this.renderRoundRect({
+    }, r,)
+    this.roundRect(ctx, {
       x: x + w - d,
       y: y - d,
       w: 2 * d,
       h: 2 * d,
       lineWidth
-    }, r, ctx)
-    this.renderRoundRect({
+    }, r,)
+    this.roundRect(ctx, {
       x: x + w - d,
       y: y + h - d,
       w: 2 * d,
       h: 2 * d,
       lineWidth
-    }, r, ctx)
-    this.renderRoundRect({
+    }, r,)
+    this.roundRect(ctx, {
       x: x - d,
       y: y + h - d,
       w: 2 * d,
       h: 2 * d,
       lineWidth
-    }, r, ctx)
+    }, r,)
 
 
     d = 40
@@ -288,39 +268,9 @@ export default {
       x: t.x + d,
       y: t.y + d,
     }
-    this.renderRound(topLeft, r2, ctx, ShapeType.SELECT)
+    this.round(topLeft, r2, ctx, ShapeType.SELECT)
   },
-  hover(ctx: CanvasRenderingContext2D, config: any) {
-    let {
-      layout: {x, y, w, h,},
-      radius,
-      fillColor, borderColor, rotation,
-      type, flipVertical, flipHorizontal, children,
-    } = config
-    let d = .5
-    let hover: any = {}
-    hover.lineWidth = 2
-    hover.x = x - d
-    hover.y = y - d
-    hover.w = w + 2 * d
-    hover.h = h + 2 * d
-    if (radius) {
-      this.renderRoundRect(hover, radius, ctx)
-    } else {
-      ctx.beginPath()
-      ctx.moveTo(hover.x, hover.y)
-      ctx.lineTo(hover.x + hover.w, hover.y)
-      ctx.lineTo(hover.x + hover.w, hover.y + hover.h)
-      ctx.lineTo(hover.x, hover.y + hover.h)
-      ctx.lineTo(hover.x, hover.y)
-      ctx.closePath()
-      ctx.strokeStyle = borderColor
-      ctx.stroke()
-    }
-    ctx.strokeStyle = 'rgb(139,80,255)'
-    ctx.stroke()
-  },
-  drawCp(ctx: CanvasRenderingContext2D, rect: any, center: P2) {
+  controlPoint(ctx: CanvasRenderingContext2D, rect: any, center: P2) {
     let d = 3
     let {x, y, w = 2 * d, h = 2 * d, lineWidth = 1} = rect
     let ow = w / 2
@@ -344,20 +294,20 @@ export default {
     ctx.restore()
   },
   drawRound(ctx: any, rect: any, r: number = 4) {
-    let d = 4
-    let {x, y, w = 2 * d, h = 2 * d, lineWidth = 1.5} = rect
+    let cu = CanvasUtil2.getInstance()
+    let {x, y} = rect
     ctx.save()
-    ctx.beginPath()
-    ctx.lineWidth = lineWidth
+    ctx.lineWidth = defaultConfig.lineWidth / cu.handScale
     ctx.fillStyle = Colors.White
-    ctx.strokeStyle = Colors.Primary
-    ctx.arc(x, y, r, 0, 2 * Math.PI)
+    ctx.strokeStyle = defaultConfig.strokeStyle
+    ctx.beginPath()
+    ctx.arc(x, y, r / cu.handScale, 0, 2 * Math.PI)
     ctx.fill()
     ctx.stroke()
     ctx.closePath()
     ctx.restore()
   },
-  renderRound(rect: any, r: number, ctx: any, type: ShapeType = ShapeType.RECTANGLE) {
+  round(rect: any, r: number, ctx: any, type: ShapeType = ShapeType.RECTANGLE) {
     let {x, y} = rect
     ctx.save()
     ctx.lineWidth = 1.5
@@ -375,8 +325,7 @@ export default {
     }
     ctx.restore()
   },
-  renderRoundRect(rect: any, r: number, ctx: any,) {
-    ctx.lineWidth = rect.lineWidth
+  roundRect(ctx: any, rect: any, r: number,) {
     let {x, y, w, h} = rect
     ctx.beginPath()
     ctx.moveTo(x + w / 2, y)
@@ -385,23 +334,7 @@ export default {
     ctx.arcTo(x, y + h, x, y, r)
     ctx.arcTo(x, y, x + w / 2, y, r)
     ctx.closePath()
+    ctx.fill()
     ctx.stroke()
   },
-  drawRoundRect(ctx: CanvasRenderingContext2D, rect: any, r: number = 2, d: number = 4) {
-    let {x, y, w = 2 * d, h = 2 * d, lineWidth = 2} = rect
-    let ow = w / 2
-    let oh = h / 2
-    ctx.save()
-    ctx.lineWidth = lineWidth
-    ctx.translate(x, y)
-    ctx.beginPath()
-    ctx.moveTo(0, -oh)
-    ctx.arcTo(ow, -oh, ow, oh, r)
-    ctx.arcTo(ow, oh, -ow, oh, r)
-    ctx.arcTo(-ow, oh, -ow, -oh, r)
-    ctx.arcTo(-ow, -oh, 0, -oh, r)
-    ctx.closePath()
-    ctx.stroke()
-    ctx.restore()
-  }
 }

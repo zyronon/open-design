@@ -5,46 +5,46 @@ import {withRouter} from "../../components/WithRouter"
 import draw from "../canvas/utils/draw"
 
 function bezier(pots: any, amount: any) {
-  let pot;
-  let lines;
-  let ret = [];
-  let points;
+  let pot
+  let lines
+  let ret = []
+  let points
   for (let i = 0; i <= amount; i++) {
-    points = pots.slice(0);
-    lines = [];
+    points = pots.slice(0)
+    lines = []
     while (pot = points.shift()) {
       if (points.length) {
-        lines.push(pointLine([pot, points[0]], i / amount));
+        lines.push(pointLine([pot, points[0]], i / amount))
       } else if (lines.length > 1) {
-        points = lines;
-        lines = [];
+        points = lines
+        lines = []
       } else {
-        break;
+        break
       }
     }
-    ret.push(lines[0]);
+    ret.push(lines[0])
   }
 
   function pointLine(points: any, rate: any) {
-    let pointA, pointB, pointDistance, xDistance, yDistance, tan, radian, tmpPointDistance;
-    let ret = [];
-    pointA = points[0];
-    pointB = points[1];
-    xDistance = pointB.x - pointA.x;
-    yDistance = pointB.y - pointA.y;
-    pointDistance = Math.pow(Math.pow(xDistance, 2) + Math.pow(yDistance, 2), 1 / 2);
-    tan = yDistance / xDistance;
-    radian = Math.atan(tan);
-    tmpPointDistance = pointDistance * rate;
+    let pointA, pointB, pointDistance, xDistance, yDistance, tan, radian, tmpPointDistance
+    let ret = []
+    pointA = points[0]
+    pointB = points[1]
+    xDistance = pointB.x - pointA.x
+    yDistance = pointB.y - pointA.y
+    pointDistance = Math.pow(Math.pow(xDistance, 2) + Math.pow(yDistance, 2), 1 / 2)
+    tan = yDistance / xDistance
+    radian = Math.atan(tan)
+    tmpPointDistance = pointDistance * rate
     ret = {
       // @ts-ignore
       x: pointA.x + tmpPointDistance * Math.cos(radian),
       y: pointA.y + tmpPointDistance * Math.sin(radian)
-    };
-    return ret;
+    }
+    return ret
   }
 
-  return ret;
+  return ret
 }
 
 //P = (1−t)3P1 + 3(1−t)2tP2 +3(1−t)t2P3 + t3P4
@@ -94,12 +94,12 @@ function getCp2(tp1: any, tp2: any, p1: any, p4: any) {
 
 class T extends Component<any, any> {
   constructor(props: any) {
-    super(props);
+    super(props)
   }
 
   componentDidMount() {
-    let canvas = document.querySelector('canvas');
-    let ctx = canvas!.getContext('2d')!;
+    let canvas = document.querySelector('canvas')
+    let ctx = canvas!.getContext('2d')!
     ctx.clearRect(0, 0, 500, 500)
     ctx.save()
     let rect = {
@@ -178,29 +178,29 @@ class T extends Component<any, any> {
     let d = 4
     let lineWidth = 2
     let r = 2
-    draw.renderRoundRect({
+    draw.roundRect(ctx, {
       x: cp1.x,
       y: cp1.y,
       w: 2 * d,
       h: 2 * d,
       lineWidth
-    }, r, ctx)
-    draw.renderRoundRect({
+    }, r,)
+    draw.roundRect(ctx, {
       x: cp2.x,
       y: cp2.y,
       w: 2 * d,
       h: 2 * d,
       lineWidth
-    }, r, ctx)
+    }, r,)
 
     let item: any = bezier3(0.5, left, cp1, cp2, right)
-    draw.renderRoundRect({
+    draw.roundRect(ctx, {
       x: item.x,
       y: item.y,
       w: 2 * d,
       h: 2 * d,
       lineWidth
-    }, r, ctx)
+    }, r,)
 
     //第一种算法，反推控制点
     //https://jermmy.github.io/2016/08/01/2016-8-1-Bezier-Curve-SVG/
@@ -247,13 +247,13 @@ class T extends Component<any, any> {
     console.log(s)
 
     s.map(item => {
-      draw.renderRoundRect({
+      draw.roundRect(ctx, {
         x: item.x,
         y: item.y,
         w: 2 * d,
         h: 2 * d,
         lineWidth
-      }, r, ctx)
+      }, r,)
     })
 
 

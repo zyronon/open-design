@@ -232,9 +232,10 @@ export abstract class BaseShape {
       * */
       if (flipHorizontal) x = helper._reversePoint(x, center.x)
       if (flipVertical) y = helper._reversePoint(y, center.y)
-      let edge = 10
-      let angle = 7
-      let rotation = 27
+      let edge = 10 / cu.handScale
+      let angle = 7 / cu.handScale
+      let rotation = 27 / cu.handScale
+      let rr = 5 / cu.handScale
       //左边
       if ((leftX! - edge < x && x < leftX! + edge) &&
         (topY! + edge < y && y < bottomY! - edge)
@@ -251,7 +252,6 @@ export abstract class BaseShape {
         this.hoverType = MouseOptionType.Right
         return true
       }
-
       //上边
       if ((leftX! + edge < x && x < rightX! - edge) &&
         (topY! - edge < y && y < topY! + edge)
@@ -260,7 +260,6 @@ export abstract class BaseShape {
         this.hoverType = MouseOptionType.Top
         return true
       }
-
       //下边
       if ((leftX! + edge < x && x < rightX! - edge) &&
         (bottomY! - edge < y && y < bottomY! + edge)
@@ -269,7 +268,6 @@ export abstract class BaseShape {
         this.hoverType = MouseOptionType.Bottom
         return true
       }
-
       //左上
       if ((leftX! - angle < x && x < leftX! + angle) &&
         (topY! - angle < y && y < topY! + angle)
@@ -278,7 +276,6 @@ export abstract class BaseShape {
         this.hoverType = MouseOptionType.TopLeft
         return true
       }
-
       //左上旋转
       if ((leftX! - rotation < x && x < leftX! - angle) &&
         (topY! - rotation < y && y < topY! - angle)
@@ -287,9 +284,7 @@ export abstract class BaseShape {
         this.hoverType = MouseOptionType.TopLeftRotation
         return true
       }
-
       let r = radius
-      let rr = 5
       //左上，拉动圆角那个点
       if ((leftX! + r - rr < x && x < leftX! + r + rr / 2) &&
         (topY! + r - rr < y && y < topY! + r + rr / 2)

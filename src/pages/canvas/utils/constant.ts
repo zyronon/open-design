@@ -1050,7 +1050,7 @@ export const rects: any[] = [
         flipVertical: false
       }
     ],
-    "borderColor": "rgb(107,107,107)",
+    "borderColor": "rgb(197,197,197)",
     "fillColor": "#e1e1e1",
     flipHorizontal: false,
     flipVertical: false

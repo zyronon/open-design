@@ -188,19 +188,6 @@ export function getP2(use: boolean = false): P2 {
   }
 }
 
-export function getP(): P {
-  return {x: 0, y: 0}
-}
-
-export type ShapeState = {
-  isHover: boolean,
-  isSelect: boolean,
-  isSelectHover: boolean,
-  isEdit: boolean,
-  enterLT: boolean,
-  enterL: boolean
-}
-
 export enum MouseOptionType {
   None = 0,
   Top = 1,

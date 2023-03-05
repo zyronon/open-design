@@ -118,6 +118,7 @@ export class Frame extends BaseShape {
     const {x, y} = p
 
     ctx.lineWidth = lineWidth ?? defaultConfig.lineWidth
+    let lineWidth2 = ctx.lineWidth / 2
     ctx.fillStyle = fillColor
     ctx.strokeStyle = borderColor
     if (radius) {
@@ -129,15 +130,17 @@ export class Frame extends BaseShape {
       ctx.fill()
       let path = new Path2D()
       if (strokeAlign === StrokeAlign.INSIDE) {
-        path.rect(x + ctx.lineWidth / 2, y + ctx.lineWidth / 2, w, h)
+        path.rect(x + lineWidth2, y + lineWidth2, w - lineWidth2 * 2, h - lineWidth2 * 2)
       } else if (strokeAlign === StrokeAlign.OUTSIDE) {
-        path.rect(x - ctx.lineWidth / 2, y - ctx.lineWidth / 2, w, h)
+        path.rect(x - lineWidth2, y - lineWidth2, w + lineWidth2 * 2, h + lineWidth2 * 2)
       } else {
         path.rect(x, y, w, h)
       }
       ctx.stroke(path)
     }
-    ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
+
+    let cu = CanvasUtil2.getInstance()
+    ctx.font = `400 ${18 / cu.handScale}rem "SourceHanSansCN", sans-serif`
     let text = `${w.toFixed(2)} x ${h.toFixed(2)}`
     let m = ctx.measureText(text)
     let lX = x + w / 2 - m.width / 2

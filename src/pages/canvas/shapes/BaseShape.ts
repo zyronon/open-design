@@ -5,7 +5,7 @@ import {getRotatedPoint} from "../../../utils"
 import {getShapeFromConfig} from "../utils/common"
 import EventBus from "../../../utils/event-bus"
 import {EventMapTypes} from "../../canvas20221111/type"
-import {BaseConfig} from "../config/BaseConfig"
+import {BaseConfig, Rect} from "../config/BaseConfig"
 import helper from "../utils/helper"
 import draw from "../utils/draw"
 
@@ -47,15 +47,15 @@ export abstract class BaseShape {
     CanvasUtil2.getInstance().render()
   }
 
-  abstract drawShape(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any
+  abstract drawShape(ctx: CanvasRenderingContext2D, newLayout: Rect, parent?: BaseConfig): any
 
-  abstract drawHover(ctx: CanvasRenderingContext2D, conf: BaseConfig): any
+  abstract drawHover(ctx: CanvasRenderingContext2D, newLayout: Rect,): any
 
-  abstract drawSelected(ctx: CanvasRenderingContext2D, conf: BaseConfig): any
+  abstract drawSelected(ctx: CanvasRenderingContext2D, newLayout: Rect): any
 
-  abstract drawSelectedHover(ctx: CanvasRenderingContext2D, conf: BaseConfig): void
+  abstract drawSelectedHover(ctx: CanvasRenderingContext2D, newLayout: Rect): void
 
-  abstract drawEdit(ctx: CanvasRenderingContext2D, conf: BaseConfig): any
+  abstract drawEdit(ctx: CanvasRenderingContext2D, newLayout: Rect): any
 
   abstract childMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean
 
@@ -155,7 +155,8 @@ export abstract class BaseShape {
   render(ctx: CanvasRenderingContext2D, parent?: BaseConfig) {
     ctx.save()
     let {x, y} = draw.calcPosition(ctx, this.conf, this.original,)
-    this.drawShape(ctx, {x, y}, parent,)
+    let newLayout = {...this.conf.layout, x, y}
+    this.drawShape(ctx, newLayout, parent,)
     // ctx.globalCompositeOperation = 'source-atop'
     //恢复本次图形渲染前的矩阵变换。
     //可以用ctx.restore() 来恢复，但那样会导致clip方法裁剪的区域也被恢复（即仅作用于本组件）。
@@ -179,28 +180,27 @@ export abstract class BaseShape {
     ctx.restore()
 
     if (this.status !== ShapeStatus.Normal) {
-      CanvasUtil2.getInstance().waitRenderOtherStatusFunc.push(() => this.renderOtherStatus(ctx, {x, y}))
+      CanvasUtil2.getInstance().waitRenderOtherStatusFunc.push(() => this.renderOtherStatus(ctx, newLayout))
     }
     // this.renderOtherStatus(ctx, {x, y})
   }
 
-  renderOtherStatus(ctx: CanvasRenderingContext2D, {x, y}: any) {
+  renderOtherStatus(ctx: CanvasRenderingContext2D, newLayout: Rect) {
     let cu = CanvasUtil2.getInstance()
     ctx.save()
     draw.calcPosition(ctx, this.conf, this.original,)
     ctx.lineWidth = 2 / cu.handScale
-    let newConf = merge(cloneDeep(this.conf), {layout: {x, y}})
     if (this.status === ShapeStatus.Hover) {
-      this.drawHover(ctx, newConf)
+      this.drawHover(ctx, newLayout)
     }
     if (this.status === ShapeStatus.Select) {
-      this.drawSelected(ctx, newConf)
+      this.drawSelected(ctx, newLayout)
       if (this.isSelectHover) {
-        this.drawSelectedHover(ctx, newConf)
+        this.drawSelectedHover(ctx, newLayout)
       }
     }
     if (this.status === ShapeStatus.Edit) {
-      this.drawEdit(ctx, newConf)
+      this.drawEdit(ctx, newLayout)
     }
     ctx.restore()
   }

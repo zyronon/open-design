@@ -1,10 +1,10 @@
 import {BaseShape} from "./BaseShape"
 import CanvasUtil2 from "../CanvasUtil2"
-import {BaseEvent2, P, ShapeProps, ShapeStatus, StrokeAlign} from "../utils/type"
+import {BaseEvent2, P, ShapeProps, ShapeStatus, ShapeType, StrokeAlign} from "../utils/type"
 import {BaseConfig, Rect} from "../config/BaseConfig"
 import draw from "../utils/draw"
-import {getRotatedPoint} from "../../../utils"
-import {defaultConfig} from "../utils/constant"
+import {getRotatedPoint, jiaodu2hudu} from "../../../utils"
+import {Colors, defaultConfig} from "../utils/constant"
 
 export class Frame extends BaseShape {
 
@@ -138,7 +138,7 @@ export class Frame extends BaseShape {
     //文字
     ctx.fillStyle = defaultConfig.strokeStyle
     let cu = CanvasUtil2.getInstance()
-    ctx.font = `400 ${18 / cu.handScale}rem "SourceHanSansCN", sans-serif`
+    ctx.font = `400 ${16 / cu.handScale}rem "SourceHanSansCN", sans-serif`
     let text = `${w.toFixed(2)} x ${h.toFixed(2)}`
     let m = ctx.measureText(text)
     let lX = x + w / 2 - m.width / 2
@@ -156,32 +156,61 @@ export class Frame extends BaseShape {
 
     //描边
     let lw2 = ctx.lineWidth / 2
-    let w1 = w, h1 = h, x1 = x, y1 = y, r1 = radius
     if (strokeAlign === StrokeAlign.INSIDE) {
-      w1 -= lw2 * 2, h1 -= lw2 * 2, x1 += lw2, y1 += lw2, r1 -= lw2
+      x += lw2, y += lw2, w -= lw2 * 2, h -= lw2 * 2, radius -= lw2
     } else if (strokeAlign === StrokeAlign.OUTSIDE) {
-      w1 += lw2 * 2, h1 += lw2 * 2, x1 -= lw2, y1 -= lw2, r1 += lw2
+      x -= lw2, y -= lw2, w += lw2 * 2, h += lw2 * 2, radius += lw2
     }
     ctx.strokeStyle = borderColor
-    let path2 = this.getShapePath(ctx, {x: x1, y: y1, w: w1, h: h1}, r1)
+    let path2 = this.getShapePath(ctx, {x, y, w, h}, radius)
     ctx.stroke(path2)
 
     //裁剪放在描边后，不然描边也会被裁掉
     if (clip) ctx.clip(path)
   }
 
-  drawHover(ctx: CanvasRenderingContext2D, newLayout: Rect): void {
+  drawHover(ctx: CanvasRenderingContext2D, layout: Rect): void {
     ctx.strokeStyle = defaultConfig.strokeStyle
-    let path = this.getShapePath(ctx, newLayout, this.conf.radius)
+    //容器hover时只需要描边矩形就行了
+    let path = this.getShapePath(ctx, layout, 0)
+    // let path = this.getShapePath(ctx, newLayout, this.conf.radius)
     ctx.stroke(path)
   }
 
-  drawSelected(ctx: CanvasRenderingContext2D, newLayout: Rect): void {
-    draw.selected(ctx, {...this.conf, ...{layout: newLayout}})
+  drawSelected(ctx: CanvasRenderingContext2D, layout: Rect): void {
+    draw.selected(ctx, layout)
   }
 
-  drawSelectedHover(ctx: CanvasRenderingContext2D, conf: BaseConfig): void {
-    // drawSelectedHover(ctx, conf)
+  drawSelectedHover(ctx: CanvasRenderingContext2D, layout: Rect): void {
+    // console.log('drawSelectedHover')
+    let {x, y, w, h} = layout
+    let {radius,} = this.conf
+    ctx.strokeStyle = defaultConfig.strokeStyle
+    ctx.fillStyle = Colors.White
+
+    let cu = CanvasUtil2.getInstance()
+    let d = radius
+    let r2 = 5 / cu.handScale
+    let topLeft = {
+      x: x + d,
+      y: y + d,
+    }
+    let topRight = {
+      x: x + w - d,
+      y: y + d,
+    }
+    let bottomLeft = {
+      x: x + d,
+      y: y + h - d,
+    }
+    let bottomRight = {
+      x: x + w - d,
+      y: y + h - d,
+    }
+    draw.round(ctx, topLeft, r2,)
+    draw.round(ctx, topRight, r2,)
+    draw.round(ctx, bottomLeft, r2,)
+    draw.round(ctx, bottomRight, r2,)
   }
 
   drawEdit(ctx: CanvasRenderingContext2D, conf: BaseConfig): void {

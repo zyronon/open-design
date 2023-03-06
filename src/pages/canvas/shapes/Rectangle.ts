@@ -114,7 +114,7 @@ export class Rectangle extends BaseShape {
     const {x, y} = p
     ctx.save()
     if (radius) {
-      draw.roundRect( ctx,{x, y, w, h}, radius,)
+      draw.roundRect(ctx, {x, y, w, h}, radius,)
     } else {
       ctx.beginPath()
       ctx.moveTo(x, y)
@@ -143,66 +143,6 @@ export class Rectangle extends BaseShape {
   }
 
   drawSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void {
-    let {
-      x, y, w, h, radius,
-      fillColor, borderColor, rotate,
-      type, flipVertical, flipHorizontal, children,
-    } = conf
-    ctx.strokeStyle = 'rgb(139,80,255)'
-
-    let d = 4
-    let radius2 = 200
-    let min = Math.min(w, h)
-    // debugger
-    let maxRadius = min / 2
-    // let hypotenuse = Math.sqrt(Math.pow(maxRadius, 2) + Math.pow(maxRadius, 2))
-    let hypotenuse = Math.hypot(maxRadius, maxRadius)
-
-    let radiusHyp = hypotenuse / maxRadius * radius2
-    let cos = Math.cos(jiaodu2hudu(45))
-    let hey = cos * radiusHyp
-    // console.log(hey)
-
-
-    d = 20
-    d = radius
-    let r2 = 5
-    let t = conf
-    let endTop = {
-      x: t.x + Math.min(t.w, t.h) / 2,
-      y: t.y + Math.min(t.w, t.h) / 2,
-    }
-    let endBottom = {
-      x: t.x + Math.min(t.w, t.h) / 2,
-      y: t.y + t.h - Math.min(t.w, t.h) / 2,
-    }
-    let topLeft = {
-      x: t.x + d,
-      y: t.y + d,
-    }
-    let topRight = {
-      x: t.x + t.w - d,
-      y: t.y + d,
-    }
-    let bottomLeft = {
-      x: t.x + d,
-      y: t.y + t.h - d,
-    }
-    let bottomRight = {
-      x: t.x + t.w - d,
-      y: t.y + t.h - d,
-    }
-    ctx.save()
-    // let nv = currentMat
-    // ctx.transform(nv[0], nv[4], nv[1], nv[5], nv[12], nv[13]);
-    // draw.renderRound(endTop, r, ctx, ShapeType.SELECT)
-    // draw.renderRound(endBottom, r, ctx, ShapeType.SELECT)
-
-    draw.round(topLeft, r2, ctx, ShapeType.SELECT)
-    draw.round(topRight, r2, ctx, ShapeType.SELECT)
-    draw.round(bottomLeft, r2, ctx, ShapeType.SELECT)
-    draw.round(bottomRight, r2, ctx, ShapeType.SELECT)
-    ctx.restore()
   }
 
   drawEdit(ctx: CanvasRenderingContext2D, conf: any): void {

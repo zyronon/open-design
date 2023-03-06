@@ -1,6 +1,6 @@
 import {BaseEvent2, MouseOptionType, P, ShapeProps, ShapeStatus, ShapeType} from "../utils/type"
 import CanvasUtil2 from "../CanvasUtil2"
-import {cloneDeep, merge} from "lodash"
+import {cloneDeep} from "lodash"
 import {getRotatedPoint} from "../../../utils"
 import {getShapeFromConfig} from "../utils/common"
 import EventBus from "../../../utils/event-bus"
@@ -17,7 +17,7 @@ export abstract class BaseShape {
   conf: BaseConfig
   children: BaseShape[] = []
   _status: ShapeStatus = ShapeStatus.Normal
-  isSelectHover: boolean = false
+  _isSelectHover: boolean = false
   isCapture: boolean = true//是否捕获事件，为true不会再往下传递事件
   enter: boolean = false
   startX: number = 0
@@ -43,8 +43,21 @@ export abstract class BaseShape {
   }
 
   set status(val) {
-    this._status = val
-    CanvasUtil2.getInstance().render()
+    if (val !== this._status) {
+      this._status = val
+      CanvasUtil2.getInstance().render()
+    }
+  }
+
+  get isSelectHover() {
+    return this._isSelectHover
+  }
+
+  set isSelectHover(val) {
+    if (val !== this._isSelectHover) {
+      this._isSelectHover = val
+      CanvasUtil2.getInstance().render()
+    }
   }
 
   abstract drawShape(ctx: CanvasRenderingContext2D, newLayout: Rect, parent?: BaseConfig): any
@@ -152,60 +165,7 @@ export abstract class BaseShape {
       && rect.box.topY < y && y < rect.box.bottomY
   }
 
-  render(ctx: CanvasRenderingContext2D, parent?: BaseConfig) {
-    ctx.save()
-    let {x, y} = draw.calcPosition(ctx, this.conf, this.original,)
-    let newLayout = {...this.conf.layout, x, y}
-    this.drawShape(ctx, newLayout, parent,)
-    // ctx.globalCompositeOperation = 'source-atop'
-    //恢复本次图形渲染前的矩阵变换。
-    //可以用ctx.restore() 来恢复，但那样会导致clip方法裁剪的区域也被恢复（即仅作用于本组件）。
-    //导致后续绘制子组件时，如果超出父组件边界时，无法被裁剪。
-    let nv = CanvasUtil2.getInstance().storedTransform
-    ctx.setTransform(nv.a, nv.b, nv.c, nv.d, nv.e, nv.f)
-
-    if (true) {
-      draw.drawRound(ctx, this.conf.box.topLeft)
-      draw.drawRound(ctx, this.conf.box.topRight)
-      draw.drawRound(ctx, this.conf.box.bottomLeft)
-      draw.drawRound(ctx, this.conf.box.bottomRight)
-      draw.drawRound(ctx, this.conf.center)
-      draw.drawRound(ctx, this.conf.original)
-    }
-
-    for (let i = 0; i < this.children.length; i++) {
-      let shape = this.children[i]
-      shape.render(ctx, this.conf)
-    }
-    ctx.restore()
-
-    if (this.status !== ShapeStatus.Normal) {
-      CanvasUtil2.getInstance().waitRenderOtherStatusFunc.push(() => this.renderOtherStatus(ctx, newLayout))
-    }
-    // this.renderOtherStatus(ctx, {x, y})
-  }
-
-  renderOtherStatus(ctx: CanvasRenderingContext2D, newLayout: Rect) {
-    let cu = CanvasUtil2.getInstance()
-    ctx.save()
-    draw.calcPosition(ctx, this.conf, this.original,)
-    ctx.lineWidth = 2 / cu.handScale
-    if (this.status === ShapeStatus.Hover) {
-      this.drawHover(ctx, newLayout)
-    }
-    if (this.status === ShapeStatus.Select) {
-      this.drawSelected(ctx, newLayout)
-      if (this.isSelectHover) {
-        this.drawSelectedHover(ctx, newLayout)
-      }
-    }
-    if (this.status === ShapeStatus.Edit) {
-      this.drawEdit(ctx, newLayout)
-    }
-    ctx.restore()
-  }
-
-  shapeIsIn(mousePoint: P, cu: CanvasUtil2, parent?: BaseShape): boolean {
+  isInShape(mousePoint: P, cu: CanvasUtil2, parent?: BaseShape): boolean {
     //如果操作中，那么永远返回ture，保持事件一直直接传递到当前图形上
     if (this.enter || this.enterType !== MouseOptionType.None) {
       return true
@@ -220,6 +180,7 @@ export abstract class BaseShape {
       flipHorizontal, flipVertical, center
     } = this.conf
     const {leftX, rightX, topY, bottomY,} = box
+    //反转到0度，好判断
     if (realRotation) {
       let s2 = getRotatedPoint({x, y}, center, -realRotation)
       x = s2.x
@@ -305,6 +266,59 @@ export abstract class BaseShape {
     return this.isHoverIn({x, y}, cu)
   }
 
+  render(ctx: CanvasRenderingContext2D, parent?: BaseConfig) {
+    ctx.save()
+    let {x, y} = draw.calcPosition(ctx, this.conf, this.original,)
+    let newLayout = {...this.conf.layout, x, y}
+    this.drawShape(ctx, newLayout, parent,)
+    // ctx.globalCompositeOperation = 'source-atop'
+    //恢复本次图形渲染前的矩阵变换。
+    //可以用ctx.restore() 来恢复，但那样会导致clip方法裁剪的区域也被恢复（即仅作用于本组件）。
+    //导致后续绘制子组件时，如果超出父组件边界时，无法被裁剪。
+    let nv = CanvasUtil2.getInstance().storedTransform
+    ctx.setTransform(nv.a, nv.b, nv.c, nv.d, nv.e, nv.f)
+
+    if (false) {
+      draw.drawRound(ctx, this.conf.box.topLeft)
+      draw.drawRound(ctx, this.conf.box.topRight)
+      draw.drawRound(ctx, this.conf.box.bottomLeft)
+      draw.drawRound(ctx, this.conf.box.bottomRight)
+      draw.drawRound(ctx, this.conf.center)
+      draw.drawRound(ctx, this.conf.original)
+    }
+
+    for (let i = 0; i < this.children.length; i++) {
+      let shape = this.children[i]
+      shape.render(ctx, this.conf)
+    }
+    ctx.restore()
+
+    if (this.status !== ShapeStatus.Normal) {
+      CanvasUtil2.getInstance().waitRenderOtherStatusFunc.push(() => this.renderOtherStatus(ctx, newLayout))
+    }
+    // this.renderOtherStatus(ctx, {x, y})
+  }
+
+  renderOtherStatus(ctx: CanvasRenderingContext2D, newLayout: Rect) {
+    let cu = CanvasUtil2.getInstance()
+    ctx.save()
+    draw.calcPosition(ctx, this.conf, this.original,)
+    ctx.lineWidth = 2 / cu.handScale
+    if (this.status === ShapeStatus.Hover) {
+      this.drawHover(ctx, newLayout)
+    }
+    if (this.status === ShapeStatus.Select) {
+      this.drawSelected(ctx, newLayout)
+      if (this.isSelectHover) {
+        this.drawSelectedHover(ctx, newLayout)
+      }
+    }
+    if (this.status === ShapeStatus.Edit) {
+      this.drawEdit(ctx, newLayout)
+    }
+    ctx.restore()
+  }
+
   log(val: string) {
     console.log(this.conf.name, ':', val)
   }
@@ -325,7 +339,7 @@ export abstract class BaseShape {
       return true
     }
     let cu = CanvasUtil2.getInstance()
-    if (this.shapeIsIn(point, cu, parents?.[parents?.length - 1])) {
+    if (this.isInShape(point, cu, parents?.[parents?.length - 1])) {
       // this.log('in:' + cu.inShape?.conf?.name)
       if (
         //如果是容器，并且裁剪了、或者父级不裁剪
@@ -475,6 +489,7 @@ export abstract class BaseShape {
     this.enter = true
     if (this.status === ShapeStatus.Select) return
     this.status = ShapeStatus.Select
+    this.isSelectHover = true
     this.isCapture = true
     //如果当前选中的图形不是自己，那么把那个图形设为未选中
     cu.setSelectShape(this, parents)
@@ -534,6 +549,7 @@ export abstract class BaseShape {
     // console.log('mouseup')
     if (this.childMouseUp(event, parents)) return
     this.enterType = MouseOptionType.None
+    this.enterRd1 = this.hoverRd1 = false
     this.enter = false
   }
 

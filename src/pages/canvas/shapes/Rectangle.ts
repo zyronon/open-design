@@ -339,6 +339,7 @@ export class Rectangle extends BaseShape {
   }
 
   //拖动左上，改变圆角按钮
+  // todo 当水平翻转的时候不行
   dragRd1(point: P) {
     let {w, h} = this.conf.layout
     let {x, y} = point

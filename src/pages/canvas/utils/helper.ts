@@ -146,7 +146,7 @@ export default {
       bottomLeft,
       bottomRight,
     }
-    conf.strokeAlign = StrokeAlign.OUTSIDE
+    conf.strokeAlign = StrokeAlign.INSIDE
     // console.log('initConf', conf)
     return conf
   },

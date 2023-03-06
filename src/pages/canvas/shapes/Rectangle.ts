@@ -1,12 +1,29 @@
 import {BaseShape} from "./BaseShape"
 import CanvasUtil2 from "../CanvasUtil2"
-import {BaseEvent2, BezierPoint, BezierPointType, getP2, LineType, P, P2, ShapeStatus, ShapeType} from "../utils/type"
-import {jiaodu2hudu} from "../../../utils"
-import {Colors} from "../utils/constant"
-import {BaseConfig} from "../config/BaseConfig"
+import {
+  BaseEvent2,
+  BezierPoint,
+  BezierPointType,
+  getP2,
+  LineType,
+  MouseOptionType,
+  P,
+  P2,
+  ShapeStatus,
+  StrokeAlign
+} from "../utils/type"
+import {Colors, defaultConfig} from "../utils/constant"
+import {BaseConfig, Rect} from "../config/BaseConfig"
 import draw from "../utils/draw"
 
 export class Rectangle extends BaseShape {
+
+  //最小拖动圆角。真实圆角可能为0，导致渲染的控制点和角重合，所以设置一个最小圆角
+  minDragRadius = 15
+  hoverPointIndex: number = -1
+  rectHoverType: MouseOptionType = MouseOptionType.None
+  rectEnterType: MouseOptionType = MouseOptionType.None
+
 
   constructor(props: any) {
     super(props)
@@ -38,23 +55,22 @@ export class Rectangle extends BaseShape {
     this.conf = val
   }
 
-  childDbClick(event: BaseEvent2, parents: BaseShape[]): boolean {
+  dbClickChild(event: BaseEvent2, parents: BaseShape[]): boolean {
     return false
   }
 
-  hoverPointIndex: number = -1
-
-  childMouseDown(event: BaseEvent2, parents: BaseShape[]) {
+  mouseDownChild(event: BaseEvent2, parents: BaseShape[]) {
     // console.log('childMouseDown', this.hoverPointIndex)
     if (this.status === ShapeStatus.Edit) {
       this._config.isCustom = true
       this.enter = true
       return true
     }
+    this.rectEnterType = this.rectHoverType
     return false
   }
 
-  childMouseMove(event: BaseEvent2, parents: BaseShape[]) {
+  mouseMoveChild(event: BaseEvent2, parents: BaseShape[]) {
     // console.log('childMouseMove', this.hoverPointIndex)
     if (this.status === ShapeStatus.Edit) {
       if (this.hoverPointIndex < 0 || !this.enter) return false
@@ -67,24 +83,43 @@ export class Rectangle extends BaseShape {
       cu.render()
       return true
     }
+    switch (this.rectEnterType) {
+      case MouseOptionType.TopRight:
+        this.dragRd1(event.point)
+        return true
+    }
     return false
   }
 
-  childMouseUp(event: BaseEvent2, parents: BaseShape[]) {
+  mouseUpChild(event: BaseEvent2, parents: BaseShape[]) {
+    this.rectEnterType = this.rectHoverType = MouseOptionType.None
     // console.log('childMouseUp', this.hoverPointIndex)
-
     return false
   }
 
-  beforeShapeIsIn() {
+  beforeIsInShape() {
     return false
   }
 
-  isInOnSelect(mousePoint: P, cu: CanvasUtil2): boolean {
+  isInShapeOnSelect(mousePoint: P, cu: CanvasUtil2): boolean {
+    const {x, y} = mousePoint
+    const {radius, box} = this.conf
+    const {leftX, rightX, topY, bottomY,} = box
+    let rr = 5 / cu.handScale
+
+    let r = Math.max(radius, this.minDragRadius)
+    //左上，拉动圆角那个点
+    if ((leftX! + r - rr < x && x < leftX! + r + rr / 2) &&
+      (topY! + r - rr < y && y < topY! + r + rr / 2)
+    ) {
+      this.rectHoverType = MouseOptionType.TopRight
+      document.body.style.cursor = "pointer"
+      return true
+    }
     return false
   }
 
-  isHoverIn(mousePoint: P, cu: CanvasUtil2): boolean {
+  isInShapeChild(mousePoint: P, cu: CanvasUtil2): boolean {
     if (this.status === ShapeStatus.Edit) {
       let {x, y, w, h, points} = this._config
       this.hoverPointIndex = -1
@@ -103,52 +138,102 @@ export class Rectangle extends BaseShape {
     return super.isInBox(mousePoint)
   }
 
-  //TODO 可以用roundRect方法
-  drawShape(ctx: CanvasRenderingContext2D, p: P, parent?: BaseConfig) {
-    let {
-      w, h, radius,
-      fillColor, borderColor, rotate, lineWidth,
-      type, flipVertical, flipHorizontal, children,
-      fontWeight, fontSize, fontFamily
-    } = this._config
-    const {x, y} = p
-    ctx.save()
-    if (radius) {
-      draw.roundRect(ctx, {x, y, w, h}, radius,)
+  getShapePath(ctx: CanvasRenderingContext2D, layout: Rect, r: number) {
+    let {x, y, w, h} = layout
+    let path = new Path2D()
+    if (r > 0) {
+      let w2 = w / 2, h2 = h / 2
+      path.moveTo(x + w2, y)
+      path.arcTo(x + w, y, x + w, y + h2, r)
+      path.arcTo(x + w, y + h, x + w2, y + h, r)
+      path.arcTo(x, y + h, x, y + h2, r)
+      path.arcTo(x, y, x + w2, y, r)
     } else {
-      ctx.beginPath()
-      ctx.moveTo(x, y)
-      ctx.lineTo(x + w, y)
-      ctx.lineTo(x + w, y + h)
-      ctx.lineTo(x, y + h)
-      ctx.lineTo(x, y)
-      ctx.closePath()
-      ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
-      let text = `${w.toFixed(2)} x ${h.toFixed(2)}`
-      let m = ctx.measureText(text)
-      let lX = x + w / 2 - m.width / 2
-      ctx.fillText(text, lX, y + h + 26)
-      ctx.fillStyle = fillColor
-      ctx.fill()
-      ctx.strokeStyle = borderColor
-      ctx.stroke()
+      path.rect(x, y, w, h)
     }
-    ctx.restore()
+    path.closePath()
+    return path
   }
 
-  drawHover(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): void {
+  drawShape(ctx: CanvasRenderingContext2D, layout: Rect, parent?: BaseConfig) {
+    let {
+      radius,
+      fillColor, borderColor, lineWidth, strokeAlign
+    } = this.conf
+    let {x, y, w, h} = layout
+
+    ctx.lineWidth = lineWidth ?? defaultConfig.lineWidth
+
+    //填充图形
+    ctx.fillStyle = fillColor
+    let path = this.getShapePath(ctx, layout, this.conf.radius)
+    ctx.fill(path)
+
+    //描边
+    let lw2 = ctx.lineWidth / 2
+    if (strokeAlign === StrokeAlign.INSIDE) {
+      x += lw2, y += lw2, w -= lw2 * 2, h -= lw2 * 2, radius -= lw2
+    } else if (strokeAlign === StrokeAlign.OUTSIDE) {
+      x -= lw2, y -= lw2, w += lw2 * 2, h += lw2 * 2, radius += lw2
+    }
+    ctx.strokeStyle = borderColor
+    let path2 = this.getShapePath(ctx, {x, y, w, h}, radius)
+    ctx.stroke(path2)
+
   }
 
-  drawSelected(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): void {
+  drawHover(ctx: CanvasRenderingContext2D, layout: Rect): void {
+    ctx.strokeStyle = defaultConfig.strokeStyle
+    //容器hover时只需要描边矩形就行了
+    let path = this.getShapePath(ctx, layout, 0)
+    // let path = this.getShapePath(ctx, newLayout, this.conf.radius)
+    ctx.stroke(path)
   }
 
-  drawSelectedHover(ctx: CanvasRenderingContext2D, conf: any): void {
+  drawSelected(ctx: CanvasRenderingContext2D, layout: Rect): void {
+    draw.selected(ctx, layout)
   }
 
-  drawEdit(ctx: CanvasRenderingContext2D, conf: any): void {
+  drawSelectedHover(ctx: CanvasRenderingContext2D, layout: Rect): void {
+    // console.log('drawSelectedHover')
+    let {x, y, w, h} = layout
+    let {radius,} = this.conf
+    ctx.strokeStyle = defaultConfig.strokeStyle
+    ctx.fillStyle = Colors.White
+
+    let cu = CanvasUtil2.getInstance()
+    let r = Math.max(radius, this.minDragRadius)
+    //当拖动时，圆角需要可以渲染到0
+    if (this.rectEnterType) {
+      r = radius
+    }
+    let r2 = 5 / cu.handScale
+    let topLeft = {
+      x: x + r,
+      y: y + r,
+    }
+    let topRight = {
+      x: x + w - r,
+      y: y + r,
+    }
+    let bottomLeft = {
+      x: x + r,
+      y: y + h - r,
+    }
+    let bottomRight = {
+      x: x + w - r,
+      y: y + h - r,
+    }
+    draw.round(ctx, topLeft, r2,)
+    draw.round(ctx, topRight, r2,)
+    draw.round(ctx, bottomLeft, r2,)
+    draw.round(ctx, bottomRight, r2,)
+  }
+
+  drawEdit(ctx: CanvasRenderingContext2D, conf: BaseConfig): void {
     let {
       x, y, w, h, radius,
-      fillColor, borderColor, rotate,
+      fillColor, borderColor,
       type, flipVertical, flipHorizontal, children, points,
       isCustom
     } = conf
@@ -251,5 +336,27 @@ export class Rectangle extends BaseShape {
     })
     ctx.restore()
 
+  }
+
+  //拖动左上，改变圆角按钮
+  dragRd1(point: P) {
+    let {w, h} = this.conf.layout
+    let {x, y} = point
+    let cu = CanvasUtil2.getInstance()
+    let dx = (x - cu.startX)
+    if (this.original.radius < this.minDragRadius) {
+      dx += this.minDragRadius
+    }
+    this.conf.radius = this.original.radius + dx
+    if (this.conf.radius < 0) {
+      this.conf.radius = 0
+    }
+    let maxRadius = Math.min(w / 2, h / 2)
+    if (this.conf.radius > maxRadius) {
+      this.conf.radius = maxRadius
+    }
+    this.conf.radius = this.conf.radius.toFixed2()
+    cu.render()
+    console.log('th.enterRd1')
   }
 }

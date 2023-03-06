@@ -10,8 +10,6 @@ import helper from "../utils/helper"
 import draw from "../utils/draw"
 
 export abstract class BaseShape {
-  hoverRd1: boolean = false
-  enterRd1: boolean = false
   hoverType: MouseOptionType = MouseOptionType.None
   enterType: MouseOptionType = MouseOptionType.None
   conf: BaseConfig
@@ -70,26 +68,26 @@ export abstract class BaseShape {
 
   abstract drawEdit(ctx: CanvasRenderingContext2D, newLayout: Rect): any
 
-  abstract childMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean
+  abstract mouseDownChild(event: BaseEvent2, parents: BaseShape[]): boolean
 
-  abstract childMouseMove(event: BaseEvent2, parents: BaseShape[]): boolean
+  abstract mouseMoveChild(event: BaseEvent2, parents: BaseShape[]): boolean
 
-  abstract childMouseUp(event: BaseEvent2, parents: BaseShape[]): boolean
+  abstract mouseUpChild(event: BaseEvent2, parents: BaseShape[]): boolean
 
-  abstract childDbClick(event: BaseEvent2, parents: BaseShape[]): boolean
+  abstract dbClickChild(event: BaseEvent2, parents: BaseShape[]): boolean
 
-  //判断是否hover在图形上
-  abstract isHoverIn(mousePoint: P, cu: CanvasUtil2): boolean
+  //子类判断是否在图形上
+  abstract isInShapeChild(mousePoint: P, cu: CanvasUtil2): boolean
 
   //当select时，判断是否在图形上
-  abstract isInOnSelect(p: P, cu: CanvasUtil2): boolean
+  abstract isInShapeOnSelect(p: P, cu: CanvasUtil2): boolean
 
   /**
-   * @desc 判断是否在图形上，之前
+   * @desc 子类判断是否在图形上的回调
    * 用于子类的enter之类的变量判断
    * 如果变量为ture，那么方法直接返回true，不用再走后续判断是否在图形上
    * */
-  abstract beforeShapeIsIn(): boolean
+  abstract beforeIsInShape(): boolean
 
   getStatus() {
     return `
@@ -167,15 +165,13 @@ export abstract class BaseShape {
 
   isInShape(mousePoint: P, cu: CanvasUtil2, parent?: BaseShape): boolean {
     //如果操作中，那么永远返回ture，保持事件一直直接传递到当前图形上
-    if (this.enter || this.enterType !== MouseOptionType.None) {
-      return true
-    }
-    if (this.beforeShapeIsIn()) return true
+    if (this.enter || this.enterType !== MouseOptionType.None) return true
+    if (this.beforeIsInShape()) return true
 
     let {x, y} = mousePoint
 
     let {
-      w, h, rotation, radius,
+      w, h, radius,
       box, realRotation,
       flipHorizontal, flipVertical, center
     } = this.conf
@@ -196,7 +192,6 @@ export abstract class BaseShape {
       let edge = 10 / cu.handScale
       let angle = 7 / cu.handScale
       let rotation = 27 / cu.handScale
-      let rr = 5 / cu.handScale
       //左边
       if ((leftX! - edge < x && x < leftX! + edge) &&
         (topY! + edge < y && y < bottomY! - edge)
@@ -245,17 +240,8 @@ export abstract class BaseShape {
         this.hoverType = MouseOptionType.TopLeftRotation
         return true
       }
-      let r = radius
-      //左上，拉动圆角那个点
-      if ((leftX! + r - rr < x && x < leftX! + r + rr / 2) &&
-        (topY! + r - rr < y && y < topY! + r + rr / 2)
-      ) {
-        this.hoverRd1 = true
-        document.body.style.cursor = "pointer"
-        return true
-      }
 
-      if (this.isInOnSelect({x, y}, cu)) {
+      if (this.isInShapeOnSelect({x, y}, cu)) {
         return true
       }
 
@@ -263,7 +249,7 @@ export abstract class BaseShape {
       document.body.style.cursor = "default"
       this.hoverType = MouseOptionType.None
     }
-    return this.isHoverIn({x, y}, cu)
+    return this.isInShapeChild({x, y}, cu)
   }
 
   render(ctx: CanvasRenderingContext2D, parent?: BaseConfig) {
@@ -401,7 +387,7 @@ export abstract class BaseShape {
 
   dblclick(event: BaseEvent2, parents: BaseShape[] = []) {
     console.log('on-dblclick',)
-    if (this.childDbClick(event, parents)) return
+    if (this.dbClickChild(event, parents)) return
 
     if (this.status === ShapeStatus.Edit) {
       this.status = ShapeStatus.Select
@@ -415,7 +401,7 @@ export abstract class BaseShape {
   mousedown(event: BaseEvent2, parents: BaseShape[] = []) {
     // console.log('mousedown', this.conf.name, this.enterType, this.hoverType)
     EventBus.emit(EventMapTypes.onMouseDown, this)
-    if (this.childMouseDown(event, parents)) return
+    if (this.mouseDownChild(event, parents)) return
 
     let {e, point: {x, y}, type} = event
     let cu = CanvasUtil2.getInstance()
@@ -478,12 +464,6 @@ export abstract class BaseShape {
       case MouseOptionType.BottomRightRotation:
     }
 
-    //TODO 应该由子类实现
-    //按下左上，拉动圆角那个点
-    if (this.hoverRd1) {
-      this.enterRd1 = true
-      return
-    }
 
     //默认选中以及拖动
     this.enter = true
@@ -497,7 +477,7 @@ export abstract class BaseShape {
 
   mousemove(event: BaseEvent2, parents: BaseShape[] = []) {
     // console.log('mousemove', this.conf.name, this.enterType, this.hoverType)
-    if (this.childMouseMove(event, parents)) return
+    if (this.mouseMoveChild(event, parents)) return
     let {e, point, type} = event
 
     //编辑模式下，不用添加hover样式
@@ -539,17 +519,13 @@ export abstract class BaseShape {
     if (this.enter) {
       return this.move(point)
     }
-    if (this.enterRd1) {
-      return this.dragRd1(point)
-    }
   }
 
   mouseup(event: BaseEvent2, parents: BaseShape[] = []) {
     // if (e.capture) return
     // console.log('mouseup')
-    if (this.childMouseUp(event, parents)) return
+    if (this.mouseUpChild(event, parents)) return
     this.enterType = MouseOptionType.None
-    this.enterRd1 = this.hoverRd1 = false
     this.enter = false
   }
 
@@ -566,15 +542,6 @@ export abstract class BaseShape {
     cu.render()
   }
 
-  //拖动左上，改变圆角按钮
-  dragRd1(point: P) {
-    let {x, y,} = point
-    let cu = CanvasUtil2.getInstance()
-    let dx = (x - cu.startX)
-    this.conf.radius = this.original.radius + dx
-    cu.render()
-    console.log('th.enterRd1')
-  }
 
   //拖动左上旋转
   dragTopLeftRotation(point: P) {

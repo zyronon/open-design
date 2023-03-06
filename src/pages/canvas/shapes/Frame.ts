@@ -28,7 +28,7 @@ export class Frame extends BaseShape {
     }
   }
 
-  isInOnSelect(p: P, cu: CanvasUtil2): boolean {
+  isInShapeOnSelect(p: P, cu: CanvasUtil2): boolean {
     return false
   }
 
@@ -60,15 +60,16 @@ export class Frame extends BaseShape {
       && original.y > y && y > original.y - 18
   }
 
-  isHoverIn(mousePoint: P, cu: CanvasUtil2): boolean {
+  isInShapeChild(mousePoint: P, cu: CanvasUtil2): boolean {
     if (this.isOnlyHoverInName()) {
+      // return this.isInName(mousePoint)
       return this.isInName(mousePoint) || super.isInBox(mousePoint)
     }
     return super.isInBox(mousePoint)
   }
 
-  childDbClick(event: BaseEvent2, parents: BaseShape[]): boolean {
-    console.log('childDbClick')
+  dbClickChild(event: BaseEvent2, parents: BaseShape[]): boolean {
+    // console.log('childDbClick')
     for (let i = 0; i < this.children.length; i++) {
       this.children[i].event(event, parents?.concat([this]), true)
       if (event.capture) break
@@ -76,7 +77,7 @@ export class Frame extends BaseShape {
     return true
   }
 
-  childMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean {
+  mouseDownChild(event: BaseEvent2, parents: BaseShape[]): boolean {
     return false
     if (this.status === ShapeStatus.Select) return false
     if (this.isOnlyHoverInName()) {
@@ -91,7 +92,8 @@ export class Frame extends BaseShape {
     return false
   }
 
-  childMouseMove(event: BaseEvent2, parents: BaseShape[]) {
+  mouseMoveChild(event: BaseEvent2, parents: BaseShape[]) {
+    // return false
     if (this.status === ShapeStatus.Select) return false
     if (this.isOnlyHoverInName()) {
       return !this.isInName(event.point, true)
@@ -99,21 +101,22 @@ export class Frame extends BaseShape {
     return false
   }
 
-  childMouseUp(event: BaseEvent2, parents: BaseShape[]): boolean {
+  mouseUpChild(event: BaseEvent2, parents: BaseShape[]): boolean {
     return false
   }
 
-  beforeShapeIsIn() {
+  beforeIsInShape() {
     return false
   }
 
   //这里仅绘制图形线路,不管着色。用于绘制图形填充，或用于hover描边（边的宽度经过等比缩放）
   //绘制图形描边时的处理不一样。canvas默认绘制是在线条的中间，边的宽度也未等比缩放。
   //如果要把描边在内部或外部，需修改xywh值。单独处理
+  // TODO 矩形的绘制方法也是这样，可以考虑优化代码
   getShapePath(ctx: CanvasRenderingContext2D, layout: Rect, r: number) {
     let {x, y, w, h} = layout
     let path = new Path2D()
-    if (r) {
+    if (r > 0) {
       let w2 = w / 2, h2 = h / 2
       path.moveTo(x + w2, y)
       path.arcTo(x + w, y, x + w, y + h2, r)
@@ -182,35 +185,6 @@ export class Frame extends BaseShape {
   }
 
   drawSelectedHover(ctx: CanvasRenderingContext2D, layout: Rect): void {
-    // console.log('drawSelectedHover')
-    let {x, y, w, h} = layout
-    let {radius,} = this.conf
-    ctx.strokeStyle = defaultConfig.strokeStyle
-    ctx.fillStyle = Colors.White
-
-    let cu = CanvasUtil2.getInstance()
-    let d = radius
-    let r2 = 5 / cu.handScale
-    let topLeft = {
-      x: x + d,
-      y: y + d,
-    }
-    let topRight = {
-      x: x + w - d,
-      y: y + d,
-    }
-    let bottomLeft = {
-      x: x + d,
-      y: y + h - d,
-    }
-    let bottomRight = {
-      x: x + w - d,
-      y: y + h - d,
-    }
-    draw.round(ctx, topLeft, r2,)
-    draw.round(ctx, topRight, r2,)
-    draw.round(ctx, bottomLeft, r2,)
-    draw.round(ctx, bottomRight, r2,)
   }
 
   drawEdit(ctx: CanvasRenderingContext2D, conf: BaseConfig): void {

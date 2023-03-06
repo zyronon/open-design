@@ -4,31 +4,31 @@ import CanvasUtil2 from "../CanvasUtil2"
 import {BaseConfig} from "../config/BaseConfig"
 
 export class RulerLine extends BaseShape {
-  beforeShapeIsIn(): boolean {
+  beforeIsInShape(): boolean {
     return false
   }
 
-  childDbClick(event: BaseEvent2, parents: BaseShape[]): boolean {
+  dbClickChild(event: BaseEvent2, parents: BaseShape[]): boolean {
     return false
   }
 
-  childMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean {
+  mouseDownChild(event: BaseEvent2, parents: BaseShape[]): boolean {
     this.enter = true
     return true
   }
 
-  childMouseMove(event: BaseEvent2, parents: BaseShape[]): boolean {
+  mouseMoveChild(event: BaseEvent2, parents: BaseShape[]): boolean {
     if (this.enter) {
       return true
     }
     return true
   }
 
-  childMouseUp(event: BaseEvent2, parents: BaseShape[]): boolean {
+  mouseUpChild(event: BaseEvent2, parents: BaseShape[]): boolean {
     return false
   }
 
-  isHoverIn(mousePoint: P, cu: CanvasUtil2): boolean {
+  isInShapeChild(mousePoint: P, cu: CanvasUtil2): boolean {
     const {x, y} = mousePoint
     let r = 0 < x && x < cu.canvasRect.width
       && 0 < y && y < 20
@@ -40,7 +40,7 @@ export class RulerLine extends BaseShape {
     return r
   }
 
-  isInOnSelect(p: P, cu: CanvasUtil2): boolean {
+  isInShapeOnSelect(p: P, cu: CanvasUtil2): boolean {
     return false
   }
 

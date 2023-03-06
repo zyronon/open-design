@@ -968,8 +968,8 @@ export const rects: any[] = [
     "type": "FRAME",
     "color": "gray",
     "radius": 10,
-    children: [],
-    "children1": [
+    children1: [],
+    "children": [
       {
         "name": "容器2",
         layout: {
@@ -983,8 +983,8 @@ export const rects: any[] = [
         "type": "FRAME",
         "color": "gray",
         "radius": 0,
-        children2: [],
-        "children": [
+        children: [],
+        "children1": [
           {
             "name": "容器3",
             layout: {
@@ -1020,31 +1020,10 @@ export const rects: any[] = [
         },
         "rotation": 0,
         "lineWidth": 2,
-        "type": "FRAME",
+        "type": ShapeType.RECTANGLE,
         "color": "gray",
         "radius": 0,
-        children2: [],
-        "children": [
-          {
-            "name": "容器3-1",
-            layout: {
-              "x": 40,
-              "y": 40,
-              "w": 150,
-              "h": 100,
-            },
-            "rotation": 0,
-            "lineWidth": 2,
-            "type": "FRAME",
-            "color": "gray",
-            "radius": 0,
-            "children": [],
-            "borderColor": "rgb(216,216,216)",
-            "fillColor": "#e1e1e1",
-            flipHorizontal: false,
-            flipVertical: false
-          },
-        ],
+        children: [],
         "borderColor": "rgb(216,216,216)",
         "fillColor": "rgb(241,238,238)",
         flipHorizontal: false,

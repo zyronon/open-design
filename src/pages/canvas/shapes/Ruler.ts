@@ -6,20 +6,20 @@ import {RulerLine} from "./RulerLine"
 import helper from "../utils/helper"
 
 export class Ruler extends BaseShape {
-  beforeShapeIsIn(): boolean {
+  beforeIsInShape(): boolean {
     return false
   }
 
-  childDbClick(event: BaseEvent2, parents: BaseShape[]): boolean {
+  dbClickChild(event: BaseEvent2, parents: BaseShape[]): boolean {
     return false
   }
 
-  childMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean {
+  mouseDownChild(event: BaseEvent2, parents: BaseShape[]): boolean {
     this.enter = true
     return true
   }
 
-  childMouseMove(event: BaseEvent2, parents: BaseShape[]): boolean {
+  mouseMoveChild(event: BaseEvent2, parents: BaseShape[]): boolean {
     if (this.enter) {
       let cu = CanvasUtil2.getInstance()
       if (cu.newShape) {
@@ -58,7 +58,7 @@ export class Ruler extends BaseShape {
     return true
   }
 
-  childMouseUp(event: BaseEvent2, parents: BaseShape[]): boolean {
+  mouseUpChild(event: BaseEvent2, parents: BaseShape[]): boolean {
     let cu = CanvasUtil2.getInstance()
     cu.newShape = undefined
     return false
@@ -68,7 +68,7 @@ export class Ruler extends BaseShape {
     return this.conf.data?.direction === 'horizontal'
   }
 
-  isHoverIn(mousePoint: P, cu: CanvasUtil2): boolean {
+  isInShapeChild(mousePoint: P, cu: CanvasUtil2): boolean {
     const {x, y} = mousePoint
     let r
     if (this.isHorizontal()) {
@@ -91,7 +91,7 @@ export class Ruler extends BaseShape {
     return r
   }
 
-  isInOnSelect(p: P, cu: CanvasUtil2): boolean {
+  isInShapeOnSelect(p: P, cu: CanvasUtil2): boolean {
     return false
   }
 

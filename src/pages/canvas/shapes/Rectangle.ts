@@ -15,6 +15,7 @@ import {
 import {Colors, defaultConfig} from "../utils/constant"
 import {BaseConfig, Rect} from "../config/BaseConfig"
 import draw from "../utils/draw"
+import helper from "../utils/helper"
 
 export class Rectangle extends BaseShape {
 
@@ -140,9 +141,22 @@ export class Rectangle extends BaseShape {
         x: mousePoint.x - (x + w / 2),
         y: mousePoint.y - (y + h / 2)
       }
+      if (helper.isInLine(fixMousePoint, points[0].center, points[1].center)) {
+        document.body.style.cursor = "pointer"
+        let center = helper.getCenterPoint(points[0].center, points[1].center)
+        console.log('center', center)
+        let cu = CanvasUtil2.getInstance()
+        cu.ctx.save()
+        draw.calcPosition(cu.ctx, this.conf)
+        draw.round(cu.ctx, center, 4)
+        cu.ctx.restore()
+        return true
+      }else {
+
+      }
       for (let i = 0; i < points.length; i++) {
         let p = points[i]
-        if (super.isInPoint(fixMousePoint, p.center, 4)) {
+        if (helper.isInPoint(fixMousePoint, p.center, 4)) {
           document.body.style.cursor = "pointer"
           this.hoverPointIndex = i
           return true
@@ -150,12 +164,15 @@ export class Rectangle extends BaseShape {
       }
       document.body.style.cursor = "default"
     }
-    return super.isInBox(mousePoint)
+    return helper.isInBox(mousePoint, this.conf.box)
   }
 
   getShapePath(layout: Rect, r: number): Path2D {
     let {x, y, w, h} = layout
     let path = new Path2D()
+    if (this._config.isCustom) {
+      return this.getCustomShapePath()
+    }
     if (r > 0) {
       let w2 = w / 2, h2 = h / 2
       path.moveTo(x + w2, y)
@@ -268,6 +285,7 @@ export class Rectangle extends BaseShape {
   }
 
   drawSelectedHover(ctx: CanvasRenderingContext2D, layout: Rect): void {
+    if (this._config.isCustom) return
     // console.log('drawSelectedHover')
     let {x, y, w, h} = layout
     let {radius,} = this.conf
@@ -297,10 +315,10 @@ export class Rectangle extends BaseShape {
       x: x + w - r,
       y: y + h - r,
     }
-    draw.round(ctx, topLeft, r2,)
-    draw.round(ctx, topRight, r2,)
-    draw.round(ctx, bottomLeft, r2,)
-    draw.round(ctx, bottomRight, r2,)
+    draw.round2(ctx, topLeft, r2,)
+    draw.round2(ctx, topRight, r2,)
+    draw.round2(ctx, bottomLeft, r2,)
+    draw.round2(ctx, bottomRight, r2,)
   }
 
   drawEdit(ctx: CanvasRenderingContext2D, layout: Rect): void {

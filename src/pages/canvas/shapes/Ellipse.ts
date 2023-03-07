@@ -143,7 +143,7 @@
 //       x: this._config.endMouseControlPoint.x + x + w / 2,
 //       y: this._config.endMouseControlPoint.y + y + h / 2,
 //     }
-//     if (super.isInPoint(mousePoint, absoluteEndMouseControlPoint, 4)) {
+//     if (helper.isInPoint(mousePoint, absoluteEndMouseControlPoint, 4)) {
 //       document.body.style.cursor = "pointer"
 //       this.hoverEndMouseControlPoint = true
 //       return true

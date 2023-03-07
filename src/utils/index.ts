@@ -25,7 +25,6 @@ export function computedIncludedAngle(av: any, bv: any) {
 export function getHypotenuse2(p1: any, p2: any) {
   let {x: p1X, y: p1Y} = p1
   let {x: p2X, y: p2Y} = p2
-  // return Math.sqrt(Math.pow(p2X - p1X, 2) + Math.pow(p2Y - p1Y, 2))
   return Math.hypot(p2X - p1X, p2Y - p1Y)
 }
 

@@ -148,24 +148,6 @@ export abstract class BaseShape {
     return !this.isCapture || !cu.isDesignMode()
   }
 
-  /**
-   * @desc 判断鼠标m是否在p点内
-   * @param m 鼠标坐标
-   * @param p 判断点坐标
-   * @param r 半径
-   * */
-  isInPoint(m: P, p: P, r: number) {
-    return (p.x - r < m.x && m.x < p.x + r) &&
-      (p.y - r < m.y && m.y < p.y + r)
-  }
-
-  isInBox(mousePoint: P): boolean {
-    const {x, y} = mousePoint
-    let rect = this.conf
-    return rect.box.leftX < x && x < rect.box.rightX
-      && rect.box.topY < y && y < rect.box.bottomY
-  }
-
   isInShape(mousePoint: P, cu: CanvasUtil2, parent?: BaseShape): boolean {
     //如果操作中，那么永远返回ture，保持事件一直直接传递到当前图形上
     if (this.enter || this.enterType !== MouseOptionType.None) return true
@@ -257,7 +239,7 @@ export abstract class BaseShape {
 
   render(ctx: CanvasRenderingContext2D, parent?: BaseConfig) {
     ctx.save()
-    let {x, y} = draw.calcPosition(ctx, this.conf, this.original,)
+    let {x, y} = draw.calcPosition(ctx, this.conf)
     let newLayout = {...this.conf.layout, x, y}
     this.drawShape(ctx, newLayout, parent,)
     // ctx.globalCompositeOperation = 'source-atop'
@@ -291,7 +273,7 @@ export abstract class BaseShape {
   renderOtherStatus(ctx: CanvasRenderingContext2D, newLayout: Rect) {
     let cu = CanvasUtil2.getInstance()
     ctx.save()
-    draw.calcPosition(ctx, this.conf, this.original,)
+    draw.calcPosition(ctx, this.conf)
     ctx.lineWidth = 2 / cu.handScale
     if (this.status === ShapeStatus.Hover) {
       this.drawHover(ctx, newLayout)

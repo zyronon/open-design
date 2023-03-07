@@ -5,6 +5,7 @@ import {BaseConfig, Rect} from "../config/BaseConfig"
 import draw from "../utils/draw"
 import {getRotatedPoint, jiaodu2hudu} from "../../../utils"
 import {Colors, defaultConfig} from "../utils/constant"
+import helper from "../utils/helper"
 
 export class Frame extends BaseShape {
 
@@ -63,9 +64,9 @@ export class Frame extends BaseShape {
   isInShapeChild(mousePoint: P, cu: CanvasUtil2): boolean {
     if (this.isOnlyHoverInName()) {
       // return this.isInName(mousePoint)
-      return this.isInName(mousePoint) || super.isInBox(mousePoint)
+      return this.isInName(mousePoint) || helper.isInBox(mousePoint, this.conf.box)
     }
-    return super.isInBox(mousePoint)
+    return helper.isInBox(mousePoint, this.conf.box)
   }
 
   dbClickChild(event: BaseEvent2, parents: BaseShape[]): boolean {
@@ -84,7 +85,7 @@ export class Frame extends BaseShape {
       if (this.isInName(event.point, true)) {
         return false
       }
-      if (super.isInBox(event.point,)) {
+      if (helper.isInBox(event.point, this.conf.box)) {
         event.cancelStopPropagation()
       }
       return true

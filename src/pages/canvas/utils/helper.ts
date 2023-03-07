@@ -1,8 +1,8 @@
 import {BaseConfig} from "../config/BaseConfig"
-import {getRotatedPoint, jiaodu2hudu} from "../../../utils"
+import {getHypotenuse2, getRotatedPoint, jiaodu2hudu} from "../../../utils"
 // @ts-ignore
 import {v4 as uuid} from 'uuid'
-import {clone, cloneDeep} from "lodash"
+import {clone, cloneDeep, inRange} from "lodash"
 import {P, StrokeAlign} from "./type"
 
 export default {
@@ -561,5 +561,39 @@ export default {
     angle = c2 - c1
     angle = angle < 0 ? angle + 360 : angle
     return angle
+  },
+  /**
+   * @desc 判断鼠标m是否在p点内
+   * @param m 鼠标坐标
+   * @param p 判断点坐标
+   * @param r 半径
+   * */
+  isInPoint(m: P, p: P, r: number) {
+    return (p.x - r < m.x && m.x < p.x + r) &&
+      (p.y - r < m.y && m.y < p.y + r)
+  },
+  //判断点是否在盒子内
+  isInBox(target: P, box: any): boolean {
+    const {x, y} = target
+    return box.leftX < x && x < box.rightX
+      && box.topY < y && y < box.bottomY
+  },
+
+  /**
+   * @desc 判断鼠标m是否线段上
+   * @param target
+   * @param p1
+   * @param p2
+   * */
+  isInLine(target: P, p1: P, p2: P) {
+    let line1 = getHypotenuse2(target, p1)
+    let line2 = getHypotenuse2(target, p2)
+    let line3 = getHypotenuse2(p1, p2)
+    let d = 0.02
+    if (inRange(line1 + line2, line3 - d, line3 + d)) {
+      console.log('在线上')
+      return true
+    }
+    return false
   }
 }

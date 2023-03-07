@@ -13,14 +13,10 @@ export default {
   calcPosition(
     ctx: CanvasRenderingContext2D,
     conf: BaseConfig,
-    original: any,
-    status?: any,
-    parent?: BaseConfig,
   ) {
     let {
       layout: {x, y, w, h,},
-      radius, absolute,
-      fillColor, borderColor, rotation, lineWidth,
+      fillColor, borderColor, lineWidth,
       flipVertical, flipHorizontal,
       center,
       realRotation
@@ -293,6 +289,20 @@ export default {
     ctx.closePath()
     ctx.fill()
     ctx.stroke()
+  },
+  round2(ctx: any, rect: any, r: number,) {
+    let {x, y} = rect
+    ctx.beginPath()
+    ctx.strokeStyle = defaultConfig.strokeStyle
+    ctx.fillStyle = Colors.White
+    ctx.arc(x, y, r, 0, 2 * Math.PI)
+    ctx.fill()
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.arc(x, y, r / 2.5, 0, 2 * Math.PI)
+    ctx.fillStyle = defaultConfig.strokeStyle
+    ctx.fill()
+    ctx.closePath()
   },
   roundRect(ctx: any, rect: any, r: number,) {
     let {x, y, w, h} = rect

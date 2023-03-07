@@ -109,6 +109,10 @@ export class Frame extends BaseShape {
     return false
   }
 
+  beforeEvent(event: BaseEvent2) {
+    return false
+  }
+
   //这里仅绘制图形线路,不管着色。用于绘制图形填充，或用于hover描边（边的宽度经过等比缩放）
   //绘制图形描边时的处理不一样。canvas默认绘制是在线条的中间，边的宽度也未等比缩放。
   //如果要把描边在内部或外部，需修改xywh值。单独处理

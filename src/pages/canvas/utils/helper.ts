@@ -147,6 +147,7 @@ export default {
       bottomRight,
     }
     conf.strokeAlign = StrokeAlign.INSIDE
+    conf.points = []
     // console.log('initConf', conf)
     return conf
   },

@@ -89,6 +89,9 @@ export abstract class BaseShape {
    * */
   abstract beforeIsInShape(): boolean
 
+  //传递事件之前的回调，用于子类直接消费而不经过父类判断
+  abstract beforeEvent(event: BaseEvent2): boolean
+
   getStatus() {
     return `
     <div>
@@ -317,6 +320,8 @@ export abstract class BaseShape {
   event(event: BaseEvent2, parents?: BaseShape[], isParentDbClick?: boolean): boolean {
     let {e, point, type} = event
 
+    if (this.beforeEvent(event)) return true
+
     // 如果在操作中，那么就不要再向下传递事件啦，再向下传递事件，会导致子父冲突
     if (this.enterType !== MouseOptionType.None || this.enter) {
       //把事件消费了，不然父级会使用
@@ -380,22 +385,22 @@ export abstract class BaseShape {
   }
 
   emit(event: BaseEvent2, p: BaseShape[] = []) {
-    let {e, point, type} = event
     // @ts-ignore
-    this[type]?.(event, p)
+    this[event.type]?.(event, p)
   }
 
   dblclick(event: BaseEvent2, parents: BaseShape[] = []) {
     console.log('on-dblclick',)
     if (this.dbClickChild(event, parents)) return
+    let cu = CanvasUtil2.getInstance()
 
     if (this.status === ShapeStatus.Edit) {
       this.status = ShapeStatus.Select
+      cu.editShape = null
     } else {
-      this.status = ShapeStatus.Normal
+      this.status = ShapeStatus.Edit
+      cu.editShape = this
     }
-    let cu = CanvasUtil2.getInstance()
-    cu.editShape = this
   }
 
   mousedown(event: BaseEvent2, parents: BaseShape[] = []) {

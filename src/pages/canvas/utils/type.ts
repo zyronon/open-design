@@ -1,7 +1,6 @@
 import CanvasUtil2 from "../CanvasUtil2"
 import {BaseConfig} from "../config/BaseConfig"
 import {BaseShape} from "../shapes/BaseShape"
-import {RulerLine} from "../shapes/RulerLine"
 
 export type IState = {
   canvas: HTMLCanvasElement,

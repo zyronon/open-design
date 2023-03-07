@@ -21,6 +21,22 @@ declare global {
     rect2(p: Rect): void
   }
 
+  interface Path2D {
+    //三次贝塞尔曲线
+    bezierCurveTo2(cp1: P, cp2: P, end: P): void
+
+    //二次贝塞尔曲线
+    quadraticCurveTo2(cp1: P | P2, end: P): void
+
+    moveTo2(cp1: P | P2): void
+
+    lineTo2(cp1: P | P2): void
+
+    translate2(p: P): void
+
+    rect2(p: Rect): void
+  }
+
   interface Math {
     decimal(val: number): number
   }
@@ -57,6 +73,7 @@ let Context2D: CanvasRenderingContext2D = {
 
 for (const key in Context2D) {
   CanvasRenderingContext2D.prototype[key] = Context2D[key]
+  Path2D.prototype[key] = Context2D[key]
 }
 
 Math.decimal = (num: number) => {

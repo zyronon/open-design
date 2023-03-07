@@ -959,7 +959,7 @@ export const rects: any[] = [
       "x": 470,
       "y": 80,
       // "w": 60,
-      w: 500,
+      w: 600,
       "h": 400,
     },
     clip: false,
@@ -973,8 +973,8 @@ export const rects: any[] = [
       {
         "name": "容器2",
         layout: {
-          "x": 100,
-          "y": 80,
+          "x": 10,
+          "y": 200,
           "w": 250,
           "h": 200,
         },
@@ -1013,8 +1013,8 @@ export const rects: any[] = [
       {
         "name": "容器2-1",
         layout: {
-          "x": 200,
-          "y": 40,
+          "x": 300,
+          "y": 20,
           "w": 250,
           "h": 200,
         },

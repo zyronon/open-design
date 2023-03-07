@@ -207,9 +207,9 @@ export default class CanvasUtil2 {
   }
 
   //TODO　这里过滤会导致mouseup丢失
-  handleEvent = throttle(e => this._handleEvent(e), 0)
+  // handleEvent = throttle(e => this._handleEvent(e), 0)
 
-  _handleEvent = async (e: any) => {
+  handleEvent = async (e: any) => {
     let screenPoint = {x: e.x, y: e.y}
     let canvasPoint = {x: e.x - this.canvasRect.left, y: e.y - this.canvasRect.top}
 
@@ -231,28 +231,30 @@ export default class CanvasUtil2 {
       }
     }
     if (this.isDesignMode()) {
-      //如果有选中的，优先传递。选中组件是脱离父组件裁剪的。所以须单独传递事件
-      if (this.selectedShape?.event(event, this.selectedShapeParent)) {
-        //容器的子组件也会hover被设置为inShape
-        if (this.inShape) {
-          this.inShape.event(event, this.inShapeParent)
-        }
+      if (this.editShape) {
+        this.editShape.event(event, [])
       } else {
-        //有inShape就单传，没有遍历所有组件
-        if (this.inShape) {
-          this.inShape.event(event, this.inShapeParent)
+        //如果有选中的，优先传递。选中组件是脱离父组件裁剪的。所以须单独传递事件
+        if (this.selectedShape?.event(event, this.selectedShapeParent)) {
+          //容器的子组件也会hover被设置为inShape
+          // 2023-3-7,加上!this.editShape是因为这里的两个判断都会通过，导致触发两次dbclick,双面取消掉了编辑模式
+          //TODO 这里的逻辑后面应该还可以优化
+          if (this.inShape && !this.editShape) {
+            this.inShape.event(event, this.inShapeParent)
+          }
         } else {
-          for (let i = 0; i < this.children.length; i++) {
-            let shape = this.children[i]
-            shape.event(event, [])
-            if (event.capture) break
+          //有inShape就单传，没有遍历所有组件
+          if (this.inShape) {
+            this.inShape.event(event, this.inShapeParent)
+          } else {
+            for (let i = 0; i < this.children.length; i++) {
+              let shape = this.children[i]
+              shape.event(event, [])
+              if (event.capture) break
+            }
           }
         }
       }
-
-      // if (this.editShape) {
-      //   this.editShape.event(event, [])
-      // } else
     }
 
     if (event.type === EventTypes.onMouseMove) {

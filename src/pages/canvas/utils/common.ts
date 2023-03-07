@@ -11,8 +11,8 @@ import {Rectangle} from "../shapes/Rectangle"
 // import {Line} from "../shapes/Line"
 // import {Arrow} from "../shapes/Arrow"
 // import {BaseConfig} from "../config/BaseConfig"
-import {Ruler} from "../shapes/Ruler"
-import {RulerLine} from "../shapes/RulerLine"
+// import {Ruler} from "../shapes/Ruler"
+// import {RulerLine} from "../shapes/RulerLine"
 
 export const getShapeFromConfig = (props: ShapeProps): any => {
   const {conf} = props
@@ -51,12 +51,12 @@ export const getShapeFromConfig = (props: ShapeProps): any => {
     // case ShapeType.ARROW:
     //   r = new Arrow(props)
     //   break
-    case ShapeType.RULER:
-      r = new Ruler(props)
-      break
-    case ShapeType.RULER_LINE:
-      r = new RulerLine(props)
-      break
+    // case ShapeType.RULER:
+    //   r = new Ruler(props)
+    //   break
+    // case ShapeType.RULER_LINE:
+    //   r = new RulerLine(props)
+    //   break
   }
   return r
 }

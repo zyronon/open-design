@@ -183,16 +183,6 @@ export class Rectangle extends BaseShape {
         y: mousePoint.y - (y + h / 2)
       }
 
-      if (helper.isInLine(fixMousePoint, points[0].center, points[1].center)) {
-        document.body.style.cursor = "pointer"
-        let center = helper.getCenterPoint(points[0].center, points[1].center)
-        console.log('center', center)
-        this.tempDrawCp.push(center)
-        CanvasUtil2.getInstance().render()
-        return true
-      } else {
-        this.tempDrawCp = []
-      }
       for (let index = 0; index < points.length; index++) {
         let currentPoint = points[index]
         if (helper.isInPoint(fixMousePoint, currentPoint.center, 4)) {

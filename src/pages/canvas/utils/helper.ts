@@ -595,5 +595,16 @@ export default {
       return true
     }
     return false
+  },
+  isInLine2(target: P, line: [p1: P, p2: P]) {
+    let line1 = getHypotenuse2(target, line[0])
+    let line2 = getHypotenuse2(target, line[1])
+    let line3 = getHypotenuse2(line[0], line[1])
+    let d = 0.02
+    if (inRange(line1 + line2, line3 - d, line3 + d)) {
+      console.log('在线上')
+      return true
+    }
+    return false
   }
 }

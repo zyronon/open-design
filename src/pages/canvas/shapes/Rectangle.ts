@@ -25,6 +25,8 @@ export class Rectangle extends BaseShape {
   enterPointIndex: number = -1
   rectHoverType: MouseOptionType = MouseOptionType.None
   rectEnterType: MouseOptionType = MouseOptionType.None
+  //编辑模式下，hover在线段上时，临时绘制的控制点
+  tempDrawCp: any = []
 
 
   constructor(props: any) {
@@ -45,7 +47,7 @@ export class Rectangle extends BaseShape {
           this.capture = false
         }
       }
-      this.dblclick(event)
+      this._dblclick(event)
     }
   }
 
@@ -57,11 +59,50 @@ export class Rectangle extends BaseShape {
     this.conf = val
   }
 
-  dbClickChild(event: BaseEvent2, parents: BaseShape[]): boolean {
+  onDbClick(event: BaseEvent2, parents: BaseShape[]): boolean {
+    let cu = CanvasUtil2.getInstance()
+    if (this.status === ShapeStatus.Edit) {
+      this.status = ShapeStatus.Select
+      cu.editShape = null
+    } else {
+      if (!this._config.points.length) {
+        let {w, h} = this._config.layout
+        //这里的xy这样设置是因为，渲染时的起点是center
+        let x = -w / 2, y = -h / 2
+        let bezierCps: BezierPoint[] = []
+        bezierCps.push({
+          cp1: getP2(),
+          center: {...getP2(true), x: x, y: y},
+          cp2: getP2(),
+          type: BezierPointType.RightAngle
+        })
+        bezierCps.push({
+          cp1: getP2(),
+          center: {...getP2(true), x: x + w, y: y},
+          cp2: getP2(),
+          type: BezierPointType.RightAngle
+        })
+        bezierCps.push({
+          cp1: getP2(),
+          center: {...getP2(true), x: x + w, y: y + h},
+          cp2: getP2(),
+          type: BezierPointType.RightAngle
+        })
+        bezierCps.push({
+          cp1: getP2(),
+          center: {...getP2(true), x: x, y: y + h},
+          cp2: getP2(),
+          type: BezierPointType.RightAngle
+        })
+        this._config.points = bezierCps
+      }
+      this.status = ShapeStatus.Edit
+      cu.editShape = this
+    }
     return false
   }
 
-  mouseDownChild(event: BaseEvent2, parents: BaseShape[]) {
+  onMouseDown(event: BaseEvent2, parents: BaseShape[]) {
     // console.log('childMouseDown', this.hoverPointIndex)
     if (this.status === ShapeStatus.Edit) {
       if (this.hoverPointIndex > -1) {
@@ -74,7 +115,7 @@ export class Rectangle extends BaseShape {
     return false
   }
 
-  mouseMoveChild(event: BaseEvent2, parents: BaseShape[]) {
+  onMouseMove(event: BaseEvent2, parents: BaseShape[]) {
     // console.log('childMouseMove', this.hoverPointIndex)
     if (this.status === ShapeStatus.Edit) {
       if (this.enterPointIndex === -1) return false
@@ -95,7 +136,7 @@ export class Rectangle extends BaseShape {
     return false
   }
 
-  mouseUpChild(event: BaseEvent2, parents: BaseShape[]) {
+  onMouseUp(event: BaseEvent2, parents: BaseShape[]) {
     // console.log('childMouseUp', this.hoverPointIndex)
     this.rectEnterType = this.rectHoverType = MouseOptionType.None
     this.enterPointIndex = this.hoverPointIndex = -1
@@ -133,7 +174,7 @@ export class Rectangle extends BaseShape {
     return false
   }
 
-  isInShapeChild(mousePoint: P, cu: CanvasUtil2): boolean {
+  isInShape(mousePoint: P, cu: CanvasUtil2): boolean {
     if (this.status === ShapeStatus.Edit) {
       let {absolute: {x, y}, layout: {w, h}, points} = this._config
       this.hoverPointIndex = -1
@@ -141,25 +182,40 @@ export class Rectangle extends BaseShape {
         x: mousePoint.x - (x + w / 2),
         y: mousePoint.y - (y + h / 2)
       }
+
       if (helper.isInLine(fixMousePoint, points[0].center, points[1].center)) {
         document.body.style.cursor = "pointer"
         let center = helper.getCenterPoint(points[0].center, points[1].center)
         console.log('center', center)
-        let cu = CanvasUtil2.getInstance()
-        cu.ctx.save()
-        draw.calcPosition(cu.ctx, this.conf)
-        draw.round(cu.ctx, center, 4)
-        cu.ctx.restore()
+        this.tempDrawCp.push(center)
+        CanvasUtil2.getInstance().render()
         return true
-      }else {
-
+      } else {
+        this.tempDrawCp = []
       }
-      for (let i = 0; i < points.length; i++) {
-        let p = points[i]
-        if (helper.isInPoint(fixMousePoint, p.center, 4)) {
+      for (let index = 0; index < points.length; index++) {
+        let currentPoint = points[index]
+        if (helper.isInPoint(fixMousePoint, currentPoint.center, 4)) {
           document.body.style.cursor = "pointer"
-          this.hoverPointIndex = i
+          this.hoverPointIndex = index
           return true
+        }
+        let previousPoint: BezierPoint
+        if (index === 0) {
+          previousPoint = points[points.length - 1]
+        } else {
+          previousPoint = points[index - 1]
+        }
+        let line: any = [previousPoint.center, currentPoint.center]
+        if (helper.isInLine2(fixMousePoint, line)) {
+          document.body.style.cursor = "pointer"
+          let center = helper.getCenterPoint(points[0].center, points[1].center)
+          console.log('center', center)
+          this.tempDrawCp.push(center)
+          CanvasUtil2.getInstance().render()
+          return true
+        } else {
+          this.tempDrawCp = []
         }
       }
       document.body.style.cursor = "default"
@@ -324,39 +380,8 @@ export class Rectangle extends BaseShape {
   drawEdit(ctx: CanvasRenderingContext2D, layout: Rect): void {
     this.log('drawEdit')
     let {
-      radius, fillColor, points, isCustom
+      fillColor
     } = this.conf
-    let {x, y, w, h} = layout
-    let bezierCps: BezierPoint[] = []
-    if (isCustom) {
-      bezierCps = points
-    } else {
-      bezierCps.push({
-        cp1: getP2(),
-        center: {...getP2(true), x: x, y: y},
-        cp2: getP2(),
-        type: BezierPointType.RightAngle
-      })
-      bezierCps.push({
-        cp1: getP2(),
-        center: {...getP2(true), x: x + w, y: y},
-        cp2: getP2(),
-        type: BezierPointType.RightAngle
-      })
-      bezierCps.push({
-        cp1: getP2(),
-        center: {...getP2(true), x: x + w, y: y + h},
-        cp2: getP2(),
-        type: BezierPointType.RightAngle
-      })
-      bezierCps.push({
-        cp1: getP2(),
-        center: {...getP2(true), x: x, y: y + h},
-        cp2: getP2(),
-        type: BezierPointType.RightAngle
-      })
-      this.conf.points = bezierCps
-    }
 
     ctx.save()
 
@@ -367,11 +392,16 @@ export class Rectangle extends BaseShape {
     ctx.fill(path)
     ctx.stroke(path)
 
+    let bezierCps: BezierPoint[] = this._config.points
     bezierCps.map((currentPoint: BezierPoint) => {
       draw.drawRound(ctx, currentPoint.center)
       if (currentPoint.cp1.use) draw.controlPoint(ctx, currentPoint.cp1, currentPoint.center)
       if (currentPoint.cp2.use) draw.controlPoint(ctx, currentPoint.cp2, currentPoint.center)
     })
+    this.tempDrawCp.map((currentPoint: P) => {
+      draw.drawRound(ctx, currentPoint)
+    })
+
     ctx.restore()
   }
 

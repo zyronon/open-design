@@ -61,7 +61,7 @@ export class Frame extends BaseShape {
       && original.y > y && y > original.y - 18
   }
 
-  isInShapeChild(mousePoint: P, cu: CanvasUtil2): boolean {
+  isInShape(mousePoint: P, cu: CanvasUtil2): boolean {
     if (this.isOnlyHoverInName()) {
       // return this.isInName(mousePoint)
       return this.isInName(mousePoint) || helper.isInBox(mousePoint, this.conf.box)
@@ -69,7 +69,7 @@ export class Frame extends BaseShape {
     return helper.isInBox(mousePoint, this.conf.box)
   }
 
-  dbClickChild(event: BaseEvent2, parents: BaseShape[]): boolean {
+  onDbClick(event: BaseEvent2, parents: BaseShape[]): boolean {
     // console.log('childDbClick')
     for (let i = 0; i < this.children.length; i++) {
       this.children[i].event(event, parents?.concat([this]), true)
@@ -78,7 +78,7 @@ export class Frame extends BaseShape {
     return true
   }
 
-  mouseDownChild(event: BaseEvent2, parents: BaseShape[]): boolean {
+  onMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean {
     return false
     if (this.status === ShapeStatus.Select) return false
     if (this.isOnlyHoverInName()) {
@@ -93,7 +93,7 @@ export class Frame extends BaseShape {
     return false
   }
 
-  mouseMoveChild(event: BaseEvent2, parents: BaseShape[]) {
+  onMouseMove(event: BaseEvent2, parents: BaseShape[]) {
     // return false
     if (this.status === ShapeStatus.Select) return false
     if (this.isOnlyHoverInName()) {
@@ -102,7 +102,7 @@ export class Frame extends BaseShape {
     return false
   }
 
-  mouseUpChild(event: BaseEvent2, parents: BaseShape[]): boolean {
+  onMouseUp(event: BaseEvent2, parents: BaseShape[]): boolean {
     return false
   }
 

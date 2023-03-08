@@ -68,16 +68,16 @@ export abstract class BaseShape {
 
   abstract drawEdit(ctx: CanvasRenderingContext2D, newLayout: Rect): any
 
-  abstract mouseDownChild(event: BaseEvent2, parents: BaseShape[]): boolean
+  abstract onMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean
 
-  abstract mouseMoveChild(event: BaseEvent2, parents: BaseShape[]): boolean
+  abstract onMouseMove(event: BaseEvent2, parents: BaseShape[]): boolean
 
-  abstract mouseUpChild(event: BaseEvent2, parents: BaseShape[]): boolean
+  abstract onMouseUp(event: BaseEvent2, parents: BaseShape[]): boolean
 
-  abstract dbClickChild(event: BaseEvent2, parents: BaseShape[]): boolean
+  abstract onDbClick(event: BaseEvent2, parents: BaseShape[]): boolean
 
   //子类判断是否在图形上
-  abstract isInShapeChild(mousePoint: P, cu: CanvasUtil2): boolean
+  abstract isInShape(mousePoint: P, cu: CanvasUtil2): boolean
 
   //当select时，判断是否在图形上
   abstract isInShapeOnSelect(p: P, cu: CanvasUtil2): boolean
@@ -148,7 +148,7 @@ export abstract class BaseShape {
     return !this.isCapture || !cu.isDesignMode()
   }
 
-  isInShape(mousePoint: P, cu: CanvasUtil2, parent?: BaseShape): boolean {
+  _isInShape(mousePoint: P, cu: CanvasUtil2, parent?: BaseShape): boolean {
     //如果操作中，那么永远返回ture，保持事件一直直接传递到当前图形上
     if (this.enter || this.enterType !== MouseOptionType.None) return true
     if (this.beforeIsInShape()) return true
@@ -234,7 +234,7 @@ export abstract class BaseShape {
       document.body.style.cursor = "default"
       this.hoverType = MouseOptionType.None
     }
-    return this.isInShapeChild({x, y}, cu)
+    return this.isInShape({x, y}, cu)
   }
 
   render(ctx: CanvasRenderingContext2D, parent?: BaseConfig) {
@@ -312,7 +312,7 @@ export abstract class BaseShape {
       return true
     }
     let cu = CanvasUtil2.getInstance()
-    if (this.isInShape(point, cu, parents?.[parents?.length - 1])) {
+    if (this._isInShape(point, cu, parents?.[parents?.length - 1])) {
       // this.log('in:' + cu.inShape?.conf?.name)
       if (
         //如果是容器，并且裁剪了、或者父级不裁剪
@@ -323,9 +323,9 @@ export abstract class BaseShape {
       }
       if (isParentDbClick) {
         //这需要mousedown把图形选中，和链设置好
-        this.mousedown(event, parents)
+        this._mousedown(event, parents)
         //手动重置一个enter，不然会跟手
-        this.mouseup(event, parents)
+        this._mouseup(event, parents)
       } else {
         if (this.canNext(cu)) {
           for (let i = 0; i < this.children.length; i++) {
@@ -368,27 +368,18 @@ export abstract class BaseShape {
 
   emit(event: BaseEvent2, p: BaseShape[] = []) {
     // @ts-ignore
-    this[event.type]?.(event, p)
+    this['_' + event.type]?.(event, p)
   }
 
-  dblclick(event: BaseEvent2, parents: BaseShape[] = []) {
+  _dblclick(event: BaseEvent2, parents: BaseShape[] = []) {
     console.log('on-dblclick',)
-    if (this.dbClickChild(event, parents)) return
-    let cu = CanvasUtil2.getInstance()
-
-    if (this.status === ShapeStatus.Edit) {
-      this.status = ShapeStatus.Select
-      cu.editShape = null
-    } else {
-      this.status = ShapeStatus.Edit
-      cu.editShape = this
-    }
+    if (this.onDbClick(event, parents)) return
   }
 
-  mousedown(event: BaseEvent2, parents: BaseShape[] = []) {
+  _mousedown(event: BaseEvent2, parents: BaseShape[] = []) {
     // console.log('mousedown', this.conf.name, this.enterType, this.hoverType)
     EventBus.emit(EventMapTypes.onMouseDown, this)
-    if (this.mouseDownChild(event, parents)) return
+    if (this.onMouseDown(event, parents)) return
 
     let {e, point: {x, y}, type} = event
     let cu = CanvasUtil2.getInstance()
@@ -462,9 +453,9 @@ export abstract class BaseShape {
     cu.setSelectShape(this, parents)
   }
 
-  mousemove(event: BaseEvent2, parents: BaseShape[] = []) {
+  _mousemove(event: BaseEvent2, parents: BaseShape[] = []) {
     // console.log('mousemove', this.conf.name, this.enterType, this.hoverType)
-    if (this.mouseMoveChild(event, parents)) return
+    if (this.onMouseMove(event, parents)) return
     let {e, point, type} = event
 
     //编辑模式下，不用添加hover样式
@@ -508,10 +499,10 @@ export abstract class BaseShape {
     }
   }
 
-  mouseup(event: BaseEvent2, parents: BaseShape[] = []) {
+  _mouseup(event: BaseEvent2, parents: BaseShape[] = []) {
     // if (e.capture) return
     // console.log('mouseup')
-    if (this.mouseUpChild(event, parents)) return
+    if (this.onMouseUp(event, parents)) return
     this.enterType = MouseOptionType.None
     this.enter = false
   }
@@ -528,7 +519,6 @@ export abstract class BaseShape {
     this.calcChildrenConf()
     cu.render()
   }
-
 
   //拖动左上旋转
   dragTopLeftRotation(point: P) {

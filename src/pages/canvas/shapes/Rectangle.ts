@@ -27,6 +27,8 @@ export class Rectangle extends BaseShape {
   rectEnterType: MouseOptionType = MouseOptionType.None
   //编辑模式下，hover在线段上时，临时绘制的控制点
   tempDrawCp: any = []
+  hoverLineIndex: number = -1
+  hoverLinePoint: P = {x: 0, y: 0}
 
 
   constructor(props: any) {
@@ -183,6 +185,7 @@ export class Rectangle extends BaseShape {
         y: mousePoint.y - (y + h / 2)
       }
 
+      let tempHoverLineIndex = -1
       for (let index = 0; index < points.length; index++) {
         let currentPoint = points[index]
         if (helper.isInPoint(fixMousePoint, currentPoint.center, 4)) {
@@ -199,14 +202,16 @@ export class Rectangle extends BaseShape {
         let line: any = [previousPoint.center, currentPoint.center]
         if (helper.isInLine2(fixMousePoint, line)) {
           document.body.style.cursor = "pointer"
-          let center = helper.getCenterPoint(points[0].center, points[1].center)
-          console.log('center', center)
-          this.tempDrawCp.push(center)
-          CanvasUtil2.getInstance().render()
-          return true
-        } else {
-          this.tempDrawCp = []
+          tempHoverLineIndex = index
+          this.hoverLinePoint = helper.getCenterPoint(points[0].center, points[1].center)
+          break
         }
+      }
+
+      if (this.hoverLineIndex !== tempHoverLineIndex) {
+        this.hoverLineIndex = tempHoverLineIndex
+        CanvasUtil2.getInstance().render()
+        return true
       }
       document.body.style.cursor = "default"
     }
@@ -388,9 +393,9 @@ export class Rectangle extends BaseShape {
       if (currentPoint.cp1.use) draw.controlPoint(ctx, currentPoint.cp1, currentPoint.center)
       if (currentPoint.cp2.use) draw.controlPoint(ctx, currentPoint.cp2, currentPoint.center)
     })
-    this.tempDrawCp.map((currentPoint: P) => {
-      draw.drawRound(ctx, currentPoint)
-    })
+    if (this.hoverLineIndex > -1) {
+      draw.drawRound(ctx, this.hoverLinePoint)
+    }
 
     ctx.restore()
   }

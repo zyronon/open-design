@@ -578,25 +578,7 @@ export default {
     return box.leftX < x && x < box.rightX
       && box.topY < y && y < box.bottomY
   },
-
-  /**
-   * @desc 判断鼠标m是否线段上
-   * @param target
-   * @param p1
-   * @param p2
-   * */
-  isInLine(target: P, p1: P, p2: P) {
-    let line1 = getHypotenuse2(target, p1)
-    let line2 = getHypotenuse2(target, p2)
-    let line3 = getHypotenuse2(p1, p2)
-    let d = 0.02
-    if (inRange(line1 + line2, line3 - d, line3 + d)) {
-      console.log('在线上')
-      return true
-    }
-    return false
-  },
-  isInLine2(target: P, line: [p1: P, p2: P]) {
+  isInLine(target: P, line: [p1: P, p2: P]) {
     let line1 = getHypotenuse2(target, line[0])
     let line2 = getHypotenuse2(target, line[1])
     let line3 = getHypotenuse2(line[0], line[1])

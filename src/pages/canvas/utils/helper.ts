@@ -600,7 +600,8 @@ export default {
     let line1 = getHypotenuse2(target, line[0])
     let line2 = getHypotenuse2(target, line[1])
     let line3 = getHypotenuse2(line[0], line[1])
-    let d = 0.02
+    // let d = 0.02
+    let d = 0.04
     if (inRange(line1 + line2, line3 - d, line3 + d)) {
       console.log('在线上')
       return true

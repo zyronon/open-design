@@ -379,7 +379,6 @@ export abstract class BaseShape {
   _mousedown(event: BaseEvent2, parents: BaseShape[] = []) {
     // console.log('mousedown', this.conf.name, this.enterType, this.hoverType)
     EventBus.emit(EventMapTypes.onMouseDown, this)
-    if (this.onMouseDown(event, parents)) return
 
     let {e, point: {x, y}, type} = event
     let cu = CanvasUtil2.getInstance()
@@ -391,6 +390,8 @@ export abstract class BaseShape {
     cu.startY = y
     cu.offsetX = x - this.conf.layout.x
     cu.offsetY = y - this.conf.layout.y
+
+    if (this.onMouseDown(event, parents)) return
 
     if (this.status === ShapeStatus.Edit) {
       return

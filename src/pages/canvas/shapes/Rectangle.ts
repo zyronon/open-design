@@ -26,8 +26,8 @@ export class Rectangle extends BaseShape {
   rectHoverType: MouseOptionType = MouseOptionType.None
   rectEnterType: MouseOptionType = MouseOptionType.None
   //编辑模式下，hover在线段上时，临时绘制的控制点
-  tempDrawCp: any = []
   hoverLineIndex: number = -1
+  enterLineIndex: number = -1
   hoverLinePoint: P = {x: 0, y: 0}
 
 
@@ -105,10 +105,18 @@ export class Rectangle extends BaseShape {
   }
 
   onMouseDown(event: BaseEvent2, parents: BaseShape[]) {
-    // console.log('childMouseDown', this.hoverPointIndex)
+    console.log('childMouseDown', this.hoverLineIndex)
     if (this.status === ShapeStatus.Edit) {
       if (this.hoverPointIndex > -1) {
         this.enterPointIndex = this.hoverPointIndex
+        this._config.isCustom = true
+        return true
+      }
+      if (this.hoverLineIndex > -1) {
+        console.log('onMouseDown-in')
+        this.enterLineIndex = this.hoverLineIndex
+        //因为drawEdit方法靠这个判断是否绘制hoverLinePoint
+        this.hoverLineIndex = -1
         this._config.isCustom = true
         return true
       }
@@ -120,15 +128,41 @@ export class Rectangle extends BaseShape {
   onMouseMove(event: BaseEvent2, parents: BaseShape[]) {
     // console.log('childMouseMove', this.hoverPointIndex)
     if (this.status === ShapeStatus.Edit) {
-      if (this.enterPointIndex === -1) return false
-      let cu = CanvasUtil2.getInstance()
-      let {absolute: {x, y}, layout: {w, h}} = this._config
-      this._config.points[this.hoverPointIndex].center = {
-        x: event.point.x - (x + w / 2),
-        y: event.point.y - (y + h / 2)
+      if (this.enterPointIndex !== -1) {
+        let cu = CanvasUtil2.getInstance()
+        let {absolute: {x, y}, layout: {w, h}} = this._config
+        this._config.points[this.hoverPointIndex].center = {
+          x: event.point.x - (x + w / 2),
+          y: event.point.y - (y + h / 2)
+        }
+        cu.render()
+        return true
       }
-      cu.render()
-      return true
+      if (this.enterLineIndex !== -1) {
+        console.log('onMouseMove-in')
+        let cu = CanvasUtil2.getInstance()
+        // let {absolute: {x, y}} = this._config
+        let {x, y} = event.point
+        let dx = x - cu.startX
+        let dy = y - cu.startY
+        console.log('dx', dx, 'dy', dy)
+        let oldLine1Point = this.original.points[this.enterLineIndex]
+        this._config.points[this.enterLineIndex].center.x = oldLine1Point.center.x + dx
+        this._config.points[this.enterLineIndex].center.y = oldLine1Point.center.y + dy
+        let previousPoint: BezierPoint
+        let oldPreviousPoint: BezierPoint
+        if (this.enterLineIndex === 0) {
+          previousPoint = this._config.points[this._config.points.length - 1]
+          oldPreviousPoint = this.original.points[this.original.points.length - 1]
+        } else {
+          previousPoint = this._config.points[this.enterLineIndex - 1]
+          oldPreviousPoint = this.original.points[this.enterLineIndex - 1]
+        }
+        previousPoint.center.x = oldPreviousPoint.center.x + dx
+        previousPoint.center.y = oldPreviousPoint.center.y + dy
+        cu.render()
+        return true
+      }
     }
     switch (this.rectEnterType) {
       case MouseOptionType.TopRight:
@@ -142,6 +176,7 @@ export class Rectangle extends BaseShape {
     // console.log('childMouseUp', this.hoverPointIndex)
     this.rectEnterType = this.rectHoverType = MouseOptionType.None
     this.enterPointIndex = this.hoverPointIndex = -1
+    this.enterLineIndex = this.hoverLineIndex = -1
     return false
   }
 
@@ -150,7 +185,10 @@ export class Rectangle extends BaseShape {
   }
 
   beforeEvent(event: BaseEvent2) {
-    if (this.enterPointIndex > -1) {
+    //todo 这里不应该放行hoverLineIndex。应该在isInShape里面判断。先凑合.
+    // 因为鼠标在图形边缘，isInShape会判断为false，导致事件传不进来
+    // if (this.enterPointIndex > -1 || this.enterLineIndex > -1 || this.hoverLineIndex > -1) {
+    if (this.enterPointIndex > -1 || this.enterLineIndex > -1) {
       event.stopPropagation()
       super.emit(event, [])
       return true
@@ -203,16 +241,23 @@ export class Rectangle extends BaseShape {
         if (helper.isInLine2(fixMousePoint, line)) {
           document.body.style.cursor = "pointer"
           tempHoverLineIndex = index
-          this.hoverLinePoint = helper.getCenterPoint(points[0].center, points[1].center)
+          this.hoverLinePoint = helper.getCenterPoint(previousPoint.center, currentPoint.center)
           break
         }
       }
 
+      //仅hover在线上时，才我重绘
       if (this.hoverLineIndex !== tempHoverLineIndex) {
         this.hoverLineIndex = tempHoverLineIndex
         CanvasUtil2.getInstance().render()
         return true
       }
+
+      //hover在线上时，消费事件。不然会把cursor = "default"
+      if (tempHoverLineIndex !== -1) {
+        return true
+      }
+
       document.body.style.cursor = "default"
     }
     return helper.isInBox(mousePoint, this.conf.box)
@@ -373,7 +418,7 @@ export class Rectangle extends BaseShape {
   }
 
   drawEdit(ctx: CanvasRenderingContext2D, layout: Rect): void {
-    this.log('drawEdit')
+    // this.log('drawEdit')
     let {
       fillColor
     } = this.conf

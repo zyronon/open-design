@@ -69,7 +69,7 @@ export class Rectangle extends BaseShape {
       this.status = ShapeStatus.Select
       cu.editShape = null
     } else {
-      if (!this._config.lines.length) {
+      if (!this._config.lineShapes.length) {
         let {w, h} = this._config.layout
         //这里的xy这样设置是因为，渲染时的起点是center
         let x = -w / 2, y = -h / 2
@@ -98,7 +98,7 @@ export class Rectangle extends BaseShape {
           cp2: getP2(),
           type: BezierPointType.RightAngle
         })
-        this._config.lines = [bezierCps]
+        this._config.lineShapes = [bezierCps]
       }
       this.status = ShapeStatus.Edit
       cu.editShape = this
@@ -166,7 +166,7 @@ export class Rectangle extends BaseShape {
         let dx = x - cu.startX
         let dy = y - cu.startY
         console.log('dx', dx, 'dy', dy)
-        let oldLine1Point = this.original.lines[this.enterLineIndex]
+        let oldLine1Point = this.original.lineShapes[this.enterLineIndex]
         // this._config.lines[this.enterLineIndex].center.x = oldLine1Point.center.x + dx
         // this._config.lines[this.enterLineIndex].center.y = oldLine1Point.center.y + dy
         // let previousPoint: BezierPoint
@@ -262,40 +262,46 @@ export class Rectangle extends BaseShape {
 
   isInShape(mousePoint: P, cu: CanvasUtil2): boolean {
     if (this.status === ShapeStatus.Edit) {
-      let {absolute: {x, y}, layout: {w, h}, lines} = this._config
+      let {absolute: {x, y}, layout: {w, h}, lineShapes} = this._config
       this.hoverPointIndex = -1
       let fixMousePoint = {
         x: mousePoint.x - (x + w / 2),
         y: mousePoint.y - (y + h / 2)
       }
-
       let tempHoverLineIndex = -1
       let tempHoverLineCenterPointIndex = -1
-      for (let index = 0; index < lines.length; index++) {
-        let currentPoint = lines[index]
-        // if (helper.isInPoint(fixMousePoint, currentPoint.center, 4)) {
-        //   document.body.style.cursor = "pointer"
-        //   this.hoverPointIndex = index
-        //   return true
-        // }
-        // let previousPoint: BezierPoint
-        // if (index === 0) {
-        //   previousPoint = lines[lines.length - 1]
-        // } else {
-        //   previousPoint = lines[index - 1]
-        // }
-        // let line: any = [previousPoint.center, currentPoint.center]
-        // if (helper.isInLine(fixMousePoint, line)) {
-        //   document.body.style.cursor = "pointer"
-        //   tempHoverLineIndex = index
-        //   this.hoverLineCenterPoint = helper.getCenterPoint(previousPoint.center, currentPoint.center)
-        //   if (helper.isInPoint(fixMousePoint, this.hoverLineCenterPoint, 4)) {
-        //     console.log('hover在线的中点上')
-        //     document.body.style.cursor = "pointer"
-        //     tempHoverLineCenterPointIndex = index
-        //   }
-        //   break
-        // }
+      //用于跳出外层的for循环。hover到了任一目标上时，就不需要再去判断了
+      let isBreak = false
+      for (let index = 0; index < lineShapes.length; index++) {
+        let lineShape = lineShapes[index]
+        for (let j = 0; j < lineShape.length; j++) {
+          let currentPoint = lineShape[j]
+          if (helper.isInPoint(fixMousePoint, currentPoint.center, 4)) {
+            document.body.style.cursor = "pointer"
+            this.hoverPointIndex = index
+            return true
+          }
+          let previousPoint: BezierPoint
+          if (j === 0) {
+            previousPoint = lineShape[lineShape.length - 1]
+          } else {
+            previousPoint = lineShape[j - 1]
+          }
+          let line: any = [previousPoint.center, currentPoint.center]
+          if (helper.isInLine(fixMousePoint, line)) {
+            document.body.style.cursor = "pointer"
+            tempHoverLineIndex = j
+            this.hoverLineCenterPoint = helper.getCenterPoint(previousPoint.center, currentPoint.center)
+            if (helper.isInPoint(fixMousePoint, this.hoverLineCenterPoint, 4)) {
+              console.log('hover在线的中点上')
+              document.body.style.cursor = "pointer"
+              tempHoverLineCenterPointIndex = j
+            }
+            isBreak = true
+            break
+          }
+        }
+        if (isBreak) break
       }
 
       //仅hover在线中点上时，才重绘
@@ -343,7 +349,7 @@ export class Rectangle extends BaseShape {
 
   getCustomShapePath(): Path2D {
     let path = new Path2D()
-    this._config.lines.map((line) => {
+    this._config.lineShapes.map((line) => {
       line.map((currentPoint: BezierPoint, index: number, array: any) => {
         let previousPoint: BezierPoint
         if (index === 0) {
@@ -492,7 +498,7 @@ export class Rectangle extends BaseShape {
     ctx.fill(path)
     ctx.stroke(path)
 
-    let bezierCps = this._config.lines
+    let bezierCps = this._config.lineShapes
     bezierCps.map(line => {
       line.map((currentPoint) => {
         draw.drawRound(ctx, currentPoint.center)

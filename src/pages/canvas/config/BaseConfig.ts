@@ -82,7 +82,7 @@ interface Geometry {
   dashCap: 'NONE' | 'ROUND' | 'SQUARE' //虚线端点装饰。
 }
 
-type Line = BezierPoint[]
+type LineShape = BezierPoint[]
 
 export interface BaseConfig extends Layout, Geometry {
   id: number | string,
@@ -101,9 +101,9 @@ export interface BaseConfig extends Layout, Geometry {
   flipVertical: boolean,
   flipHorizontal: boolean,
   points: any[],
-  //所有的线条。一个图形默认由N个连续的点组成闭合的条线组成。但编辑模式下，可以删除特定的点，或新增另一条线条
-  lines: Line[],
-  //存放当多条线，共用的点
+  //所有的线条图形。一个图形默认由N个连续的点组成闭合的条线组成。但编辑模式下，可以删除特定的点，或新增另一条线
+  lineShapes: LineShape[],
+  //存放多条线时共用到的点
   commonPoints: BezierPoint[],
 
   /**

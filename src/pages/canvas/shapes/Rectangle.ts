@@ -69,7 +69,7 @@ export class Rectangle extends BaseShape {
       this.status = ShapeStatus.Select
       cu.editShape = null
     } else {
-      if (!this._config.points.length) {
+      if (!this._config.lines.length) {
         let {w, h} = this._config.layout
         //这里的xy这样设置是因为，渲染时的起点是center
         let x = -w / 2, y = -h / 2
@@ -98,7 +98,7 @@ export class Rectangle extends BaseShape {
           cp2: getP2(),
           type: BezierPointType.RightAngle
         })
-        this._config.points = bezierCps
+        this._config.lines = [bezierCps]
       }
       this.status = ShapeStatus.Edit
       cu.editShape = this
@@ -119,12 +119,12 @@ export class Rectangle extends BaseShape {
         console.log('onMouseDown-hoverLineCenterPointIndex')
         this.enterLineCenterPointIndex = this.hoverLineCenterPointIndex
         //因为drawEdit方法靠这个判断是否绘制hoverLinePoint
-        this._config.points.splice(this.hoverLineCenterPointIndex, 0, {
-          cp1: getP2(),
-          center: {...getP2(true), ...this.hoverLineCenterPoint},
-          cp2: getP2(),
-          type: BezierPointType.RightAngle
-        })
+        // this._config.lines.splice(this.hoverLineCenterPointIndex, 0, {
+        //   cp1: getP2(),
+        //   center: {...getP2(true), ...this.hoverLineCenterPoint},
+        //   cp2: getP2(),
+        //   type: BezierPointType.RightAngle
+        // })
         this.hoverLineCenterPointIndex = -1
         this.hoverLineIndex = -1
         this._config.isCustom = true
@@ -151,10 +151,10 @@ export class Rectangle extends BaseShape {
       if (this.enterPointIndex !== -1) {
         let cu = CanvasUtil2.getInstance()
         let {absolute: {x, y}, layout: {w, h}} = this._config
-        this._config.points[this.hoverPointIndex].center = {
-          x: event.point.x - (x + w / 2),
-          y: event.point.y - (y + h / 2)
-        }
+        // this._config.lines[this.hoverPointIndex].center = {
+        //   x: event.point.x - (x + w / 2),
+        //   y: event.point.y - (y + h / 2)
+        // }
         cu.render()
         return true
       }
@@ -166,20 +166,20 @@ export class Rectangle extends BaseShape {
         let dx = x - cu.startX
         let dy = y - cu.startY
         console.log('dx', dx, 'dy', dy)
-        let oldLine1Point = this.original.points[this.enterLineIndex]
-        this._config.points[this.enterLineIndex].center.x = oldLine1Point.center.x + dx
-        this._config.points[this.enterLineIndex].center.y = oldLine1Point.center.y + dy
-        let previousPoint: BezierPoint
-        let oldPreviousPoint: BezierPoint
-        if (this.enterLineIndex === 0) {
-          previousPoint = this._config.points[this._config.points.length - 1]
-          oldPreviousPoint = this.original.points[this.original.points.length - 1]
-        } else {
-          previousPoint = this._config.points[this.enterLineIndex - 1]
-          oldPreviousPoint = this.original.points[this.enterLineIndex - 1]
-        }
-        previousPoint.center.x = oldPreviousPoint.center.x + dx
-        previousPoint.center.y = oldPreviousPoint.center.y + dy
+        let oldLine1Point = this.original.lines[this.enterLineIndex]
+        // this._config.lines[this.enterLineIndex].center.x = oldLine1Point.center.x + dx
+        // this._config.lines[this.enterLineIndex].center.y = oldLine1Point.center.y + dy
+        // let previousPoint: BezierPoint
+        // let oldPreviousPoint: BezierPoint
+        // if (this.enterLineIndex === 0) {
+        //   previousPoint = this._config.lines[this._config.lines.length - 1]
+        //   oldPreviousPoint = this.original.lines[this.original.lines.length - 1]
+        // } else {
+        //   previousPoint = this._config.lines[this.enterLineIndex - 1]
+        //   oldPreviousPoint = this.original.lines[this.enterLineIndex - 1]
+        // }
+        // previousPoint.center.x = oldPreviousPoint.center.x + dx
+        // previousPoint.center.y = oldPreviousPoint.center.y + dy
         cu.render()
         return true
       }
@@ -191,17 +191,17 @@ export class Rectangle extends BaseShape {
         // let dx = x - cu.startX
         // let dy = y - cu.startY
         // console.log('dx', dx, 'dy', dy)
-        // let oldLine1Point = this.original.points[this.enterLineIndex]
-        // this._config.points[this.enterLineIndex].center.x = oldLine1Point.center.x + dx
-        // this._config.points[this.enterLineIndex].center.y = oldLine1Point.center.y + dy
+        // let oldLine1Point = this.original.lines[this.enterLineIndex]
+        // this._config.lines[this.enterLineIndex].center.x = oldLine1Point.center.x + dx
+        // this._config.lines[this.enterLineIndex].center.y = oldLine1Point.center.y + dy
         // let previousPoint: BezierPoint
         // let oldPreviousPoint: BezierPoint
         // if (this.enterLineCenterPointIndex === 0) {
-        //   previousPoint = this._config.points[this._config.points.length - 1]
-        //   oldPreviousPoint = this.original.points[this.original.points.length - 1]
+        //   previousPoint = this._config.lines[this._config.lines.length - 1]
+        //   oldPreviousPoint = this.original.lines[this.original.lines.length - 1]
         // } else {
-        //   previousPoint = this._config.points[this.enterLineIndex - 1]
-        //   oldPreviousPoint = this.original.points[this.enterLineIndex - 1]
+        //   previousPoint = this._config.lines[this.enterLineIndex - 1]
+        //   oldPreviousPoint = this.original.lines[this.enterLineIndex - 1]
         // }
         // previousPoint.center.x = oldPreviousPoint.center.x + dx
         // previousPoint.center.y = oldPreviousPoint.center.y + dy
@@ -262,7 +262,7 @@ export class Rectangle extends BaseShape {
 
   isInShape(mousePoint: P, cu: CanvasUtil2): boolean {
     if (this.status === ShapeStatus.Edit) {
-      let {absolute: {x, y}, layout: {w, h}, points} = this._config
+      let {absolute: {x, y}, layout: {w, h}, lines} = this._config
       this.hoverPointIndex = -1
       let fixMousePoint = {
         x: mousePoint.x - (x + w / 2),
@@ -271,31 +271,31 @@ export class Rectangle extends BaseShape {
 
       let tempHoverLineIndex = -1
       let tempHoverLineCenterPointIndex = -1
-      for (let index = 0; index < points.length; index++) {
-        let currentPoint = points[index]
-        if (helper.isInPoint(fixMousePoint, currentPoint.center, 4)) {
-          document.body.style.cursor = "pointer"
-          this.hoverPointIndex = index
-          return true
-        }
-        let previousPoint: BezierPoint
-        if (index === 0) {
-          previousPoint = points[points.length - 1]
-        } else {
-          previousPoint = points[index - 1]
-        }
-        let line: any = [previousPoint.center, currentPoint.center]
-        if (helper.isInLine(fixMousePoint, line)) {
-          document.body.style.cursor = "pointer"
-          tempHoverLineIndex = index
-          this.hoverLineCenterPoint = helper.getCenterPoint(previousPoint.center, currentPoint.center)
-          if (helper.isInPoint(fixMousePoint, this.hoverLineCenterPoint, 4)) {
-            console.log('hover在线的中点上')
-            document.body.style.cursor = "pointer"
-            tempHoverLineCenterPointIndex = index
-          }
-          break
-        }
+      for (let index = 0; index < lines.length; index++) {
+        let currentPoint = lines[index]
+        // if (helper.isInPoint(fixMousePoint, currentPoint.center, 4)) {
+        //   document.body.style.cursor = "pointer"
+        //   this.hoverPointIndex = index
+        //   return true
+        // }
+        // let previousPoint: BezierPoint
+        // if (index === 0) {
+        //   previousPoint = lines[lines.length - 1]
+        // } else {
+        //   previousPoint = lines[index - 1]
+        // }
+        // let line: any = [previousPoint.center, currentPoint.center]
+        // if (helper.isInLine(fixMousePoint, line)) {
+        //   document.body.style.cursor = "pointer"
+        //   tempHoverLineIndex = index
+        //   this.hoverLineCenterPoint = helper.getCenterPoint(previousPoint.center, currentPoint.center)
+        //   if (helper.isInPoint(fixMousePoint, this.hoverLineCenterPoint, 4)) {
+        //     console.log('hover在线的中点上')
+        //     document.body.style.cursor = "pointer"
+        //     tempHoverLineCenterPointIndex = index
+        //   }
+        //   break
+        // }
       }
 
       //仅hover在线中点上时，才重绘
@@ -343,56 +343,58 @@ export class Rectangle extends BaseShape {
 
   getCustomShapePath(): Path2D {
     let path = new Path2D()
-    this._config.points.map((currentPoint: BezierPoint, index: number, array: any) => {
-      let previousPoint: BezierPoint
-      if (index === 0) {
-        previousPoint = array[array.length - 1]
-      } else {
-        previousPoint = array[index - 1]
-      }
-      let lineType: LineType = LineType.Line
-      if (
-        currentPoint.type === BezierPointType.RightAngle &&
-        previousPoint.type === BezierPointType.RightAngle
-      ) {
-        lineType = LineType.Line
-      } else if (
-        currentPoint.type !== BezierPointType.RightAngle &&
-        previousPoint.type !== BezierPointType.RightAngle) {
-        lineType = LineType.Bezier3
-      } else {
-        if (previousPoint.cp2.use || currentPoint.cp1.use) {
-          lineType = LineType.Bezier2
+    this._config.lines.map((line) => {
+      line.map((currentPoint: BezierPoint, index: number, array: any) => {
+        let previousPoint: BezierPoint
+        if (index === 0) {
+          previousPoint = array[array.length - 1]
         } else {
-          lineType = LineType.Line
+          previousPoint = array[index - 1]
         }
-      }
-      switch (lineType) {
-        case LineType.Line:
-          // ctx.beginPath()
-          path.lineTo2(previousPoint.center)
-          path.lineTo2(currentPoint.center)
-          // ctx.stroke()
-          break
-        case LineType.Bezier3:
-          // ctx.beginPath()
-          path.lineTo2(previousPoint.center)
-          path.bezierCurveTo2(
-            previousPoint.cp2,
-            currentPoint.cp1,
-            currentPoint.center)
-          // ctx.stroke()
-          break
-        case LineType.Bezier2:
-          let cp: P2
-          if (previousPoint.cp2.use) cp = previousPoint.cp2
-          if (currentPoint.cp1.use) cp = currentPoint.cp2
-          // ctx.beginPath()
-          path.lineTo2(previousPoint.center)
-          path.quadraticCurveTo2(cp!, currentPoint.center)
-          // ctx.stroke()
-          break
-      }
+        let lineType: LineType = LineType.Line
+        if (
+          currentPoint.type === BezierPointType.RightAngle &&
+          previousPoint.type === BezierPointType.RightAngle
+        ) {
+          lineType = LineType.Line
+        } else if (
+          currentPoint.type !== BezierPointType.RightAngle &&
+          previousPoint.type !== BezierPointType.RightAngle) {
+          lineType = LineType.Bezier3
+        } else {
+          if (previousPoint.cp2.use || currentPoint.cp1.use) {
+            lineType = LineType.Bezier2
+          } else {
+            lineType = LineType.Line
+          }
+        }
+        switch (lineType) {
+          case LineType.Line:
+            // ctx.beginPath()
+            path.lineTo2(previousPoint.center)
+            path.lineTo2(currentPoint.center)
+            // ctx.stroke()
+            break
+          case LineType.Bezier3:
+            // ctx.beginPath()
+            path.lineTo2(previousPoint.center)
+            path.bezierCurveTo2(
+              previousPoint.cp2,
+              currentPoint.cp1,
+              currentPoint.center)
+            // ctx.stroke()
+            break
+          case LineType.Bezier2:
+            let cp: P2
+            if (previousPoint.cp2.use) cp = previousPoint.cp2
+            if (currentPoint.cp1.use) cp = currentPoint.cp2
+            // ctx.beginPath()
+            path.lineTo2(previousPoint.center)
+            path.quadraticCurveTo2(cp!, currentPoint.center)
+            // ctx.stroke()
+            break
+        }
+      })
     })
 
     path.closePath()
@@ -490,11 +492,13 @@ export class Rectangle extends BaseShape {
     ctx.fill(path)
     ctx.stroke(path)
 
-    let bezierCps: BezierPoint[] = this._config.points
-    bezierCps.map((currentPoint: BezierPoint) => {
-      draw.drawRound(ctx, currentPoint.center)
-      if (currentPoint.cp1.use) draw.controlPoint(ctx, currentPoint.cp1, currentPoint.center)
-      if (currentPoint.cp2.use) draw.controlPoint(ctx, currentPoint.cp2, currentPoint.center)
+    let bezierCps = this._config.lines
+    bezierCps.map(line => {
+      line.map((currentPoint) => {
+        draw.drawRound(ctx, currentPoint.center)
+        if (currentPoint.cp1.use) draw.controlPoint(ctx, currentPoint.cp1, currentPoint.center)
+        if (currentPoint.cp2.use) draw.controlPoint(ctx, currentPoint.cp2, currentPoint.center)
+      })
     })
     if (this.hoverLineIndex > -1 || this.hoverLineCenterPointIndex > -1) {
       draw.drawRound(ctx, this.hoverLineCenterPoint)

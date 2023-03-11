@@ -1,5 +1,5 @@
 //属性参考：https://developers.mastergo.com/apis/node-frame.html
-import {P, P2, ShapeType, StrokeAlign} from "../utils/type"
+import {BezierPoint, P, P2, ShapeType, StrokeAlign} from "../utils/type"
 
 interface Layout {
   absoluteTransform: Transform//图层节点相对于包含它的页面的位置，以变换矩阵的方式呈现。
@@ -82,6 +82,8 @@ interface Geometry {
   dashCap: 'NONE' | 'ROUND' | 'SQUARE' //虚线端点装饰。
 }
 
+type Line = BezierPoint[]
+
 export interface BaseConfig extends Layout, Geometry {
   id: number | string,
   /**
@@ -99,6 +101,11 @@ export interface BaseConfig extends Layout, Geometry {
   flipVertical: boolean,
   flipHorizontal: boolean,
   points: any[],
+  //所有的线条。一个图形默认由N个连续的点组成闭合的条线组成。但编辑模式下，可以删除特定的点，或新增另一条线条
+  lines: Line[],
+  //存放当多条线，共用的点
+  commonPoints: BezierPoint[],
+
   /**
    * @desc 是否是自定义图形
    * 默认的图形，都是固定的渲染方式

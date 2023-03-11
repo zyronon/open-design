@@ -148,6 +148,8 @@ export default {
     }
     conf.strokeAlign = StrokeAlign.INSIDE
     conf.points = []
+    conf.lines = []
+    conf.commonPoints = []
     // console.log('initConf', conf)
     return conf
   },

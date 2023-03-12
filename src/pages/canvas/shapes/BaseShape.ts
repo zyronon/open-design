@@ -42,6 +42,9 @@ export abstract class BaseShape {
 
   set status(val) {
     if (val !== this._status) {
+      if (this._status === ShapeStatus.Edit) {
+        this.calcNewCenterAndWidthAndHeight()
+      }
       this._status = val
       CanvasUtil2.getInstance().render()
     }
@@ -876,5 +879,35 @@ export abstract class BaseShape {
       item.conf = helper.calcConf(item.conf, item.parent?.conf)
       item.childrenDiagonalFlip(type, item.conf)
     })
+  }
+
+  calcNewCenterAndWidthAndHeight() {
+    if (!this.conf.isCustom) return
+    let temp: any = this.conf.lineShapes.reduce((previousValue: any, currentValue) => {
+      previousValue.push({
+        maxX: Math.max(...currentValue.map(p => p.center.x)),
+        minX: Math.min(...currentValue.map(p => p.center.x)),
+        maxY: Math.max(...currentValue.map(p => p.center.y)),
+        minY: Math.min(...currentValue.map(p => p.center.y)),
+      })
+      return previousValue
+    }, [])
+    let maxX = Math.max(...temp.map((a: any) => a.maxX))
+    let minX = Math.max(...temp.map((a: any) => a.minX))
+    let maxY = Math.max(...temp.map((a: any) => a.maxY))
+    let minY = Math.max(...temp.map((a: any) => a.minY))
+
+    let newWidth = maxX - minX
+    let newHeight = maxY - minY
+    let newCenter = {
+      x: minX + newWidth / 2,
+      y: minY + newHeight / 2,
+    }
+
+    this.conf.center = newCenter
+    this.conf.layout.w = newWidth
+    this.conf.layout.h = newHeight
+    this.conf = helper.calcConf(this.conf, this.parent?.conf)
+    console.log('newCenter', newCenter)
   }
 }

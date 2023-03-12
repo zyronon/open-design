@@ -421,6 +421,7 @@ export default class CanvasUtil2 {
     this.currentMat = new Float32Array(defaultConfig.currentMat)
     this.selectedShape = null
     this.inShape = null
+    this.editShape = null
     this.children = []
   }
 

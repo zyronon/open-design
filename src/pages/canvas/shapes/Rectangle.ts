@@ -86,29 +86,31 @@ export class Rectangle extends BaseShape {
       cu.editShape = null
     } else {
       if (!this._config.lineShapes.length) {
-        let {topLeft, topRight, bottomLeft, bottomRight} = this._config.box
+        let {w, h} = this._config.layout
+        //这里的xy这样设置是因为，渲染时的起点是center
+        let x = -w / 2, y = -h / 2
         let bezierCps: BezierPoint[] = []
         bezierCps.push({
           cp1: getP2(),
-          center: {...getP2(true), ...topLeft},
+          center: {...getP2(true), x: x, y: y},
           cp2: getP2(),
           type: BezierPointType.RightAngle
         })
         bezierCps.push({
           cp1: getP2(),
-          center: {...getP2(true), ...topRight},
+          center: {...getP2(true), x: x + w, y: y},
           cp2: getP2(),
           type: BezierPointType.RightAngle
         })
         bezierCps.push({
           cp1: getP2(),
-          center: {...getP2(true), ...bottomRight},
+          center: {...getP2(true), x: x + w, y: y + h},
           cp2: getP2(),
           type: BezierPointType.RightAngle
         })
         bezierCps.push({
           cp1: getP2(),
-          center: {...getP2(true), ...bottomLeft},
+          center: {...getP2(true), x: x, y: y + h},
           cp2: getP2(),
           type: BezierPointType.RightAngle
         })
@@ -158,10 +160,11 @@ export class Rectangle extends BaseShape {
       if (this.editEnter.index !== -1) {
         if (this.editEnter.type === EditType.point || this.editEnter.type === EditType.centerPoint) {
           let cu = CanvasUtil2.getInstance()
+          let {absolute: {x, y}, layout: {w, h}} = this._config
           this._config.lineShapes[this.editEnter.baseIndex][this.editEnter.index].center = {
             ...getP2(true), ...{
-              x: event.point.x,
-              y: event.point.y
+              x: event.point.x - (x + w / 2),
+              y: event.point.y - (y + h / 2)
             }
           }
           cu.render()
@@ -252,11 +255,11 @@ export class Rectangle extends BaseShape {
 
   isInShape(mousePoint: P, cu: CanvasUtil2): boolean {
     if (this.status === ShapeStatus.Edit) {
-      let {lineShapes} = this._config
+      let {absolute: {x, y}, layout: {w, h}, lineShapes} = this._config
       this.hoverPointIndex = -1
       let fixMousePoint = {
-        x: mousePoint.x,
-        y: mousePoint.y
+        x: mousePoint.x - (x + w / 2),
+        y: mousePoint.y - (y + h / 2)
       }
       //用于判断是否与之前保存的值不同，仅在不同时才重绘
       let tempHoverLineIndex = -1
@@ -432,8 +435,7 @@ export class Rectangle extends BaseShape {
     let bezierCps = this._config.lineShapes
     bezierCps.map(line => {
       line.map((currentPoint) => {
-        // draw.drawRound(ctx, currentPoint.center)
-        draw.drawRound(ctx, this.getPointRelativeToCenter(currentPoint.center, center))
+        draw.drawRound(ctx, currentPoint.center)
         if (currentPoint.cp1.use) draw.controlPoint(ctx, currentPoint.cp1, currentPoint.center)
         if (currentPoint.cp2.use) draw.controlPoint(ctx, currentPoint.cp2, currentPoint.center)
       })
@@ -445,7 +447,7 @@ export class Rectangle extends BaseShape {
         || this.editHover.type === EditType.centerPoint)
       && this.editHover.index !== -1
     ) {
-      draw.drawRound(ctx, this.getPointRelativeToCenter(this.hoverLineCenterPoint, center))
+      draw.drawRound(ctx, this.hoverLineCenterPoint)
     }
     ctx.restore()
   }
@@ -541,7 +543,8 @@ export class Rectangle extends BaseShape {
             // ctx.beginPath()
             // let s = this.getPointRelativeToCenter(currentPoint.center, center)
             // console.log('s', s)
-            path.lineTo2(this.getPointRelativeToCenter(currentPoint.center, center))
+            path.lineTo2(currentPoint.center)
+            // path.lineTo2(this.getPointRelativeToCenter(currentPoint.center, center))
             // ctx.stroke()
             break
           case LineType.Bezier3:

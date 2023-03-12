@@ -882,6 +882,7 @@ export abstract class BaseShape {
   }
 
   calcNewCenterAndWidthAndHeight() {
+    return
     if (!this.conf.isCustom) return
     let temp: any = this.conf.lineShapes.reduce((previousValue: any, currentValue) => {
       previousValue.push({

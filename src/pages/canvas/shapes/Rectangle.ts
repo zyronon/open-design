@@ -16,9 +16,15 @@ import {Colors, defaultConfig} from "../utils/constant"
 import {BaseConfig, Rect} from "../config/BaseConfig"
 import draw from "../utils/draw"
 import helper from "../utils/helper"
+import {clone, cloneDeep} from "lodash"
+
+enum EditType {
+  line = 'line',
+  point = 'point',
+  centerPoint = 'centerPoint',
+}
 
 export class Rectangle extends BaseShape {
-
   //最小拖动圆角。真实圆角可能为0，导致渲染的控制点和角重合，所以设置一个最小圆角
   minDragRadius = 15
   hoverPointIndex: number = -1
@@ -31,6 +37,16 @@ export class Rectangle extends BaseShape {
   hoverLineCenterPointIndex: number = -1
   enterLineCenterPointIndex: number = -1
   hoverLineCenterPoint: P = {x: 0, y: 0}
+  editHover = {
+    type: EditType.line,
+    baseIndex: -1,
+    index: -1,
+  }
+  editEnter = {
+    type: EditType.line,
+    baseIndex: -1,
+    index: -1,
+  }
 
 
   constructor(props: any) {
@@ -107,38 +123,37 @@ export class Rectangle extends BaseShape {
   }
 
   onMouseDown(event: BaseEvent2, parents: BaseShape[]) {
-    console.log('childMouseDown', this.hoverLineIndex)
+    console.log('childMouseDown', this.editHover)
     if (this.status === ShapeStatus.Edit) {
-      if (this.hoverPointIndex > -1) {
-        this.enterPointIndex = this.hoverPointIndex
-        this._config.isCustom = true
-        return true
-      }
+      // if (this.hoverPointIndex > -1) {
+      //   this.enterPointIndex = this.hoverPointIndex
+      //   this._config.isCustom = true
+      //   return true
+      // }
 
-      if (this.hoverLineCenterPointIndex > -1) {
-        console.log('onMouseDown-hoverLineCenterPointIndex')
-        this.enterLineCenterPointIndex = this.hoverLineCenterPointIndex
-        //因为drawEdit方法靠这个判断是否绘制hoverLinePoint
-        // this._config.lines.splice(this.hoverLineCenterPointIndex, 0, {
-        //   cp1: getP2(),
-        //   center: {...getP2(true), ...this.hoverLineCenterPoint},
-        //   cp2: getP2(),
-        //   type: BezierPointType.RightAngle
-        // })
-        this.hoverLineCenterPointIndex = -1
-        this.hoverLineIndex = -1
-        this._config.isCustom = true
-        CanvasUtil2.getInstance().render()
-        return true
-      }
+      if (this.editHover.index !== -1) {
+        if (this.editHover.type === EditType.centerPoint) {
+          console.log('onMouseDown-hoverLineCenterPointIndex')
+          this.editEnter = cloneDeep(this.editHover)
+          this._config.lineShapes[this.editEnter.baseIndex].splice(this.editEnter.index, 0, {
+            cp1: getP2(),
+            center: {...getP2(true), ...this.hoverLineCenterPoint},
+            cp2: getP2(),
+            type: BezierPointType.RightAngle
+          })
+          // this.editEnter.index += 1
+          this.editHover.index = -1
+          this._config.isCustom = true
+          CanvasUtil2.getInstance().render()
+          return true
+        }
 
-      if (this.hoverLineIndex > -1) {
-        console.log('onMouseDown-hoverLineIndex')
-        this.enterLineIndex = this.hoverLineIndex
-        //因为drawEdit方法靠这个判断是否绘制hoverLinePoint
-        this.hoverLineIndex = -1
-        this._config.isCustom = true
-        return true
+        if (this.editHover.type === EditType.line || this.editHover.type === EditType.point) {
+          this.editEnter = cloneDeep(this.editHover)
+          this.editHover.index = -1
+          this._config.isCustom = true
+          return true
+        }
       }
     }
     this.rectEnterType = this.rectHoverType
@@ -146,67 +161,48 @@ export class Rectangle extends BaseShape {
   }
 
   onMouseMove(event: BaseEvent2, parents: BaseShape[]) {
-    // console.log('childMouseMove', this.hoverPointIndex)
+    console.log('childMouseMove', this.editEnter)
     if (this.status === ShapeStatus.Edit) {
-      if (this.enterPointIndex !== -1) {
-        let cu = CanvasUtil2.getInstance()
-        let {absolute: {x, y}, layout: {w, h}} = this._config
-        // this._config.lines[this.hoverPointIndex].center = {
-        //   x: event.point.x - (x + w / 2),
-        //   y: event.point.y - (y + h / 2)
-        // }
-        cu.render()
-        return true
-      }
-      if (this.enterLineIndex !== -1) {
-        console.log('onMouseMove-enterLineIndex')
-        let cu = CanvasUtil2.getInstance()
-        // let {absolute: {x, y}} = this._config
-        let {x, y} = event.point
-        let dx = x - cu.startX
-        let dy = y - cu.startY
-        console.log('dx', dx, 'dy', dy)
-        let oldLine1Point = this.original.lineShapes[this.enterLineIndex]
-        // this._config.lines[this.enterLineIndex].center.x = oldLine1Point.center.x + dx
-        // this._config.lines[this.enterLineIndex].center.y = oldLine1Point.center.y + dy
-        // let previousPoint: BezierPoint
-        // let oldPreviousPoint: BezierPoint
-        // if (this.enterLineIndex === 0) {
-        //   previousPoint = this._config.lines[this._config.lines.length - 1]
-        //   oldPreviousPoint = this.original.lines[this.original.lines.length - 1]
-        // } else {
-        //   previousPoint = this._config.lines[this.enterLineIndex - 1]
-        //   oldPreviousPoint = this.original.lines[this.enterLineIndex - 1]
-        // }
-        // previousPoint.center.x = oldPreviousPoint.center.x + dx
-        // previousPoint.center.y = oldPreviousPoint.center.y + dy
-        cu.render()
-        return true
-      }
-      if (this.enterLineCenterPointIndex !== -1) {
-        console.log('onMouseMove-enterLineCenterPointIndex')
-        // let cu = CanvasUtil2.getInstance()
-        // // let {absolute: {x, y}} = this._config
-        // let {x, y} = event.point
-        // let dx = x - cu.startX
-        // let dy = y - cu.startY
-        // console.log('dx', dx, 'dy', dy)
-        // let oldLine1Point = this.original.lines[this.enterLineIndex]
-        // this._config.lines[this.enterLineIndex].center.x = oldLine1Point.center.x + dx
-        // this._config.lines[this.enterLineIndex].center.y = oldLine1Point.center.y + dy
-        // let previousPoint: BezierPoint
-        // let oldPreviousPoint: BezierPoint
-        // if (this.enterLineCenterPointIndex === 0) {
-        //   previousPoint = this._config.lines[this._config.lines.length - 1]
-        //   oldPreviousPoint = this.original.lines[this.original.lines.length - 1]
-        // } else {
-        //   previousPoint = this._config.lines[this.enterLineIndex - 1]
-        //   oldPreviousPoint = this.original.lines[this.enterLineIndex - 1]
-        // }
-        // previousPoint.center.x = oldPreviousPoint.center.x + dx
-        // previousPoint.center.y = oldPreviousPoint.center.y + dy
-        // cu.render()
-        return true
+      if (this.editEnter.index !== -1) {
+        if (this.editEnter.type === EditType.point || this.editEnter.type === EditType.centerPoint) {
+          let cu = CanvasUtil2.getInstance()
+          let {absolute: {x, y}, layout: {w, h}} = this._config
+          this._config.lineShapes[this.editEnter.baseIndex][this.editEnter.index].center = {
+            ...getP2(true), ...{
+              x: event.point.x - (x + w / 2),
+              y: event.point.y - (y + h / 2)
+            }
+          }
+          cu.render()
+          return true
+        }
+
+        if (this.editHover.type === EditType.line) {
+          console.log('onMouseMove-enterLineIndex')
+          let cu = CanvasUtil2.getInstance()
+          // let {absolute: {x, y}} = this._config
+          let {x, y} = event.point
+          let dx = x - cu.startX
+          let dy = y - cu.startY
+          console.log('dx', dx, 'dy', dy)
+          let oldLine1Point = this.original.lineShapes[this.editEnter.baseIndex][this.editEnter.index]
+          this._config.lineShapes[this.editEnter.baseIndex][this.editEnter.index].center.x = oldLine1Point.center.x + dx
+          this._config.lineShapes[this.editEnter.baseIndex][this.editEnter.index].center.y = oldLine1Point.center.y + dy
+          let previousPoint: BezierPoint
+          let oldPreviousPoint: BezierPoint
+          if (this.editEnter.index === 0) {
+            let length = this._config.lineShapes[this.editEnter.baseIndex].length
+            previousPoint = this._config.lineShapes[this.editEnter.baseIndex][length - 1]
+            oldPreviousPoint = this.original.lineShapes[this.editEnter.baseIndex][length - 1]
+          } else {
+            previousPoint = this._config.lineShapes[this.editEnter.baseIndex][this.editEnter.index - 1]
+            oldPreviousPoint = this.original.lineShapes[this.editEnter.baseIndex][this.editEnter.index - 1]
+          }
+          previousPoint.center.x = oldPreviousPoint.center.x + dx
+          previousPoint.center.y = oldPreviousPoint.center.y + dy
+          cu.render()
+          return true
+        }
       }
     }
     switch (this.rectEnterType) {
@@ -218,11 +214,17 @@ export class Rectangle extends BaseShape {
   }
 
   onMouseUp(event: BaseEvent2, parents: BaseShape[]) {
-    // console.log('childMouseUp', this.hoverPointIndex)
+    console.log('childMouseUp')
     this.rectEnterType = this.rectHoverType = MouseOptionType.None
     this.enterPointIndex = this.hoverPointIndex = -1
     this.enterLineIndex = this.hoverLineIndex = -1
     this.enterLineCenterPointIndex = this.hoverLineCenterPointIndex = -1
+    this.editHover = {
+      type: EditType.line,
+      baseIndex: -1,
+      index: -1,
+    }
+    this.editEnter = cloneDeep(this.editHover)
     return false
   }
 
@@ -231,10 +233,7 @@ export class Rectangle extends BaseShape {
   }
 
   beforeEvent(event: BaseEvent2) {
-    if (this.enterPointIndex > -1
-      || this.enterLineIndex > -1
-      || this.enterLineCenterPointIndex > -1
-    ) {
+    if (this.editEnter.index > -1) {
       event.stopPropagation()
       super.emit(event, [])
       return true
@@ -268,17 +267,21 @@ export class Rectangle extends BaseShape {
         x: mousePoint.x - (x + w / 2),
         y: mousePoint.y - (y + h / 2)
       }
+      //用于判断是否与之前保存的值不同，仅在不同时才重绘
       let tempHoverLineIndex = -1
       let tempHoverLineCenterPointIndex = -1
       //用于跳出外层的for循环。hover到了任一目标上时，就不需要再去判断了
       let isBreak = false
       for (let index = 0; index < lineShapes.length; index++) {
         let lineShape = lineShapes[index]
+        this.editHover.baseIndex = index
         for (let j = 0; j < lineShape.length; j++) {
           let currentPoint = lineShape[j]
           if (helper.isInPoint(fixMousePoint, currentPoint.center, 4)) {
             document.body.style.cursor = "pointer"
             this.hoverPointIndex = index
+            this.editHover.type = EditType.point
+            this.editHover.index = j
             return true
           }
           let previousPoint: BezierPoint
@@ -289,10 +292,12 @@ export class Rectangle extends BaseShape {
           }
           let line: any = [previousPoint.center, currentPoint.center]
           if (helper.isInLine(fixMousePoint, line)) {
+            this.editHover.type = EditType.line
             document.body.style.cursor = "pointer"
             tempHoverLineIndex = j
             this.hoverLineCenterPoint = helper.getCenterPoint(previousPoint.center, currentPoint.center)
             if (helper.isInPoint(fixMousePoint, this.hoverLineCenterPoint, 4)) {
+              this.editHover.type = EditType.centerPoint
               console.log('hover在线的中点上')
               document.body.style.cursor = "pointer"
               tempHoverLineCenterPointIndex = j
@@ -305,17 +310,31 @@ export class Rectangle extends BaseShape {
       }
 
       //仅hover在线中点上时，才重绘
-      if (this.hoverLineCenterPointIndex !== tempHoverLineCenterPointIndex) {
-        this.hoverLineCenterPointIndex = tempHoverLineCenterPointIndex
+      if (this.editHover.type === EditType.centerPoint && this.editHover.index !== tempHoverLineCenterPointIndex) {
+        this.editHover.index = tempHoverLineCenterPointIndex
         CanvasUtil2.getInstance().render()
         return true
       }
+
       //仅hover在线上时，才重绘
-      if (this.hoverLineIndex !== tempHoverLineIndex) {
-        this.hoverLineIndex = tempHoverLineIndex
+      if (this.editHover.type === EditType.line && this.editHover.index !== tempHoverLineIndex) {
+        this.editHover.index = tempHoverLineIndex
         CanvasUtil2.getInstance().render()
         return true
       }
+
+      // //仅hover在线中点上时，才重绘
+      // if (this.hoverLineCenterPointIndex !== tempHoverLineCenterPointIndex) {
+      //   this.hoverLineCenterPointIndex = tempHoverLineCenterPointIndex
+      //   CanvasUtil2.getInstance().render()
+      //   return true
+      // }
+      // //仅hover在线上时，才重绘
+      // if (this.hoverLineIndex !== tempHoverLineIndex) {
+      //   this.hoverLineIndex = tempHoverLineIndex
+      //   CanvasUtil2.getInstance().render()
+      //   return true
+      // }
 
       //hover在线上时，消费事件。不然会把cursor = "default"
       if (tempHoverLineIndex !== -1) {
@@ -506,7 +525,13 @@ export class Rectangle extends BaseShape {
         if (currentPoint.cp2.use) draw.controlPoint(ctx, currentPoint.cp2, currentPoint.center)
       })
     })
-    if (this.hoverLineIndex > -1 || this.hoverLineCenterPointIndex > -1) {
+    // if (this.hoverLineIndex > -1 || this.hoverLineCenterPointIndex > -1) {
+    //   draw.drawRound(ctx, this.hoverLineCenterPoint)
+    // }
+    if ((this.editHover.type === EditType.line
+        || this.editHover.type === EditType.centerPoint)
+      && this.editHover.index !== -1
+    ) {
       draw.drawRound(ctx, this.hoverLineCenterPoint)
     }
     ctx.restore()

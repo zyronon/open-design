@@ -160,6 +160,15 @@ export class Rectangle extends BaseShape {
     return false
   }
 
+  getMaxWidthHeight() {
+    let center = this._config.center
+    this._config.lineShapes.reduce((previousValue, currentValue, currentIndex, array) => {
+      let maxX = Math.max(...currentValue.map(p => Math.abs(p.center.x - center.x)))
+      let maxY = Math.max(...currentValue.map(p => Math.abs(p.center.y - center.y)))
+      return previousValue
+    }, [])
+  }
+
   onMouseMove(event: BaseEvent2, parents: BaseShape[]) {
     console.log('childMouseMove', this.editEnter)
     if (this.status === ShapeStatus.Edit) {

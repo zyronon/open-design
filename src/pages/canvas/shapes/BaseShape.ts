@@ -882,14 +882,15 @@ export abstract class BaseShape {
   }
 
   calcNewCenterAndWidthAndHeight() {
-    return
+    // return
     if (!this.conf.isCustom) return
+    let center = this.conf.center
     let temp: any = this.conf.lineShapes.reduce((previousValue: any, currentValue) => {
       previousValue.push({
-        maxX: Math.max(...currentValue.map(p => p.center.x)),
-        minX: Math.min(...currentValue.map(p => p.center.x)),
-        maxY: Math.max(...currentValue.map(p => p.center.y)),
-        minY: Math.min(...currentValue.map(p => p.center.y)),
+        maxX: Math.max(...currentValue.map(p => center.x + p.center.x)),
+        minX: Math.min(...currentValue.map(p => center.x + p.center.x)),
+        maxY: Math.max(...currentValue.map(p => center.y + p.center.y)),
+        minY: Math.min(...currentValue.map(p => center.y + p.center.y)),
       })
       return previousValue
     }, [])
@@ -905,6 +906,16 @@ export abstract class BaseShape {
       y: minY + newHeight / 2,
     }
 
+    //因为lineShapes的点的值，是相对于center的。所以还需要修正。新center减去老center得到偏移量
+    //点的值再减去偏移值，就是以新center为相对值的点值
+    let dx = newCenter.x - center.x
+    let dy = newCenter.y - center.y
+    this.conf.lineShapes.map(line => {
+      line.map(p => {
+        p.center.x -= dx
+        p.center.y -= dy
+      })
+    })
     this.conf.center = newCenter
     this.conf.layout.w = newWidth
     this.conf.layout.h = newHeight

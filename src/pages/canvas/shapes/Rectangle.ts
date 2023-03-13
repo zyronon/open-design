@@ -85,7 +85,7 @@ export class Rectangle extends BaseShape {
       this.status = ShapeStatus.Select
       cu.editShape = null
     } else {
-      if (!this._config.lineShapes.length) {
+      if (!this._config.isCustom) {
         let {w, h} = this._config.layout
         //这里的xy这样设置是因为，渲染时的起点是center
         let x = -w / 2, y = -h / 2

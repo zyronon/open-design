@@ -536,7 +536,7 @@ export abstract class BaseShape {
 
     //这里要减去，父级的旋转角度
     let realRotation = (newRotation < 180 ? newRotation : newRotation - 360)
-    console.log('旋转角度', realRotation)
+    // console.log('旋转角度', realRotation)
 
     this.conf.realRotation = realRotation.toFixed2()
     this.conf.rotation = (realRotation - (this.parent?.conf?.realRotation ?? 0)).toFixed2()
@@ -920,6 +920,5 @@ export abstract class BaseShape {
     this.conf.layout.w = newWidth
     this.conf.layout.h = newHeight
     this.conf = helper.calcConf(this.conf, this.parent?.conf)
-    console.log('newCenter', newCenter)
   }
 }

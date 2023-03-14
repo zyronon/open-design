@@ -952,6 +952,25 @@ const rule = [
     "nameWidth": 36,
   },
 ]
+let temp = {
+    "name": "容器2-1",
+    layout: {
+      "x": 300,
+      "y": 20,
+      "w": 250,
+      "h": 200,
+    },
+    "rotation": 0,
+    "lineWidth": 2,
+    "type": ShapeType.RECTANGLE,
+    "color": "gray",
+    "radius": 0,
+    children: [],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "rgb(241,238,238)",
+    flipHorizontal: false,
+    flipVertical: false
+  }
 export const rects: any[] = [
   {
     "name": "容器",
@@ -1012,11 +1031,236 @@ export const rects: any[] = [
       },
       {
         "name": "容器2-1",
+        "layout": {
+          "x": 290.7905098677362,
+          "y": -13.194770842966278,
+          "w": 275,
+          "h": 221
+        },
+        "rotation": 11.5,
+        "lineWidth": 2,
+        "type": "RECTANGLE",
+        "color": "gray",
+        "radius": 0,
+        "children": [],
+        "borderColor": "rgb(216,216,216)",
+        "fillColor": "rgb(241,238,238)",
+        "flipHorizontal": false,
+        "flipVertical": false,
+        "id": "ae48f0bf-5fe8-494b-9beb-5a3db565151c",
+        "realRotation": 11.5,
+        "percent": {
+          "x": 0.5,
+          "y": 0.05
+        },
+        "relativeCenter": {
+          "x": 403.5,
+          "y": 122.5
+        },
+        "start": {
+          "x": 770,
+          "y": 200
+        },
+        "absolute": {
+          "x": 760.7905098677362,
+          "y": 166.80522915703372
+        },
+        "original": {
+          "x": 736,
+          "y": 192
+        },
+        "center": {
+          "x": 873.5,
+          "y": 302.5
+        },
+        "box": {
+          "leftX": 736,
+          "rightX": 1011,
+          "topY": 192,
+          "bottomY": 413,
+          "topLeft": {
+            "x": 760.7905098677362,
+            "y": 166.80522915703372
+          },
+          "topRight": {
+            "x": 1030.2698036384643,
+            "y": 221.63141112176294
+          },
+          "bottomLeft": {
+            "x": 716.7301963615357,
+            "y": 383.36858887823706
+          },
+          "bottomRight": {
+            "x": 986.2094901322638,
+            "y": 438.19477084296625
+          }
+        },
+        "strokeAlign": "INSIDE",
+        "points": [],
+        "lineShapes": [
+          [
+            {
+              "cp1": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "center": {
+                "use": true,
+                "x": -137.5,
+                "y": -5.5,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "cp2": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "type": "RightAngle"
+            },
+            {
+              "cp1": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "center": {
+                "use": true,
+                "x": -94.5,
+                "y": -85.5,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "cp2": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "type": "RightAngle"
+            },
+            {
+              "cp1": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "center": {
+                "use": true,
+                "x": 137.5,
+                "y": -110.5,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "cp2": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "type": "RightAngle"
+            },
+            {
+              "cp1": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "center": {
+                "use": true,
+                "x": 135.5,
+                "y": 110.5,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "cp2": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "type": "RightAngle"
+            },
+            {
+              "cp1": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "center": {
+                "use": true,
+                "x": -103.5,
+                "y": 97.5,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "cp2": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "type": "RightAngle"
+            }
+          ]
+        ],
+        "commonPoints": [],
+        "isCustom": true
+      },
+      {
+        "name": "容器2-2",
         layout: {
-          "x": 300,
+          "x": 10,
           "y": 20,
-          "w": 250,
-          "h": 200,
+          "w": 200,
+          "h": 150,
         },
         "rotation": 0,
         "lineWidth": 2,
@@ -1028,7 +1272,7 @@ export const rects: any[] = [
         "fillColor": "rgb(241,238,238)",
         flipHorizontal: false,
         flipVertical: false
-      }
+      },
     ],
     "borderColor": "rgb(197,197,197)",
     "fillColor": "#e1e1e1",

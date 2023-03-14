@@ -17,6 +17,7 @@ import {BaseConfig, Rect} from "../config/BaseConfig"
 import draw from "../utils/draw"
 import helper from "../utils/helper"
 import {clone, cloneDeep} from "lodash"
+import {getRotatedPoint} from "../../../utils"
 
 enum EditType {
   line = 'line',
@@ -47,7 +48,6 @@ export class Rectangle extends BaseShape {
     baseIndex: -1,
     index: -1,
   }
-
 
   constructor(props: any) {
     super(props)
@@ -158,13 +158,20 @@ export class Rectangle extends BaseShape {
     // console.log('childMouseMove', this.editEnter)
     if (this.status === ShapeStatus.Edit) {
       if (this.editEnter.index !== -1) {
+
         if (this.editEnter.type === EditType.point || this.editEnter.type === EditType.centerPoint) {
+          let {center, realRotation} = this._config
+          //反转到0度，好判断
+          //TODO 是否可以统一反转？
+          if (realRotation) {
+            event.point = getRotatedPoint(event.point, center, -realRotation)
+          }
           let cu = CanvasUtil2.getInstance()
-          let {absolute: {x, y}, layout: {w, h}} = this._config
+          let {center: {x, y},} = this._config
           this._config.lineShapes[this.editEnter.baseIndex][this.editEnter.index].center = {
             ...getP2(true), ...{
-              x: event.point.x - (x + w / 2),
-              y: event.point.y - (y + h / 2)
+              x: event.point.x - x,
+              y: event.point.y - y
             }
           }
           cu.render()
@@ -178,7 +185,7 @@ export class Rectangle extends BaseShape {
           let {x, y} = event.point
           let dx = x - cu.startX
           let dy = y - cu.startY
-          // console.log('dx', dx, 'dy', dy)
+          console.log('dx', dx, 'dy', dy)
           let oldLine1Point = this.original.lineShapes[this.editEnter.baseIndex][this.editEnter.index]
           this._config.lineShapes[this.editEnter.baseIndex][this.editEnter.index].center.x = oldLine1Point.center.x + dx
           this._config.lineShapes[this.editEnter.baseIndex][this.editEnter.index].center.y = oldLine1Point.center.y + dy
@@ -255,11 +262,12 @@ export class Rectangle extends BaseShape {
 
   isInShape(mousePoint: P, cu: CanvasUtil2): boolean {
     if (this.status === ShapeStatus.Edit) {
-      let {absolute: {x, y}, layout: {w, h}, lineShapes} = this._config
+      let {center, lineShapes} = this._config
       this.hoverPointIndex = -1
+
       let fixMousePoint = {
-        x: mousePoint.x - (x + w / 2),
-        y: mousePoint.y - (y + h / 2)
+        x: mousePoint.x - center.x,
+        y: mousePoint.y - center.y
       }
       //用于判断是否与之前保存的值不同，仅在不同时才重绘
       let tempHoverLineIndex = -1

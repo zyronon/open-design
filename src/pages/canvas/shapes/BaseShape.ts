@@ -151,27 +151,23 @@ export abstract class BaseShape {
     return !this.isCapture || !cu.isDesignMode()
   }
 
-  _isInShape(mousePoint: P, cu: CanvasUtil2, parent?: BaseShape): boolean {
+  _isInShape(mousePoint: P, cu: CanvasUtil2): boolean {
     //如果操作中，那么永远返回ture，保持事件一直直接传递到当前图形上
     if (this.enter || this.enterType !== MouseOptionType.None) return true
     if (this.beforeIsInShape()) return true
 
-    let {x, y} = mousePoint
-
     let {
-      w, h, radius,
-      box, realRotation,
+      realRotation,
       flipHorizontal, flipVertical, center
     } = this.conf
-    const {leftX, rightX, topY, bottomY,} = box
+
     //反转到0度，好判断
     if (realRotation) {
-      let s2 = getRotatedPoint({x, y}, center, -realRotation)
-      x = s2.x
-      y = s2.y
+      mousePoint = getRotatedPoint(mousePoint, center, -realRotation)
     }
-
+    let {x, y} = mousePoint
     if (this.status === ShapeStatus.Select) {
+      const {leftX, rightX, topY, bottomY,} = this.conf.box
       /*
       * 同上原因，判断是否在图形内，不需要翻转点。
       * */
@@ -237,7 +233,7 @@ export abstract class BaseShape {
       document.body.style.cursor = "default"
       this.hoverType = MouseOptionType.None
     }
-    return this.isInShape({x, y}, cu)
+    return this.isInShape(mousePoint, cu)
   }
 
   render(ctx: CanvasRenderingContext2D, parent?: BaseConfig) {
@@ -315,7 +311,7 @@ export abstract class BaseShape {
       return true
     }
     let cu = CanvasUtil2.getInstance()
-    if (this._isInShape(point, cu, parents?.[parents?.length - 1])) {
+    if (this._isInShape(point, cu)) {
       // this.log('in:' + cu.inShape?.conf?.name)
       if (
         //如果是容器，并且裁剪了、或者父级不裁剪

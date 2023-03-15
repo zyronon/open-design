@@ -1,6 +1,6 @@
 import {BaseShape} from "./BaseShape"
 import CanvasUtil2 from "../CanvasUtil2"
-import {BaseEvent2, BezierPoint, BezierPointType, LineType, P, P2, ShapeStatus} from "../utils/type"
+import {BaseEvent2, BezierPoint, BezierPointType, LineType, P, P2, ShapeEditStatus, ShapeStatus} from "../utils/type"
 import {BaseConfig, Rect} from "../config/BaseConfig"
 import helper from "../utils/helper"
 import {cloneDeep} from "lodash"
@@ -17,7 +17,6 @@ export class Pen extends BaseShape {
   }
 
   beforeEvent(event: BaseEvent2): boolean {
-    console.log('beforeEvent')
     if (this.status === ShapeStatus.Edit) {
       event.stopPropagation()
       super.emit(event, [])
@@ -73,10 +72,15 @@ export class Pen extends BaseShape {
 
   onMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean {
     console.log('pen-onMouseDown')
+
     return false
   }
 
   onMouseMove(event: BaseEvent2, parents: BaseShape[]): boolean {
+    console.log('pen-onMouseMove')
+    if (this._editStatus === ShapeEditStatus.Edit){
+
+    }
     return false
   }
 

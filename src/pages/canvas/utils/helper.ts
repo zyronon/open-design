@@ -148,9 +148,11 @@ export default {
       bottomRight,
     }
     conf.strokeAlign = StrokeAlign.INSIDE
-    conf.points = []
-    conf.lineShapes = []
-    conf.commonPoints = []
+    if (!conf.lineShapes){
+      conf.lineShapes = []
+      conf.commonPoints = []
+    }
+
     // console.log('initConf', conf)
     return conf
   },

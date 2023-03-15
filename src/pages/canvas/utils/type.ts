@@ -213,6 +213,7 @@ export enum ShapeStatus {
 
 export enum ShapeEditStatus {
   Select = 'Select',
+  Wait = 'Wait',
   Edit = 'Edit',
   Curve = 'Curve',
   Cut = 'Cut',

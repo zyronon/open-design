@@ -1,6 +1,6 @@
 import {BaseShape} from "./shapes/BaseShape"
 import EventBus from "../../utils/event-bus"
-import {BaseEvent2, EventTypes, P, ShapeEditStatus, ShapeStatus, ShapeType} from "./utils/type"
+import {BaseEvent2, BezierPointType, EventTypes, getP2, P, ShapeEditStatus, ShapeStatus, ShapeType} from "./utils/type"
 import {cloneDeep} from "lodash"
 import {defaultConfig} from "./utils/constant"
 import {mat4} from "gl-matrix"
@@ -233,7 +233,7 @@ export default class CanvasUtil2 {
       if (this.editShape) {
         this.editShape.event(event, [])
       }
-    }else {
+    } else {
       if (this.isDesignMode()) {
         //如果有选中的，优先传递。选中组件是脱离父组件裁剪的。所以须单独传递事件
         if (this.selectedShape?.event(event, this.selectedShapeParent)) {
@@ -306,8 +306,18 @@ export default class CanvasUtil2 {
           this.editShape = new Pen({
             conf: helper.getDefaultShapeConfig({
               layout: {x: this.mouseStart.x, y: this.mouseStart.y},
-              name: 'Pen'
-            } as any),
+              name: 'Pen',
+              lineShapes: [
+                [
+                  {
+                    cp1: getP2(),
+                    center: {...getP2(true), ...this.mouseStart},
+                    cp2: getP2(),
+                    type: BezierPointType.RightAngle
+                  }
+                ]
+              ]
+            } as BaseConfig),
           })
           this.editShape.status = ShapeStatus.Edit
           this.editShape._editStatus = ShapeEditStatus.Edit

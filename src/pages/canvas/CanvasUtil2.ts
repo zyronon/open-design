@@ -1,7 +1,7 @@
 import {BaseShape} from "./shapes/BaseShape"
 import EventBus from "../../utils/event-bus"
 import {BaseEvent2, EventTypes, P, ShapeStatus, ShapeType} from "./utils/type"
-import {cloneDeep, throttle} from "lodash"
+import {cloneDeep} from "lodash"
 import {defaultConfig} from "./utils/constant"
 import {mat4} from "gl-matrix"
 import {getShapeFromConfig} from "./utils/common"
@@ -57,10 +57,8 @@ export default class CanvasUtil2 {
   //用于标记子组件是否选中
   childIsIn: boolean = false
   mode: ShapeType = ShapeType.SELECT
-  startX: number = -1
-  startY: number = -1
-  offsetX: number = -1
-  offsetY: number = -1
+  mouseStart: P = {x: 0, y: 0} //鼠标起点
+  fixMouseStart: P = {x: 0, y: 0} //修正后的鼠标起点（修正为0度）
   isMouseDown: boolean = false
   drawShapeConfig: any = null
   newShape: BaseShape | undefined
@@ -294,8 +292,8 @@ export default class CanvasUtil2 {
       this.selectedShape = null
     }
     if (!this.isDesignMode()) {
-      this.startX = e.point.x
-      this.startY = e.point.y
+      this.mouseStart.x = e.point.x
+      this.mouseStart.y = e.point.y
       this.isMouseDown = true
     }
   }
@@ -304,8 +302,8 @@ export default class CanvasUtil2 {
     if (e.capture) return
     // console.log('cu-onMouseMove', e)
     if (this.isMouseDown) {
-      let w = e.point.x - this.startX
-      let h = e.point.y - this.startY
+      let w = e.point.x - this.mouseStart.x
+      let h = e.point.y - this.mouseStart.y
       switch (this.mode) {
         case ShapeType.RECTANGLE:
           if (this.newShape) {
@@ -323,8 +321,8 @@ export default class CanvasUtil2 {
             this.newShape.conf = helper.getPath(this.newShape.conf)
             this.render()
           } else {
-            let x = this.startX
-            let y = this.startY
+            let x = this.mouseStart.x
+            let y = this.mouseStart.y
             this.newShape = new Rectangle({
               "x": x,
               "y": y,
@@ -363,6 +361,8 @@ export default class CanvasUtil2 {
           }
           this.render()
           break
+        case ShapeType.PEN:
+
       }
     }
   }

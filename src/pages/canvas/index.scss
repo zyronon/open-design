@@ -5,6 +5,7 @@
   height: 100%;
   width: 100%;
   font-size: 16rem;
+  background: rgb(44,44,44);
   &.white {
     .tool-bar {
       opacity: 0;
@@ -83,6 +84,7 @@
   $header-height: 42rem;
 
   > .header {
+    background: rgb(33,33,33);
     height: $header-height;
 
     .fps {

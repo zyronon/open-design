@@ -18,8 +18,6 @@ export abstract class BaseShape {
   _isSelectHover: boolean = false
   isCapture: boolean = true//是否捕获事件，为true不会再往下传递事件
   enter: boolean = false
-  startX: number = 0
-  startY: number = 0
   original: BaseConfig
   diagonal: P = {x: 0, y: 0}//对面的点（和handlePoint相反的点），如果handlePoint是中间点，那么这个也是中间点
   handLineCenterPoint: P = {x: 0, y: 0}//鼠标按住那条边的中间点（当前角度），非鼠标点
@@ -385,10 +383,11 @@ export abstract class BaseShape {
     this.children.map(shape => {
       shape.original = cloneDeep(shape.conf)
     })
-    cu.startX = x
-    cu.startY = y
-    cu.offsetX = x - this.conf.layout.x
-    cu.offsetY = y - this.conf.layout.y
+    cu.mouseStart = {x, y}
+    let {center, realRotation} = this.conf
+    if (realRotation) {
+      cu.fixMouseStart = getRotatedPoint(event.point, center, -realRotation)
+    }
 
     if (this.onMouseDown(event, parents)) return
 
@@ -397,7 +396,7 @@ export abstract class BaseShape {
     }
 
     this.enterType = this.hoverType
-    let {layout: {w, h,}, absolute, center, realRotation, flipHorizontal, flipVertical} = this.conf
+    let {layout: {w, h,}, absolute, flipHorizontal, flipVertical} = this.conf
     //按住那条线0度时的中间点
     let handLineZeroDegreesCenterPoint
     let w2 = w / 2
@@ -512,8 +511,8 @@ export abstract class BaseShape {
     let cu = CanvasUtil2.getInstance()
     let {x, y,} = point
 
-    this.conf.center.x = this.original.center.x + (x - cu.startX)
-    this.conf.center.y = this.original.center.y + (y - cu.startY)
+    this.conf.center.x = this.original.center.x + (x - cu.mouseStart.x)
+    this.conf.center.y = this.original.center.y + (y - cu.mouseStart.y)
 
     this.conf = helper.calcConf(this.conf, this.parent?.conf)
     this.calcChildrenConf()
@@ -628,7 +627,7 @@ export abstract class BaseShape {
       // conf.layout.y = (y - cu.offsetY)
       // conf.layout.h = this.original.box.bottomY - conf.layout.y
       // conf.center.y = conf.layout.y + conf.layout.h / 2
-      let d = y - cu.startY
+      let d = y - cu.mouseStart.y
       if (this.original.flipVertical) d = -d
       conf.layout.h = this.original.layout.h - d
       let d2 = d / 2
@@ -678,7 +677,7 @@ export abstract class BaseShape {
       // conf.layout.y = (y - cu.offsetY)
       // conf.layout.h = this.original.box.bottomY - conf.layout.y
       // conf.center.y = conf.layout.y + conf.layout.h / 2
-      let d = y - cu.startY
+      let d = y - cu.mouseStart.y
       if (this.original.flipVertical) d = -d
       conf.layout.h = this.original.layout.h + d
       let d2 = d / 2
@@ -731,7 +730,7 @@ export abstract class BaseShape {
       }
     } else {
       //dx和dragRight相反
-      let d = x - cu.startX
+      let d = x - cu.mouseStart.x
       //如果水平翻转，那么移动距离取反
       if (this.original.flipHorizontal) d = -d
       //原始值，加或减去移动的值
@@ -786,7 +785,7 @@ export abstract class BaseShape {
         if (currentAngleMovePoint.x < this.diagonal.x) isReverseW = true
       }
     } else {
-      let d = x - cu.startX
+      let d = x - cu.mouseStart.x
       if (this.original.flipHorizontal) d = -d
       //这里不同，left是减去dx
       conf.layout.w = this.original.layout.w + d

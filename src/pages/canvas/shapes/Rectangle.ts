@@ -158,33 +158,30 @@ export class Rectangle extends BaseShape {
     // console.log('childMouseMove', this.editEnter)
     if (this.status === ShapeStatus.Edit) {
       if (this.editEnter.index !== -1) {
-
+        let {center, realRotation} = this._config
+        //TODO 是否可以统一反转？
+        //反转到0度，好判断
+        if (realRotation) {
+          event.point = getRotatedPoint(event.point, center, -realRotation)
+        }
         if (this.editEnter.type === EditType.point || this.editEnter.type === EditType.centerPoint) {
-          let {center, realRotation} = this._config
-          //反转到0度，好判断
-          //TODO 是否可以统一反转？
-          if (realRotation) {
-            event.point = getRotatedPoint(event.point, center, -realRotation)
-          }
-          let cu = CanvasUtil2.getInstance()
-          let {center: {x, y},} = this._config
+
           this._config.lineShapes[this.editEnter.baseIndex][this.editEnter.index].center = {
             ...getP2(true), ...{
-              x: event.point.x - x,
-              y: event.point.y - y
+              x: event.point.x - center.x,
+              y: event.point.y - center.y
             }
           }
-          cu.render()
+          CanvasUtil2.getInstance().render()
           return true
         }
 
         if (this.editHover.type === EditType.line) {
           console.log('onMouseMove-enterLineIndex')
           let cu = CanvasUtil2.getInstance()
-          // let {absolute: {x, y}} = this._config
           let {x, y} = event.point
-          let dx = x - cu.startX
-          let dy = y - cu.startY
+          let dx = x - cu.fixMouseStart.x
+          let dy = y - cu.fixMouseStart.y
           console.log('dx', dx, 'dy', dy)
           let oldLine1Point = this.original.lineShapes[this.editEnter.baseIndex][this.editEnter.index]
           this._config.lineShapes[this.editEnter.baseIndex][this.editEnter.index].center.x = oldLine1Point.center.x + dx
@@ -467,7 +464,7 @@ export class Rectangle extends BaseShape {
     let {w, h} = this.conf.layout
     let {x, y} = point
     let cu = CanvasUtil2.getInstance()
-    let dx = (x - cu.startX)
+    let dx = (x - cu.mouseStart.x)
     if (this.original.radius < this.minDragRadius) {
       dx += this.minDragRadius
     }

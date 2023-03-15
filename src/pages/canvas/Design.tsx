@@ -140,7 +140,7 @@ class Design extends React.Component<any, IState> {
     // console.log('selectRectConf', selectRectConf?.fontFamily)
     // @ts-ignore
     const selectRectConf: BaseConfig = selectShape?.conf
-    const hide = true
+    const hide = false
 
     return <>
       <div className={cx('design', {'white': hide})}>

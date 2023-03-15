@@ -123,7 +123,7 @@ export class Rectangle extends BaseShape {
   }
 
   onMouseDown(event: BaseEvent2, parents: BaseShape[]) {
-    console.log('childMouseDown', this.editHover)
+    // console.log('childMouseDown', this.editHover)
     if (this.status === ShapeStatus.Edit) {
       if (this.editHover.index !== -1) {
         if (this.editHover.type === EditType.centerPoint) {
@@ -215,7 +215,7 @@ export class Rectangle extends BaseShape {
   }
 
   onMouseUp(event: BaseEvent2, parents: BaseShape[]) {
-    console.log('childMouseUp')
+    // console.log('childMouseUp')
     this.rectEnterType = this.rectHoverType = MouseOptionType.None
     this.enterPointIndex = this.hoverPointIndex = -1
     this.enterLineIndex = this.hoverLineIndex = -1

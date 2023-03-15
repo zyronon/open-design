@@ -17,6 +17,12 @@ export class Pen extends BaseShape {
   }
 
   beforeEvent(event: BaseEvent2): boolean {
+    console.log('beforeEvent')
+    if (this.status === ShapeStatus.Edit) {
+      event.stopPropagation()
+      super.emit(event, [])
+      return true
+    }
     return false
   }
 
@@ -66,6 +72,7 @@ export class Pen extends BaseShape {
   }
 
   onMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean {
+    console.log('pen-onMouseDown')
     return false
   }
 

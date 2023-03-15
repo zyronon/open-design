@@ -1,4 +1,4 @@
-import {BaseEvent2, MouseOptionType, P, ShapeProps, ShapeStatus, ShapeType} from "../utils/type"
+import {BaseEvent2, MouseOptionType, P, ShapeEditStatus, ShapeProps, ShapeStatus, ShapeType} from "../utils/type"
 import CanvasUtil2 from "../CanvasUtil2"
 import {cloneDeep} from "lodash"
 import {getRotatedPoint} from "../../../utils"
@@ -15,6 +15,7 @@ export abstract class BaseShape {
   conf: BaseConfig
   children: BaseShape[] = []
   _status: ShapeStatus = ShapeStatus.Normal
+  _editStatus: ShapeEditStatus = ShapeEditStatus.Select
   _isSelectHover: boolean = false
   isCapture: boolean = true//是否捕获事件，为true不会再往下传递事件
   enter: boolean = false

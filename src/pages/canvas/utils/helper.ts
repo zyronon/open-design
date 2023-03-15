@@ -2,8 +2,9 @@ import {BaseConfig} from "../config/BaseConfig"
 import {getHypotenuse2, getRotatedPoint, jiaodu2hudu} from "../../../utils"
 // @ts-ignore
 import {v4 as uuid} from 'uuid'
-import {clone, cloneDeep, inRange} from "lodash"
-import {P, StrokeAlign} from "./type"
+import {clone, cloneDeep, inRange, merge} from "lodash"
+import {P, ShapeType, StrokeAlign} from "./type"
+import {Colors, defaultConfig} from "./constant"
 
 export default {
   //废弃
@@ -591,5 +592,39 @@ export default {
       return true
     }
     return false
+  },
+  getDefaultShapeConfig(newConfig?: BaseConfig): BaseConfig {
+    return merge({
+      lineWidth: defaultConfig.lineWidth,
+      fillColor: Colors.FillColor,
+      borderColor: Colors.Border,
+      children: [],
+      flipHorizontal: false,
+      flipVertical: false,
+      radius: 0,
+      lineShapes:[],
+      cacheLineShapes:[],
+      commonPoints:[],
+      rotation: 0,
+      layout: {
+        "x": 0,
+        "y": 0,
+        "w": 200,
+        "h": 200,
+      },
+      isCustom:false,
+      isVisible:false,
+      isLocked:false,
+      cornerSmooth:0,
+      cornerRadius:0,
+      topLeftRadius:0,
+      topRightRadius:0,
+      bottomLeftRadius:0,
+      bottomRightRadius:0,
+      opacity:0,
+      blendMode:0,
+      isMask:false,
+      effects:[],
+    } as any, newConfig)
   }
 }

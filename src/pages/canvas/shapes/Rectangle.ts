@@ -10,13 +10,14 @@ import {
   P,
   P2,
   ShapeStatus,
+  ShapeType,
   StrokeAlign
 } from "../utils/type"
 import {Colors, defaultConfig} from "../utils/constant"
 import {BaseConfig, Rect} from "../config/BaseConfig"
 import draw from "../utils/draw"
 import helper from "../utils/helper"
-import {clone, cloneDeep} from "lodash"
+import {cloneDeep} from "lodash"
 import {getRotatedPoint} from "../../../utils"
 
 enum EditType {
@@ -83,7 +84,8 @@ export class Rectangle extends BaseShape {
     let cu = CanvasUtil2.getInstance()
     if (this.status === ShapeStatus.Edit) {
       this.status = ShapeStatus.Select
-      cu.editShape = null
+      cu.editShape = undefined
+      cu.mode = ShapeType.SELECT
     } else {
       if (!this._config.isCustom) {
         let {w, h} = this._config.layout
@@ -118,6 +120,7 @@ export class Rectangle extends BaseShape {
       }
       this.status = ShapeStatus.Edit
       cu.editShape = this
+      cu.mode = ShapeType.EDIT
     }
     return false
   }

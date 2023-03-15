@@ -1,6 +1,6 @@
 import {BaseShape} from "./shapes/BaseShape"
 import EventBus from "../../utils/event-bus"
-import {BaseEvent2, EventTypes, P, ShapeStatus, ShapeType} from "./utils/type"
+import {BaseEvent2, EventTypes, P, ShapeEditStatus, ShapeStatus, ShapeType} from "./utils/type"
 import {cloneDeep} from "lodash"
 import {defaultConfig} from "./utils/constant"
 import {mat4} from "gl-matrix"
@@ -9,6 +9,7 @@ import {Rectangle} from "./shapes/Rectangle"
 import {BaseConfig} from "./config/BaseConfig"
 import helper from "./utils/helper"
 import draw from "./utils/draw"
+import {Pen} from "./shapes/Pen"
 
 const out: any = new Float32Array([
   0, 0, 0, 0,
@@ -53,7 +54,7 @@ export default class CanvasUtil2 {
   //原因：选中新图形后，hover老图形时依然能hover中，所以需要把老的父级链isCapture全部设为ture
   //屏蔽事件向下传递
   selectedShapeParent: any = []
-  editShape: any
+  editShape?: BaseShape
   //用于标记子组件是否选中
   childIsIn: boolean = false
   mode: ShapeType = ShapeType.SELECT
@@ -228,10 +229,12 @@ export default class CanvasUtil2 {
         this.capture = false
       }
     }
-    if (this.isDesignMode()) {
+    if (this.mode === ShapeType.EDIT) {
       if (this.editShape) {
         this.editShape.event(event, [])
-      } else {
+      }
+    }else {
+      if (this.isDesignMode()) {
         //如果有选中的，优先传递。选中组件是脱离父组件裁剪的。所以须单独传递事件
         if (this.selectedShape?.event(event, this.selectedShapeParent)) {
           //容器的子组件也会hover被设置为inShape
@@ -255,17 +258,19 @@ export default class CanvasUtil2 {
       }
     }
 
-    if (event.type === EventTypes.onMouseMove) {
-      this.onMouseMove(event)
-    }
-    if (event.type === EventTypes.onMouseDown) {
-      this.onMouseDown(event)
-    }
-    if (event.type === EventTypes.onMouseUp) {
-      this.onMouseUp(event)
-    }
-    if (event.type === EventTypes.onDbClick) {
-      this.onDbClick(event)
+    switch (event.type) {
+      case EventTypes.onMouseMove:
+        this.onMouseMove(event)
+        break
+      case EventTypes.onMouseDown:
+        this.onMouseDown(event)
+        break
+      case EventTypes.onMouseUp:
+        this.onMouseUp(event)
+        break
+      case EventTypes.onDbClick:
+        this.onDbClick(event)
+        break
     }
   }
 
@@ -274,7 +279,7 @@ export default class CanvasUtil2 {
     console.log('cu-onDbClick', e)
     if (this.editShape) {
       this.editShape.status = ShapeStatus.Select
-      this.editShape = null
+      this.editShape = undefined
       this.render()
     }
   }
@@ -295,6 +300,21 @@ export default class CanvasUtil2 {
       this.mouseStart.x = e.point.x
       this.mouseStart.y = e.point.y
       this.isMouseDown = true
+
+      switch (this.mode) {
+        case ShapeType.PEN:
+          this.editShape = new Pen({
+            conf: helper.getDefaultShapeConfig({
+              layout: {x: this.mouseStart.x, y: this.mouseStart.y},
+              name: 'Pen'
+            } as any),
+          })
+          this.editShape.status = ShapeStatus.Edit
+          this.editShape._editStatus = ShapeEditStatus.Edit
+          EventBus.emit(EventTypes.onMouseDown, this.editShape)
+          this.children.push(this.editShape)
+          this.mode = ShapeType.EDIT
+      }
     }
   }
 
@@ -362,7 +382,6 @@ export default class CanvasUtil2 {
           this.render()
           break
         case ShapeType.PEN:
-
       }
     }
   }
@@ -372,9 +391,11 @@ export default class CanvasUtil2 {
     // console.log('cu-onMouseUp', e)
     if (this.isMouseDown) {
       this.isMouseDown = false
-      this.setSelectShape(this.newShape!, [])
-      this.newShape = undefined
-      if (this.mode !== ShapeType.MOVE) {
+      if (this.newShape) {
+        this.setSelectShape(this.newShape!, [])
+        this.newShape = undefined
+      }
+      if (this.mode !== ShapeType.MOVE && this.mode !== ShapeType.EDIT) {
         this.setMode(ShapeType.SELECT)
       }
       return
@@ -421,7 +442,7 @@ export default class CanvasUtil2 {
     this.currentMat = new Float32Array(defaultConfig.currentMat)
     this.selectedShape = null
     this.inShape = null
-    this.editShape = null
+    this.editShape = undefined
     this.children = []
   }
 

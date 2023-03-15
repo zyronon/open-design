@@ -211,6 +211,13 @@ export enum ShapeStatus {
   Edit = 'Edit'
 }
 
+export enum ShapeEditStatus {
+  Select = 'Select',
+  Edit = 'Edit',
+  Curve = 'Curve',
+  Cut = 'Cut',
+}
+
 export enum StrokeAlign {
   CENTER = 'CENTER',
   INSIDE = 'INSIDE',

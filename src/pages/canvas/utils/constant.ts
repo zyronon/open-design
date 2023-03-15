@@ -43,6 +43,8 @@ export const Colors = {
   Primary: '#4B75F6FF',
   Line: 'rgb(217,217,217)',
   Line2: 'rgb(140,140,140)',
+  FillColor: 'rgb(241,238,238)',
+  Border: 'rgb(140,140,140)',
   White: 'white',
 }
 

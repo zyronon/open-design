@@ -307,6 +307,7 @@ export default class CanvasUtil2 {
             conf: helper.getDefaultShapeConfig({
               layout: {x: this.mouseStart.x, y: this.mouseStart.y},
               name: 'Pen',
+              type:ShapeType.PEN,
               lineShapes: [
                 [
                   {
@@ -323,6 +324,7 @@ export default class CanvasUtil2 {
           this.editShape._editStatus = ShapeEditStatus.Edit
           EventBus.emit(EventTypes.onMouseDown, this.editShape)
           this.children.push(this.editShape)
+          this.render()
           this.mode = ShapeType.EDIT
       }
     }

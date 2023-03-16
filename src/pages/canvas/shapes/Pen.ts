@@ -4,7 +4,8 @@ import {BaseEvent2, BezierPoint, BezierPointType, LineType, P, P2, ShapeEditStat
 import {BaseConfig, Rect} from "../config/BaseConfig"
 import helper from "../utils/helper"
 import {cloneDeep} from "lodash"
-import {defaultConfig} from "../utils/constant"
+import {Colors, defaultConfig} from "../utils/constant"
+import draw from "../utils/draw"
 
 export class Pen extends BaseShape {
 
@@ -51,8 +52,6 @@ export class Pen extends BaseShape {
 
     ctx.lineWidth = lineWidth ?? defaultConfig.lineWidth
     ctx.lineCap = "round"
-
-    //填充图形
     ctx.fillStyle = fillColor
     let path = this.getCustomShapePath()
     ctx.stroke(path)
@@ -72,14 +71,32 @@ export class Pen extends BaseShape {
 
   onMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean {
     console.log('pen-onMouseDown')
-
     return false
   }
 
   onMouseMove(event: BaseEvent2, parents: BaseShape[]): boolean {
-    console.log('pen-onMouseMove')
-    if (this._editStatus === ShapeEditStatus.Edit){
-
+    // console.log('pen-onMouseMove')
+    if (this._editStatus === ShapeEditStatus.Edit) {
+      let lastLine = this._config.lineShapes[this._config.lineShapes.length - 1]
+      if (lastLine) {
+        let lastPoint = lastLine[lastLine.length - 1]
+        if (lastPoint) {
+          console.log('pen-onMouseMove', lastPoint.center, event.point)
+          let cu = CanvasUtil2.getInstance()
+          let ctx = cu.ctx
+          cu.waitRenderOtherStatusFunc.push(()=>{
+            ctx.strokeStyle = defaultConfig.strokeStyle
+            ctx.beginPath()
+            ctx.moveTo2(lastPoint.center)
+            ctx.lineTo2(event.point)
+            ctx.closePath()
+            ctx.stroke()
+            draw.drawRound(ctx, lastPoint.center)
+          })
+          cu.render()
+          return true
+        }
+      }
     }
     return false
   }

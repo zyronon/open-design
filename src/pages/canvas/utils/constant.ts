@@ -1282,7 +1282,30 @@ export const rects3: any[] = [
     flipVertical: false
   },
 ]
-export const rects: any[] = []
+export const rects22: any[] = [
+  {
+    "name": "容器",
+    layout: {
+      "x": 0,
+      "y": 0,
+      // "w": 60,
+      w: 60,
+      "h": 40,
+    },
+    clip: false,
+    "rotation": 0,
+    "lineWidth": 2,
+    "type": "PEN",
+    "color": "gray",
+    "radius": 10,
+    children: [],
+    "borderColor": "rgb(197,197,197)",
+    "fillColor": "#e1e1e1",
+    flipHorizontal: false,
+    flipVertical: false
+  }
+]
+export const rects = []
 
 const defaultCurrentMat = [
   1, 0, 0, 0,
@@ -1303,5 +1326,6 @@ export const defaultConfig = {
   handMove: defaultHandMove,
   shapes: rects,
   lineWidth: 2,
-  strokeStyle: Colors.Primary
+  strokeStyle: Colors.Primary,
+  fillStyle: Colors.FillColor
 }

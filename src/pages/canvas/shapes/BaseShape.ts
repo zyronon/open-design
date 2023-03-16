@@ -239,6 +239,7 @@ export abstract class BaseShape {
     ctx.save()
     let {x, y} = draw.calcPosition(ctx, this.conf)
     let newLayout = {...this.conf.layout, x, y}
+    // let newLayout = {...this.conf.layout, }
     this.drawShape(ctx, newLayout, parent,)
     // ctx.globalCompositeOperation = 'source-atop'
     //恢复本次图形渲染前的矩阵变换。

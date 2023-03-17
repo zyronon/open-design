@@ -57,6 +57,7 @@ export default class CanvasUtil2 {
   editShape?: BaseShape
   //用于标记子组件是否选中
   childIsIn: boolean = false
+  // mode: ShapeType = ShapeType.PEN
   mode: ShapeType = ShapeType.SELECT
   mouseStart: P = {x: 0, y: 0} //鼠标起点
   fixMouseStart: P = {x: 0, y: 0} //修正后的鼠标起点（修正为0度）
@@ -276,6 +277,7 @@ export default class CanvasUtil2 {
 
   onKeyDown = (e: any) => {
     console.log('onKeyDown', e.keyCode)
+    //Esc
     if (e.keyCode === 27) {
       if (this.selectedShape) {
         this.selectedShape = undefined
@@ -290,7 +292,32 @@ export default class CanvasUtil2 {
         }
       }
     }
+    //Del
+    if (e.keyCode === 46) {
+      if (this.editShape) {
+        return
+      }
+      if (this.selectedShape) {
+        this.delChild(this.children, this.selectedShape.conf.id)
+      }
+      this.selectedShape = undefined
+      this.editShape = undefined
+      this.inShape = undefined
+    }
     this.render()
+  }
+
+  delChild(list: BaseShape[], targetId: string) {
+    for (let i = 0; i < list.length; i++) {
+      let item = list[i]
+      if (item.conf.id === targetId) {
+        list.splice(i, 1)
+        break
+      }
+      if (item.conf.children.length) {
+        this.delChild(item.conf.children, targetId)
+      }
+    }
   }
 
   onDbClick(e: any) {

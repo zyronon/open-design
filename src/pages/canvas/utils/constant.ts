@@ -1305,7 +1305,184 @@ export const rects22: any[] = [
     flipVertical: false
   }
 ]
-export const rects = []
+export const rects = [
+  {
+    "lineWidth": 2,
+    "fillColor": "rgb(241,238,238)",
+    "borderColor": "rgb(140,140,140)",
+    "children": [],
+    "flipHorizontal": false,
+    "flipVertical": false,
+    "radius": 0,
+    "lineShapes": [
+      [
+        {
+          "cp1": {
+            "use": false,
+            "x": 0,
+            "y": 0,
+            "px": 0,
+            "py": 0,
+            "rx": 0,
+            "ry": 0
+          },
+          "center": {
+            "use": true,
+            "x": -29,
+            "y": -37.75,
+            "px": 0,
+            "py": 0,
+            "rx": 0,
+            "ry": 0
+          },
+          "cp2": {
+            "use": false,
+            "x": 0,
+            "y": 0,
+            "px": 0,
+            "py": 0,
+            "rx": 0,
+            "ry": 0
+          },
+          "type": "RightAngle"
+        },
+        {
+          "cp1": {
+            "use": true,
+            "x": -62.5,
+            "y": 75.5,
+            "px": 0,
+            "py": 0,
+            "rx": 0,
+            "ry": 0
+          },
+          "center": {
+            "use": true,
+            "x": -30.5,
+            "y": 37.75,
+            "px": 0,
+            "py": 0,
+            "rx": 0,
+            "ry": 0
+          },
+          "cp2": {
+            "use": true,
+            "x": 59.5,
+            "y": 75.5,
+            "px": 0,
+            "py": 0,
+            "rx": 0,
+            "ry": 0
+          },
+          "type": "MirrorAngleAndLength"
+        },
+        {
+          "cp1": {
+            "use": false,
+            "x": 0,
+            "y": 0,
+            "px": 0,
+            "py": 0,
+            "rx": 0,
+            "ry": 0
+          },
+          "center": {
+            "use": true,
+            "x": 30.5,
+            "y": 37.75,
+            "px": 0,
+            "py": 0,
+            "rx": 0,
+            "ry": 0
+          },
+          "cp2": {
+            "use": false,
+            "x": 0,
+            "y": 0,
+            "px": 0,
+            "py": 0,
+            "rx": 0,
+            "ry": 0
+          },
+          "type": "RightAngle"
+        },
+      ]
+    ],
+    "cacheLineShapes": [],
+    "commonPoints": [],
+    "rotation": 0,
+    "layout": {
+      "x": 435,
+      "y": 153.5,
+      "w": 61,
+      "h": 75.5
+    },
+    "isCustom": true,
+    "isVisible": false,
+    "isLocked": false,
+    "cornerSmooth": 0,
+    "cornerRadius": 0,
+    "topLeftRadius": 0,
+    "topRightRadius": 0,
+    "bottomLeftRadius": 0,
+    "bottomRightRadius": 0,
+    "opacity": 0,
+    "blendMode": 0,
+    "isMask": false,
+    "effects": [],
+    "name": "Pen",
+    "type": "PEN",
+    "id": "85278709-2372-482d-a74e-827c5aaf64d6",
+    "percent": {
+      "x": 0,
+      "y": 0
+    },
+    "relativeCenter": {
+      "x": 0,
+      "y": 0
+    },
+    "realRotation": 0,
+    "start": {
+      "x": 436,
+      "y": 153
+    },
+    "absolute": {
+      "x": 435,
+      "y": 153.5
+    },
+    "original": {
+      "x": 435,
+      "y": 153.5
+    },
+    "center": {
+      "x": 465.5,
+      "y": 191.25
+    },
+    "box": {
+      "leftX": 435,
+      "rightX": 496,
+      "topY": 153.5,
+      "bottomY": 229,
+      "topLeft": {
+        "x": 435,
+        "y": 153.5
+      },
+      "topRight": {
+        "x": 496,
+        "y": 153.5
+      },
+      "bottomLeft": {
+        "x": 435,
+        "y": 229
+      },
+      "bottomRight": {
+        "x": 496,
+        "y": 229
+      }
+    },
+    "strokeAlign": "INSIDE"
+  }
+]
 
 const defaultCurrentMat = [
   1, 0, 0, 0,

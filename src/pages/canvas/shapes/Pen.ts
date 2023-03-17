@@ -1,11 +1,11 @@
 import {BaseShape} from "./BaseShape"
 import CanvasUtil2 from "../CanvasUtil2"
-import {BaseEvent2, getP2, P, ShapeEditStatus, ShapeStatus, ShapeType} from "../utils/type"
+import {BaseEvent2, BezierPointType, getP2, P, ShapeEditStatus, ShapeStatus, ShapeType} from "../utils/type"
 import {BaseConfig, Rect} from "../config/BaseConfig"
 import helper from "../utils/helper"
 import {Colors, defaultConfig} from "../utils/constant"
 import draw from "../utils/draw"
-import {merge} from "lodash"
+import {cloneDeep, merge} from "lodash"
 
 export class Pen extends BaseShape {
   mouseDown: boolean = false
@@ -134,7 +134,7 @@ export class Pen extends BaseShape {
 
   onMouseMove(event: BaseEvent2, parents: BaseShape[]): boolean {
     // console.log('pen-onMouseMove')
-    if (this.status === ShapeStatus.Edit){
+    if (this.status === ShapeStatus.Edit) {
       if (this._editStatus === ShapeEditStatus.Edit) {
         let lastLine = this._config.lineShapes[this._config.lineShapes.length - 1]
         if (lastLine) {
@@ -144,8 +144,15 @@ export class Pen extends BaseShape {
             let cu = CanvasUtil2.getInstance()
             let ctx = cu.ctx
             if (this.mouseDown) {
-              lastPoint.cp2 = merge(getP2(), event.point)
-
+              let center = this._config.center
+              let fixMousePoint = {
+                x: event.point.x - center.x,
+                y: event.point.y - center.y
+              }
+              lastPoint.cp2 = merge(getP2(true), fixMousePoint)
+              let cp1 = helper.horizontalReversePoint(cloneDeep(lastPoint.cp2), lastPoint.center)
+              lastPoint.cp1 = helper.verticalReversePoint(cp1, lastPoint.center)
+              lastPoint.type = BezierPointType.MirrorAngleAndLength
             } else {
               let center = this._config.center
               cu.waitRenderOtherStatusFunc.push(() => {
@@ -164,8 +171,9 @@ export class Pen extends BaseShape {
                 draw.drawRound(ctx, fixLastPoint)
                 ctx.restore()
               })
-              cu.render()
             }
+            cu.render()
+
             return true
           }
         }

@@ -921,6 +921,10 @@ export abstract class BaseShape {
       line.map(p => {
         p.center.x -= dx
         p.center.y -= dy
+        p.cp1.x -= dx
+        p.cp1.y -= dy
+        p.cp2.x -= dx
+        p.cp2.y -= dy
       })
     })
     this.conf.center = newCenter
@@ -966,10 +970,7 @@ export abstract class BaseShape {
         switch (lineType) {
           case LineType.Line:
             // ctx.beginPath()
-            // let s = this.getPointRelativeToCenter(currentPoint.center, center)
-            // console.log('s', s)
             path.lineTo2(currentPoint.center)
-            // path.lineTo2(this.getPointRelativeToCenter(currentPoint.center, center))
             // ctx.stroke()
             break
           case LineType.Bezier3:

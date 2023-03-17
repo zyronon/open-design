@@ -3,7 +3,7 @@ import {getHypotenuse2, getRotatedPoint, jiaodu2hudu} from "../../../utils"
 // @ts-ignore
 import {v4 as uuid} from 'uuid'
 import {clone, cloneDeep, inRange, merge} from "lodash"
-import {P, ShapeType, StrokeAlign} from "./type"
+import {BezierPoint, BezierPointType, getP2, P, P2, ShapeType, StrokeAlign} from "./type"
 import {Colors, defaultConfig} from "./constant"
 
 export default {
@@ -148,7 +148,7 @@ export default {
       bottomRight,
     }
     conf.strokeAlign = StrokeAlign.INSIDE
-    if (!conf.lineShapes){
+    if (!conf.lineShapes) {
       conf.lineShapes = []
       conf.commonPoints = []
     }
@@ -604,9 +604,9 @@ export default {
       flipHorizontal: false,
       flipVertical: false,
       radius: 0,
-      lineShapes:[],
-      cacheLineShapes:[],
-      commonPoints:[],
+      lineShapes: [],
+      cacheLineShapes: [],
+      commonPoints: [],
       rotation: 0,
       layout: {
         "x": 0,
@@ -614,19 +614,27 @@ export default {
         "w": 200,
         "h": 200,
       },
-      isCustom:false,
-      isVisible:false,
-      isLocked:false,
-      cornerSmooth:0,
-      cornerRadius:0,
-      topLeftRadius:0,
-      topRightRadius:0,
-      bottomLeftRadius:0,
-      bottomRightRadius:0,
-      opacity:0,
-      blendMode:0,
-      isMask:false,
-      effects:[],
+      isCustom: false,
+      isVisible: false,
+      isLocked: false,
+      cornerSmooth: 0,
+      cornerRadius: 0,
+      topLeftRadius: 0,
+      topRightRadius: 0,
+      bottomLeftRadius: 0,
+      bottomRightRadius: 0,
+      opacity: 0,
+      blendMode: 0,
+      isMask: false,
+      effects: [],
     } as any, newConfig)
+  },
+  getDefaultBezierPoint(p: P | P2) {
+    return {
+      cp1: getP2(),
+      center: {...getP2(true), ...p},
+      cp2: getP2(),
+      type: BezierPointType.RightAngle
+    }
   }
 }

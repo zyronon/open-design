@@ -199,7 +199,7 @@ export default class CanvasUtil2 {
     })
     this.canvas[fn](EventTypes.onWheel, this.onWheel)
     this.canvas[fn](EventTypes.onDbClick, this.handleEvent)
-    // this.canvas[fn](EventTypes.onMouseEnter, this.onWheel)
+    this.canvas[fn](EventTypes.onKeyDown, this.onKeyDown)
     this.canvas[fn](EventTypes.onMouseLeave, () => {
       document.body.style.cursor = 'default'
     })
@@ -274,6 +274,25 @@ export default class CanvasUtil2 {
     }
   }
 
+  onKeyDown = (e: any) => {
+    console.log('onKeyDown', e.keyCode)
+    if (e.keyCode === 27) {
+      if (this.selectedShape) {
+        this.selectedShape = undefined
+      }
+      if (this.editShape) {
+        if (this.editShape.status === ShapeStatus.Edit) {
+          if (this.editShape._editStatus === ShapeEditStatus.Edit) {
+            this.editShape._editStatus = ShapeEditStatus.Wait
+          } else {
+            this.editShape = undefined
+          }
+        }
+      }
+    }
+    this.render()
+  }
+
   onDbClick(e: any) {
     if (e.capture) return
     console.log('cu-onDbClick', e)
@@ -305,9 +324,11 @@ export default class CanvasUtil2 {
         case ShapeType.PEN:
           this.editShape = new Pen({
             conf: helper.getDefaultShapeConfig({
-              layout: {x: this.mouseStart.x, y: this.mouseStart.y},
+              // layout: {x: this.mouseStart.x, y: this.mouseStart.y, w: 1, h: 1},
+              layout: {x: 0, y: 0, w: 0, h: 0},
+              center: {x: this.mouseStart.x, y: this.mouseStart.y},
               name: 'Pen',
-              type:ShapeType.PEN,
+              type: ShapeType.PEN,
               lineShapes: [
                 [
                   {

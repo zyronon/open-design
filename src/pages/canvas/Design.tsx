@@ -288,6 +288,7 @@ class Design extends React.Component<any, IState> {
                 // onMouseDown={this.onMouseDown}
                 // onMouseUp={this.onMouseUp}
                 // onWheel={this.onWheel}
+                tabIndex={1}
                 id="canvas" ref={this.canvasRef}/>
             </div>
           </div>

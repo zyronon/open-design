@@ -119,6 +119,8 @@ export const EventTypes = {
   onMouseEnter: 'mouseenter',
   onMouseLeave: 'mouseleave',
   onDraw: 'draw',
+  onKeyPress: 'keypress',
+  onKeyDown: 'keydown',
 }
 
 

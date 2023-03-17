@@ -1,13 +1,15 @@
 import {BaseShape} from "./BaseShape"
 import CanvasUtil2 from "../CanvasUtil2"
-import {BaseEvent2, BezierPoint, BezierPointType, LineType, P, P2, ShapeEditStatus, ShapeStatus} from "../utils/type"
+import {BaseEvent2, getP2, P, ShapeEditStatus, ShapeStatus} from "../utils/type"
 import {BaseConfig, Rect} from "../config/BaseConfig"
 import helper from "../utils/helper"
-import {cloneDeep} from "lodash"
 import {Colors, defaultConfig} from "../utils/constant"
 import draw from "../utils/draw"
+import {merge} from "lodash"
 
 export class Pen extends BaseShape {
+  mouseDown: boolean = false
+
 
   get _config(): BaseConfig {
     return this.conf
@@ -30,9 +32,6 @@ export class Pen extends BaseShape {
     return false
   }
 
-  drawEdit(ctx: CanvasRenderingContext2D, newLayout: Rect): any {
-  }
-
   drawHover(ctx: CanvasRenderingContext2D, newLayout: Rect): any {
   }
 
@@ -53,9 +52,37 @@ export class Pen extends BaseShape {
     ctx.lineWidth = lineWidth ?? defaultConfig.lineWidth
     ctx.lineCap = "round"
     ctx.fillStyle = fillColor
-    let path = this.getCustomShapePath()
+    let path = super.getCustomShapePath(false)
     ctx.stroke(path)
   }
+
+  drawEdit(ctx: CanvasRenderingContext2D, newLayout: Rect): any {
+    // this.log('drawEdit')
+    let {
+      fillColor,
+      center
+    } = this.conf
+
+    ctx.save()
+
+    ctx.strokeStyle = Colors.Line2
+    ctx.fillStyle = fillColor
+
+    let path = super.getCustomShapePath(false)
+    // ctx.fill(path)
+    ctx.stroke(path)
+
+    let bezierCps = this._config.lineShapes
+    bezierCps.map(line => {
+      line.map((currentPoint) => {
+        draw.drawRound(ctx, currentPoint.center)
+        if (currentPoint.cp1.use) draw.controlPoint(ctx, currentPoint.cp1, currentPoint.center)
+        if (currentPoint.cp2.use) draw.controlPoint(ctx, currentPoint.cp2, currentPoint.center)
+      })
+    })
+    ctx.restore()
+  }
+
 
   isInShape(mousePoint: P, cu: CanvasUtil2): boolean {
     return helper.isInBox(mousePoint, this.conf.box)
@@ -71,6 +98,20 @@ export class Pen extends BaseShape {
 
   onMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean {
     console.log('pen-onMouseDown')
+    if (this._editStatus === ShapeEditStatus.Edit) {
+      this.mouseDown = true
+      let lastLine = this._config.lineShapes[this._config.lineShapes.length - 1]
+      if (lastLine) {
+        let {center} = this._config
+        let fixMousePoint = {
+          x: event.point.x - center.x,
+          y: event.point.y - center.y
+        }
+        lastLine.push(helper.getDefaultBezierPoint(fixMousePoint))
+        CanvasUtil2.getInstance().render()
+        return true
+      }
+    }
     return false
   }
 
@@ -81,19 +122,27 @@ export class Pen extends BaseShape {
       if (lastLine) {
         let lastPoint = lastLine[lastLine.length - 1]
         if (lastPoint) {
-          console.log('pen-onMouseMove', lastPoint.center, event.point)
+          // console.log('pen-onMouseMove', lastPoint.center, event.point)
           let cu = CanvasUtil2.getInstance()
           let ctx = cu.ctx
-          cu.waitRenderOtherStatusFunc.push(()=>{
-            ctx.strokeStyle = defaultConfig.strokeStyle
-            ctx.beginPath()
-            ctx.moveTo2(lastPoint.center)
-            ctx.lineTo2(event.point)
-            ctx.closePath()
-            ctx.stroke()
-            draw.drawRound(ctx, lastPoint.center)
-          })
-          cu.render()
+          if (this.mouseDown) {
+            lastPoint.cp2 = merge(getP2(), event.point)
+
+          } else {
+            cu.waitRenderOtherStatusFunc.push(() => {
+              ctx.save()
+              // draw.calcPosition(ctx, this.conf)
+              ctx.strokeStyle = defaultConfig.strokeStyle
+              ctx.beginPath()
+              ctx.moveTo2(lastPoint.center)
+              ctx.lineTo2(event.point)
+              ctx.closePath()
+              ctx.stroke()
+              draw.drawRound(ctx, lastPoint.center)
+              ctx.restore()
+            })
+            cu.render()
+          }
           return true
         }
       }
@@ -102,76 +151,7 @@ export class Pen extends BaseShape {
   }
 
   onMouseUp(event: BaseEvent2, parents: BaseShape[]): boolean {
+    this.mouseDown = false
     return false
   }
-
-  getCustomShapePath(): Path2D {
-    let path = new Path2D()
-    this._config.lineShapes.map((line) => {
-      line.map((currentPoint: BezierPoint, index: number, array: any) => {
-        let previousPoint: BezierPoint
-        if (index === 0) {
-          previousPoint = cloneDeep(array[array.length - 1])
-        } else {
-          previousPoint = cloneDeep(array[index - 1])
-        }
-        let lineType: LineType = LineType.Line
-        if (
-          currentPoint.type === BezierPointType.RightAngle &&
-          previousPoint.type === BezierPointType.RightAngle
-        ) {
-          lineType = LineType.Line
-        } else if (
-          currentPoint.type !== BezierPointType.RightAngle &&
-          previousPoint.type !== BezierPointType.RightAngle) {
-          lineType = LineType.Bezier3
-        } else {
-          if (previousPoint.cp2.use || currentPoint.cp1.use) {
-            lineType = LineType.Bezier2
-          } else {
-            lineType = LineType.Line
-          }
-        }
-
-
-        // let fixPreviousPoint = cloneDeep(previousPoint)
-        // fixPreviousPoint.center.x = fixPreviousPoint.center.x - center.x
-        // fixPreviousPoint.center.y = fixPreviousPoint.center.y - center.y
-        // let  fixPreviousPoint.center = this.getPointRelativeToCenter(previousPoint.center, center)
-        // console.log('lineType', fixPreviousPoint.center, fixCurrentPoint.center)
-        switch (lineType) {
-          case LineType.Line:
-            // ctx.beginPath()
-            // let s = this.getPointRelativeToCenter(currentPoint.center, center)
-            // console.log('s', s)
-            path.lineTo2(currentPoint.center)
-            // path.lineTo2(this.getPointRelativeToCenter(currentPoint.center, center))
-            // ctx.stroke()
-            break
-          case LineType.Bezier3:
-            // ctx.beginPath()
-            path.lineTo2(previousPoint.center)
-            path.bezierCurveTo2(
-              previousPoint.cp2,
-              currentPoint.cp1,
-              currentPoint.center)
-            // ctx.stroke()
-            break
-          case LineType.Bezier2:
-            let cp: P2
-            if (previousPoint.cp2.use) cp = previousPoint.cp2
-            if (currentPoint.cp1.use) cp = currentPoint.cp2
-            // ctx.beginPath()
-            path.lineTo2(previousPoint.center)
-            path.quadraticCurveTo2(cp!, currentPoint.center)
-            // ctx.stroke()
-            break
-        }
-      })
-    })
-
-    path.closePath()
-    return path
-  }
-
 }

@@ -1,4 +1,13 @@
-import {BaseEvent2, MouseOptionType, P, ShapeEditStatus, ShapeProps, ShapeStatus, ShapeType} from "../utils/type"
+import {
+  BaseEvent2,
+  BezierPoint, BezierPointType, LineType,
+  MouseOptionType,
+  P, P2,
+  ShapeEditStatus,
+  ShapeProps,
+  ShapeStatus,
+  ShapeType
+} from "../utils/type"
 import CanvasUtil2 from "../CanvasUtil2"
 import {cloneDeep} from "lodash"
 import {getRotatedPoint} from "../../../utils"
@@ -917,5 +926,74 @@ export abstract class BaseShape {
     this.conf.layout.w = newWidth
     this.conf.layout.h = newHeight
     this.conf = helper.calcConf(this.conf, this.parent?.conf)
+  }
+
+  getCustomShapePath(close: boolean = true): Path2D {
+    let path = new Path2D()
+    this.conf.lineShapes.map((line) => {
+      line.map((currentPoint: BezierPoint, index: number, array: any) => {
+        let previousPoint: BezierPoint
+        if (index === 0) {
+          previousPoint = cloneDeep(array[array.length - 1])
+        } else {
+          previousPoint = cloneDeep(array[index - 1])
+        }
+        let lineType: LineType = LineType.Line
+        if (
+          currentPoint.type === BezierPointType.RightAngle &&
+          previousPoint.type === BezierPointType.RightAngle
+        ) {
+          lineType = LineType.Line
+        } else if (
+          currentPoint.type !== BezierPointType.RightAngle &&
+          previousPoint.type !== BezierPointType.RightAngle) {
+          lineType = LineType.Bezier3
+        } else {
+          if (previousPoint.cp2.use || currentPoint.cp1.use) {
+            lineType = LineType.Bezier2
+          } else {
+            lineType = LineType.Line
+          }
+        }
+
+
+        // let fixPreviousPoint = cloneDeep(previousPoint)
+        // fixPreviousPoint.center.x = fixPreviousPoint.center.x - center.x
+        // fixPreviousPoint.center.y = fixPreviousPoint.center.y - center.y
+        // let  fixPreviousPoint.center = this.getPointRelativeToCenter(previousPoint.center, center)
+        // console.log('lineType', fixPreviousPoint.center, fixCurrentPoint.center)
+        switch (lineType) {
+          case LineType.Line:
+            // ctx.beginPath()
+            // let s = this.getPointRelativeToCenter(currentPoint.center, center)
+            // console.log('s', s)
+            path.lineTo2(currentPoint.center)
+            // path.lineTo2(this.getPointRelativeToCenter(currentPoint.center, center))
+            // ctx.stroke()
+            break
+          case LineType.Bezier3:
+            // ctx.beginPath()
+            path.lineTo2(previousPoint.center)
+            path.bezierCurveTo2(
+              previousPoint.cp2,
+              currentPoint.cp1,
+              currentPoint.center)
+            // ctx.stroke()
+            break
+          case LineType.Bezier2:
+            let cp: P2
+            if (previousPoint.cp2.use) cp = previousPoint.cp2
+            if (currentPoint.cp1.use) cp = currentPoint.cp2
+            // ctx.beginPath()
+            path.lineTo2(previousPoint.center)
+            path.quadraticCurveTo2(cp!, currentPoint.center)
+            // ctx.stroke()
+            break
+        }
+      })
+    })
+
+    close && path.closePath()
+    return path
   }
 }

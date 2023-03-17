@@ -1,6 +1,6 @@
 import {BaseShape} from "./BaseShape"
 import CanvasUtil2 from "../CanvasUtil2"
-import {BaseEvent2, getP2, P, ShapeEditStatus, ShapeStatus} from "../utils/type"
+import {BaseEvent2, getP2, P, ShapeEditStatus, ShapeStatus, ShapeType} from "../utils/type"
 import {BaseConfig, Rect} from "../config/BaseConfig"
 import helper from "../utils/helper"
 import {Colors, defaultConfig} from "../utils/constant"
@@ -32,15 +32,6 @@ export class Pen extends BaseShape {
     return false
   }
 
-  drawHover(ctx: CanvasRenderingContext2D, newLayout: Rect): any {
-  }
-
-  drawSelected(ctx: CanvasRenderingContext2D, newLayout: Rect): any {
-  }
-
-  drawSelectedHover(ctx: CanvasRenderingContext2D, newLayout: Rect): void {
-  }
-
   drawShape(ctx: CanvasRenderingContext2D, newLayout: Rect, parent?: BaseConfig): any {
     if (this.status === ShapeStatus.Edit) return
     let {
@@ -54,6 +45,19 @@ export class Pen extends BaseShape {
     ctx.fillStyle = fillColor
     let path = super.getCustomShapePath(false)
     ctx.stroke(path)
+  }
+
+  drawHover(ctx: CanvasRenderingContext2D, newLayout: Rect): any {
+    ctx.strokeStyle = defaultConfig.strokeStyle
+    let path = super.getCustomShapePath(false)
+    ctx.stroke(path)
+  }
+
+  drawSelected(ctx: CanvasRenderingContext2D, newLayout: Rect): any {
+    draw.selected(ctx, newLayout)
+  }
+
+  drawSelectedHover(ctx: CanvasRenderingContext2D, newLayout: Rect): void {
   }
 
   drawEdit(ctx: CanvasRenderingContext2D, newLayout: Rect): any {
@@ -83,7 +87,6 @@ export class Pen extends BaseShape {
     ctx.restore()
   }
 
-
   isInShape(mousePoint: P, cu: CanvasUtil2): boolean {
     return helper.isInBox(mousePoint, this.conf.box)
   }
@@ -93,23 +96,37 @@ export class Pen extends BaseShape {
   }
 
   onDbClick(event: BaseEvent2, parents: BaseShape[]): boolean {
+    let cu = CanvasUtil2.getInstance()
+    if (this.status === ShapeStatus.Edit) {
+      this.status = ShapeStatus.Select
+      cu.editShape = undefined
+      cu.selectedShape = this
+      cu.mode = ShapeType.SELECT
+    } else {
+      this.status = ShapeStatus.Edit
+      this._editStatus = ShapeEditStatus.Select
+      cu.editShape = this
+      cu.mode = ShapeType.EDIT
+    }
     return false
   }
 
   onMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean {
     console.log('pen-onMouseDown')
-    if (this._editStatus === ShapeEditStatus.Edit) {
-      this.mouseDown = true
-      let lastLine = this._config.lineShapes[this._config.lineShapes.length - 1]
-      if (lastLine) {
-        let {center} = this._config
-        let fixMousePoint = {
-          x: event.point.x - center.x,
-          y: event.point.y - center.y
+    if (this.status === ShapeStatus.Edit) {
+      if (this._editStatus === ShapeEditStatus.Edit) {
+        this.mouseDown = true
+        let lastLine = this._config.lineShapes[this._config.lineShapes.length - 1]
+        if (lastLine) {
+          let {center} = this._config
+          let fixMousePoint = {
+            x: event.point.x - center.x,
+            y: event.point.y - center.y
+          }
+          lastLine.push(helper.getDefaultBezierPoint(fixMousePoint))
+          CanvasUtil2.getInstance().render()
+          return true
         }
-        lastLine.push(helper.getDefaultBezierPoint(fixMousePoint))
-        CanvasUtil2.getInstance().render()
-        return true
       }
     }
     return false
@@ -117,33 +134,40 @@ export class Pen extends BaseShape {
 
   onMouseMove(event: BaseEvent2, parents: BaseShape[]): boolean {
     // console.log('pen-onMouseMove')
-    if (this._editStatus === ShapeEditStatus.Edit) {
-      let lastLine = this._config.lineShapes[this._config.lineShapes.length - 1]
-      if (lastLine) {
-        let lastPoint = lastLine[lastLine.length - 1]
-        if (lastPoint) {
-          // console.log('pen-onMouseMove', lastPoint.center, event.point)
-          let cu = CanvasUtil2.getInstance()
-          let ctx = cu.ctx
-          if (this.mouseDown) {
-            lastPoint.cp2 = merge(getP2(), event.point)
+    if (this.status === ShapeStatus.Edit){
+      if (this._editStatus === ShapeEditStatus.Edit) {
+        let lastLine = this._config.lineShapes[this._config.lineShapes.length - 1]
+        if (lastLine) {
+          let lastPoint = lastLine[lastLine.length - 1]
+          if (lastPoint) {
+            // console.log('pen-onMouseMove', lastPoint.center, event.point)
+            let cu = CanvasUtil2.getInstance()
+            let ctx = cu.ctx
+            if (this.mouseDown) {
+              lastPoint.cp2 = merge(getP2(), event.point)
 
-          } else {
-            cu.waitRenderOtherStatusFunc.push(() => {
-              ctx.save()
-              // draw.calcPosition(ctx, this.conf)
-              ctx.strokeStyle = defaultConfig.strokeStyle
-              ctx.beginPath()
-              ctx.moveTo2(lastPoint.center)
-              ctx.lineTo2(event.point)
-              ctx.closePath()
-              ctx.stroke()
-              draw.drawRound(ctx, lastPoint.center)
-              ctx.restore()
-            })
-            cu.render()
+            } else {
+              let center = this._config.center
+              cu.waitRenderOtherStatusFunc.push(() => {
+                let fixLastPoint = {
+                  x: center.x + lastPoint.center.x,
+                  y: center.y + lastPoint.center.y,
+                }
+                ctx.save()
+                // draw.calcPosition(ctx, this.conf)
+                ctx.strokeStyle = defaultConfig.strokeStyle
+                ctx.beginPath()
+                ctx.moveTo2(fixLastPoint)
+                ctx.lineTo2(event.point)
+                ctx.closePath()
+                ctx.stroke()
+                draw.drawRound(ctx, fixLastPoint)
+                ctx.restore()
+              })
+              cu.render()
+            }
+            return true
           }
-          return true
         }
       }
     }
@@ -154,4 +178,6 @@ export class Pen extends BaseShape {
     this.mouseDown = false
     return false
   }
+
+
 }

@@ -324,16 +324,18 @@ export default class CanvasUtil2 {
         case ShapeType.PEN:
           this.editShape = new Pen({
             conf: helper.getDefaultShapeConfig({
-              // layout: {x: this.mouseStart.x, y: this.mouseStart.y, w: 1, h: 1},
-              layout: {x: 0, y: 0, w: 0, h: 0},
-              center: {x: this.mouseStart.x, y: this.mouseStart.y},
+              layout: {x: this.mouseStart.x, y: this.mouseStart.y, w: 1, h: 1},
+              // layout: {x: 0, y: 0, w: 0, h: 0},
+              // center: {x: this.mouseStart.x, y: this.mouseStart.y},
               name: 'Pen',
               type: ShapeType.PEN,
+              isCustom: true,
               lineShapes: [
                 [
                   {
                     cp1: getP2(),
-                    center: {...getP2(true), ...this.mouseStart},
+                    // center: {...getP2(true), ...this.mouseStart},
+                    center: {...getP2(true), ...{x: 0, y: 0}},
                     cp2: getP2(),
                     type: BezierPointType.RightAngle
                   }
@@ -496,7 +498,7 @@ export default class CanvasUtil2 {
   }
 
   print2() {
-    console.log(this.currentMat, this.handScale, this.handMove)
+    // console.log(this.currentMat, this.handScale, this.handMove)
     return this.printO(cloneDeep(this.children), true)
   }
 

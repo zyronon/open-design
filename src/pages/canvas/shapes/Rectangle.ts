@@ -80,154 +80,7 @@ export class Rectangle extends BaseShape {
     this.conf = val
   }
 
-  onDbClick(event: BaseEvent2, parents: BaseShape[]): boolean {
-    let cu = CanvasUtil2.getInstance()
-    if (this.status === ShapeStatus.Edit) {
-      this.status = ShapeStatus.Select
-      cu.editShape = undefined
-      cu.mode = ShapeType.SELECT
-    } else {
-      if (!this._config.isCustom) {
-        let {w, h} = this._config.layout
-        //这里的xy这样设置是因为，渲染时的起点是center
-        let x = -w / 2, y = -h / 2
-        let bezierCps: BezierPoint[] = []
-        bezierCps.push({
-          cp1: getP2(),
-          center: {...getP2(true), x: x, y: y},
-          cp2: getP2(),
-          type: BezierPointType.RightAngle
-        })
-        bezierCps.push({
-          cp1: getP2(),
-          center: {...getP2(true), x: x + w, y: y},
-          cp2: getP2(),
-          type: BezierPointType.RightAngle
-        })
-        bezierCps.push({
-          cp1: getP2(),
-          center: {...getP2(true), x: x + w, y: y + h},
-          cp2: getP2(),
-          type: BezierPointType.RightAngle
-        })
-        bezierCps.push({
-          cp1: getP2(),
-          center: {...getP2(true), x: x, y: y + h},
-          cp2: getP2(),
-          type: BezierPointType.RightAngle
-        })
-        this._config.lineShapes = [bezierCps]
-      }
-      this.status = ShapeStatus.Edit
-      cu.editShape = this
-      cu.mode = ShapeType.EDIT
-    }
-    return false
-  }
 
-  onMouseDown(event: BaseEvent2, parents: BaseShape[]) {
-    // console.log('childMouseDown', this.editHover)
-    if (this.status === ShapeStatus.Edit) {
-      if (this.editHover.index !== -1) {
-        if (this.editHover.type === EditType.centerPoint) {
-          console.log('onMouseDown-hoverLineCenterPointIndex')
-          this.editEnter = cloneDeep(this.editHover)
-          this._config.lineShapes[this.editEnter.baseIndex].splice(this.editEnter.index, 0, {
-            cp1: getP2(),
-            center: {...getP2(true), ...this.hoverLineCenterPoint},
-            cp2: getP2(),
-            type: BezierPointType.RightAngle
-          })
-          // this.editEnter.index += 1
-          this.editHover.index = -1
-          this._config.isCustom = true
-          CanvasUtil2.getInstance().render()
-          return true
-        }
-
-        if (this.editHover.type === EditType.line || this.editHover.type === EditType.point) {
-          this.editEnter = cloneDeep(this.editHover)
-          this.editHover.index = -1
-          this._config.isCustom = true
-          return true
-        }
-      }
-    }
-    this.rectEnterType = this.rectHoverType
-    return false
-  }
-
-  onMouseMove(event: BaseEvent2, parents: BaseShape[]) {
-    // console.log('childMouseMove', this.editEnter)
-    if (this.status === ShapeStatus.Edit) {
-      if (this.editEnter.index !== -1) {
-        let {center, realRotation} = this._config
-        //TODO 是否可以统一反转？
-        //反转到0度，好判断
-        if (realRotation) {
-          event.point = getRotatedPoint(event.point, center, -realRotation)
-        }
-        if (this.editEnter.type === EditType.point || this.editEnter.type === EditType.centerPoint) {
-
-          this._config.lineShapes[this.editEnter.baseIndex][this.editEnter.index].center = {
-            ...getP2(true), ...{
-              x: event.point.x - center.x,
-              y: event.point.y - center.y
-            }
-          }
-          CanvasUtil2.getInstance().render()
-          return true
-        }
-
-        if (this.editHover.type === EditType.line) {
-          console.log('onMouseMove-enterLineIndex')
-          let cu = CanvasUtil2.getInstance()
-          let {x, y} = event.point
-          let dx = x - cu.fixMouseStart.x
-          let dy = y - cu.fixMouseStart.y
-          console.log('dx', dx, 'dy', dy)
-          let oldLine1Point = this.original.lineShapes[this.editEnter.baseIndex][this.editEnter.index]
-          this._config.lineShapes[this.editEnter.baseIndex][this.editEnter.index].center.x = oldLine1Point.center.x + dx
-          this._config.lineShapes[this.editEnter.baseIndex][this.editEnter.index].center.y = oldLine1Point.center.y + dy
-          let previousPoint: BezierPoint
-          let oldPreviousPoint: BezierPoint
-          if (this.editEnter.index === 0) {
-            let length = this._config.lineShapes[this.editEnter.baseIndex].length
-            previousPoint = this._config.lineShapes[this.editEnter.baseIndex][length - 1]
-            oldPreviousPoint = this.original.lineShapes[this.editEnter.baseIndex][length - 1]
-          } else {
-            previousPoint = this._config.lineShapes[this.editEnter.baseIndex][this.editEnter.index - 1]
-            oldPreviousPoint = this.original.lineShapes[this.editEnter.baseIndex][this.editEnter.index - 1]
-          }
-          previousPoint.center.x = oldPreviousPoint.center.x + dx
-          previousPoint.center.y = oldPreviousPoint.center.y + dy
-          cu.render()
-          return true
-        }
-      }
-    }
-    switch (this.rectEnterType) {
-      case MouseOptionType.TopRight:
-        this.dragRd1(event.point)
-        return true
-    }
-    return false
-  }
-
-  onMouseUp(event: BaseEvent2, parents: BaseShape[]) {
-    // console.log('childMouseUp')
-    this.rectEnterType = this.rectHoverType = MouseOptionType.None
-    this.enterPointIndex = this.hoverPointIndex = -1
-    this.enterLineIndex = this.hoverLineIndex = -1
-    this.enterLineCenterPointIndex = this.hoverLineCenterPointIndex = -1
-    this.editHover = {
-      type: EditType.line,
-      baseIndex: -1,
-      index: -1,
-    }
-    this.editEnter = cloneDeep(this.editHover)
-    return false
-  }
 
   beforeIsInShape() {
     return false
@@ -481,6 +334,155 @@ export class Rectangle extends BaseShape {
     }
     this.conf.radius = this.conf.radius.toFixed2()
     cu.render()
+  }
+
+  onDbClick(event: BaseEvent2, parents: BaseShape[]): boolean {
+    let cu = CanvasUtil2.getInstance()
+    if (this.status === ShapeStatus.Edit) {
+      this.status = ShapeStatus.Select
+      cu.editShape = undefined
+      cu.mode = ShapeType.SELECT
+    } else {
+      if (!this._config.isCustom) {
+        let {w, h} = this._config.layout
+        //这里的xy这样设置是因为，渲染时的起点是center
+        let x = -w / 2, y = -h / 2
+        let bezierCps: BezierPoint[] = []
+        bezierCps.push({
+          cp1: getP2(),
+          center: {...getP2(true), x: x, y: y},
+          cp2: getP2(),
+          type: BezierPointType.RightAngle
+        })
+        bezierCps.push({
+          cp1: getP2(),
+          center: {...getP2(true), x: x + w, y: y},
+          cp2: getP2(),
+          type: BezierPointType.RightAngle
+        })
+        bezierCps.push({
+          cp1: getP2(),
+          center: {...getP2(true), x: x + w, y: y + h},
+          cp2: getP2(),
+          type: BezierPointType.RightAngle
+        })
+        bezierCps.push({
+          cp1: getP2(),
+          center: {...getP2(true), x: x, y: y + h},
+          cp2: getP2(),
+          type: BezierPointType.RightAngle
+        })
+        this._config.lineShapes = [bezierCps]
+      }
+      this.status = ShapeStatus.Edit
+      cu.editShape = this
+      cu.mode = ShapeType.EDIT
+    }
+    return false
+  }
+
+  onMouseDown(event: BaseEvent2, parents: BaseShape[]) {
+    // console.log('childMouseDown', this.editHover)
+    if (this.status === ShapeStatus.Edit) {
+      if (this.editHover.index !== -1) {
+        if (this.editHover.type === EditType.centerPoint) {
+          console.log('onMouseDown-hoverLineCenterPointIndex')
+          this.editEnter = cloneDeep(this.editHover)
+          this._config.lineShapes[this.editEnter.baseIndex].splice(this.editEnter.index, 0, {
+            cp1: getP2(),
+            center: {...getP2(true), ...this.hoverLineCenterPoint},
+            cp2: getP2(),
+            type: BezierPointType.RightAngle
+          })
+          // this.editEnter.index += 1
+          this.editHover.index = -1
+          this._config.isCustom = true
+          CanvasUtil2.getInstance().render()
+          return true
+        }
+
+        if (this.editHover.type === EditType.line || this.editHover.type === EditType.point) {
+          this.editEnter = cloneDeep(this.editHover)
+          this.editHover.index = -1
+          this._config.isCustom = true
+          return true
+        }
+      }
+    }
+    this.rectEnterType = this.rectHoverType
+    return false
+  }
+
+  onMouseMove(event: BaseEvent2, parents: BaseShape[]) {
+    // console.log('childMouseMove', this.editEnter)
+    if (this.status === ShapeStatus.Edit) {
+      if (this.editEnter.index !== -1) {
+        let {center, realRotation} = this._config
+        //TODO 是否可以统一反转？
+        //反转到0度，好判断
+        if (realRotation) {
+          event.point = getRotatedPoint(event.point, center, -realRotation)
+        }
+        if (this.editEnter.type === EditType.point || this.editEnter.type === EditType.centerPoint) {
+
+          this._config.lineShapes[this.editEnter.baseIndex][this.editEnter.index].center = {
+            ...getP2(true), ...{
+              x: event.point.x - center.x,
+              y: event.point.y - center.y
+            }
+          }
+          CanvasUtil2.getInstance().render()
+          return true
+        }
+
+        if (this.editHover.type === EditType.line) {
+          console.log('onMouseMove-enterLineIndex')
+          let cu = CanvasUtil2.getInstance()
+          let {x, y} = event.point
+          let dx = x - cu.fixMouseStart.x
+          let dy = y - cu.fixMouseStart.y
+          console.log('dx', dx, 'dy', dy)
+          let oldLine1Point = this.original.lineShapes[this.editEnter.baseIndex][this.editEnter.index]
+          this._config.lineShapes[this.editEnter.baseIndex][this.editEnter.index].center.x = oldLine1Point.center.x + dx
+          this._config.lineShapes[this.editEnter.baseIndex][this.editEnter.index].center.y = oldLine1Point.center.y + dy
+          let previousPoint: BezierPoint
+          let oldPreviousPoint: BezierPoint
+          if (this.editEnter.index === 0) {
+            let length = this._config.lineShapes[this.editEnter.baseIndex].length
+            previousPoint = this._config.lineShapes[this.editEnter.baseIndex][length - 1]
+            oldPreviousPoint = this.original.lineShapes[this.editEnter.baseIndex][length - 1]
+          } else {
+            previousPoint = this._config.lineShapes[this.editEnter.baseIndex][this.editEnter.index - 1]
+            oldPreviousPoint = this.original.lineShapes[this.editEnter.baseIndex][this.editEnter.index - 1]
+          }
+          previousPoint.center.x = oldPreviousPoint.center.x + dx
+          previousPoint.center.y = oldPreviousPoint.center.y + dy
+          cu.render()
+          return true
+        }
+      }
+    }
+    switch (this.rectEnterType) {
+      case MouseOptionType.TopRight:
+        this.dragRd1(event.point)
+        return true
+    }
+    return false
+  }
+
+  onMouseUp(event: BaseEvent2, parents: BaseShape[]) {
+    // console.log('childMouseUp')
+    this.rectEnterType = this.rectHoverType = MouseOptionType.None
+    this.enterPointIndex = this.hoverPointIndex = -1
+    this.enterLineIndex = this.hoverLineIndex = -1
+    this.enterLineCenterPointIndex = this.hoverLineCenterPointIndex = -1
+    this.editHover = {
+      type: EditType.line,
+      baseIndex: -1,
+      index: -1,
+    }
+    this.editEnter = cloneDeep(this.editHover)
+    return false
   }
 
   getShapePath(layout: Rect, r: number): Path2D {

@@ -888,6 +888,7 @@ export abstract class BaseShape {
   }
 
   calcNewCenterAndWidthAndHeight() {
+    console.log('重新计算中心点和宽高')
     // return
     if (!this.conf.isCustom) return
     let center = this.conf.center

@@ -279,17 +279,20 @@ export default class CanvasUtil2 {
     console.log('onKeyDown', e.keyCode)
     //Esc
     if (e.keyCode === 27) {
-      if (this.selectedShape) {
-        this.selectedShape = undefined
-      }
       if (this.editShape) {
         if (this.editShape.status === ShapeStatus.Edit) {
           if (this.editShape._editStatus === ShapeEditStatus.Edit) {
             this.editShape._editStatus = ShapeEditStatus.Wait
           } else {
+            this.editShape.status = ShapeStatus.Select
+            this.selectedShape = this.editShape
             this.editShape = undefined
           }
+          return this.render()
         }
+      }
+      if (this.selectedShape) {
+        this.selectedShape = undefined
       }
     }
     //Del

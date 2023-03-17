@@ -144,9 +144,9 @@ export enum BezierPointType {
 }
 
 export enum LineType {
-  Line = 0,
-  Bezier2 = 1,
-  Bezier3 = 2,
+  Line = 'Line',
+  Bezier2 = 'Bezier2',
+  Bezier3 = 'Bezier3',
 }
 
 //简单点

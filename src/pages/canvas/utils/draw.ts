@@ -246,7 +246,8 @@ export default {
     // this.round(topLeft, r2, ctx, ShapeType.SELECT)
   },
   controlPoint(ctx: CanvasRenderingContext2D, rect: any, center: P2) {
-    let d = 3
+    let handScale = CanvasUtil2.getInstance().handScale
+    let d = 3 / handScale
     let {x, y, w = 2 * d, h = 2 * d, lineWidth = 1} = rect
     let ow = w / 2
 
@@ -257,7 +258,7 @@ export default {
     ctx.stroke()
 
     ctx.save()
-    ctx.lineWidth = lineWidth
+    ctx.lineWidth = lineWidth / handScale
     ctx.fillStyle = Colors.White
     ctx.strokeStyle = Colors.Primary
     ctx.translate(x, y)

@@ -13,7 +13,7 @@ import {cloneDeep} from "lodash"
 import {getRotatedPoint} from "../../../utils"
 import {getShapeFromConfig} from "../utils/common"
 import EventBus from "../../../utils/event-bus"
-import {EventMapTypes} from "../../canvas20221111/type"
+import {EventMapTypes, getDefaultPoint} from "../../canvas20221111/type"
 import {BaseConfig, Rect} from "../config/BaseConfig"
 import helper from "../utils/helper"
 import draw from "../utils/draw"
@@ -961,36 +961,41 @@ export abstract class BaseShape {
           }
         }
 
-
         // let fixPreviousPoint = cloneDeep(previousPoint)
         // fixPreviousPoint.center.x = fixPreviousPoint.center.x - center.x
         // fixPreviousPoint.center.y = fixPreviousPoint.center.y - center.y
         // let  fixPreviousPoint.center = this.getPointRelativeToCenter(previousPoint.center, center)
         // console.log('lineType', fixPreviousPoint.center, fixCurrentPoint.center)
-        switch (lineType) {
-          case LineType.Line:
-            // ctx.beginPath()
-            path.lineTo2(currentPoint.center)
-            // ctx.stroke()
-            break
-          case LineType.Bezier3:
-            // ctx.beginPath()
-            path.lineTo2(previousPoint.center)
-            path.bezierCurveTo2(
-              previousPoint.cp2,
-              currentPoint.cp1,
-              currentPoint.center)
-            // ctx.stroke()
-            break
-          case LineType.Bezier2:
-            let cp: P2
-            if (previousPoint.cp2.use) cp = previousPoint.cp2
-            if (currentPoint.cp1.use) cp = currentPoint.cp2
-            // ctx.beginPath()
-            path.lineTo2(previousPoint.center)
-            path.quadraticCurveTo2(cp!, currentPoint.center)
-            // ctx.stroke()
-            break
+
+        //未闭合的情况下，只需绘制一个起点即可
+        if (index === 0 && !close) {
+          path.lineTo2(currentPoint.center)
+        } else {
+          switch (lineType) {
+            case LineType.Line:
+              // ctx.beginPath()
+              path.lineTo2(currentPoint.center)
+              // ctx.stroke()
+              break
+            case LineType.Bezier3:
+              // ctx.beginPath()
+              path.lineTo2(previousPoint.center)
+              path.bezierCurveTo2(
+                previousPoint.cp2,
+                currentPoint.cp1,
+                currentPoint.center)
+              // ctx.stroke()
+              break
+            case LineType.Bezier2:
+              let cp: P2
+              if (previousPoint.cp2.use) cp = previousPoint.cp2
+              if (currentPoint.cp1.use) cp = currentPoint.cp1
+              // ctx.beginPath()
+              path.lineTo2(previousPoint.center)
+              path.quadraticCurveTo2(cp!, currentPoint.center)
+              // ctx.stroke()
+              break
+          }
         }
       })
     })

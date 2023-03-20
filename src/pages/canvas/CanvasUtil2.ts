@@ -44,10 +44,10 @@ export default class CanvasUtil2 {
   handScale: number = defaultConfig.handScale
   handMove: P = defaultConfig.handMove
   //当hover时，只向hover那个图形传递事件。不用递归整个树去判断isIn
-  inShape: any
+  hoverShape: any
   //因为当hover只向hover图形传递事件，所以无法获得父级链，这里用个变量保存起来
   //当hover时，传递这个就可以正确获得父级链
-  inShapeParent: any
+  hoverShapeParent: any
   //选中图形
   selectedShape: any
   //选中图形的父级链，选中新的图形时，需要把老的父级链的isCapture全部设为ture,
@@ -105,25 +105,24 @@ export default class CanvasUtil2 {
     return this.mode === ShapeType.SELECT
   }
 
-  //设置inShape
-  setInShape(target: BaseShape, parent?: BaseShape[]) {
-    if (this.inShapeParent !== parent) {
-      this.inShapeParent = parent
+  setHoverShape(target: BaseShape, parent?: BaseShape[]) {
+    if (this.hoverShapeParent !== parent) {
+      this.hoverShapeParent = parent
     }
-    if (this.inShape !== target) {
-      this.inShape = target
+    if (this.hoverShape !== target) {
+      this.hoverShape = target
     }
   }
 
-  //设置inShape为null
-  setInShapeNull(target: BaseShape) {
-    if (this.inShape === target) {
-      this.inShape = null
+  setHoverShapeIsNull(target: BaseShape) {
+    if (this.hoverShape === target) {
+      this.hoverShape = null
     }
   }
 
   //设置选中的Shape
   setSelectShape(shape: BaseShape, parent?: BaseShape[]) {
+    //如果当前选中的图形不是自己，那么把那个图形设为未选中
     if (this.selectedShape && this.selectedShape !== shape) {
       this.selectedShape.status = ShapeStatus.Normal
     }
@@ -145,22 +144,8 @@ export default class CanvasUtil2 {
   }
 
   render() {
-    EventBus.emit(EventTypes.onDraw)
-    // if (true){
-    if (false) {
-      this.currentMat = new Float32Array([
-        1.25, 0, 0, 0,
-        0, 1.25, 0, 0,
-        0, 0, 1, 0,
-        -96.75, -87, 0, 1,
-      ])
-      this.handScale = this.currentMat[0]
-      this.handMove = {
-        x: this.currentMat[12],
-        y: this.currentMat[13],
-      }
-    }
     // console.log('重绘所有图形')
+    EventBus.emit(EventTypes.onDraw)
     draw.clear({x: 0, y: 0, w: this.canvas.width, h: this.canvas.height}, this.ctx)
     this.ctx.save()
     if (this.currentMat) {
@@ -175,7 +160,6 @@ export default class CanvasUtil2 {
     this.storedTransform = this.ctx.getTransform()
     this.ctx.lineCap = 'round'
     // console.log('this.children,', this.children)
-    //不能用map或者forEach，因为里面await 不生效
     for (let i = 0; i < this.children.length; i++) {
       let shape = this.children[i]
       shape.render(this.ctx)
@@ -230,28 +214,25 @@ export default class CanvasUtil2 {
         this.capture = false
       }
     }
+    if (e.type !== 'mousemove') {
+      console.log('handleEvent', e.type)
+    }
     if (this.mode === ShapeType.EDIT) {
       if (this.editShape) {
         this.editShape.event(event, [])
       }
     } else {
       if (this.isDesignMode()) {
-        //如果有选中的，优先传递。选中组件是脱离父组件裁剪的。所以须单独传递事件
-        if (this.selectedShape?.event(event, this.selectedShapeParent)) {
-          //容器的子组件也会hover被设置为inShape
-          // 2023-3-7,加上!this.editShape是因为这里的两个判断都会通过，导致触发两次dbclick,双面取消掉了编辑模式
-          //TODO 这里的逻辑后面应该还可以优化
-          if (this.inShape && !this.editShape) {
-            this.inShape.event(event, this.inShapeParent)
-          }
+        //有hoverShape就单传，没有遍历所有组件
+        if (this.hoverShape && (this.hoverShape.conf.id !== this.selectedShape?.conf?.id)) {
+          this.hoverShape.event(event, this.hoverShapeParent, false, 'hover')
         } else {
-          //有inShape就单传，没有遍历所有组件
-          if (this.inShape) {
-            this.inShape.event(event, this.inShapeParent)
+          //如果有选中的，优先传递。选中组件是脱离父组件裁剪的。所以须单独传递事件
+          if (this.selectedShape?.event(event, this.selectedShapeParent, false, 'select')) {
           } else {
             for (let i = 0; i < this.children.length; i++) {
               let shape = this.children[i]
-              shape.event(event, [])
+              shape.event(event, [], false, 'for')
               if (event.capture) break
             }
           }
@@ -305,7 +286,7 @@ export default class CanvasUtil2 {
       }
       this.selectedShape = undefined
       this.editShape = undefined
-      this.inShape = undefined
+      this.hoverShape = undefined
     }
     this.render()
   }
@@ -506,7 +487,7 @@ export default class CanvasUtil2 {
     this.handMove = defaultConfig.handMove
     this.currentMat = new Float32Array(defaultConfig.currentMat)
     this.selectedShape = null
-    this.inShape = null
+    this.hoverShape = null
     this.editShape = undefined
     this.children = []
   }

@@ -226,3 +226,9 @@ export enum StrokeAlign {
   INSIDE = 'INSIDE',
   OUTSIDE = 'OUTSIDE',
 }
+
+export enum EditType {
+  line = 'line',
+  point = 'point',
+  centerPoint = 'centerPoint',
+}

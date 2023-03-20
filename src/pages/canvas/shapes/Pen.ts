@@ -79,9 +79,9 @@ export class Pen extends BaseShape {
     let bezierCps = this._config.lineShapes
     bezierCps.map(line => {
       line.map((currentPoint) => {
-        draw.drawRound(ctx, currentPoint.center)
         if (currentPoint.cp1.use) draw.controlPoint(ctx, currentPoint.cp1, currentPoint.center)
         if (currentPoint.cp2.use) draw.controlPoint(ctx, currentPoint.cp2, currentPoint.center)
+        draw.drawRound(ctx, currentPoint.center)
       })
     })
     ctx.restore()
@@ -96,6 +96,7 @@ export class Pen extends BaseShape {
   }
 
   onDbClick(event: BaseEvent2, parents: BaseShape[]): boolean {
+    console.log('pen-onDbClick')
     let cu = CanvasUtil2.getInstance()
     if (this.status === ShapeStatus.Edit) {
       this.status = ShapeStatus.Select
@@ -113,85 +114,17 @@ export class Pen extends BaseShape {
 
   onMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean {
     console.log('pen-onMouseDown')
-    if (this.status === ShapeStatus.Edit) {
-      if (this._editStatus === ShapeEditStatus.Edit) {
-        this.mouseDown = true
-        let lastLine = this._config.lineShapes[this._config.lineShapes.length - 1]
-        if (lastLine) {
-          let {center} = this._config
-          let fixMousePoint = {
-            x: event.point.x - center.x,
-            y: event.point.y - center.y
-          }
-          lastLine.push(helper.getDefaultBezierPoint(fixMousePoint))
-          CanvasUtil2.getInstance().render()
-          return true
-        }
-      }
-    }
     return false
   }
 
   onMouseMove(event: BaseEvent2, parents: BaseShape[]): boolean {
     // console.log('pen-onMouseMove')
-    if (this.status === ShapeStatus.Edit) {
-      if (this._editStatus === ShapeEditStatus.Edit) {
-        let lastLine = this._config.lineShapes[this._config.lineShapes.length - 1]
-        if (lastLine) {
-          let lastPoint = lastLine[lastLine.length - 1]
-          if (lastPoint) {
-            // console.log('pen-onMouseMove', lastPoint.center, event.point)
-            let cu = CanvasUtil2.getInstance()
-            let ctx = cu.ctx
-            if (this.mouseDown) {
-              let center = this._config.center
-              let fixMousePoint = {
-                x: event.point.x - center.x,
-                y: event.point.y - center.y
-              }
-              lastPoint.cp2 = merge(getP2(true), fixMousePoint)
-              let cp1 = helper.horizontalReversePoint(cloneDeep(lastPoint.cp2), lastPoint.center)
-              lastPoint.cp1 = helper.verticalReversePoint(cp1, lastPoint.center)
-              lastPoint.type = BezierPointType.MirrorAngleAndLength
-            } else {
-              let center = this._config.center
-              cu.waitRenderOtherStatusFunc.push(() => {
-                ctx.save()
-                ctx.beginPath()
-                let fixLastPoint = {
-                  x: center.x + lastPoint.center.x,
-                  y: center.y + lastPoint.center.y,
-                }
-                ctx.moveTo2(fixLastPoint)
-                ctx.strokeStyle = defaultConfig.strokeStyle
-                if (lastPoint.cp2.use) {
-                  let fixLastPointCp2 = {
-                    x: center.x + lastPoint.cp2.x,
-                    y: center.y + lastPoint.cp2.y,
-                  }
-                  ctx.quadraticCurveTo2(fixLastPointCp2, event.point)
-                }else {
-                  ctx.lineTo2(event.point)
-                }
-                // ctx.closePath()
-                ctx.stroke()
-                draw.drawRound(ctx, fixLastPoint)
-                ctx.restore()
-              })
-            }
-            cu.render()
-            return true
-          }
-        }
-      }
-    }
     return false
   }
 
   onMouseUp(event: BaseEvent2, parents: BaseShape[]): boolean {
+    console.log('pen-onMouseUp')
     this.mouseDown = false
     return false
   }
-
-
 }

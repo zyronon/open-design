@@ -1,6 +1,6 @@
 import {BaseShape} from "./BaseShape"
 import CanvasUtil2 from "../CanvasUtil2"
-import {BaseEvent2, BezierPointType, getP2, P, ShapeEditStatus, ShapeStatus, ShapeType} from "../utils/type"
+import {BaseEvent2, BezierPointType, getP2, P, P2, ShapeEditStatus, ShapeStatus, ShapeType} from "../utils/type"
 import {BaseConfig, Rect} from "../config/BaseConfig"
 import helper from "../utils/helper"
 import {Colors, defaultConfig} from "../utils/constant"
@@ -156,24 +156,30 @@ export class Pen extends BaseShape {
             } else {
               let center = this._config.center
               cu.waitRenderOtherStatusFunc.push(() => {
+                ctx.save()
+                ctx.beginPath()
                 let fixLastPoint = {
                   x: center.x + lastPoint.center.x,
                   y: center.y + lastPoint.center.y,
                 }
-                ctx.save()
-                // draw.calcPosition(ctx, this.conf)
-                ctx.strokeStyle = defaultConfig.strokeStyle
-                ctx.beginPath()
                 ctx.moveTo2(fixLastPoint)
-                ctx.lineTo2(event.point)
-                ctx.closePath()
+                ctx.strokeStyle = defaultConfig.strokeStyle
+                if (lastPoint.cp2.use) {
+                  let fixLastPointCp2 = {
+                    x: center.x + lastPoint.cp2.x,
+                    y: center.y + lastPoint.cp2.y,
+                  }
+                  ctx.quadraticCurveTo2(fixLastPointCp2, event.point)
+                }else {
+                  ctx.lineTo2(event.point)
+                }
+                // ctx.closePath()
                 ctx.stroke()
                 draw.drawRound(ctx, fixLastPoint)
                 ctx.restore()
               })
             }
             cu.render()
-
             return true
           }
         }

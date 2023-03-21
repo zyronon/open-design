@@ -1,8 +1,14 @@
 import {
   BaseEvent2,
-  BezierPoint, BezierPointType, EditType, getP2, LineType,
+  BezierPoint,
+  BezierPointType,
+  EditModeType,
+  EditType,
+  getP2,
+  LineType,
   MouseOptionType,
-  P, P2,
+  P,
+  P2,
   ShapeEditStatus,
   ShapeProps,
   ShapeStatus,
@@ -13,12 +19,11 @@ import {cloneDeep, merge} from "lodash"
 import {getRotatedPoint} from "../../../utils"
 import {getShapeFromConfig} from "../utils/common"
 import EventBus from "../../../utils/event-bus"
-import {EventMapTypes, getDefaultPoint} from "../../canvas20221111/type"
+import {EventMapTypes} from "../../canvas20221111/type"
 import {BaseConfig, Rect} from "../config/BaseConfig"
 import helper from "../utils/helper"
 import draw from "../utils/draw"
 import {defaultConfig} from "../utils/constant"
-
 
 export abstract class BaseShape {
   hoverType: MouseOptionType = MouseOptionType.None
@@ -151,7 +156,7 @@ export abstract class BaseShape {
    * 4、当前hoverType等于空
    * 再判断是否捕获、是否是设计模式
    * */
-  canNext(cu: CanvasUtil2): boolean {
+  canTransmitChildren(cu: CanvasUtil2): boolean {
     if (this.hoverType !== MouseOptionType.None) return false
     if (this.conf.type === ShapeType.FRAME) {
       if (this.children.length && !this.parent) {
@@ -179,10 +184,7 @@ export abstract class BaseShape {
     if (this.mouseDown || this.enterType !== MouseOptionType.None) return true
     if (this.beforeIsInShape()) return true
 
-    let {
-      realRotation,
-      flipHorizontal, flipVertical, center
-    } = this.conf
+    let {realRotation, flipHorizontal, flipVertical, center} = this.conf
 
     //反转到0度，好判断
     if (realRotation) {
@@ -256,79 +258,6 @@ export abstract class BaseShape {
       document.body.style.cursor = "default"
       this.hoverType = MouseOptionType.None
     }
-
-    if (this.status === ShapeStatus.Edit) {
-      let {center, lineShapes} = this.conf
-      this.hoverPointIndex = -1
-
-      let fixMousePoint = {
-        x: mousePoint.x - center.x,
-        y: mousePoint.y - center.y
-      }
-      //用于判断是否与之前保存的值不同，仅在不同时才重绘
-      let tempHoverLineIndex = -1
-      let tempHoverLineCenterPointIndex = -1
-      //用于跳出外层的for循环。hover到了任一目标上时，就不需要再去判断了
-      let isBreak = false
-      for (let index = 0; index < lineShapes.length; index++) {
-        let lineShape = lineShapes[index]
-        this.editHover.baseIndex = index
-        for (let j = 0; j < lineShape.length; j++) {
-          let currentPoint = lineShape[j]
-          if (helper.isInPoint(fixMousePoint, currentPoint.center, 4)) {
-            document.body.style.cursor = "pointer"
-            this.hoverPointIndex = index
-            this.editHover.type = EditType.point
-            this.editHover.index = j
-            return true
-          }
-          let previousPoint: BezierPoint
-          if (j === 0) {
-            previousPoint = lineShape[lineShape.length - 1]
-          } else {
-            previousPoint = lineShape[j - 1]
-          }
-          let line: any = [previousPoint.center, currentPoint.center]
-          if (helper.isInLine(fixMousePoint, line)) {
-            this.editHover.type = EditType.line
-            document.body.style.cursor = "pointer"
-            tempHoverLineIndex = j
-            this.hoverLineCenterPoint = helper.getCenterPoint(previousPoint.center, currentPoint.center)
-            if (helper.isInPoint(fixMousePoint, this.hoverLineCenterPoint, 4)) {
-              this.editHover.type = EditType.centerPoint
-              console.log('hover在线的中点上')
-              document.body.style.cursor = "pointer"
-              tempHoverLineCenterPointIndex = j
-            }
-            isBreak = true
-            break
-          }
-        }
-        if (isBreak) break
-      }
-
-      //仅hover在线中点上时，才重绘
-      if (this.editHover.type === EditType.centerPoint && this.editHover.index !== tempHoverLineCenterPointIndex) {
-        this.editHover.index = tempHoverLineCenterPointIndex
-        CanvasUtil2.getInstance().render()
-        return true
-      }
-
-      //仅hover在线上时，才重绘
-      if (this.editHover.type === EditType.line && this.editHover.index !== tempHoverLineIndex) {
-        this.editHover.index = tempHoverLineIndex
-        CanvasUtil2.getInstance().render()
-        return true
-      }
-
-      //hover在线上时，消费事件。不然会把cursor = "default"
-      if (tempHoverLineIndex !== -1) {
-        return true
-      }
-
-      document.body.style.cursor = "default"
-    }
-
     return this.isInShape(mousePoint, cu)
   }
 
@@ -398,37 +327,45 @@ export abstract class BaseShape {
    * */
   event(event: BaseEvent2, parents?: BaseShape[], isParentDbClick?: boolean, from?: string): boolean {
     let {e, point, type} = event
-    if (type !== 'mousemove') {
-      // console.log(this.conf.name, event.type, from)
-    }
-    console.log(this.conf.name, event.type, from)
+    // if (type !== 'mousemove') {
+    // if (type === 'dblclick') {
+    //   console.log(this.conf.name, event.type, from)
+    // }
+    // console.log(this.conf.name, event.type, from)
 
     if (this.beforeEvent(event)) return true
 
-    // 如果在操作中，那么就不要再向下传递事件啦，再向下传递事件，会导致子父冲突
-    if (this.enterType !== MouseOptionType.None || this.mouseDown) {
+    // 下面几种特定情况，那么就不要再向下传递事件啦，再向下传递事件，会导致子父冲突
+    if (this.enterType !== MouseOptionType.None || this.mouseDown || this.status === ShapeStatus.Edit) {
       //把事件消费了，不然父级会使用
       event.stopPropagation()
       this.emit(event, parents)
       return true
     }
+
     let cu = CanvasUtil2.getInstance()
+
+    //只有在状态是普通或者hover时，需要判断父级是否裁剪。因为选中和编辑时，所有事件都能直接传递到图形上
+    if (this.status == ShapeStatus.Normal || this.status === ShapeStatus.Hover) {
+      //如果有父级，并且父级还裁剪了，那么先判断是否在父级里面
+      if (!parents?.filter(item => item.conf.clip).every(item => item._isInShape(point, cu))) {
+        if (this.status === ShapeStatus.Hover) this.status = ShapeStatus.Normal
+        if (this.isSelectHover) this.isSelectHover = false
+        cu.setHoverShapeIsNull(this)
+        return false
+      }
+    }
+
     if (this._isInShape(point, cu)) {
       // this.log('in:' + cu.inShape?.conf?.name)
-      if (
-        //如果是容器，并且裁剪了、或者父级不裁剪
-        (this.conf.clip && this.conf.type === ShapeType.FRAME)
-        || !this.parent?.conf.clip
-      ) {
-        cu.setHoverShape(this, parents)
-      }
+      cu.setHoverShape(this, parents)
       if (isParentDbClick) {
         //这需要mousedown把图形选中，和链设置好
         this._mousedown(event, parents)
         //手动重置一个enter，不然会跟手
         this._mouseup(event, parents)
       } else {
-        if (this.canNext(cu)) {
+        if (this.canTransmitChildren(cu)) {
           for (let i = 0; i < this.children.length; i++) {
             this.children[i].event(event, parents?.concat([this]), isParentDbClick, from)
             //如果事件被子组件消费了，就不往下执行了
@@ -446,18 +383,15 @@ export abstract class BaseShape {
       if (this.isSelectHover) this.isSelectHover = false
       cu.setHoverShapeIsNull(this)
       if (this.conf.clip) {
-        //如果自己裁剪，但是hover在子组件上了，并且子组件有一半不在容器内。那么要把子组件状态重置
-        this.children.map(item => {
-          if (item.status === ShapeStatus.Hover) item.status = ShapeStatus.Normal
-        })
-        // //状态等于选中的子组件。还是要向下传递事件，以触发对应4个角的hover
-        // for (let i = 0; i < this.children.length; i++) {
-        //   if (this.children[i].status === ShapeStatus.Select) {
-        //     this.children[i].event(event, parents?.concat([this]))
-        //     if (event.capture) break
-        //   }
-        // }
+        //状态等于选中的子组件。还是要向下传递事件，以触发对应4个角的hover
+        for (let i = 0; i < this.children.length; i++) {
+          if (this.children[i].status === ShapeStatus.Select) {
+            this.children[i].event(event, parents?.concat([this]), isParentDbClick, from)
+            if (event.capture) break
+          }
+        }
       } else {
+        //容器未裁剪，子组件露了一半在外面，这种情况，子组件也需要事件
         for (let i = 0; i < this.children.length; i++) {
           this.children[i].event(event, parents?.concat([this]), isParentDbClick, from)
           if (event.capture) break
@@ -494,7 +428,21 @@ export abstract class BaseShape {
     }
 
     if (this.status === ShapeStatus.Edit) {
-      if (this._editStatus === ShapeEditStatus.Edit) {
+      if (cu.editModeType === EditModeType.Edit) {
+        //没hover时，再新增
+        this.mouseDown = true
+        let lastLine = this.conf.lineShapes[this.conf.lineShapes.length - 1]
+        if (lastLine) {
+          let fixMousePoint = {
+            x: event.point.x - center.x,
+            y: event.point.y - center.y
+          }
+          lastLine.push(helper.getDefaultBezierPoint(fixMousePoint))
+          CanvasUtil2.getInstance().render()
+          return
+        }
+      }
+      if (cu.editModeType === EditModeType.Select) {
         //如果hover在点上，先处理hover
         if (this.editHover.index !== -1) {
           if (this.editHover.type === EditType.centerPoint) {
@@ -519,21 +467,9 @@ export abstract class BaseShape {
             this.conf.isCustom = true
             return
           }
-        } else {
-          //没hover时，再新增
-          this.mouseDown = true
-          let lastLine = this.conf.lineShapes[this.conf.lineShapes.length - 1]
-          if (lastLine) {
-            let fixMousePoint = {
-              x: event.point.x - center.x,
-              y: event.point.y - center.y
-            }
-            lastLine.push(helper.getDefaultBezierPoint(fixMousePoint))
-            CanvasUtil2.getInstance().render()
-            return
-          }
         }
       }
+      return
     }
 
     //上面是编辑的逻辑，编辑只涉及到自己，不涉及子级
@@ -600,8 +536,80 @@ export abstract class BaseShape {
     // console.log('mousemove', this.conf.name, this.enterType, this.hoverType)
     if (this.onMouseMove(event, parents)) return
     if (this.status === ShapeStatus.Edit) {
-      if (this._editStatus === ShapeEditStatus.Edit) {
-        let {center, realRotation} = this.conf
+      if (this.editEnter.index === -1) {
+        let {center, lineShapes} = this.conf
+        this.hoverPointIndex = -1
+        let fixMousePoint = {
+          x: event.point.x - center.x,
+          y: event.point.y - center.y
+        }
+        //用于判断是否与之前保存的值不同，仅在不同时才重绘
+        let tempHoverLineIndex = -1
+        let tempHoverLineCenterPointIndex = -1
+        //用于跳出外层的for循环。hover到了任一目标上时，就不需要再去判断了
+        let isBreak = false
+        for (let index = 0; index < lineShapes.length; index++) {
+          let lineShape = lineShapes[index]
+          this.editHover.baseIndex = index
+          for (let j = 0; j < lineShape.length; j++) {
+            let currentPoint = lineShape[j]
+            if (helper.isInPoint(fixMousePoint, currentPoint.center, 4)) {
+              document.body.style.cursor = "pointer"
+              this.hoverPointIndex = index
+              this.editHover.type = EditType.point
+              this.editHover.index = j
+              return true
+            }
+            let previousPoint: BezierPoint
+            if (j === 0) {
+              previousPoint = lineShape[lineShape.length - 1]
+            } else {
+              previousPoint = lineShape[j - 1]
+            }
+            let line: any = [previousPoint.center, currentPoint.center]
+            if (helper.isInLine(fixMousePoint, line)) {
+              this.editHover.type = EditType.line
+              document.body.style.cursor = "pointer"
+              tempHoverLineIndex = j
+              this.hoverLineCenterPoint = helper.getCenterPoint(previousPoint.center, currentPoint.center)
+              if (helper.isInPoint(fixMousePoint, this.hoverLineCenterPoint, 4)) {
+                this.editHover.type = EditType.centerPoint
+                console.log('hover在线的中点上')
+                document.body.style.cursor = "pointer"
+                tempHoverLineCenterPointIndex = j
+              }
+              isBreak = true
+              break
+            }
+          }
+          if (isBreak) break
+        }
+
+        //仅hover在线中点上时，才重绘
+        if (this.editHover.type === EditType.centerPoint && this.editHover.index !== tempHoverLineCenterPointIndex) {
+          this.editHover.index = tempHoverLineCenterPointIndex
+          CanvasUtil2.getInstance().render()
+          return true
+        }
+
+        //仅hover在线上时，才重绘
+        if (this.editHover.type === EditType.line && this.editHover.index !== tempHoverLineIndex) {
+          this.editHover.index = tempHoverLineIndex
+          CanvasUtil2.getInstance().render()
+          return true
+        }
+
+        //hover在线上时，消费事件。不然会把cursor = "default"
+        if (tempHoverLineIndex !== -1) {
+          return true
+        }
+
+        document.body.style.cursor = "default"
+      }
+
+      let cu = CanvasUtil2.getInstance()
+      let {center, realRotation} = this.conf
+      if (cu.editModeType === EditModeType.Select) {
         if (this.editEnter.index !== -1) {
           //TODO 是否可以统一反转？
           //反转到0度，好判断
@@ -643,59 +651,55 @@ export abstract class BaseShape {
             cu.render()
             return
           }
-        } else {
-          let lastLine = this.conf.lineShapes[this.conf.lineShapes.length - 1]
-          if (lastLine) {
-            let lastPoint = lastLine[lastLine.length - 1]
-            if (lastPoint) {
-              // console.log('pen-onMouseMove', lastPoint.center, event.point)
-              let cu = CanvasUtil2.getInstance()
-              let ctx = cu.ctx
-              if (this.mouseDown) {
-                let fixMousePoint = {
-                  x: event.point.x - center.x,
-                  y: event.point.y - center.y
-                }
-                lastPoint.cp2 = merge(getP2(true), fixMousePoint)
-                let cp1 = helper.horizontalReversePoint(cloneDeep(lastPoint.cp2), lastPoint.center)
-                lastPoint.cp1 = helper.verticalReversePoint(cp1, lastPoint.center)
-                lastPoint.type = BezierPointType.MirrorAngleAndLength
-              } else {
-                cu.waitRenderOtherStatusFunc.push(() => {
-                  ctx.save()
-                  ctx.beginPath()
-                  let fixLastPoint = {
-                    x: center.x + lastPoint.center.x,
-                    y: center.y + lastPoint.center.y,
-                  }
-                  ctx.moveTo2(fixLastPoint)
-                  ctx.strokeStyle = defaultConfig.strokeStyle
-                  if (lastPoint.cp2.use) {
-                    let fixLastPointCp2 = {
-                      x: center.x + lastPoint.cp2.x,
-                      y: center.y + lastPoint.cp2.y,
-                    }
-                    ctx.quadraticCurveTo2(fixLastPointCp2, event.point)
-                  } else {
-                    ctx.lineTo2(event.point)
-                  }
-                  // ctx.closePath()
-                  ctx.stroke()
-                  draw.drawRound(ctx, fixLastPoint)
-                  ctx.restore()
-                })
+        }
+      } else if (cu.editModeType === EditModeType.Edit) {
+        let lastLine = this.conf.lineShapes[this.conf.lineShapes.length - 1]
+        if (lastLine) {
+          let lastPoint = lastLine[lastLine.length - 1]
+          if (lastPoint) {
+            // console.log('pen-onMouseMove', lastPoint.center, event.point)
+            let cu = CanvasUtil2.getInstance()
+            let ctx = cu.ctx
+            if (this.mouseDown) {
+              let fixMousePoint = {
+                x: event.point.x - center.x,
+                y: event.point.y - center.y
               }
-              cu.render()
-              return
+              lastPoint.cp2 = merge(getP2(true), fixMousePoint)
+              let cp1 = helper.horizontalReversePoint(cloneDeep(lastPoint.cp2), lastPoint.center)
+              lastPoint.cp1 = helper.verticalReversePoint(cp1, lastPoint.center)
+              lastPoint.type = BezierPointType.MirrorAngleAndLength
+            } else {
+              cu.waitRenderOtherStatusFunc.push(() => {
+                ctx.save()
+                ctx.beginPath()
+                let fixLastPoint = {
+                  x: center.x + lastPoint.center.x,
+                  y: center.y + lastPoint.center.y,
+                }
+                ctx.moveTo2(fixLastPoint)
+                ctx.strokeStyle = defaultConfig.strokeStyle
+                if (lastPoint.cp2.use) {
+                  let fixLastPointCp2 = {
+                    x: center.x + lastPoint.cp2.x,
+                    y: center.y + lastPoint.cp2.y,
+                  }
+                  ctx.quadraticCurveTo2(fixLastPointCp2, event.point)
+                } else {
+                  ctx.lineTo2(event.point)
+                }
+                // ctx.closePath()
+                ctx.stroke()
+                draw.drawRound(ctx, fixLastPoint)
+                ctx.restore()
+              })
             }
+            cu.render()
+            return
           }
         }
       }
-    }
-    let {e, point, type} = event
-
-    //编辑模式下，不用添加hover样式
-    if (this.status !== ShapeStatus.Edit) {
+    } else {
       if (this.status === ShapeStatus.Normal) {
         this.status = ShapeStatus.Hover
         if (this.parent) {
@@ -708,6 +712,8 @@ export abstract class BaseShape {
         this.isSelectHover = true
       }
     }
+    let {e, point, type} = event
+
 
     switch (this.enterType) {
       case MouseOptionType.Left:

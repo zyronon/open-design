@@ -1,6 +1,16 @@
 import {BaseShape} from "./shapes/BaseShape"
 import EventBus from "../../utils/event-bus"
-import {BaseEvent2, BezierPointType, EventTypes, getP2, P, ShapeEditStatus, ShapeStatus, ShapeType} from "./utils/type"
+import {
+  BaseEvent2,
+  BezierPointType,
+  EditModeType,
+  EventTypes,
+  getP2,
+  P,
+  ShapeEditStatus,
+  ShapeStatus,
+  ShapeType
+} from "./utils/type"
 import {cloneDeep} from "lodash"
 import {defaultConfig} from "./utils/constant"
 import {mat4} from "gl-matrix"
@@ -58,7 +68,8 @@ export default class CanvasUtil2 {
   //用于标记子组件是否选中
   childIsIn: boolean = false
   // mode: ShapeType = ShapeType.PEN
-  mode: ShapeType = ShapeType.SELECT
+  _mode: ShapeType = ShapeType.SELECT
+  editModeType: EditModeType = EditModeType.Select
   mouseStart: P = {x: 0, y: 0} //鼠标起点
   fixMouseStart: P = {x: 0, y: 0} //修正后的鼠标起点（修正为0度）
   isMouseDown: boolean = false
@@ -71,6 +82,21 @@ export default class CanvasUtil2 {
 
   constructor(canvas: HTMLCanvasElement) {
     this.init(canvas)
+  }
+
+
+  get mode() {
+    return this._mode
+  }
+
+  set mode(val) {
+    if (val !== this._mode) {
+      if (val === ShapeType.EDIT) {
+        this.editModeType = EditModeType.Select
+      }
+      this._mode = val
+      EventBus.emit(EventTypes.onModeChange, val)
+    }
   }
 
   init(canvas: HTMLCanvasElement) {
@@ -214,27 +240,24 @@ export default class CanvasUtil2 {
         this.capture = false
       }
     }
-    if (e.type !== 'mousemove') {
+    // if (e.type !== 'mousemove') {
+    if (e.type === 'dblclick') {
       console.log('handleEvent', e.type)
     }
     if (this.mode === ShapeType.EDIT) {
       if (this.editShape) {
-        this.editShape.event(event, [])
+        this.editShape.event(event, [], false, 'edit')
       }
     } else {
       if (this.isDesignMode()) {
         //有hoverShape就单传，没有遍历所有组件
-        if (this.hoverShape && (this.hoverShape.conf.id !== this.selectedShape?.conf?.id)) {
+        if (this.hoverShape) {
           this.hoverShape.event(event, this.hoverShapeParent, false, 'hover')
         } else {
-          //如果有选中的，优先传递。选中组件是脱离父组件裁剪的。所以须单独传递事件
-          if (this.selectedShape?.event(event, this.selectedShapeParent, false, 'select')) {
-          } else {
-            for (let i = 0; i < this.children.length; i++) {
-              let shape = this.children[i]
-              shape.event(event, [], false, 'for')
-              if (event.capture) break
-            }
+          for (let i = 0; i < this.children.length; i++) {
+            let shape = this.children[i]
+            shape.event(event, [], false, 'for')
+            if (event.capture) break
           }
         }
       }
@@ -268,6 +291,7 @@ export default class CanvasUtil2 {
             this.editShape.status = ShapeStatus.Select
             this.selectedShape = this.editShape
             this.editShape = undefined
+            this.mode = ShapeType.SELECT
           }
           return this.render()
         }
@@ -310,6 +334,7 @@ export default class CanvasUtil2 {
     if (this.editShape) {
       this.editShape.status = ShapeStatus.Select
       this.editShape = undefined
+      this.mode = ShapeType.SELECT
       this.render()
     }
   }

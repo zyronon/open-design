@@ -8,7 +8,7 @@ import {
   LineType,
   MouseOptionType,
   P,
-  P2,
+  P2, ShapeEditStatus,
   ShapeStatus,
   ShapeType,
   StrokeAlign
@@ -255,6 +255,7 @@ export class Rectangle extends BaseShape {
     if (this.status === ShapeStatus.Edit) {
       this.status = ShapeStatus.Select
       cu.editShape = undefined
+      cu.selectedShape = this
       cu.mode = ShapeType.SELECT
     } else {
       if (!this._config.isCustom) {

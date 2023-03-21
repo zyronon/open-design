@@ -105,7 +105,6 @@ export class Pen extends BaseShape {
       cu.mode = ShapeType.SELECT
     } else {
       this.status = ShapeStatus.Edit
-      this._editStatus = ShapeEditStatus.Select
       cu.editShape = this
       cu.mode = ShapeType.EDIT
     }

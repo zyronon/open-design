@@ -46,6 +46,8 @@ export type IState = {
   enterPen: boolean,
   isEdit: boolean,
   cu: CanvasUtil2,
+  mode: ShapeType,
+  editModeType: EditModeType,
   drawCount: number
 
   selectDrawType: string,
@@ -121,6 +123,7 @@ export const EventTypes = {
   onDraw: 'draw',
   onKeyPress: 'keypress',
   onKeyDown: 'keydown',
+  onModeChange: 'onModeChange',
 }
 
 
@@ -214,6 +217,14 @@ export enum ShapeStatus {
 }
 
 export enum ShapeEditStatus {
+  Select = 'Select',
+  Wait = 'Wait',
+  Edit = 'Edit',
+  Curve = 'Curve',
+  Cut = 'Cut',
+}
+
+export enum EditModeType {
   Select = 'Select',
   Wait = 'Wait',
   Edit = 'Edit',

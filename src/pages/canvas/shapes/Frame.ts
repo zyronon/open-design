@@ -71,11 +71,11 @@ export class Frame extends BaseShape {
 
   onDbClick(event: BaseEvent2, parents: BaseShape[]): boolean {
     // console.log('childDbClick')
-    for (let i = 0; i < this.children.length; i++) {
-      this.children[i].event(event, parents?.concat([this]), true)
-      if (event.capture) break
-    }
-    return true
+    // for (let i = 0; i < this.children.length; i++) {
+    //   this.children[i].event(event, parents?.concat([this]), true)
+    //   if (event.capture) break
+    // }
+    return false
   }
 
   onMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean {

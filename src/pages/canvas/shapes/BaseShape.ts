@@ -422,6 +422,7 @@ export abstract class BaseShape {
     let cu = CanvasUtil2.getInstance()
     this.original = cloneDeep(this.conf)
     cu.mouseStart = {x, y}
+    cu.fixMouseStart = {x, y}
     let {center, realRotation,} = this.conf
     if (realRotation) {
       cu.fixMouseStart = getRotatedPoint(event.point, center, -realRotation)
@@ -652,7 +653,8 @@ export abstract class BaseShape {
             return
           }
         }
-      } else if (cu.editModeType === EditModeType.Edit) {
+      }
+      if (cu.editModeType === EditModeType.Edit) {
         let lastLine = this.conf.lineShapes[this.conf.lineShapes.length - 1]
         if (lastLine) {
           let lastPoint = lastLine[lastLine.length - 1]

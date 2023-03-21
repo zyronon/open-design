@@ -322,8 +322,8 @@ export default class CanvasUtil2 {
         list.splice(i, 1)
         break
       }
-      if (item.conf.children.length) {
-        this.delChild(item.conf.children, targetId)
+      if (item.children.length) {
+        this.delChild(item.children, targetId)
       }
     }
   }
@@ -515,6 +515,7 @@ export default class CanvasUtil2 {
     this.hoverShape = null
     this.editShape = undefined
     this.children = []
+    this.mode = ShapeType.SELECT
   }
 
   printO(list: any, needId = false) {

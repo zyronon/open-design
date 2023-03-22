@@ -240,7 +240,7 @@ export enum StrokeAlign {
 }
 
 export enum EditType {
-  line = 'line',
-  point = 'point',
-  centerPoint = 'centerPoint',
+  Line = 'Line',
+  Point = 'Point',
+  CenterPoint = 'CenterPoint',
 }

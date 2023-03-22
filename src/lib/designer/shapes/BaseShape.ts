@@ -176,12 +176,12 @@ export abstract class BaseShape {
     index: -1,
   }
   editHover = {
-    type: EditType.line,
+    type: EditType.Line,
     baseIndex: -1,
     index: -1,
   }
   editEnter = {
-    type: EditType.line,
+    type: EditType.Line,
     baseIndex: -1,
     index: -1,
   }
@@ -420,10 +420,15 @@ export abstract class BaseShape {
 
     let cu = CanvasUtil2.getInstance()
     if (this.status === ShapeStatus.Edit) {
-      this.status = ShapeStatus.Select
-      cu.editShape = undefined
-      cu.selectedShape = this
-      cu.mode = ShapeType.SELECT
+      const {baseIndex, index, type} = this.editHover
+      if (index !== -1 && type === EditType.Point) {
+
+      } else {
+        this.status = ShapeStatus.Select
+        cu.editShape = undefined
+        cu.selectedShape = this
+        cu.mode = ShapeType.SELECT
+      }
     } else {
       if (!this.conf.isCustom) {
         this.conf.lineShapes = this.getCustomPoint()
@@ -514,7 +519,7 @@ export abstract class BaseShape {
       if (cu.editModeType === EditModeType.Select) {
         //如果hover在点上，先处理hover
         if (this.editHover.index !== -1) {
-          if (this.editHover.type === EditType.centerPoint) {
+          if (this.editHover.type === EditType.CenterPoint) {
             console.log('_mousedown-hoverLineCenterPointIndex')
             this.editEnter = cloneDeep(this.editHover)
             this.conf.lineShapes[this.editEnter.baseIndex].splice(this.editEnter.index, 0, {
@@ -531,14 +536,14 @@ export abstract class BaseShape {
             return
           }
 
-          if (this.editHover.type === EditType.point) {
+          if (this.editHover.type === EditType.Point) {
             this.editStartPointInfo = {
               baseIndex: this.editHover.baseIndex,
               index: this.editHover.index
             }
           }
 
-          if (this.editHover.type === EditType.line || this.editHover.type === EditType.point) {
+          if (this.editHover.type === EditType.Line || this.editHover.type === EditType.Point) {
             console.log('_mousedown-line or point')
             this.editEnter = cloneDeep(this.editHover)
             this.editHover.index = -1
@@ -650,7 +655,7 @@ export abstract class BaseShape {
               let currentPoint = lineShape[j]
               if (helper.isInPoint(fixMousePoint, currentPoint.center, 4)) {
                 document.body.style.cursor = "pointer"
-                this.editHover.type = EditType.point
+                this.editHover.type = EditType.Point
                 this.editHover.index = j
                 return true
               }
@@ -662,12 +667,12 @@ export abstract class BaseShape {
               }
               let line: any = [previousPoint.center, currentPoint.center]
               if (helper.isInLine(fixMousePoint, line)) {
-                this.editHover.type = EditType.line
+                this.editHover.type = EditType.Line
                 document.body.style.cursor = "pointer"
                 tempHoverLineIndex = j
                 this.hoverLineCenterPoint = helper.getCenterPoint(previousPoint.center, currentPoint.center)
                 if (helper.isInPoint(fixMousePoint, this.hoverLineCenterPoint, 4)) {
-                  this.editHover.type = EditType.centerPoint
+                  this.editHover.type = EditType.CenterPoint
                   console.log('hover在线的中点上')
                   document.body.style.cursor = "pointer"
                   tempHoverLineCenterPointIndex = j
@@ -680,14 +685,14 @@ export abstract class BaseShape {
           }
 
           //仅hover在线中点上时，才重绘
-          if (this.editHover.type === EditType.centerPoint && this.editHover.index !== tempHoverLineCenterPointIndex) {
+          if (this.editHover.type === EditType.CenterPoint && this.editHover.index !== tempHoverLineCenterPointIndex) {
             this.editHover.index = tempHoverLineCenterPointIndex
             CanvasUtil2.getInstance().render()
             return true
           }
 
           //仅hover在线上时，才重绘
-          if (this.editHover.type === EditType.line && this.editHover.index !== tempHoverLineIndex) {
+          if (this.editHover.type === EditType.Line && this.editHover.index !== tempHoverLineIndex) {
             this.editHover.index = tempHoverLineIndex
             CanvasUtil2.getInstance().render()
             return true
@@ -707,7 +712,7 @@ export abstract class BaseShape {
           if (realRotation) {
             event.point = getRotatedPoint(event.point, center, -realRotation)
           }
-          if (this.editEnter.type === EditType.point || this.editEnter.type === EditType.centerPoint) {
+          if (this.editEnter.type === EditType.Point || this.editEnter.type === EditType.CenterPoint) {
             this.conf.lineShapes[this.editEnter.baseIndex][this.editEnter.index].center = {
               ...getP2(true), ...{
                 x: event.point.x - center.x,
@@ -717,7 +722,7 @@ export abstract class BaseShape {
             CanvasUtil2.getInstance().render()
             return
           }
-          if (this.editHover.type === EditType.line) {
+          if (this.editHover.type === EditType.Line) {
             console.log('onMouseMove-enterLineIndex')
             let cu = CanvasUtil2.getInstance()
             let {x, y} = event.point
@@ -799,7 +804,7 @@ export abstract class BaseShape {
     if (this.onMouseUp(event, parents)) return
     this.enterType = MouseOptionType.None
     this.editHover = {
-      type: EditType.line,
+      type: EditType.Line,
       baseIndex: -1,
       index: -1,
     }

@@ -4,12 +4,11 @@ import {
   BaseEvent2,
   BezierPoint,
   BezierPointType,
+  EditType,
   getP2,
   MouseOptionType,
   P,
-  P2,
   ShapeStatus,
-  ShapeType,
   StrokeAlign
 } from "../utils/type"
 import {Colors, defaultConfig} from "../utils/constant"
@@ -18,28 +17,11 @@ import draw from "../utils/draw"
 import helper from "../utils/helper"
 import {v4 as uuid} from 'uuid'
 
-enum EditType {
-  line = 'line',
-  point = 'point',
-  centerPoint = 'centerPoint',
-}
-
 export class Rectangle extends BaseShape {
   //最小拖动圆角。真实圆角可能为0，导致渲染的控制点和角重合，所以设置一个最小圆角
   minDragRadius = 15
   rectHoverType: MouseOptionType = MouseOptionType.None
   rectEnterType: MouseOptionType = MouseOptionType.None
-  hoverLineCenterPoint: P = {x: 0, y: 0}
-  editHover = {
-    type: EditType.line,
-    baseIndex: -1,
-    index: -1,
-  }
-  editEnter = {
-    type: EditType.line,
-    baseIndex: -1,
-    index: -1,
-  }
 
   constructor(props: any) {
     super(props)
@@ -118,8 +100,10 @@ export class Rectangle extends BaseShape {
 
     //填充图形
     ctx.fillStyle = fillColor
-    let path = this.getShapePath(layout, this.conf.radius)
-    ctx.fill(path)
+    let pathList = this.getShapePath(layout, this.conf.radius)
+    pathList.map(path => {
+      ctx.fill(path)
+    })
 
     //描边
     let lw2 = ctx.lineWidth / 2
@@ -129,16 +113,19 @@ export class Rectangle extends BaseShape {
       x -= lw2, y -= lw2, w += lw2 * 2, h += lw2 * 2, radius += lw2
     }
     ctx.strokeStyle = borderColor
-    let path2 = this.getShapePath({x, y, w, h}, radius)
-    ctx.stroke(path2)
+    pathList = this.getShapePath({x, y, w, h}, radius)
+    pathList.map(path => {
+      ctx.stroke(path)
+    })
   }
 
   drawHover(ctx: CanvasRenderingContext2D, layout: Rect): void {
     ctx.strokeStyle = defaultConfig.strokeStyle
     //容器hover时只需要描边矩形就行了
-    let path = this.getShapePath(layout, 0)
-    // let path = this.getShapePath(ctx, newLayout, this.conf.radius)
-    ctx.stroke(path)
+    let pathList = this.getShapePath(layout, 0)
+    pathList.map(path => {
+      ctx.stroke(path)
+    })
   }
 
   drawSelected(ctx: CanvasRenderingContext2D, layout: Rect): void {
@@ -194,27 +181,32 @@ export class Rectangle extends BaseShape {
     ctx.strokeStyle = Colors.Line2
     ctx.fillStyle = fillColor
 
-    let path = super.getCustomShapePath()
-    ctx.fill(path)
-    ctx.stroke(path)
+    let pathList = super.getCustomShapePath()
+    pathList.map(path => {
+      ctx.fill(path)
+      ctx.stroke(path)
+    })
 
     let bezierCps = this._config.lineShapes
     bezierCps.map(line => {
-      line.map((currentPoint) => {
+      line.points.map((currentPoint) => {
         draw.drawRound(ctx, currentPoint.center)
         if (currentPoint.cp1.use) draw.controlPoint(ctx, currentPoint.cp1, currentPoint.center)
         if (currentPoint.cp2.use) draw.controlPoint(ctx, currentPoint.cp2, currentPoint.center)
       })
     })
-    if ((this.editHover.type === EditType.line
-        || this.editHover.type === EditType.centerPoint)
+    if ((this.editHover.type === EditType.Line
+        || this.editHover.type === EditType.CenterPoint)
       && this.editHover.index !== -1
     ) {
       draw.drawRound(ctx, this.hoverLineCenterPoint)
     }
     let {baseIndex, index} = this.editStartPointInfo
     if (index !== -1) {
-      draw.drawRound(ctx, bezierCps[baseIndex][index].center)
+      let currentPoint = bezierCps[baseIndex].points[index]
+      draw.currentPoint(ctx, currentPoint.center)
+      if (currentPoint.cp1.use) draw.controlPoint(ctx, currentPoint.cp1, currentPoint.center)
+      if (currentPoint.cp2.use) draw.controlPoint(ctx, currentPoint.cp2, currentPoint.center)
     }
     ctx.restore()
   }
@@ -279,7 +271,7 @@ export class Rectangle extends BaseShape {
       cp2: getP2(),
       type: BezierPointType.RightAngle
     })
-    return [bezierCps]
+    return [{close: true, points: bezierCps}]
   }
 
   onMouseDown(event: BaseEvent2, parents: BaseShape[]) {
@@ -304,12 +296,12 @@ export class Rectangle extends BaseShape {
     return false
   }
 
-  getShapePath(layout: Rect, r: number): Path2D {
-    let {x, y, w, h} = layout
-    let path = new Path2D()
+  getShapePath(layout: Rect, r: number): Path2D[] {
     if (this._config.isCustom) {
       return super.getCustomShapePath()
     }
+    let {x, y, w, h} = layout
+    let path = new Path2D()
     if (r > 0) {
       let w2 = w / 2, h2 = h / 2
       path.moveTo(x + w2, y)
@@ -321,7 +313,7 @@ export class Rectangle extends BaseShape {
       path.rect(x, y, w, h)
     }
     path.closePath()
-    return path
+    return [path]
   }
 
 }

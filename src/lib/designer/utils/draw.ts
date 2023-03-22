@@ -283,6 +283,20 @@ export default {
     ctx.closePath()
     ctx.restore()
   },
+  currentPoint(ctx: any, rect: any, r: number = 6) {
+    let cu = CanvasUtil2.getInstance()
+    let {x, y} = rect
+    ctx.save()
+    ctx.lineWidth = defaultConfig.lineWidth / cu.handScale
+    ctx.fillStyle = Colors.Primary
+    ctx.strokeStyle = Colors.White
+    ctx.beginPath()
+    ctx.arc(x, y, r / cu.handScale, 0, 2 * Math.PI)
+    ctx.fill()
+    ctx.stroke()
+    ctx.closePath()
+    ctx.restore()
+  },
   round(ctx: any, rect: any, r: number,) {
     let {x, y} = rect
     ctx.beginPath()

@@ -1012,7 +1012,7 @@ export const rects = [
     "fillColor": "rgb(241,238,238)",
     flipHorizontal: false,
     flipVertical: false,
-    clip: true
+    clip: false
   }
 ]
 

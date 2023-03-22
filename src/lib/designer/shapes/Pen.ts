@@ -1,15 +1,13 @@
 import {BaseShape} from "./BaseShape"
 import CanvasUtil2 from "../engine/CanvasUtil2"
-import {BaseEvent2, BezierPointType, getP2, P, P2, ShapeEditStatus, ShapeStatus, ShapeType} from "../utils/type"
-import {BaseConfig, Rect} from "../config/BaseConfig"
+import {BaseEvent2, P, ShapeStatus, ShapeType} from "../utils/type"
+import {BaseConfig, LineShape, Rect} from "../config/BaseConfig"
 import helper from "../utils/helper"
 import {Colors, defaultConfig} from "../utils/constant"
 import draw from "../utils/draw"
-import {cloneDeep, merge} from "lodash"
 
 export class Pen extends BaseShape {
   mouseDown: boolean = false
-
 
   get _config(): BaseConfig {
     return this.conf
@@ -35,22 +33,24 @@ export class Pen extends BaseShape {
   drawShape(ctx: CanvasRenderingContext2D, newLayout: Rect, parent?: BaseConfig): any {
     if (this.status === ShapeStatus.Edit) return
     let {
-      radius,
-      fillColor, borderColor, lineWidth, strokeAlign
+      fillColor, lineWidth,
     } = this.conf
-    let {x, y, w, h} = newLayout
 
     ctx.lineWidth = lineWidth ?? defaultConfig.lineWidth
     ctx.lineCap = "round"
     ctx.fillStyle = fillColor
-    let path = super.getCustomShapePath(false)
-    ctx.stroke(path)
+    let pathList = super.getCustomShapePath()
+    pathList.map(path => {
+      ctx.stroke(path)
+    })
   }
 
   drawHover(ctx: CanvasRenderingContext2D, newLayout: Rect): any {
     ctx.strokeStyle = defaultConfig.strokeStyle
-    let path = super.getCustomShapePath(false)
-    ctx.stroke(path)
+    let pathList = super.getCustomShapePath()
+    pathList.map(path => {
+      ctx.stroke(path)
+    })
   }
 
   drawSelected(ctx: CanvasRenderingContext2D, newLayout: Rect): any {
@@ -72,13 +72,14 @@ export class Pen extends BaseShape {
     ctx.strokeStyle = Colors.Line2
     ctx.fillStyle = fillColor
 
-    let path = super.getCustomShapePath(false)
-    // ctx.fill(path)
-    ctx.stroke(path)
+    let pathList = super.getCustomShapePath()
+    pathList.map(path => {
+      ctx.stroke(path)
+    })
 
     let bezierCps = this._config.lineShapes
     bezierCps.map(line => {
-      line.map((currentPoint) => {
+      line.points.map((currentPoint) => {
         if (currentPoint.cp1.use) draw.controlPoint(ctx, currentPoint.cp1, currentPoint.center)
         if (currentPoint.cp2.use) draw.controlPoint(ctx, currentPoint.cp2, currentPoint.center)
         draw.drawRound(ctx, currentPoint.center)
@@ -125,5 +126,9 @@ export class Pen extends BaseShape {
     console.log('pen-onMouseUp')
     this.mouseDown = false
     return false
+  }
+
+  getCustomPoint(): LineShape[] {
+    return []
   }
 }

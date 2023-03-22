@@ -1,7 +1,7 @@
 import {BaseShape} from "./BaseShape"
 import CanvasUtil2 from "../engine/CanvasUtil2"
 import {BaseEvent2, P, ShapeProps, ShapeStatus, ShapeType, StrokeAlign} from "../utils/type"
-import {BaseConfig, Rect} from "../config/BaseConfig"
+import {BaseConfig, LineShape, Rect} from "../config/BaseConfig"
 import draw from "../utils/draw"
 import {getRotatedPoint, jiaodu2hudu} from "../../../utils"
 import {Colors, defaultConfig} from "../utils/constant"
@@ -193,5 +193,9 @@ export class Frame extends BaseShape {
   }
 
   drawEdit(ctx: CanvasRenderingContext2D, conf: BaseConfig): void {
+  }
+
+  getCustomPoint(): LineShape[] {
+    return []
   }
 }

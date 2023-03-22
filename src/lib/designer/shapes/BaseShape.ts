@@ -9,7 +9,6 @@ import {
   MouseOptionType,
   P,
   P2,
-  ShapeEditStatus,
   ShapeProps,
   ShapeStatus,
   ShapeType
@@ -32,7 +31,6 @@ export abstract class BaseShape {
   conf: BaseConfig
   children: BaseShape[] = []
   _status: ShapeStatus = ShapeStatus.Normal
-  _editStatus: ShapeEditStatus = ShapeEditStatus.Select
   _isSelectHover: boolean = false
   isCapture: boolean = true//是否捕获事件，为true不会再往下传递事件
   mouseDown: boolean = false
@@ -57,9 +55,26 @@ export abstract class BaseShape {
   }
 
   set status(val) {
+    let cu = CanvasUtil2.getInstance()
     if (val !== this._status) {
       if (this._status === ShapeStatus.Edit) {
         this.calcNewCenterAndWidthAndHeight()
+        this.editStartPointInfo = {
+          baseIndex: -1,
+          index: -1,
+        }
+      }
+      if (val === ShapeStatus.Select){
+        cu.selectedShape = this
+        cu.mode = ShapeType.SELECT
+        cu.editShape = undefined
+      }
+      if (val === ShapeStatus.Edit){
+        if (!this.conf.isCustom) {
+          this.conf.lineShapes = this.getCustomPoint()
+        }
+        cu.editShape = this
+        cu.mode = ShapeType.EDIT
       }
       this._status = val
       CanvasUtil2.getInstance().render()
@@ -417,25 +432,15 @@ export abstract class BaseShape {
     // console.log('on-dblclick',)
     // this.log('base-dblclick')
     if (this.onDbClick(event, parents)) return
-
-    let cu = CanvasUtil2.getInstance()
     if (this.status === ShapeStatus.Edit) {
       const {baseIndex, index, type} = this.editHover
       if (index !== -1 && type === EditType.Point) {
 
       } else {
         this.status = ShapeStatus.Select
-        cu.editShape = undefined
-        cu.selectedShape = this
-        cu.mode = ShapeType.SELECT
       }
     } else {
-      if (!this.conf.isCustom) {
-        this.conf.lineShapes = this.getCustomPoint()
-      }
       this.status = ShapeStatus.Edit
-      cu.editShape = this
-      cu.mode = ShapeType.EDIT
     }
   }
 
@@ -519,10 +524,18 @@ export abstract class BaseShape {
       if (cu.editModeType === EditModeType.Select) {
         //如果hover在点上，先处理hover
         if (this.editHover.index !== -1) {
+          if (this.editHover.type === EditType.Point || this.editHover.type === EditType.CenterPoint) {
+            this.editStartPointInfo = {
+              baseIndex: this.editHover.baseIndex,
+              index: this.editHover.index
+            }
+            cu.render()
+          }
+
           if (this.editHover.type === EditType.CenterPoint) {
             console.log('_mousedown-hoverLineCenterPointIndex')
             this.editEnter = cloneDeep(this.editHover)
-            this.conf.lineShapes[this.editEnter.baseIndex].splice(this.editEnter.index, 0, {
+            this.conf.lineShapes[this.editEnter.baseIndex].points.splice(this.editEnter.index, 0, {
               id: uuid(),
               cp1: getP2(),
               center: {...getP2(true), ...this.hoverLineCenterPoint},
@@ -536,13 +549,6 @@ export abstract class BaseShape {
             return
           }
 
-          if (this.editHover.type === EditType.Point) {
-            this.editStartPointInfo = {
-              baseIndex: this.editHover.baseIndex,
-              index: this.editHover.index
-            }
-          }
-
           if (this.editHover.type === EditType.Line || this.editHover.type === EditType.Point) {
             console.log('_mousedown-line or point')
             this.editEnter = cloneDeep(this.editHover)
@@ -551,38 +557,54 @@ export abstract class BaseShape {
             return
           }
         }
-        this.editStartPointInfo = {
-          baseIndex: -1,
-          index: -1,
+
+        if (this.editStartPointInfo.index !== -1) {
+          this.editStartPointInfo = {
+            baseIndex: -1,
+            index: -1,
+          }
+          cu.render()
         }
       }
 
       if (cu.editModeType === EditModeType.Edit) {
-        //没hover时，再新增
         this.mouseDown = true
-        let {baseIndex, index} = this.editStartPointInfo
-        let lastLine = this.conf.lineShapes[baseIndex]
-        if (lastLine) {
-          let fixMousePoint = {
-            x: event.point.x - center.x,
-            y: event.point.y - center.y
-          }
-          let endPoint = helper.getDefaultBezierPoint(fixMousePoint)
-          if (lastLine.length - 1 === index) {
-            lastLine.push(endPoint)
-            this.editStartPointInfo.index += 1
-          } else {
-            let lastPoint = lastLine[index]
-            this.conf.lineShapes.push([
-              lastPoint,
-              endPoint
-            ])
-            this.editStartPointInfo.baseIndex += 1
-            this.editStartPointInfo.index = 1
-          }
-          CanvasUtil2.getInstance().render()
-          return
+
+        let fixMousePoint = {
+          x: event.point.x - center.x,
+          y: event.point.y - center.y
         }
+        let endPoint = helper.getDefaultBezierPoint(fixMousePoint)
+
+        let {baseIndex, index} = this.editStartPointInfo
+        if (index === -1) {
+          this.conf.lineShapes.push({
+            close: false,
+            points: [endPoint]
+          })
+          this.editStartPointInfo.baseIndex = this.conf.lineShapes.length - 1
+          this.editStartPointInfo.index = 0
+        } else {
+          let lastLine = this.conf.lineShapes[baseIndex]
+          if (lastLine) {
+            if (lastLine.points.length - 1 === index) {
+              lastLine.points.push(endPoint)
+              this.editStartPointInfo.index += 1
+            } else {
+              let lastPoint = lastLine.points[index]
+              this.conf.lineShapes.push({
+                close: false,
+                points: [
+                  lastPoint,
+                  endPoint
+                ]
+              })
+              this.editStartPointInfo.baseIndex += 1
+              this.editStartPointInfo.index = 1
+            }
+          }
+        }
+        CanvasUtil2.getInstance().render()
       }
       return
     }
@@ -651,8 +673,8 @@ export abstract class BaseShape {
           for (let index = 0; index < lineShapes.length; index++) {
             let lineShape = lineShapes[index]
             this.editHover.baseIndex = index
-            for (let j = 0; j < lineShape.length; j++) {
-              let currentPoint = lineShape[j]
+            for (let j = 0; j < lineShape.points.length; j++) {
+              let currentPoint = lineShape.points[j]
               if (helper.isInPoint(fixMousePoint, currentPoint.center, 4)) {
                 document.body.style.cursor = "pointer"
                 this.editHover.type = EditType.Point
@@ -661,9 +683,9 @@ export abstract class BaseShape {
               }
               let previousPoint: BezierPoint
               if (j === 0) {
-                previousPoint = lineShape[lineShape.length - 1]
+                previousPoint = lineShape.points[lineShape.points.length - 1]
               } else {
-                previousPoint = lineShape[j - 1]
+                previousPoint = lineShape.points[j - 1]
               }
               let line: any = [previousPoint.center, currentPoint.center]
               if (helper.isInLine(fixMousePoint, line)) {
@@ -713,7 +735,7 @@ export abstract class BaseShape {
             event.point = getRotatedPoint(event.point, center, -realRotation)
           }
           if (this.editEnter.type === EditType.Point || this.editEnter.type === EditType.CenterPoint) {
-            this.conf.lineShapes[this.editEnter.baseIndex][this.editEnter.index].center = {
+            this.conf.lineShapes[this.editEnter.baseIndex].points[this.editEnter.index].center = {
               ...getP2(true), ...{
                 x: event.point.x - center.x,
                 y: event.point.y - center.y
@@ -729,18 +751,18 @@ export abstract class BaseShape {
             let dx = x - cu.fixMouseStart.x
             let dy = y - cu.fixMouseStart.y
             console.log('dx', dx, 'dy', dy)
-            let oldLine1Point = this.original.lineShapes[this.editEnter.baseIndex][this.editEnter.index]
-            this.conf.lineShapes[this.editEnter.baseIndex][this.editEnter.index].center.x = oldLine1Point.center.x + dx
-            this.conf.lineShapes[this.editEnter.baseIndex][this.editEnter.index].center.y = oldLine1Point.center.y + dy
+            let oldLine1Point = this.original.lineShapes[this.editEnter.baseIndex].points[this.editEnter.index]
+            this.conf.lineShapes[this.editEnter.baseIndex].points[this.editEnter.index].center.x = oldLine1Point.center.x + dx
+            this.conf.lineShapes[this.editEnter.baseIndex].points[this.editEnter.index].center.y = oldLine1Point.center.y + dy
             let previousPoint: BezierPoint
             let oldPreviousPoint: BezierPoint
             if (this.editEnter.index === 0) {
-              let length = this.conf.lineShapes[this.editEnter.baseIndex].length
-              previousPoint = this.conf.lineShapes[this.editEnter.baseIndex][length - 1]
-              oldPreviousPoint = this.original.lineShapes[this.editEnter.baseIndex][length - 1]
+              let length = this.conf.lineShapes[this.editEnter.baseIndex].points.length
+              previousPoint = this.conf.lineShapes[this.editEnter.baseIndex].points[length - 1]
+              oldPreviousPoint = this.original.lineShapes[this.editEnter.baseIndex].points[length - 1]
             } else {
-              previousPoint = this.conf.lineShapes[this.editEnter.baseIndex][this.editEnter.index - 1]
-              oldPreviousPoint = this.original.lineShapes[this.editEnter.baseIndex][this.editEnter.index - 1]
+              previousPoint = this.conf.lineShapes[this.editEnter.baseIndex].points[this.editEnter.index - 1]
+              oldPreviousPoint = this.original.lineShapes[this.editEnter.baseIndex].points[this.editEnter.index - 1]
             }
             previousPoint.center.x = oldPreviousPoint.center.x + dx
             previousPoint.center.y = oldPreviousPoint.center.y + dy
@@ -751,7 +773,8 @@ export abstract class BaseShape {
       }
       if (cu.editModeType === EditModeType.Edit) {
         let {baseIndex, index} = this.editStartPointInfo
-        let lastPoint = this.conf.lineShapes[baseIndex][index]
+        if (index == -1) return
+        let lastPoint = this.conf.lineShapes[baseIndex].points[index]
         if (lastPoint) {
           // console.log('pen-onMouseMove', lastPoint.center, event.point)
           let cu = CanvasUtil2.getInstance()
@@ -1187,12 +1210,12 @@ export abstract class BaseShape {
     // return
     if (!this.conf.isCustom) return
     let center = this.conf.center
-    let temp: any = this.conf.lineShapes.reduce((previousValue: any, currentValue) => {
+    let temp: any = this.conf.lineShapes.reduce((previousValue: any[], currentValue) => {
       previousValue.push({
-        maxX: Math.max(...currentValue.map(p => center.x + p.center.x)),
-        minX: Math.min(...currentValue.map(p => center.x + p.center.x)),
-        maxY: Math.max(...currentValue.map(p => center.y + p.center.y)),
-        minY: Math.min(...currentValue.map(p => center.y + p.center.y)),
+        maxX: Math.max(...currentValue.points.map(p => center.x + p.center.x)),
+        minX: Math.min(...currentValue.points.map(p => center.x + p.center.x)),
+        maxY: Math.max(...currentValue.points.map(p => center.y + p.center.y)),
+        minY: Math.min(...currentValue.points.map(p => center.y + p.center.y)),
       })
       return previousValue
     }, [])
@@ -1213,7 +1236,7 @@ export abstract class BaseShape {
     let dx = newCenter.x - center.x
     let dy = newCenter.y - center.y
     this.conf.lineShapes.map(line => {
-      line.map(p => {
+      line.points.map(p => {
         p.center.x -= dx
         p.center.y -= dy
         p.cp1.x -= dx
@@ -1228,10 +1251,11 @@ export abstract class BaseShape {
     this.conf = helper.calcConf(this.conf, this.parent?.conf)
   }
 
-  getCustomShapePath(close: boolean = true): Path2D {
-    let path = new Path2D()
+  getCustomShapePath(): Path2D[] {
+    let pathList: Path2D[] = []
     this.conf.lineShapes.map((line) => {
-      line.map((currentPoint: BezierPoint, index: number, array: any) => {
+      let path = new Path2D()
+      line.points.map((currentPoint: BezierPoint, index: number, array: any) => {
         let previousPoint: BezierPoint
         if (index === 0) {
           previousPoint = cloneDeep(array[array.length - 1])
@@ -1293,9 +1317,9 @@ export abstract class BaseShape {
           }
         }
       })
+      line.close && path.closePath()
+      pathList.push(path)
     })
-
-    close && path.closePath()
-    return path
+    return pathList
   }
 }

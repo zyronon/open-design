@@ -20,6 +20,7 @@ import {BaseConfig} from "../config/BaseConfig"
 import helper from "../utils/helper"
 import draw from "../utils/draw"
 import {Pen} from "../shapes/Pen"
+import {v4 as uuid} from "uuid"
 
 const out: any = new Float32Array([
   0, 0, 0, 0,
@@ -285,14 +286,10 @@ export default class CanvasUtil2 {
     if (e.keyCode === 27) {
       if (this.editShape) {
         if (this.editShape.status === ShapeStatus.Edit) {
-          if (this.editShape._editStatus === ShapeEditStatus.Edit) {
-            this.editShape._editStatus = ShapeEditStatus.Wait
-          } else {
-            this.editShape.status = ShapeStatus.Select
-            this.selectedShape = this.editShape
-            this.editShape = undefined
-            this.mode = ShapeType.SELECT
-          }
+          this.editShape.status = ShapeStatus.Select
+          this.selectedShape = this.editShape
+          this.editShape = undefined
+          this.mode = ShapeType.SELECT
           return this.render()
         }
       }
@@ -367,20 +364,24 @@ export default class CanvasUtil2 {
               type: ShapeType.PEN,
               isCustom: true,
               lineShapes: [
-                [
-                  {
-                    cp1: getP2(),
-                    // center: {...getP2(true), ...this.mouseStart},
-                    center: {...getP2(true), ...{x: 0, y: 0}},
-                    cp2: getP2(),
-                    type: BezierPointType.RightAngle
-                  }
-                ]
+                {
+                  close: false,
+                  points: [
+                    {
+                      id: uuid(),
+                      cp1: getP2(),
+                      // center: {...getP2(true), ...this.mouseStart},
+                      center: {...getP2(true), ...{x: 0, y: 0}},
+                      cp2: getP2(),
+                      type: BezierPointType.RightAngle
+                    }
+                  ]
+                }
               ]
             } as BaseConfig),
           })
           this.editShape.status = ShapeStatus.Edit
-          this.editShape._editStatus = ShapeEditStatus.Edit
+          this.editModeType = EditModeType.Edit
           EventBus.emit(EventTypes.onMouseDown, this.editShape)
           this.children.push(this.editShape)
           this.render()

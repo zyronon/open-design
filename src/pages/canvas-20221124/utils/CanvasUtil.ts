@@ -2,7 +2,7 @@ import { Shape } from "./Shape";
 import { clear, draw } from "../utils";
 import { cloneDeep, throttle } from "lodash";
 import { BaseEvent, EventMapTypes, EventTypes, ShapeType } from "../type";
-import EventBus from "../../../utils/event-bus";
+import EventBus from "../../../lib/designer/utils/event-bus";
 import Frame from "./Frame";
 import { mat4 } from "gl-matrix";
 

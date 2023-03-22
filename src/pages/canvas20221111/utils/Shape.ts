@@ -1,6 +1,6 @@
 import {clear, getPath, renderRoundRect} from "../utils";
 import {CanvasUtil} from "./CanvasUtil";
-import EventBus from "../../../utils/event-bus";
+import EventBus from "../../../lib/designer/utils/event-bus";
 import {EventMapTypes, ShapeConfig} from "../type";
 import {clone, cloneDeep} from "lodash";
 

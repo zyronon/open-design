@@ -1,5 +1,5 @@
 import {BaseShape} from "../shapes/BaseShape"
-import EventBus from "../../../utils/event-bus"
+import EventBus from "../utils/event-bus"
 import {
   BaseEvent2,
   BezierPointType,

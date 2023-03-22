@@ -94,7 +94,7 @@ export class Frame extends BaseShape {
   }
 
   onMouseMove(event: BaseEvent2, parents: BaseShape[]) {
-    // return false
+    return false
     if (this.status === ShapeStatus.Select) return false
     if (this.isOnlyHoverInName()) {
       return !this.isInName(event.point, true)

@@ -977,8 +977,8 @@ export const rects = [
   {
     "name": "容器1",
     layout: {
-      "x": 1000,
-      "y": 100,
+      "x": 500,
+      "y": 50,
       "w": 350,
       "h": 500,
     },
@@ -991,7 +991,7 @@ export const rects = [
       {
         "name": "子组件1",
         layout: {
-          "x": -50,
+          "x": 50,
           "y": 50,
           "w": 200,
           "h": 200,

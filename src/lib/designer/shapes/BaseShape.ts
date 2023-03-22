@@ -18,7 +18,7 @@ import CanvasUtil2 from "../engine/CanvasUtil2"
 import {cloneDeep, merge} from "lodash"
 import {getRotatedPoint} from "../../../utils"
 import {getShapeFromConfig} from "../utils/common"
-import EventBus from "../../../utils/event-bus"
+import EventBus from "../utils/event-bus"
 import {EventMapTypes} from "../../../pages/canvas20221111/type"
 import {BaseConfig, Rect} from "../config/BaseConfig"
 import helper from "../utils/helper"
@@ -523,6 +523,7 @@ export abstract class BaseShape {
           }
 
           if (this.editHover.type === EditType.line || this.editHover.type === EditType.point) {
+            console.log('onMouseDown-line or point')
             this.editEnter = cloneDeep(this.editHover)
             this.editHover.index = -1
             this.conf.isCustom = true
@@ -579,80 +580,81 @@ export abstract class BaseShape {
     }
 
     if (this.status === ShapeStatus.Edit) {
-      if (this.editEnter.index === -1) {
-        let {center, lineShapes} = this.conf
-        this.hoverPointIndex = -1
-        let fixMousePoint = {
-          x: event.point.x - center.x,
-          y: event.point.y - center.y
-        }
-        //用于判断是否与之前保存的值不同，仅在不同时才重绘
-        let tempHoverLineIndex = -1
-        let tempHoverLineCenterPointIndex = -1
-        //用于跳出外层的for循环。hover到了任一目标上时，就不需要再去判断了
-        let isBreak = false
-        for (let index = 0; index < lineShapes.length; index++) {
-          let lineShape = lineShapes[index]
-          this.editHover.baseIndex = index
-          for (let j = 0; j < lineShape.length; j++) {
-            let currentPoint = lineShape[j]
-            if (helper.isInPoint(fixMousePoint, currentPoint.center, 4)) {
-              document.body.style.cursor = "pointer"
-              this.hoverPointIndex = index
-              this.editHover.type = EditType.point
-              this.editHover.index = j
-              return true
-            }
-            let previousPoint: BezierPoint
-            if (j === 0) {
-              previousPoint = lineShape[lineShape.length - 1]
-            } else {
-              previousPoint = lineShape[j - 1]
-            }
-            let line: any = [previousPoint.center, currentPoint.center]
-            if (helper.isInLine(fixMousePoint, line)) {
-              this.editHover.type = EditType.line
-              document.body.style.cursor = "pointer"
-              tempHoverLineIndex = j
-              this.hoverLineCenterPoint = helper.getCenterPoint(previousPoint.center, currentPoint.center)
-              if (helper.isInPoint(fixMousePoint, this.hoverLineCenterPoint, 4)) {
-                this.editHover.type = EditType.centerPoint
-                console.log('hover在线的中点上')
-                document.body.style.cursor = "pointer"
-                tempHoverLineCenterPointIndex = j
-              }
-              isBreak = true
-              break
-            }
-          }
-          if (isBreak) break
-        }
-
-        //仅hover在线中点上时，才重绘
-        if (this.editHover.type === EditType.centerPoint && this.editHover.index !== tempHoverLineCenterPointIndex) {
-          this.editHover.index = tempHoverLineCenterPointIndex
-          CanvasUtil2.getInstance().render()
-          return true
-        }
-
-        //仅hover在线上时，才重绘
-        if (this.editHover.type === EditType.line && this.editHover.index !== tempHoverLineIndex) {
-          this.editHover.index = tempHoverLineIndex
-          CanvasUtil2.getInstance().render()
-          return true
-        }
-
-        //hover在线上时，消费事件。不然会把cursor = "default"
-        if (tempHoverLineIndex !== -1) {
-          return true
-        }
-
-        document.body.style.cursor = "default"
-      }
 
       let cu = CanvasUtil2.getInstance()
       let {center, realRotation} = this.conf
       if (cu.editModeType === EditModeType.Select) {
+        if (this.editEnter.index === -1) {
+          let {center, lineShapes} = this.conf
+          this.hoverPointIndex = -1
+          let fixMousePoint = {
+            x: event.point.x - center.x,
+            y: event.point.y - center.y
+          }
+          //用于判断是否与之前保存的值不同，仅在不同时才重绘
+          let tempHoverLineIndex = -1
+          let tempHoverLineCenterPointIndex = -1
+          //用于跳出外层的for循环。hover到了任一目标上时，就不需要再去判断了
+          let isBreak = false
+          for (let index = 0; index < lineShapes.length; index++) {
+            let lineShape = lineShapes[index]
+            this.editHover.baseIndex = index
+            for (let j = 0; j < lineShape.length; j++) {
+              let currentPoint = lineShape[j]
+              if (helper.isInPoint(fixMousePoint, currentPoint.center, 4)) {
+                document.body.style.cursor = "pointer"
+                this.hoverPointIndex = index
+                this.editHover.type = EditType.point
+                this.editHover.index = j
+                return true
+              }
+              let previousPoint: BezierPoint
+              if (j === 0) {
+                previousPoint = lineShape[lineShape.length - 1]
+              } else {
+                previousPoint = lineShape[j - 1]
+              }
+              let line: any = [previousPoint.center, currentPoint.center]
+              if (helper.isInLine(fixMousePoint, line)) {
+                this.editHover.type = EditType.line
+                document.body.style.cursor = "pointer"
+                tempHoverLineIndex = j
+                this.hoverLineCenterPoint = helper.getCenterPoint(previousPoint.center, currentPoint.center)
+                if (helper.isInPoint(fixMousePoint, this.hoverLineCenterPoint, 4)) {
+                  this.editHover.type = EditType.centerPoint
+                  console.log('hover在线的中点上')
+                  document.body.style.cursor = "pointer"
+                  tempHoverLineCenterPointIndex = j
+                }
+                isBreak = true
+                break
+              }
+            }
+            if (isBreak) break
+          }
+
+          //仅hover在线中点上时，才重绘
+          if (this.editHover.type === EditType.centerPoint && this.editHover.index !== tempHoverLineCenterPointIndex) {
+            this.editHover.index = tempHoverLineCenterPointIndex
+            CanvasUtil2.getInstance().render()
+            return true
+          }
+
+          //仅hover在线上时，才重绘
+          if (this.editHover.type === EditType.line && this.editHover.index !== tempHoverLineIndex) {
+            this.editHover.index = tempHoverLineIndex
+            CanvasUtil2.getInstance().render()
+            return true
+          }
+
+          //hover在线上时，消费事件。不然会把cursor = "default"
+          if (tempHoverLineIndex !== -1) {
+            return true
+          }
+
+          document.body.style.cursor = "default"
+        }
+
         if (this.editEnter.index !== -1) {
           //TODO 是否可以统一反转？
           //反转到0度，好判断
@@ -747,7 +749,7 @@ export abstract class BaseShape {
   }
 
   _mouseup(event: BaseEvent2, parents: BaseShape[] = []) {
-    // this.log('base-mouseup')
+    this.log('base-mouseup')
     // if (e.capture) return
     // console.log('mouseup')
     if (this.onMouseUp(event, parents)) return

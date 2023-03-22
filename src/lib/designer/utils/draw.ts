@@ -1,4 +1,4 @@
-import {IState, P, P2, ShapeType} from "./type"
+import {IState, P, P2, ShapeType} from "../types/type"
 import {BaseConfig, Rect} from "../config/BaseConfig"
 import {Colors, defaultConfig} from "./constant"
 import {jiaodu2hudu} from "../../../utils"

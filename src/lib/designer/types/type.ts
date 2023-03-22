@@ -244,3 +244,13 @@ export enum EditType {
   Point = 'Point',
   CenterPoint = 'CenterPoint',
 }
+
+export type LinePath = {
+  close: boolean,
+  path: Path2D
+}
+
+export type LineShape = {
+  close: boolean,
+  points: BezierPoint[]
+}

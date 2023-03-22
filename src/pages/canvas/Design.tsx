@@ -11,7 +11,7 @@ import {withRouter} from "../../components/WithRouter"
 import Fps from "../../components/Fps"
 import {BaseOption, BaseSelect} from "../../components/BaseSelect2"
 import {defaultConfig, rects} from "../../lib/designer/utils/constant"
-import {EditModeType, EventTypes, IState, RectColorType, ShapeType} from "../../lib/designer/utils/type"
+import {EditModeType, EventTypes, IState, RectColorType, ShapeType} from "../../lib/designer/types/type"
 import BaseSlotButton from "../../components/BaseSlotButton"
 import Icon from '@icon-park/react/es/all'
 import {message} from "antd"

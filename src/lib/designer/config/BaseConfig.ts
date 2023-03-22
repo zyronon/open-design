@@ -1,5 +1,5 @@
 //属性参考：https://developers.mastergo.com/apis/node-frame.html
-import {BezierPoint, P, P2, ShapeType, StrokeAlign} from "../utils/type"
+import {BezierPoint, LineShape, P, P2, ShapeType, StrokeAlign} from "../types/type"
 
 interface Layout {
   absoluteTransform: Transform//图层节点相对于包含它的页面的位置，以变换矩阵的方式呈现。
@@ -82,10 +82,6 @@ interface Geometry {
   dashCap: 'NONE' | 'ROUND' | 'SQUARE' //虚线端点装饰。
 }
 
-export type LineShape = {
-  close: boolean,
-  points: BezierPoint[]
-}
 
 export interface BaseConfig extends Layout, Geometry {
   id: number | string,

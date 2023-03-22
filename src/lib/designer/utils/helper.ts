@@ -3,7 +3,7 @@ import {getHypotenuse2, getRotatedPoint, jiaodu2hudu} from "../../../utils"
 // @ts-ignore
 import {v4 as uuid} from 'uuid'
 import {clone, cloneDeep, inRange, merge} from "lodash"
-import {BezierPoint, BezierPointType, getP2, P, P2, ShapeType, StrokeAlign} from "./type"
+import {BezierPoint, BezierPointType, getP2, P, P2, ShapeType, StrokeAlign} from "../types/type"
 import {Colors, defaultConfig} from "./constant"
 
 export default {

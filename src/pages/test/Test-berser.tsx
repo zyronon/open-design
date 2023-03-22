@@ -3,7 +3,7 @@ import {Button} from 'antd'
 import './index.scss'
 import {withRouter} from "../../components/WithRouter"
 import {Colors} from "../../lib/designer/utils/constant"
-import {BezierPoint, BezierPointType, getP2, LineType, P2} from "../../lib/designer/utils/type"
+import {BezierPoint, BezierPointType, getP2, LineType, P2} from "../../lib/designer/types/type"
 import draw from "../../lib/designer/utils/draw"
 import helper from "../../lib/designer/utils/helper"
 import {v4 as uuid} from "uuid"

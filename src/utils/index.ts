@@ -1,6 +1,6 @@
 //获取斜边长度
 //给一个圆心点和其他点
-import {P} from "../lib/designer/utils/type"
+import {P} from "../lib/designer/types/type"
 import helper from "../lib/designer/utils/helper"
 
 export function getHypotenuse(one: number[], two: number[]) {

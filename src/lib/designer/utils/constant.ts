@@ -1,4 +1,4 @@
-import {FontWeight, ShapeType, StrokeAlign} from "./type"
+import {FontWeight, ShapeType, StrokeAlign} from "../types/type"
 import {FontFamily} from "../config/TextConfig"
 
 export const fontFamilies = [

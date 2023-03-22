@@ -1,4 +1,4 @@
-import {P, P2} from "../lib/designer/utils/type"
+import {P, P2} from "../lib/designer/types/type"
 import {cloneDeep} from "lodash"
 import {Rect} from "../lib/designer/config/BaseConfig"
 

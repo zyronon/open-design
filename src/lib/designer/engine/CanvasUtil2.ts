@@ -10,7 +10,7 @@ import {
   ShapeEditStatus,
   ShapeStatus,
   ShapeType
-} from "../utils/type"
+} from "../types/type"
 import {cloneDeep} from "lodash"
 import {defaultConfig} from "../utils/constant"
 import {mat4} from "gl-matrix"
@@ -19,7 +19,7 @@ import {Rectangle} from "../shapes/Rectangle"
 import {BaseConfig} from "../config/BaseConfig"
 import helper from "../utils/helper"
 import draw from "../utils/draw"
-import {Pen} from "../shapes/Pen"
+// import {Pen} from "../shapes/Pen"
 import {v4 as uuid} from "uuid"
 
 const out: any = new Float32Array([
@@ -92,9 +92,7 @@ export default class CanvasUtil2 {
 
   set mode(val) {
     if (val !== this._mode) {
-      if (val === ShapeType.EDIT) {
-        this.editModeType = EditModeType.Select
-      }
+      this.editModeType = EditModeType.Select
       this._mode = val
       EventBus.emit(EventTypes.onModeChange, val)
     }
@@ -355,37 +353,37 @@ export default class CanvasUtil2 {
 
       switch (this.mode) {
         case ShapeType.PEN:
-          this.editShape = new Pen({
-            conf: helper.getDefaultShapeConfig({
-              layout: {x: this.mouseStart.x, y: this.mouseStart.y, w: 1, h: 1},
-              // layout: {x: 0, y: 0, w: 0, h: 0},
-              // center: {x: this.mouseStart.x, y: this.mouseStart.y},
-              name: 'Pen',
-              type: ShapeType.PEN,
-              isCustom: true,
-              lineShapes: [
-                {
-                  close: false,
-                  points: [
-                    {
-                      id: uuid(),
-                      cp1: getP2(),
-                      // center: {...getP2(true), ...this.mouseStart},
-                      center: {...getP2(true), ...{x: 0, y: 0}},
-                      cp2: getP2(),
-                      type: BezierPointType.RightAngle
-                    }
-                  ]
-                }
-              ]
-            } as BaseConfig),
-          })
-          this.editShape.status = ShapeStatus.Edit
-          this.editModeType = EditModeType.Edit
-          EventBus.emit(EventTypes.onMouseDown, this.editShape)
-          this.children.push(this.editShape)
-          this.render()
-          this.mode = ShapeType.EDIT
+          // this.editShape = new Pen({
+          //   conf: helper.getDefaultShapeConfig({
+          //     layout: {x: this.mouseStart.x, y: this.mouseStart.y, w: 1, h: 1},
+          //     // layout: {x: 0, y: 0, w: 0, h: 0},
+          //     // center: {x: this.mouseStart.x, y: this.mouseStart.y},
+          //     name: 'Pen',
+          //     type: ShapeType.PEN,
+          //     isCustom: true,
+          //     lineShapes: [
+          //       {
+          //         close: false,
+          //         points: [
+          //           {
+          //             id: uuid(),
+          //             cp1: getP2(),
+          //             // center: {...getP2(true), ...this.mouseStart},
+          //             center: {...getP2(true), ...{x: 0, y: 0}},
+          //             cp2: getP2(),
+          //             type: BezierPointType.RightAngle
+          //           }
+          //         ]
+          //       }
+          //     ]
+          //   } as BaseConfig),
+          // })
+          // this.editShape.status = ShapeStatus.Edit
+          // this.editModeType = EditModeType.Edit
+          // EventBus.emit(EventTypes.onMouseDown, this.editShape)
+          // this.children.push(this.editShape)
+          // this.render()
+          // this.mode = ShapeType.EDIT
       }
     }
   }

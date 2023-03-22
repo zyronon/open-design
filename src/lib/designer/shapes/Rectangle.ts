@@ -5,14 +5,14 @@ import {
   BezierPoint,
   BezierPointType,
   EditType,
-  getP2,
+  getP2, LinePath, LineShape,
   MouseOptionType,
   P,
   ShapeStatus,
   StrokeAlign
-} from "../utils/type"
+} from "../types/type"
 import {Colors, defaultConfig} from "../utils/constant"
-import {BaseConfig, LineShape, Rect} from "../config/BaseConfig"
+import {BaseConfig, Rect} from "../config/BaseConfig"
 import draw from "../utils/draw"
 import helper from "../utils/helper"
 import {v4 as uuid} from 'uuid'
@@ -101,8 +101,12 @@ export class Rectangle extends BaseShape {
     //填充图形
     ctx.fillStyle = fillColor
     let pathList = this.getShapePath(layout, this.conf.radius)
-    pathList.map(path => {
-      ctx.fill(path)
+    pathList.map(({close, path}) => {
+      if (close) {
+        ctx.fill(path)
+      } else {
+        ctx.stroke(path)
+      }
     })
 
     //描边
@@ -114,8 +118,8 @@ export class Rectangle extends BaseShape {
     }
     ctx.strokeStyle = borderColor
     pathList = this.getShapePath({x, y, w, h}, radius)
-    pathList.map(path => {
-      ctx.stroke(path)
+    pathList.map(line => {
+      ctx.stroke(line.path)
     })
   }
 
@@ -123,8 +127,8 @@ export class Rectangle extends BaseShape {
     ctx.strokeStyle = defaultConfig.strokeStyle
     //容器hover时只需要描边矩形就行了
     let pathList = this.getShapePath(layout, 0)
-    pathList.map(path => {
-      ctx.stroke(path)
+    pathList.map(linePath => {
+      ctx.stroke(linePath.path)
     })
   }
 
@@ -182,9 +186,9 @@ export class Rectangle extends BaseShape {
     ctx.fillStyle = fillColor
 
     let pathList = super.getCustomShapePath()
-    pathList.map(path => {
-      ctx.fill(path)
-      ctx.stroke(path)
+    pathList.map(linePath => {
+      linePath.close && ctx.fill(linePath.path)
+      ctx.stroke(linePath.path)
     })
 
     let bezierCps = this._config.lineShapes
@@ -296,7 +300,7 @@ export class Rectangle extends BaseShape {
     return false
   }
 
-  getShapePath(layout: Rect, r: number): Path2D[] {
+  getShapePath(layout: Rect, r: number): LinePath[] {
     if (this._config.isCustom) {
       return super.getCustomShapePath()
     }
@@ -313,7 +317,7 @@ export class Rectangle extends BaseShape {
       path.rect(x, y, w, h)
     }
     path.closePath()
-    return [path]
+    return [{close: true, path}]
   }
 
 }

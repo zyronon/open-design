@@ -5,6 +5,8 @@ import {
   EditModeType,
   EditType,
   getP2,
+  LinePath,
+  LineShape,
   LineType,
   MouseOptionType,
   P,
@@ -12,14 +14,14 @@ import {
   ShapeProps,
   ShapeStatus,
   ShapeType
-} from "../utils/type"
+} from "../types/type"
 import CanvasUtil2 from "../engine/CanvasUtil2"
 import {cloneDeep, merge} from "lodash"
 import {getRotatedPoint} from "../../../utils"
 import {getShapeFromConfig} from "../utils/common"
 import EventBus from "../utils/event-bus"
 import {EventMapTypes} from "../../../pages/canvas20221111/type"
-import {BaseConfig, LineShape, Rect} from "../config/BaseConfig"
+import {BaseConfig, Rect} from "../config/BaseConfig"
 import helper from "../utils/helper"
 import draw from "../utils/draw"
 import {defaultConfig} from "../utils/constant"
@@ -64,12 +66,12 @@ export abstract class BaseShape {
           index: -1,
         }
       }
-      if (val === ShapeStatus.Select){
+      if (val === ShapeStatus.Select) {
         cu.selectedShape = this
-        cu.mode = ShapeType.SELECT
         cu.editShape = undefined
+        cu.mode = ShapeType.SELECT
       }
-      if (val === ShapeStatus.Edit){
+      if (val === ShapeStatus.Edit) {
         if (!this.conf.isCustom) {
           this.conf.lineShapes = this.getCustomPoint()
         }
@@ -569,7 +571,6 @@ export abstract class BaseShape {
 
       if (cu.editModeType === EditModeType.Edit) {
         this.mouseDown = true
-
         let fixMousePoint = {
           x: event.point.x - center.x,
           y: event.point.y - center.y
@@ -578,6 +579,7 @@ export abstract class BaseShape {
 
         let {baseIndex, index} = this.editStartPointInfo
         if (index === -1) {
+          this.conf.isCustom = true
           this.conf.lineShapes.push({
             close: false,
             points: [endPoint]
@@ -602,6 +604,7 @@ export abstract class BaseShape {
               this.editStartPointInfo.baseIndex += 1
               this.editStartPointInfo.index = 1
             }
+            this.conf.isCustom = true
           }
         }
         CanvasUtil2.getInstance().render()
@@ -1219,10 +1222,11 @@ export abstract class BaseShape {
       })
       return previousValue
     }, [])
+    console.log('temp',temp)
     let maxX = Math.max(...temp.map((a: any) => a.maxX))
-    let minX = Math.max(...temp.map((a: any) => a.minX))
+    let minX = Math.min(...temp.map((a: any) => a.minX))
     let maxY = Math.max(...temp.map((a: any) => a.maxY))
-    let minY = Math.max(...temp.map((a: any) => a.minY))
+    let minY = Math.min(...temp.map((a: any) => a.minY))
 
     let newWidth = maxX - minX
     let newHeight = maxY - minY
@@ -1251,8 +1255,8 @@ export abstract class BaseShape {
     this.conf = helper.calcConf(this.conf, this.parent?.conf)
   }
 
-  getCustomShapePath(): Path2D[] {
-    let pathList: Path2D[] = []
+  getCustomShapePath(): LinePath[] {
+    let pathList: LinePath[] = []
     this.conf.lineShapes.map((line) => {
       let path = new Path2D()
       line.points.map((currentPoint: BezierPoint, index: number, array: any) => {
@@ -1318,7 +1322,10 @@ export abstract class BaseShape {
         }
       })
       line.close && path.closePath()
-      pathList.push(path)
+      pathList.push({
+        close: line.close,
+        path,
+      })
     })
     return pathList
   }

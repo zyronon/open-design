@@ -418,16 +418,76 @@ export abstract class BaseShape {
     EventBus.emit(EventMapTypes.onMouseDown, this)
     if (this.onMouseDown(event, parents)) return
 
-    let {e, point: {x, y}, type} = event
     let cu = CanvasUtil2.getInstance()
     this.original = cloneDeep(this.conf)
-    cu.mouseStart = {x, y}
-    cu.fixMouseStart = {x, y}
+    cu.mouseStart = cloneDeep(event.point)
+    cu.fixMouseStart = cloneDeep(event.point)
     let {center, realRotation,} = this.conf
     if (realRotation) {
-      cu.fixMouseStart = getRotatedPoint(event.point, center, -realRotation)
+      cu.fixMouseStart = getRotatedPoint(cu.fixMouseStart, center, -realRotation)
     }
+    //默认选中以及拖动
+    this.mouseDown = true
 
+    if (this.status === ShapeStatus.Normal) {
+    }
+    if (this.status === ShapeStatus.Hover) {
+      this.status = ShapeStatus.Select
+      this.isSelectHover = true
+      this.isCapture = true
+      cu.setSelectShape(this, parents)
+    }
+    if (this.status === ShapeStatus.Select) {
+      this.children.map(shape => {
+        shape.original = cloneDeep(shape.conf)
+      })
+
+      this.enterType = this.hoverType
+      let {layout: {w, h,}, absolute, flipHorizontal, flipVertical} = this.conf
+      //按住那条线0度时的中间点
+      let handLineZeroDegreesCenterPoint
+      let w2 = w / 2
+      let h2 = h / 2
+      switch (this.hoverType) {
+        case MouseOptionType.Left:
+          // console.log('Left')
+          handLineZeroDegreesCenterPoint = {x: center.x + (flipHorizontal ? w2 : -w2), y: center.y}
+          //根据当前角度，转回来。得到的点就是当前鼠标按住那条边当前角度的中间点，非鼠标点
+          this.handLineCenterPoint = getRotatedPoint(handLineZeroDegreesCenterPoint, center, realRotation)
+          //翻转得到对面的点
+          this.diagonal = helper.reversePoint(this.handLineCenterPoint, center)
+          return
+        case MouseOptionType.Right:
+          // console.log('Right')
+          /** 这里的x的值与Right的计算相反*/
+          handLineZeroDegreesCenterPoint = {x: center.x + (flipHorizontal ? -w2 : w2), y: center.y}
+          this.handLineCenterPoint = getRotatedPoint(handLineZeroDegreesCenterPoint, center, realRotation)
+          this.diagonal = helper.reversePoint(this.handLineCenterPoint, center)
+          return
+        case MouseOptionType.Top:
+          handLineZeroDegreesCenterPoint = {x: center.x, y: center.y + (flipVertical ? h2 : -h2)}
+          this.handLineCenterPoint = getRotatedPoint(handLineZeroDegreesCenterPoint, center, realRotation)
+          this.diagonal = helper.reversePoint(this.handLineCenterPoint, center)
+          return
+        case MouseOptionType.Bottom:
+          /** 这里的y的值与Top的计算相反*/
+          handLineZeroDegreesCenterPoint = {x: center.x, y: center.y + (flipVertical ? -h2 : h2)}
+          this.handLineCenterPoint = getRotatedPoint(handLineZeroDegreesCenterPoint, center, realRotation)
+          this.diagonal = helper.reversePoint(this.handLineCenterPoint, center)
+          return
+        case MouseOptionType.TopLeft:
+          this.handLineCenterPoint = absolute
+          this.diagonal = helper.reversePoint(this.handLineCenterPoint, center)
+          return
+        case MouseOptionType.TopRight:
+        case MouseOptionType.BottomLeft:
+        case MouseOptionType.BottomRight:
+        case MouseOptionType.TopLeftRotation:
+        case MouseOptionType.TopRightRotation:
+        case MouseOptionType.BottomLeftRotation:
+        case MouseOptionType.BottomRightRotation:
+      }
+    }
     if (this.status === ShapeStatus.Edit) {
       if (cu.editModeType === EditModeType.Edit) {
         //没hover时，再新增
@@ -472,70 +532,52 @@ export abstract class BaseShape {
       }
       return
     }
-
-    //上面是编辑的逻辑，编辑只涉及到自己，不涉及子级
-    this.children.map(shape => {
-      shape.original = cloneDeep(shape.conf)
-    })
-
-    this.enterType = this.hoverType
-    let {layout: {w, h,}, absolute, flipHorizontal, flipVertical} = this.conf
-    //按住那条线0度时的中间点
-    let handLineZeroDegreesCenterPoint
-    let w2 = w / 2
-    let h2 = h / 2
-    switch (this.hoverType) {
-      case MouseOptionType.Left:
-        // console.log('Left')
-        handLineZeroDegreesCenterPoint = {x: center.x + (flipHorizontal ? w2 : -w2), y: center.y}
-        //根据当前角度，转回来。得到的点就是当前鼠标按住那条边当前角度的中间点，非鼠标点
-        this.handLineCenterPoint = getRotatedPoint(handLineZeroDegreesCenterPoint, center, realRotation)
-        //翻转得到对面的点
-        this.diagonal = helper.reversePoint(this.handLineCenterPoint, center)
-        return
-      case MouseOptionType.Right:
-        // console.log('Right')
-        /** 这里的x的值与Right的计算相反*/
-        handLineZeroDegreesCenterPoint = {x: center.x + (flipHorizontal ? -w2 : w2), y: center.y}
-        this.handLineCenterPoint = getRotatedPoint(handLineZeroDegreesCenterPoint, center, realRotation)
-        this.diagonal = helper.reversePoint(this.handLineCenterPoint, center)
-        return
-      case MouseOptionType.Top:
-        handLineZeroDegreesCenterPoint = {x: center.x, y: center.y + (flipVertical ? h2 : -h2)}
-        this.handLineCenterPoint = getRotatedPoint(handLineZeroDegreesCenterPoint, center, realRotation)
-        this.diagonal = helper.reversePoint(this.handLineCenterPoint, center)
-        return
-      case MouseOptionType.Bottom:
-        /** 这里的y的值与Top的计算相反*/
-        handLineZeroDegreesCenterPoint = {x: center.x, y: center.y + (flipVertical ? -h2 : h2)}
-        this.handLineCenterPoint = getRotatedPoint(handLineZeroDegreesCenterPoint, center, realRotation)
-        this.diagonal = helper.reversePoint(this.handLineCenterPoint, center)
-        return
-      case MouseOptionType.TopLeft:
-        this.handLineCenterPoint = absolute
-        this.diagonal = helper.reversePoint(this.handLineCenterPoint, center)
-        return
-      case MouseOptionType.TopRight:
-      case MouseOptionType.BottomLeft:
-      case MouseOptionType.BottomRight:
-      case MouseOptionType.TopLeftRotation:
-      case MouseOptionType.TopRightRotation:
-      case MouseOptionType.BottomLeftRotation:
-      case MouseOptionType.BottomRightRotation:
-    }
-
-    //默认选中以及拖动
-    this.mouseDown = true
-    if (this.status === ShapeStatus.Select) return
-    this.status = ShapeStatus.Select
-    this.isSelectHover = true
-    this.isCapture = true
-    cu.setSelectShape(this, parents)
   }
 
   _mousemove(event: BaseEvent2, parents: BaseShape[] = []) {
     // console.log('mousemove', this.conf.name, this.enterType, this.hoverType)
     if (this.onMouseMove(event, parents)) return
+
+    if (this.status === ShapeStatus.Normal) {
+      this.status = ShapeStatus.Hover
+      if (this.parent) {
+        if (this.parent.status === ShapeStatus.Hover) {
+          this.parent.status = ShapeStatus.Normal
+        }
+      }
+    }
+
+    if (this.status === ShapeStatus.Hover) {
+    }
+
+    if (this.status === ShapeStatus.Select) {
+      this.isSelectHover = true
+      let {e, point, type} = event
+      switch (this.enterType) {
+        case MouseOptionType.Left:
+          return this.dragLeft(point)
+        case MouseOptionType.Right:
+          return this.dragRight(point)
+        case MouseOptionType.Top:
+          return this.dragTop(point)
+        case MouseOptionType.Bottom:
+          return this.dragBottom(point)
+        case MouseOptionType.TopLeft:
+          return this.dragTopLeft(point)
+        case MouseOptionType.TopRight:
+        case MouseOptionType.BottomLeft:
+        case MouseOptionType.BottomRight:
+        case MouseOptionType.TopLeftRotation:
+          return this.dragTopLeftRotation(point)
+        case MouseOptionType.TopRightRotation:
+        case MouseOptionType.BottomLeftRotation:
+        case MouseOptionType.BottomRightRotation:
+      }
+      if (this.mouseDown) {
+        return this.move(point)
+      }
+    }
+
     if (this.status === ShapeStatus.Edit) {
       if (this.editEnter.index === -1) {
         let {center, lineShapes} = this.conf
@@ -701,45 +743,6 @@ export abstract class BaseShape {
           }
         }
       }
-    } else {
-      if (this.status === ShapeStatus.Normal) {
-        this.status = ShapeStatus.Hover
-        if (this.parent) {
-          if (this.parent.status === ShapeStatus.Hover) {
-            this.parent.status = ShapeStatus.Normal
-          }
-        }
-      }
-      if (this.status === ShapeStatus.Select) {
-        this.isSelectHover = true
-      }
-    }
-    let {e, point, type} = event
-
-
-    switch (this.enterType) {
-      case MouseOptionType.Left:
-        return this.dragLeft(point)
-      case MouseOptionType.Right:
-        return this.dragRight(point)
-      case MouseOptionType.Top:
-        return this.dragTop(point)
-      case MouseOptionType.Bottom:
-        return this.dragBottom(point)
-      case MouseOptionType.TopLeft:
-        return this.dragTopLeft(point)
-      case MouseOptionType.TopRight:
-      case MouseOptionType.BottomLeft:
-      case MouseOptionType.BottomRight:
-      case MouseOptionType.TopLeftRotation:
-        return this.dragTopLeftRotation(point)
-      case MouseOptionType.TopRightRotation:
-      case MouseOptionType.BottomLeftRotation:
-      case MouseOptionType.BottomRightRotation:
-    }
-
-    if (this.mouseDown) {
-      return this.move(point)
     }
   }
 

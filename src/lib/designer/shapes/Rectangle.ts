@@ -1,5 +1,5 @@
 import {BaseShape} from "./BaseShape"
-import CanvasUtil2 from "../CanvasUtil2"
+import CanvasUtil2 from "../engine/CanvasUtil2"
 import {
   BaseEvent2,
   BezierPoint,

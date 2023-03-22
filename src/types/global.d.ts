@@ -1,6 +1,6 @@
-import {P, P2} from "../pages/canvas/utils/type"
+import {P, P2} from "../lib/designer/utils/type"
 import {cloneDeep} from "lodash"
-import {Rect} from "../pages/canvas/config/BaseConfig"
+import {Rect} from "../lib/designer/config/BaseConfig"
 
 export {}
 

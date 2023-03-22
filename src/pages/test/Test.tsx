@@ -3,7 +3,7 @@ import {Button} from 'antd'
 import './index.scss'
 import {withRouter} from "../../components/WithRouter"
 import {clone, throttle} from "lodash"
-import helper from "../canvas/utils/helper"
+import helper from "../../lib/designer/utils/helper"
 
 
 class T extends Component<any, any> {

@@ -2,7 +2,7 @@ import React, {Component} from 'react'
 import {Button} from 'antd'
 import './index.scss'
 import {withRouter} from "../../components/WithRouter"
-import draw from "../canvas/utils/draw"
+import draw from "../../lib/designer/utils/draw"
 
 function bezier(pots: any, amount: any) {
   let pot

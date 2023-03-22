@@ -1,5 +1,5 @@
 import {BaseShape} from "./BaseShape"
-import CanvasUtil2 from "../CanvasUtil2"
+import CanvasUtil2 from "../engine/CanvasUtil2"
 import {BaseEvent2, P, ShapeProps, ShapeStatus, ShapeType, StrokeAlign} from "../utils/type"
 import {BaseConfig, Rect} from "../config/BaseConfig"
 import draw from "../utils/draw"

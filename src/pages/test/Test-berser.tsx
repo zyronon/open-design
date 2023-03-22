@@ -2,10 +2,10 @@ import React, {Component} from 'react'
 import {Button} from 'antd'
 import './index.scss'
 import {withRouter} from "../../components/WithRouter"
-import {Colors} from "../canvas/utils/constant"
-import {BezierPoint, BezierPointType, getP2, LineType, P2} from "../canvas/utils/type"
-import draw from "../canvas/utils/draw"
-import helper from "../canvas/utils/helper"
+import {Colors} from "../../lib/designer/utils/constant"
+import {BezierPoint, BezierPointType, getP2, LineType, P2} from "../../lib/designer/utils/type"
+import draw from "../../lib/designer/utils/draw"
+import helper from "../../lib/designer/utils/helper"
 
 
 class T extends Component<any, any> {

@@ -1,4 +1,4 @@
-import CanvasUtil2 from "../CanvasUtil2"
+import CanvasUtil2 from "../engine/CanvasUtil2"
 import {BaseConfig} from "../config/BaseConfig"
 import {BaseShape} from "../shapes/BaseShape"
 

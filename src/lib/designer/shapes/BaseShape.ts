@@ -14,12 +14,12 @@ import {
   ShapeStatus,
   ShapeType
 } from "../utils/type"
-import CanvasUtil2 from "../CanvasUtil2"
+import CanvasUtil2 from "../engine/CanvasUtil2"
 import {cloneDeep, merge} from "lodash"
 import {getRotatedPoint} from "../../../utils"
 import {getShapeFromConfig} from "../utils/common"
 import EventBus from "../../../utils/event-bus"
-import {EventMapTypes} from "../../canvas20221111/type"
+import {EventMapTypes} from "../../../pages/canvas20221111/type"
 import {BaseConfig, Rect} from "../config/BaseConfig"
 import helper from "../utils/helper"
 import draw from "../utils/draw"

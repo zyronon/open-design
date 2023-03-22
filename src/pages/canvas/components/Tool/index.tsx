@@ -1,6 +1,6 @@
 import React, {memo} from "react";
 import cx from "classnames";
-import {ShapeType} from "../../utils/type";
+import {ShapeType} from "../../../../lib/designer/utils/type";
 import Icon from "@icon-park/react/es/all";
 import {Popover} from "antd";
 

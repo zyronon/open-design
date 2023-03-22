@@ -1,5 +1,5 @@
-import {BaseShape} from "./shapes/BaseShape"
-import EventBus from "../../utils/event-bus"
+import {BaseShape} from "../shapes/BaseShape"
+import EventBus from "../../../utils/event-bus"
 import {
   BaseEvent2,
   BezierPointType,
@@ -10,16 +10,16 @@ import {
   ShapeEditStatus,
   ShapeStatus,
   ShapeType
-} from "./utils/type"
+} from "../utils/type"
 import {cloneDeep} from "lodash"
-import {defaultConfig} from "./utils/constant"
+import {defaultConfig} from "../utils/constant"
 import {mat4} from "gl-matrix"
-import {getShapeFromConfig} from "./utils/common"
-import {Rectangle} from "./shapes/Rectangle"
-import {BaseConfig} from "./config/BaseConfig"
-import helper from "./utils/helper"
-import draw from "./utils/draw"
-import {Pen} from "./shapes/Pen"
+import {getShapeFromConfig} from "../utils/common"
+import {Rectangle} from "../shapes/Rectangle"
+import {BaseConfig} from "../config/BaseConfig"
+import helper from "../utils/helper"
+import draw from "../utils/draw"
+import {Pen} from "../shapes/Pen"
 
 const out: any = new Float32Array([
   0, 0, 0, 0,

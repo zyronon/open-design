@@ -3,7 +3,7 @@ import {BaseConfig, Rect} from "../config/BaseConfig"
 import {Colors, defaultConfig} from "./constant"
 import {jiaodu2hudu} from "../../../utils"
 import {BaseShape} from "../shapes/BaseShape"
-import CanvasUtil2 from "../CanvasUtil2"
+import CanvasUtil2 from "../engine/CanvasUtil2"
 
 export default {
   /** @desc 计算位置

@@ -631,6 +631,7 @@ export default {
   },
   getDefaultBezierPoint(p: P | P2) {
     return {
+      id: uuid(),
       cp1: getP2(),
       center: {...getP2(true), ...p},
       cp2: getP2(),

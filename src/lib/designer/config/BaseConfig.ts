@@ -82,7 +82,7 @@ interface Geometry {
   dashCap: 'NONE' | 'ROUND' | 'SQUARE' //虚线端点装饰。
 }
 
-type LineShape = BezierPoint[]
+export type LineShape = BezierPoint[]
 
 export interface BaseConfig extends Layout, Geometry {
   id: number | string,

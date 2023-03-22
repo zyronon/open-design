@@ -173,6 +173,7 @@ export interface P2 {
 // 二次贝塞尔曲线：同上，只不过取任中一个cp点作为控制点
 // 直线：直接取两个点的center点相连
 export interface BezierPoint {
+  id: string,
   cp1: P2,//右边的控制点
   center: P2//中边的点
   cp2: P2//左边的控制点

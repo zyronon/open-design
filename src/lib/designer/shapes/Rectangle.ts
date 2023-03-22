@@ -5,20 +5,18 @@ import {
   BezierPoint,
   BezierPointType,
   getP2,
-  LineType,
   MouseOptionType,
   P,
-  P2, ShapeEditStatus,
+  P2,
   ShapeStatus,
   ShapeType,
   StrokeAlign
 } from "../utils/type"
 import {Colors, defaultConfig} from "../utils/constant"
-import {BaseConfig, Rect} from "../config/BaseConfig"
+import {BaseConfig, LineShape, Rect} from "../config/BaseConfig"
 import draw from "../utils/draw"
 import helper from "../utils/helper"
-import {cloneDeep} from "lodash"
-import {getRotatedPoint} from "../../../utils"
+import {v4 as uuid} from 'uuid'
 
 enum EditType {
   line = 'line',
@@ -29,15 +27,8 @@ enum EditType {
 export class Rectangle extends BaseShape {
   //最小拖动圆角。真实圆角可能为0，导致渲染的控制点和角重合，所以设置一个最小圆角
   minDragRadius = 15
-  hoverPointIndex: number = -1
-  enterPointIndex: number = -1
   rectHoverType: MouseOptionType = MouseOptionType.None
   rectEnterType: MouseOptionType = MouseOptionType.None
-  //编辑模式下，hover在线段上时，临时绘制的控制点
-  hoverLineIndex: number = -1
-  enterLineIndex: number = -1
-  hoverLineCenterPointIndex: number = -1
-  enterLineCenterPointIndex: number = -1
   hoverLineCenterPoint: P = {x: 0, y: 0}
   editHover = {
     type: EditType.line,
@@ -215,14 +206,15 @@ export class Rectangle extends BaseShape {
         if (currentPoint.cp2.use) draw.controlPoint(ctx, currentPoint.cp2, currentPoint.center)
       })
     })
-    // if (this.hoverLineIndex > -1 || this.hoverLineCenterPointIndex > -1) {
-    //   draw.drawRound(ctx, this.hoverLineCenterPoint)
-    // }
     if ((this.editHover.type === EditType.line
         || this.editHover.type === EditType.centerPoint)
       && this.editHover.index !== -1
     ) {
       draw.drawRound(ctx, this.hoverLineCenterPoint)
+    }
+    let {baseIndex, index} = this.editStartPointInfo
+    if (index !== -1) {
+      draw.drawRound(ctx, bezierCps[baseIndex][index].center)
     }
     ctx.restore()
   }
@@ -251,49 +243,43 @@ export class Rectangle extends BaseShape {
   }
 
   onDbClick(event: BaseEvent2, parents: BaseShape[]): boolean {
-    let cu = CanvasUtil2.getInstance()
-    if (this.status === ShapeStatus.Edit) {
-      this.status = ShapeStatus.Select
-      cu.editShape = undefined
-      cu.selectedShape = this
-      cu.mode = ShapeType.SELECT
-    } else {
-      if (!this._config.isCustom) {
-        let {w, h} = this._config.layout
-        //这里的xy这样设置是因为，渲染时的起点是center
-        let x = -w / 2, y = -h / 2
-        let bezierCps: BezierPoint[] = []
-        bezierCps.push({
-          cp1: getP2(),
-          center: {...getP2(true), x: x, y: y},
-          cp2: getP2(),
-          type: BezierPointType.RightAngle
-        })
-        bezierCps.push({
-          cp1: getP2(),
-          center: {...getP2(true), x: x + w, y: y},
-          cp2: getP2(),
-          type: BezierPointType.RightAngle
-        })
-        bezierCps.push({
-          cp1: getP2(),
-          center: {...getP2(true), x: x + w, y: y + h},
-          cp2: getP2(),
-          type: BezierPointType.RightAngle
-        })
-        bezierCps.push({
-          cp1: getP2(),
-          center: {...getP2(true), x: x, y: y + h},
-          cp2: getP2(),
-          type: BezierPointType.RightAngle
-        })
-        this._config.lineShapes = [bezierCps]
-      }
-      this.status = ShapeStatus.Edit
-      cu.editShape = this
-      cu.mode = ShapeType.EDIT
-    }
     return false
+  }
+
+  getCustomPoint(): LineShape[] {
+    let {w, h} = this._config.layout
+    //这里的xy这样设置是因为，渲染时的起点是center
+    let x = -w / 2, y = -h / 2
+    let bezierCps: BezierPoint[] = []
+    bezierCps.push({
+      id: uuid(),
+      cp1: getP2(),
+      center: {...getP2(true), x: x, y: y},
+      cp2: getP2(),
+      type: BezierPointType.RightAngle
+    })
+    bezierCps.push({
+      id: uuid(),
+      cp1: getP2(),
+      center: {...getP2(true), x: x + w, y: y},
+      cp2: getP2(),
+      type: BezierPointType.RightAngle
+    })
+    bezierCps.push({
+      id: uuid(),
+      cp1: getP2(),
+      center: {...getP2(true), x: x + w, y: y + h},
+      cp2: getP2(),
+      type: BezierPointType.RightAngle
+    })
+    bezierCps.push({
+      id: uuid(),
+      cp1: getP2(),
+      center: {...getP2(true), x: x, y: y + h},
+      cp2: getP2(),
+      type: BezierPointType.RightAngle
+    })
+    return [bezierCps]
   }
 
   onMouseDown(event: BaseEvent2, parents: BaseShape[]) {
@@ -336,14 +322,6 @@ export class Rectangle extends BaseShape {
     }
     path.closePath()
     return path
-  }
-
-  getPointRelativeToCenter(target: P2 | P, center: P): P2 {
-    return {
-      ...getP2(true),
-      x: target.x - center.x,
-      y: target.y - center.y,
-    }
   }
 
 }

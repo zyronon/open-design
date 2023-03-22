@@ -20,10 +20,11 @@ import {getRotatedPoint} from "../../../utils"
 import {getShapeFromConfig} from "../utils/common"
 import EventBus from "../utils/event-bus"
 import {EventMapTypes} from "../../../pages/canvas20221111/type"
-import {BaseConfig, Rect} from "../config/BaseConfig"
+import {BaseConfig, LineShape, Rect} from "../config/BaseConfig"
 import helper from "../utils/helper"
 import draw from "../utils/draw"
 import {defaultConfig} from "../utils/constant"
+import {v4 as uuid} from "uuid"
 
 export abstract class BaseShape {
   hoverType: MouseOptionType = MouseOptionType.None
@@ -110,6 +111,9 @@ export abstract class BaseShape {
   //传递事件之前的回调，用于子类直接消费而不经过父类判断
   abstract beforeEvent(event: BaseEvent2): boolean
 
+  //获取自定义的点
+  abstract getCustomPoint(): LineShape[]
+
   getStatus() {
     return `
     <div>
@@ -166,8 +170,11 @@ export abstract class BaseShape {
     return !this.isCapture || !cu.isDesignMode()
   }
 
-  hoverPointIndex: number = -1
   hoverLineCenterPoint: P = {x: 0, y: 0}
+  editStartPointInfo = {
+    baseIndex: -1,
+    index: -1,
+  }
   editHover = {
     type: EditType.line,
     baseIndex: -1,
@@ -410,6 +417,21 @@ export abstract class BaseShape {
     // console.log('on-dblclick',)
     // this.log('base-dblclick')
     if (this.onDbClick(event, parents)) return
+
+    let cu = CanvasUtil2.getInstance()
+    if (this.status === ShapeStatus.Edit) {
+      this.status = ShapeStatus.Select
+      cu.editShape = undefined
+      cu.selectedShape = this
+      cu.mode = ShapeType.SELECT
+    } else {
+      if (!this.conf.isCustom) {
+        this.conf.lineShapes = this.getCustomPoint()
+      }
+      this.status = ShapeStatus.Edit
+      cu.editShape = this
+      cu.mode = ShapeType.EDIT
+    }
   }
 
   _mousedown(event: BaseEvent2, parents: BaseShape[] = []) {
@@ -489,27 +511,14 @@ export abstract class BaseShape {
       }
     }
     if (this.status === ShapeStatus.Edit) {
-      if (cu.editModeType === EditModeType.Edit) {
-        //没hover时，再新增
-        this.mouseDown = true
-        let lastLine = this.conf.lineShapes[this.conf.lineShapes.length - 1]
-        if (lastLine) {
-          let fixMousePoint = {
-            x: event.point.x - center.x,
-            y: event.point.y - center.y
-          }
-          lastLine.push(helper.getDefaultBezierPoint(fixMousePoint))
-          CanvasUtil2.getInstance().render()
-          return
-        }
-      }
       if (cu.editModeType === EditModeType.Select) {
         //如果hover在点上，先处理hover
         if (this.editHover.index !== -1) {
           if (this.editHover.type === EditType.centerPoint) {
-            console.log('onMouseDown-hoverLineCenterPointIndex')
+            console.log('_mousedown-hoverLineCenterPointIndex')
             this.editEnter = cloneDeep(this.editHover)
             this.conf.lineShapes[this.editEnter.baseIndex].splice(this.editEnter.index, 0, {
+              id: uuid(),
               cp1: getP2(),
               center: {...getP2(true), ...this.hoverLineCenterPoint},
               cp2: getP2(),
@@ -522,13 +531,52 @@ export abstract class BaseShape {
             return
           }
 
+          if (this.editHover.type === EditType.point) {
+            this.editStartPointInfo = {
+              baseIndex: this.editHover.baseIndex,
+              index: this.editHover.index
+            }
+          }
+
           if (this.editHover.type === EditType.line || this.editHover.type === EditType.point) {
-            console.log('onMouseDown-line or point')
+            console.log('_mousedown-line or point')
             this.editEnter = cloneDeep(this.editHover)
             this.editHover.index = -1
             this.conf.isCustom = true
             return
           }
+        }
+        this.editStartPointInfo = {
+          baseIndex: -1,
+          index: -1,
+        }
+      }
+
+      if (cu.editModeType === EditModeType.Edit) {
+        //没hover时，再新增
+        this.mouseDown = true
+        let {baseIndex, index} = this.editStartPointInfo
+        let lastLine = this.conf.lineShapes[baseIndex]
+        if (lastLine) {
+          let fixMousePoint = {
+            x: event.point.x - center.x,
+            y: event.point.y - center.y
+          }
+          let endPoint = helper.getDefaultBezierPoint(fixMousePoint)
+          if (lastLine.length - 1 === index) {
+            lastLine.push(endPoint)
+            this.editStartPointInfo.index += 1
+          } else {
+            let lastPoint = lastLine[index]
+            this.conf.lineShapes.push([
+              lastPoint,
+              endPoint
+            ])
+            this.editStartPointInfo.baseIndex += 1
+            this.editStartPointInfo.index = 1
+          }
+          CanvasUtil2.getInstance().render()
+          return
         }
       }
       return
@@ -586,7 +634,6 @@ export abstract class BaseShape {
       if (cu.editModeType === EditModeType.Select) {
         if (this.editEnter.index === -1) {
           let {center, lineShapes} = this.conf
-          this.hoverPointIndex = -1
           let fixMousePoint = {
             x: event.point.x - center.x,
             y: event.point.y - center.y
@@ -603,7 +650,6 @@ export abstract class BaseShape {
               let currentPoint = lineShape[j]
               if (helper.isInPoint(fixMousePoint, currentPoint.center, 4)) {
                 document.body.style.cursor = "pointer"
-                this.hoverPointIndex = index
                 this.editHover.type = EditType.point
                 this.editHover.index = j
                 return true
@@ -699,57 +745,55 @@ export abstract class BaseShape {
         }
       }
       if (cu.editModeType === EditModeType.Edit) {
-        let lastLine = this.conf.lineShapes[this.conf.lineShapes.length - 1]
-        if (lastLine) {
-          let lastPoint = lastLine[lastLine.length - 1]
-          if (lastPoint) {
-            // console.log('pen-onMouseMove', lastPoint.center, event.point)
-            let cu = CanvasUtil2.getInstance()
-            let ctx = cu.ctx
-            if (this.mouseDown) {
-              let fixMousePoint = {
-                x: event.point.x - center.x,
-                y: event.point.y - center.y
-              }
-              lastPoint.cp2 = merge(getP2(true), fixMousePoint)
-              let cp1 = helper.horizontalReversePoint(cloneDeep(lastPoint.cp2), lastPoint.center)
-              lastPoint.cp1 = helper.verticalReversePoint(cp1, lastPoint.center)
-              lastPoint.type = BezierPointType.MirrorAngleAndLength
-            } else {
-              cu.waitRenderOtherStatusFunc.push(() => {
-                ctx.save()
-                ctx.beginPath()
-                let fixLastPoint = {
-                  x: center.x + lastPoint.center.x,
-                  y: center.y + lastPoint.center.y,
-                }
-                ctx.moveTo2(fixLastPoint)
-                ctx.strokeStyle = defaultConfig.strokeStyle
-                if (lastPoint.cp2.use) {
-                  let fixLastPointCp2 = {
-                    x: center.x + lastPoint.cp2.x,
-                    y: center.y + lastPoint.cp2.y,
-                  }
-                  ctx.quadraticCurveTo2(fixLastPointCp2, event.point)
-                } else {
-                  ctx.lineTo2(event.point)
-                }
-                // ctx.closePath()
-                ctx.stroke()
-                draw.drawRound(ctx, fixLastPoint)
-                ctx.restore()
-              })
+        let {baseIndex, index} = this.editStartPointInfo
+        let lastPoint = this.conf.lineShapes[baseIndex][index]
+        if (lastPoint) {
+          // console.log('pen-onMouseMove', lastPoint.center, event.point)
+          let cu = CanvasUtil2.getInstance()
+          let ctx = cu.ctx
+          if (this.mouseDown) {
+            let fixMousePoint = {
+              x: event.point.x - center.x,
+              y: event.point.y - center.y
             }
-            cu.render()
-            return
+            lastPoint.cp2 = merge(getP2(true), fixMousePoint)
+            let cp1 = helper.horizontalReversePoint(cloneDeep(lastPoint.cp2), lastPoint.center)
+            lastPoint.cp1 = helper.verticalReversePoint(cp1, lastPoint.center)
+            lastPoint.type = BezierPointType.MirrorAngleAndLength
+          } else {
+            cu.waitRenderOtherStatusFunc.push(() => {
+              ctx.save()
+              ctx.beginPath()
+              let fixLastPoint = {
+                x: center.x + lastPoint.center.x,
+                y: center.y + lastPoint.center.y,
+              }
+              ctx.moveTo2(fixLastPoint)
+              ctx.strokeStyle = defaultConfig.strokeStyle
+              if (lastPoint.cp2.use) {
+                let fixLastPointCp2 = {
+                  x: center.x + lastPoint.cp2.x,
+                  y: center.y + lastPoint.cp2.y,
+                }
+                ctx.quadraticCurveTo2(fixLastPointCp2, event.point)
+              } else {
+                ctx.lineTo2(event.point)
+              }
+              // ctx.closePath()
+              ctx.stroke()
+              draw.drawRound(ctx, fixLastPoint)
+              ctx.restore()
+            })
           }
+          cu.render()
+          return
         }
       }
     }
   }
 
   _mouseup(event: BaseEvent2, parents: BaseShape[] = []) {
-    this.log('base-mouseup')
+    // this.log('base-mouseup')
     // if (e.capture) return
     // console.log('mouseup')
     if (this.onMouseUp(event, parents)) return

@@ -6,6 +6,7 @@ import {Colors} from "../../lib/designer/utils/constant"
 import {BezierPoint, BezierPointType, getP2, LineType, P2} from "../../lib/designer/utils/type"
 import draw from "../../lib/designer/utils/draw"
 import helper from "../../lib/designer/utils/helper"
+import {v4 as uuid} from "uuid"
 
 
 class T extends Component<any, any> {
@@ -151,24 +152,28 @@ class T extends Component<any, any> {
       // ctx.ellipse(0, 0, w2, h2, jiaodu2hudu(0), 0, 2 * Math.PI); //倾斜 45°角
       // ctx.stroke();
       bezierCps.push({
+        id: uuid(),
         cp1: {...getP2(true), ...cp8},
         center: {...getP2(true), ...start},
         cp2: {...getP2(true), ...cp1},
         type: BezierPointType.MirrorAngleAndLength
       })
       bezierCps.push({
+        id: uuid(),
         cp1: {...getP2(true), ...cp2},
         center: {...getP2(true), ...bottom},
         cp2: {...getP2(true), ...cp3},
         type: BezierPointType.MirrorAngleAndLength
       })
       bezierCps.push({
+        id: uuid(),
         cp1: {...getP2(true), ...cp4},
         center: {...getP2(true), ...left},
         cp2: {...getP2(true), ...cp5},
         type: BezierPointType.MirrorAngleAndLength
       })
       bezierCps.push({
+        id: uuid(),
         cp1: {...getP2(true), ...cp6},
         center: {...getP2(true), ...top},
         cp2: {...getP2(true), ...cp7},
@@ -186,6 +191,7 @@ class T extends Component<any, any> {
       // console.log('currentLength', currentLength, 'lastLength', lastLength)
       // draw.drawRound(ctx, start)
       bezierCps.push({
+        id: uuid(),
         cp1: getP2(),
         center: {
           use: true,
@@ -243,6 +249,7 @@ class T extends Component<any, any> {
 
         //默认不启用cp2，因为最后一个控制点，用不到
         bezierCps.push({
+          id: uuid(),
           cp1: {
             use: true,
             x: cps[1].x,
@@ -274,6 +281,7 @@ class T extends Component<any, any> {
       }
 
       bezierCps.push({
+        id: uuid(),
         cp1: getP2(),
         center: getP2(true),
         cp2: getP2(),

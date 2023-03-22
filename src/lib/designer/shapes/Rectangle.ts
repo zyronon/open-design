@@ -7,7 +7,7 @@ import {
   EditType,
   getP2, LinePath, LineShape,
   MouseOptionType,
-  P,
+  P, ShapeProps,
   ShapeStatus,
   StrokeAlign
 } from "../types/type"
@@ -16,6 +16,9 @@ import {BaseConfig, Rect} from "../config/BaseConfig"
 import draw from "../utils/draw"
 import helper from "../utils/helper"
 import {v4 as uuid} from 'uuid'
+import {cloneDeep} from "lodash";
+import {getShapeFromConfig} from "../utils/common";
+import {getRotatedPoint} from "../../../utils";
 
 export class Rectangle extends BaseShape {
   //最小拖动圆角。真实圆角可能为0，导致渲染的控制点和角重合，所以设置一个最小圆角

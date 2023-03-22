@@ -146,25 +146,25 @@ export abstract class BaseShape {
         absoluteX:${this.conf.absolute.x.toFixed(2)}
 </div>
     <div>
-        absoluteY:${this.conf.absolute.y.toFixed(2)}    
+        absoluteY:${this.conf.absolute.y.toFixed(2)}
 </div>
     <div>
         originalX:${this.conf.original.x.toFixed(2)}
 </div>
     <div>
-        originalY:${this.conf.original.y.toFixed(2)}    
+        originalY:${this.conf.original.y.toFixed(2)}
 </div>
     <div>
         centerX:${this.conf.center.x.toFixed(2)}
 </div>
     <div>
-        centerY:${this.conf.center.y.toFixed(2)}    
+        centerY:${this.conf.center.y.toFixed(2)}
 </div>
     <div>
         relativeCenterX:${this.conf.relativeCenter?.x.toFixed(2)}
 </div>
     <div>
-        relativeCenterY:${this.conf.relativeCenter?.y.toFixed(2)}    
+        relativeCenterY:${this.conf.relativeCenter?.y.toFixed(2)}
 </div>
     `
   }

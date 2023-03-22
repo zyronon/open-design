@@ -95,6 +95,7 @@ export enum ShapeType {
 export interface ShapeProps {
   conf: BaseConfig,
   parent?: BaseShape,
+  // parent?: BaseShapeProps,
 }
 
 export enum FontWeight {

@@ -543,7 +543,7 @@ export default {
    * @param  {Object} p2 点2的坐标
    * @return {Object}    中点坐标
    */
-  getCenterPoint(p1: P, p2: P) {
+  getCenterPoint(p1: P, p2: P): P {
     return {
       x: p1.x + ((p2.x - p1.x) / 2),
       y: p1.y + ((p2.y - p1.y) / 2)
@@ -590,7 +590,7 @@ export default {
     // let d = 0.02
     let d = 0.04
     if (inRange(line1 + line2, line3 - d, line3 + d)) {
-      console.log('在线上')
+      // console.log('在线上')
       return true
     }
     return false

@@ -61,7 +61,7 @@ export class Rectangle extends BaseShape {
   }
 
   beforeEvent(event: BaseEvent2) {
-    if (this.editEnter.index > -1) {
+    if (this.editEnter.pointIndex > -1) {
       event.stopPropagation()
       super.emit(event, [])
       return true
@@ -206,13 +206,13 @@ export class Rectangle extends BaseShape {
     })
     if ((this.editHover.type === EditType.Line
         || this.editHover.type === EditType.CenterPoint)
-      && this.editHover.index !== -1
+      && this.editHover.pointIndex !== -1
     ) {
       draw.drawRound(ctx, this.hoverLineCenterPoint)
     }
-    let { baseIndex, index } = this.editStartPointInfo
-    if (index !== -1) {
-      let currentPoint = bezierCps[baseIndex].points[index]
+    let { lineIndex, pointIndex } = this.editStartPointInfo
+    if (pointIndex !== -1) {
+      let currentPoint = bezierCps[lineIndex].points[pointIndex]
       let point = this.getPoint(currentPoint)
       draw.currentPoint(ctx, point.center)
       if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)

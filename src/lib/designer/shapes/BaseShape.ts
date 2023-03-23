@@ -439,6 +439,8 @@ export abstract class BaseShape {
     if (this.status === ShapeStatus.Edit) {
       const { baseIndex, index, type } = this.editHover
       if (index !== -1 && type === EditType.Point) {
+        let line = this.conf.lineShapes[baseIndex]
+
 
       } else {
         this.status = ShapeStatus.Select

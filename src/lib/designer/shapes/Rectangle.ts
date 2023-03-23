@@ -252,8 +252,8 @@ export class Rectangle extends BaseShape {
     let { w, h } = this._config.layout
     //这里的xy这样设置是因为，渲染时的起点是center
     let x = -w / 2, y = -h / 2
-    let bezierCps: PointInfo[] = []
-    bezierCps.push({
+    let points: PointInfo[] = []
+    points.push({
       type: PointType.Single,
       point: {
         id: uuid(),
@@ -263,7 +263,7 @@ export class Rectangle extends BaseShape {
         type: BezierPointType.RightAngle
       }
     })
-    bezierCps.push({
+    points.push({
       type: PointType.Single,
       point: {
         id: uuid(),
@@ -273,7 +273,7 @@ export class Rectangle extends BaseShape {
         type: BezierPointType.RightAngle
       }
     })
-    bezierCps.push({
+    points.push({
       type: PointType.Single,
       point: {
         id: uuid(),
@@ -283,7 +283,7 @@ export class Rectangle extends BaseShape {
         type: BezierPointType.RightAngle
       }
     })
-    bezierCps.push({
+    points.push({
       type: PointType.Single,
       point: {
         id: uuid(),
@@ -293,7 +293,7 @@ export class Rectangle extends BaseShape {
         type: BezierPointType.RightAngle
       }
     })
-    return [{ close: true, points: bezierCps }]
+    return [{ close: true, points: points }]
   }
 
   onMouseDown(event: BaseEvent2, parents: BaseShape[]) {

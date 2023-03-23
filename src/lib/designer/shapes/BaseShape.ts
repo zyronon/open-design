@@ -544,7 +544,7 @@ export abstract class BaseShape {
           if (type === EditType.CenterPoint) {
             console.log('_mousedown-hoverLineCenterPointIndex')
             this.editEnter = cloneDeep(this.editHover)
-            this.conf.lineShapes[this.editEnter.baseIndex].points.splice(this.editEnter.index, 0, {
+            this.conf.lineShapes[baseIndex].points.splice(index, 0, {
               type: PointType.Single,
               point: {
                 id: uuid(),
@@ -557,7 +557,7 @@ export abstract class BaseShape {
             // this.editEnter.index += 1
             this.editHover.index = -1
             this.conf.isCustom = true
-            CanvasUtil2.getInstance().render()
+            cu.render()
             return
           }
 
@@ -617,12 +617,6 @@ export abstract class BaseShape {
             }
 
             if (isChangeCommonAddNewLine) {
-              if (pointInfo.type === PointType.Single) {
-                this.conf.commonPoints.push(pointInfo.point!)
-                this.conf.lineShapes[baseIndex].points[index].type = PointType.Common
-                this.conf.lineShapes[baseIndex].points[index].targetId = pointInfo.point!.id
-                this.conf.lineShapes[baseIndex].points[index].point = undefined
-              }
               this.conf.lineShapes.push({
                 close: false,
                 points: [
@@ -630,6 +624,12 @@ export abstract class BaseShape {
                   { type: PointType.Single, point: endPoint },
                 ]
               })
+              if (pointInfo.type === PointType.Single) {
+                this.conf.commonPoints.push(pointInfo.point!)
+                this.conf.lineShapes[baseIndex].points[index].type = PointType.Common
+                this.conf.lineShapes[baseIndex].points[index].targetId = pointInfo.point!.id
+                this.conf.lineShapes[baseIndex].points[index].point = undefined
+              }
               this.editStartPointInfo.baseIndex += 1
               this.editStartPointInfo.index = 1
             }
@@ -1294,13 +1294,13 @@ export abstract class BaseShape {
     let pathList: LinePath[] = []
     this.conf.lineShapes.map((line) => {
       let path = new Path2D()
-      line.points.map((pointInfo: PointInfo, index: number, array: any) => {
+      line.points.map((pointInfo: PointInfo, index: number, array: PointInfo[]) => {
         let currentPoint = this.getPoint(pointInfo)
         let previousPoint: BezierPoint
         if (index === 0) {
-          previousPoint = cloneDeep(array[array.length - 1])
+          previousPoint = this.getPoint(array[array.length - 1])
         } else {
-          previousPoint = cloneDeep(array[index - 1])
+          previousPoint = this.getPoint(array[index - 1])
         }
         let lineType: LineType = LineType.Line
         if (

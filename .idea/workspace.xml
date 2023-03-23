@@ -5,11 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e3d59c27-83f9-42a0-9b8c-a010f785a216" name="Changes" comment="设计编辑模式">
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/designer/shapes/BaseShape.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/designer/shapes/BaseShape.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/designer/shapes/Rectangle.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/designer/shapes/Rectangle.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/designer/types/type.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/designer/types/type.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,8 +64,16 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1679537111112</updated>
-      <workItem from="1679537112484" duration="7731000" />
+      <workItem from="1679537112484" duration="7957000" />
     </task>
+    <task id="LOCAL-00001" summary="设计编辑模式">
+      <created>1679548936485</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1679548936485</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -85,6 +91,8 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
     <MESSAGE value="设计编辑模式" />
     <option name="LAST_COMMIT_MESSAGE" value="设计编辑模式" />
   </component>

@@ -1,6 +1,6 @@
 import CanvasUtil2 from "../engine/CanvasUtil2"
-import {BaseConfig} from "../config/BaseConfig"
-import {BaseShape} from "../shapes/BaseShape"
+import { BaseConfig } from "../config/BaseConfig"
+import { BaseShape } from "../shapes/BaseShape"
 
 export type IState = {
   canvas: HTMLCanvasElement,
@@ -139,14 +139,6 @@ export interface BaseEvent2 {
   cancelStopPropagation: Function
 }
 
-//贝塞尔点的类型
-export enum BezierPointType {
-  RightAngle = 'RightAngle',//直角
-  MirrorAngleAndLength = 'MirrorAngleAndLength',//完全对称
-  MirrorAngle = 'MirrorAngle',//角度对称
-  NoMirror = 'NoMirror',//不对称
-}
-
 export enum LineType {
   Line = 'Line',
   Bezier2 = 'Bezier2',
@@ -170,6 +162,15 @@ export interface P2 {
   ry: number//相对于父级的相对值y
 }
 
+
+//贝塞尔点的类型
+export enum BezierPointType {
+  RightAngle = 'RightAngle',//直角
+  MirrorAngleAndLength = 'MirrorAngleAndLength',//完全对称
+  MirrorAngle = 'MirrorAngle',//角度对称
+  NoMirror = 'NoMirror',//不对称
+}
+
 // 三次贝塞尔曲线:用上一个点的center、cp2和当前点的cp1和center可以组成
 // 二次贝塞尔曲线：同上，只不过取任中一个cp点作为控制点
 // 直线：直接取两个点的center点相连
@@ -181,6 +182,26 @@ export interface BezierPoint {
   type: BezierPointType,
 }
 
+export enum PointType {
+  Single = 'Single',
+  Common = 'Common',
+}
+
+export interface PointInfo {
+  type: PointType,
+  targetId?: string,
+  point?: BezierPoint
+}
+
+export type LineShape = {
+  close: boolean,
+  points: PointInfo[]
+}
+
+export type LinePath = {
+  close: boolean,
+  path: Path2D
+}
 
 export function getP2(use: boolean = false): P2 {
   return {
@@ -244,14 +265,4 @@ export enum EditType {
   Line = 'Line',
   Point = 'Point',
   CenterPoint = 'CenterPoint',
-}
-
-export type LinePath = {
-  close: boolean,
-  path: Path2D
-}
-
-export type LineShape = {
-  close: boolean,
-  points: BezierPoint[]
 }

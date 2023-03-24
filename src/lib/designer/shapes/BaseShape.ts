@@ -491,6 +491,9 @@ export abstract class BaseShape {
       if (pointIndex !== -1) {
         let line = this.conf.lineShapes[lineIndex]
 
+        let previousPoint = line.points[pointIndex-1]
+        let nextPoint = line.points[pointIndex+1]
+
 
       } else {
         this.status = ShapeStatus.Select

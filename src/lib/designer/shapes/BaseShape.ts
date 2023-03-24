@@ -201,12 +201,12 @@ export abstract class BaseShape {
     pointIndex: -1,
   }
   editHover: CurrentOperationInfo = {
-    type: EditType.Line,
+    type: undefined,
     lineIndex: -1,
     pointIndex: -1,
   }
   editEnter: CurrentOperationInfo = {
-    type: EditType.Line,
+    type: undefined,
     lineIndex: -1,
     pointIndex: -1,
   }
@@ -487,8 +487,8 @@ export abstract class BaseShape {
     console.log('base-dblclick', this.editStartPointInfo, this.editHover)
     if (this.onDbClick(event, parents)) return
     if (this.status === ShapeStatus.Edit) {
-      const { lineIndex, pointIndex, type } = this.editHover
-      if (pointIndex !== -1 && type === EditType.Point) {
+      const { lineIndex, pointIndex } = this.editStartPointInfo
+      if (pointIndex !== -1) {
         let line = this.conf.lineShapes[lineIndex]
 
 
@@ -588,6 +588,13 @@ export abstract class BaseShape {
         if (pointIndex !== -1) {
           this.conf.isCustom = true
           this.editEnter = cloneDeep(result)
+          //图省事儿，直接把editHover设为默认值。不然鼠标移动点或线时。还会渲染hoverLineCenterPoint
+          //但hoverLineCenterPoint的点又不正确
+          this.editHover = {
+            type: undefined,
+            lineIndex: -1,
+            pointIndex: -1,
+          }
 
           if (type === EditType.CenterPoint) {
             this.conf.lineShapes[lineIndex].points.splice(pointIndex, 0, {
@@ -752,7 +759,6 @@ export abstract class BaseShape {
             document.body.style.cursor = "pointer"
             return true
           }
-
           document.body.style.cursor = "default"
         } else {
           //TODO 是否可以统一反转？

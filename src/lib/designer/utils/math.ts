@@ -1,8 +1,19 @@
 import { clone, inRange } from "lodash"
 import { jiaodu2hudu } from "../../../utils"
-import { P } from "../types/type"
+import { P, P2 } from "../types/type"
 
 const Math2 = {
+  getTan(p1: P | P2, p2: P | P2) {
+    let { x: p1X, y: p1Y } = p1
+    let { x: p2X, y: p2Y } = p2
+    let a = Math.abs(p2Y - p1Y)
+    let b = Math.abs(p2X - p1X)
+    let c = Math.hypot(a, b)
+    let d = Math.asin(b / c)
+    console.log('d', d)
+    let r = this.hudu2juedu(d)
+    console.log('r', r)
+  },
   getHypotenuse2(p1: any, p2: any) {
     let { x: p1X, y: p1Y } = p1
     let { x: p2X, y: p2Y } = p2

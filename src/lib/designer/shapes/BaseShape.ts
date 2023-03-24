@@ -494,6 +494,8 @@ export abstract class BaseShape {
         let currentPoint = line.points[pointIndex]
         let previousPoint = line.points[pointIndex - 1]
         let nextPoint = line.points[pointIndex + 1]
+        Math2.getTan(currentPoint.point?.center!, previousPoint.point?.center!)
+        Math2.getTan(previousPoint.point?.center!, nextPoint.point?.center!)
 
 
       } else {

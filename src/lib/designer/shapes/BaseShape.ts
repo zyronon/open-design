@@ -18,17 +18,17 @@ import {
   ShapeType
 } from "../types/type"
 import CanvasUtil2 from "../engine/CanvasUtil2"
-import { cloneDeep, merge } from "lodash"
-import { getRotatedPoint } from "../../../utils"
-import { getShapeFromConfig } from "../utils/common"
+import {cloneDeep, merge} from "lodash"
+import {getRotatedPoint} from "../../../utils"
+import {getShapeFromConfig} from "../utils/common"
 import EventBus from "../utils/event-bus"
-import { EventMapTypes } from "../../../pages/canvas20221111/type"
-import { BaseConfig, Rect } from "../config/BaseConfig"
+import {EventMapTypes} from "../../../pages/canvas20221111/type"
+import {BaseConfig, Rect} from "../config/BaseConfig"
 import helper from "../utils/helper"
 import draw from "../utils/draw"
-import { defaultConfig } from "../utils/constant"
-import { v4 as uuid } from "uuid"
-import { Math2 } from "../utils/math"
+import {defaultConfig} from "../utils/constant"
+import {v4 as uuid} from "uuid"
+import {Math2} from "../utils/math"
 
 export abstract class BaseShape {
   hoverType: MouseOptionType = MouseOptionType.None
@@ -40,8 +40,8 @@ export abstract class BaseShape {
   isCapture: boolean = true//是否捕获事件，为true不会再往下传递事件
   mouseDown: boolean = false
   original: BaseConfig
-  diagonal: P = { x: 0, y: 0 }//对面的点（和handlePoint相反的点），如果handlePoint是中间点，那么这个也是中间点
-  handLineCenterPoint: P = { x: 0, y: 0 }//鼠标按住那条边的中间点（当前角度），非鼠标点
+  diagonal: P = {x: 0, y: 0}//对面的点（和handlePoint相反的点），如果handlePoint是中间点，那么这个也是中间点
+  handLineCenterPoint: P = {x: 0, y: 0}//鼠标按住那条边的中间点（当前角度），非鼠标点
   parent?: BaseShape
 
   constructor(props: ShapeProps) {
@@ -51,7 +51,7 @@ export abstract class BaseShape {
     this.original = cloneDeep(this.conf)
     // console.log('config', clone(this.config))
     this.children = this.conf.children?.map((conf: BaseConfig) => {
-      return getShapeFromConfig({ conf, parent: this })
+      return getShapeFromConfig({conf, parent: this})
     }) ?? []
   }
 
@@ -196,7 +196,7 @@ export abstract class BaseShape {
     return !this.isCapture || !cu.isDesignMode()
   }
 
-  hoverLineCenterPoint: P = { x: 0, y: 0 }
+  hoverLineCenterPoint: P = {x: 0, y: 0}
   editStartPointInfo = {
     lineIndex: -1,
     pointIndex: -1,
@@ -213,7 +213,7 @@ export abstract class BaseShape {
   }
 
   checkMousePointOnEditStatus(point: P): CurrentOperationInfo & { lineCenterPoint?: P } {
-    let { center, lineShapes } = this.conf
+    let {center, lineShapes} = this.conf
     let fixMousePoint = {
       x: point.x - center.x,
       y: point.y - center.y
@@ -224,14 +224,14 @@ export abstract class BaseShape {
         let currentPoint = this.getPoint(lineShape.points[pointIndex])
         if (Math2.isInPoint(fixMousePoint, currentPoint.center, 4)) {
           console.log('在点上')
-          return { type: EditType.Point, lineIndex, pointIndex }
+          return {type: EditType.Point, lineIndex, pointIndex}
         }
         let previousPoint: BezierPoint
         if (pointIndex === 0) {
           if (lineShape.close) {
             previousPoint = this.getPoint(lineShape.points[lineShape.points.length - 1])
           } else {
-            return { lineIndex: -1, pointIndex: -1 }
+            return {lineIndex: -1, pointIndex: -1}
           }
         } else {
           previousPoint = this.getPoint(lineShape.points[pointIndex - 1])
@@ -253,7 +253,7 @@ export abstract class BaseShape {
         }
       }
     }
-    return { lineIndex: -1, pointIndex: -1 }
+    return {lineIndex: -1, pointIndex: -1}
   }
 
   _isInShape(mousePoint: P, cu: CanvasUtil2): boolean {
@@ -261,15 +261,15 @@ export abstract class BaseShape {
     if (this.mouseDown || this.enterType !== MouseOptionType.None) return true
     if (this.beforeIsInShape()) return true
 
-    let { realRotation, flipHorizontal, flipVertical, center } = this.conf
+    let {realRotation, flipHorizontal, flipVertical, center} = this.conf
 
     //反转到0度，好判断
     if (realRotation) {
       mousePoint = getRotatedPoint(mousePoint, center, -realRotation)
     }
-    let { x, y } = mousePoint
+    let {x, y} = mousePoint
     if (this.status === ShapeStatus.Select) {
-      const { leftX, rightX, topY, bottomY, } = this.conf.box
+      const {leftX, rightX, topY, bottomY,} = this.conf.box
       /*
       * 同上原因，判断是否在图形内，不需要翻转点。
       * */
@@ -327,7 +327,7 @@ export abstract class BaseShape {
         return true
       }
 
-      if (this.isInShapeOnSelect({ x, y }, cu)) {
+      if (this.isInShapeOnSelect({x, y}, cu)) {
         return true
       }
 
@@ -340,8 +340,8 @@ export abstract class BaseShape {
 
   render(ctx: CanvasRenderingContext2D, parent?: BaseConfig) {
     ctx.save()
-    let { x, y } = draw.calcPosition(ctx, this.conf)
-    let newLayout = { ...this.conf.layout, x, y }
+    let {x, y} = draw.calcPosition(ctx, this.conf)
+    let newLayout = {...this.conf.layout, x, y}
     // let newLayout = {...this.conf.layout, }
     this.drawShape(ctx, newLayout, parent,)
     // ctx.globalCompositeOperation = 'source-atop'
@@ -403,7 +403,7 @@ export abstract class BaseShape {
    * @param from
    * */
   event(event: BaseEvent2, parents?: BaseShape[], isParentDbClick?: boolean, from?: string): boolean {
-    let { e, point, type } = event
+    let {e, point, type} = event
     // if (type !== 'mousemove') {
     // if (type === 'dblclick') {
     //   console.log(this.conf.name, event.type, from)
@@ -488,15 +488,21 @@ export abstract class BaseShape {
     console.log('base-dblclick', this.editStartPointInfo, this.editHover)
     if (this.onDbClick(event, parents)) return
     if (this.status === ShapeStatus.Edit) {
-      const { lineIndex, pointIndex } = this.editStartPointInfo
+      const {lineIndex, pointIndex} = this.editStartPointInfo
       if (pointIndex !== -1) {
         let line = this.conf.lineShapes[lineIndex]
         let currentPoint = line.points[pointIndex]
         let previousPoint = line.points[pointIndex - 1]
         let nextPoint = line.points[pointIndex + 1]
-        Math2.getTan(currentPoint.point?.center!, previousPoint.point?.center!)
-        Math2.getTan(previousPoint.point?.center!, nextPoint.point?.center!)
-
+        // Math2.getTan(currentPoint.point?.center!, previousPoint.point?.center!)
+        // Math2.getTan(previousPoint.point?.center!, nextPoint.point?.center!)
+        let n = Math2.getTan2(previousPoint.point?.center!, nextPoint.point?.center!, currentPoint.point?.center!)
+        let ctx = CanvasUtil2.getInstance().ctx
+        ctx.save()
+        draw.calcPosition(ctx, this.conf)
+        draw.drawRound(CanvasUtil2.getInstance().ctx, n)
+        ctx.restore()
+        // CanvasUtil2.getInstance().render()
 
       } else {
         this.status = ShapeStatus.Select
@@ -516,7 +522,7 @@ export abstract class BaseShape {
     this.original = cloneDeep(this.conf)
     cu.mouseStart = cloneDeep(event.point)
     cu.fixMouseStart = cloneDeep(event.point)
-    let { center, realRotation, } = this.conf
+    let {center, realRotation,} = this.conf
     if (realRotation) {
       cu.fixMouseStart = getRotatedPoint(cu.fixMouseStart, center, -realRotation)
     }
@@ -540,7 +546,7 @@ export abstract class BaseShape {
       })
 
       this.enterType = this.hoverType
-      let { layout: { w, h, }, absolute, flipHorizontal, flipVertical } = this.conf
+      let {layout: {w, h,}, absolute, flipHorizontal, flipVertical} = this.conf
       //按住那条线0度时的中间点
       let handLineZeroDegreesCenterPoint
       let w2 = w / 2
@@ -548,7 +554,7 @@ export abstract class BaseShape {
       switch (this.hoverType) {
         case MouseOptionType.Left:
           // console.log('Left')
-          handLineZeroDegreesCenterPoint = { x: center.x + (flipHorizontal ? w2 : -w2), y: center.y }
+          handLineZeroDegreesCenterPoint = {x: center.x + (flipHorizontal ? w2 : -w2), y: center.y}
           //根据当前角度，转回来。得到的点就是当前鼠标按住那条边当前角度的中间点，非鼠标点
           this.handLineCenterPoint = getRotatedPoint(handLineZeroDegreesCenterPoint, center, realRotation)
           //翻转得到对面的点
@@ -557,18 +563,18 @@ export abstract class BaseShape {
         case MouseOptionType.Right:
           // console.log('Right')
           /** 这里的x的值与Right的计算相反*/
-          handLineZeroDegreesCenterPoint = { x: center.x + (flipHorizontal ? -w2 : w2), y: center.y }
+          handLineZeroDegreesCenterPoint = {x: center.x + (flipHorizontal ? -w2 : w2), y: center.y}
           this.handLineCenterPoint = getRotatedPoint(handLineZeroDegreesCenterPoint, center, realRotation)
           this.diagonal = helper.reversePoint(this.handLineCenterPoint, center)
           return
         case MouseOptionType.Top:
-          handLineZeroDegreesCenterPoint = { x: center.x, y: center.y + (flipVertical ? h2 : -h2) }
+          handLineZeroDegreesCenterPoint = {x: center.x, y: center.y + (flipVertical ? h2 : -h2)}
           this.handLineCenterPoint = getRotatedPoint(handLineZeroDegreesCenterPoint, center, realRotation)
           this.diagonal = helper.reversePoint(this.handLineCenterPoint, center)
           return
         case MouseOptionType.Bottom:
           /** 这里的y的值与Top的计算相反*/
-          handLineZeroDegreesCenterPoint = { x: center.x, y: center.y + (flipVertical ? -h2 : h2) }
+          handLineZeroDegreesCenterPoint = {x: center.x, y: center.y + (flipVertical ? -h2 : h2)}
           this.handLineCenterPoint = getRotatedPoint(handLineZeroDegreesCenterPoint, center, realRotation)
           this.diagonal = helper.reversePoint(this.handLineCenterPoint, center)
           return
@@ -589,7 +595,7 @@ export abstract class BaseShape {
     if (this.status === ShapeStatus.Edit) {
       if (cu.editModeType === EditModeType.Select) {
         let result = this.checkMousePointOnEditStatus(event.point)
-        const { lineIndex, pointIndex, type } = result
+        const {lineIndex, pointIndex, type} = result
         //如果hover在点上，先处理hover
         if (pointIndex !== -1) {
           this.conf.isCustom = true
@@ -608,7 +614,7 @@ export abstract class BaseShape {
               point: {
                 id: uuid(),
                 cp1: getP2(),
-                center: { ...getP2(true), ...this.hoverLineCenterPoint },
+                center: {...getP2(true), ...this.hoverLineCenterPoint},
                 cp2: getP2(),
                 type: BezierPointType.RightAngle
               }
@@ -620,7 +626,7 @@ export abstract class BaseShape {
             if (this.editStartPointInfo.lineIndex !== lineIndex
               || this.editStartPointInfo.pointIndex !== pointIndex
             ) {
-              this.editStartPointInfo = { lineIndex, pointIndex }
+              this.editStartPointInfo = {lineIndex, pointIndex}
               cu.render()
             }
             return
@@ -629,7 +635,7 @@ export abstract class BaseShape {
 
         //能走到这，说明未选中任何点。那么判断是否已选中，选中就给取消掉
         if (this.editStartPointInfo.pointIndex !== -1) {
-          this.editStartPointInfo = { lineIndex: -1, pointIndex: -1 }
+          this.editStartPointInfo = {lineIndex: -1, pointIndex: -1}
           cu.render()
         }
       }
@@ -642,13 +648,13 @@ export abstract class BaseShape {
         }
         let endPoint = helper.getDefaultBezierPoint(fixMousePoint)
 
-        let { lineIndex, pointIndex } = this.editStartPointInfo
+        let {lineIndex, pointIndex} = this.editStartPointInfo
         if (pointIndex === -1) {
           //新增一条线
           this.conf.isCustom = true
           this.conf.lineShapes.push({
             close: false,
-            points: [{ type: PointType.Single, point: endPoint }]
+            points: [{type: PointType.Single, point: endPoint}]
           })
           this.editStartPointInfo.lineIndex = this.conf.lineShapes.length - 1
           this.editStartPointInfo.pointIndex = 0
@@ -664,7 +670,7 @@ export abstract class BaseShape {
               if (line.close) {
                 isChangeCommonAddNewLine = true
               } else {
-                line.points.push({ type: PointType.Single, point: endPoint })
+                line.points.push({type: PointType.Single, point: endPoint})
                 this.editStartPointInfo.pointIndex += 1
               }
             } else {
@@ -675,8 +681,8 @@ export abstract class BaseShape {
               this.conf.lineShapes.push({
                 close: false,
                 points: [
-                  { type: PointType.Common, targetId: pointInfo.point!.id },
-                  { type: PointType.Single, point: endPoint },
+                  {type: PointType.Common, targetId: pointInfo.point!.id},
+                  {type: PointType.Single, point: endPoint},
                 ]
               })
               if (pointInfo.type === PointType.Single) {
@@ -715,7 +721,7 @@ export abstract class BaseShape {
 
     if (this.status === ShapeStatus.Select) {
       this.isSelectHover = true
-      let { e, point, type } = event
+      let {e, point, type} = event
       switch (this.enterType) {
         case MouseOptionType.Left:
           return this.dragLeft(point)
@@ -743,9 +749,9 @@ export abstract class BaseShape {
 
     if (this.status === ShapeStatus.Edit) {
       let cu = CanvasUtil2.getInstance()
-      let { center, realRotation } = this.conf
+      let {center, realRotation} = this.conf
       if (cu.editModeType === EditModeType.Select) {
-        const { lineIndex, pointIndex, type } = this.editEnter
+        const {lineIndex, pointIndex, type} = this.editEnter
         if (pointIndex === -1) {
           let result = this.checkMousePointOnEditStatus(event.point)
           //用于判断是否与之前保存的值不同，仅在不同时才重绘
@@ -785,7 +791,7 @@ export abstract class BaseShape {
           }
           if (type === EditType.Line) {
             console.log('onMouseMove-enterLineIndex')
-            let { x, y } = event.point
+            let {x, y} = event.point
             let dx = x - cu.fixMouseStart.x
             let dy = y - cu.fixMouseStart.y
             console.log('dx', dx, 'dy', dy)
@@ -811,7 +817,7 @@ export abstract class BaseShape {
         }
       }
       if (cu.editModeType === EditModeType.Edit) {
-        let { lineIndex, pointIndex } = this.editStartPointInfo
+        let {lineIndex, pointIndex} = this.editStartPointInfo
         if (pointIndex == -1) return
         let lastPoint = this.getPoint(this.conf.lineShapes[lineIndex].points[pointIndex])
         if (lastPoint) {
@@ -877,7 +883,7 @@ export abstract class BaseShape {
   //移动图形
   move(point: P) {
     let cu = CanvasUtil2.getInstance()
-    let { x, y, } = point
+    let {x, y,} = point
 
     this.conf.center.x = this.original.center.x + (x - cu.mouseStart.x)
     this.conf.center.y = this.original.center.y + (y - cu.mouseStart.y)
@@ -890,10 +896,10 @@ export abstract class BaseShape {
   //拖动左上旋转
   dragTopLeftRotation(point: P) {
     // console.log('dragTopLeftRotation')
-    let { x, y, } = point
+    let {x, y,} = point
     let cu = CanvasUtil2.getInstance()
-    let { center, original, } = this.conf
-    let current = { x, y }
+    let {center, original,} = this.conf
+    let current = {x, y}
     // console.log('x-------', x, '          y--------', y)
     let newRotation = Math2.getDegree(center, original, current)
 
@@ -913,13 +919,13 @@ export abstract class BaseShape {
   //拖动左上
   dragTopLeft(point: P) {
     // console.log('dragTopLeft')
-    let { x, y, } = point
+    let {x, y,} = point
     let cu = CanvasUtil2.getInstance()
     const conf = this.conf
-    let { realRotation } = conf
+    let {realRotation} = conf
     let isReverseW = false
     let isReverseH = false
-    let current = { x, y }
+    let current = {x, y}
     let newCenter = Math2.getCenterPoint(current, this.diagonal)
     let zeroDegreeTopLeft = getRotatedPoint(current, newCenter, -realRotation)
     let zeroDegreeBottomRight = getRotatedPoint(this.diagonal, newCenter, -realRotation)
@@ -968,16 +974,16 @@ export abstract class BaseShape {
   //拖动上边
   dragTop(point: P) {
     // console.log('拖动上边')
-    let { x, y, } = point
+    let {x, y,} = point
     let cu = CanvasUtil2.getInstance()
     let conf = this.conf
     let isReverseW = false
-    const { realRotation } = conf
+    const {realRotation} = conf
     if (realRotation) {
-      const current = { x, y }
+      const current = {x, y}
       const handlePoint = this.handLineCenterPoint
       const zeroAngleCurrentPoint = getRotatedPoint(current, handlePoint, -realRotation)
-      const zeroAngleMovePoint = { x: handlePoint.x, y: zeroAngleCurrentPoint.y }
+      const zeroAngleMovePoint = {x: handlePoint.x, y: zeroAngleCurrentPoint.y}
       const currentAngleMovePoint = getRotatedPoint(zeroAngleMovePoint, handlePoint, realRotation)
       const newHeight = Math.hypot(currentAngleMovePoint.x - this.diagonal.x, currentAngleMovePoint.y - this.diagonal.y)
       const newCenter = {
@@ -1018,16 +1024,16 @@ export abstract class BaseShape {
   //拖动下边
   dragBottom(point: P) {
     // console.log('拖动下边')
-    let { x, y, } = point
+    let {x, y,} = point
     let cu = CanvasUtil2.getInstance()
     let conf = this.conf
     let isReverseW = false
-    const { realRotation } = conf
+    const {realRotation} = conf
     if (realRotation) {
-      const current = { x, y }
+      const current = {x, y}
       const handlePoint = this.handLineCenterPoint
       const zeroAngleCurrentPoint = getRotatedPoint(current, handlePoint, -realRotation)
-      const zeroAngleMovePoint = { x: handlePoint.x, y: zeroAngleCurrentPoint.y }
+      const zeroAngleMovePoint = {x: handlePoint.x, y: zeroAngleCurrentPoint.y}
       const currentAngleMovePoint = getRotatedPoint(zeroAngleMovePoint, handlePoint, realRotation)
       const newHeight = Math.hypot(currentAngleMovePoint.x - this.diagonal.x, currentAngleMovePoint.y - this.diagonal.y)
       const newCenter = {
@@ -1068,18 +1074,18 @@ export abstract class BaseShape {
   //拖动左边，最完整的
   dragLeft(point: P) {
     // console.log('拖动左边')
-    let { x, y, } = point
+    let {x, y,} = point
     let cu = CanvasUtil2.getInstance()
     let conf = this.conf
-    const { realRotation } = conf
+    const {realRotation} = conf
     let isReverseW = false
     if (realRotation) {
-      const current = { x, y }
+      const current = {x, y}
       const handlePoint = this.handLineCenterPoint
       //0度的当前点：以当前边中间点为圆心，负角度偏转当前点，得到0度的当前点
       const zeroAngleCurrentPoint = getRotatedPoint(current, handlePoint, -realRotation)
       //0度的移动点：x取其0度的当前点的，y取当前边中间点的（保证在一条直线上，因为只能拖动x，y不需要变动）
-      const zeroAngleMovePoint = { x: zeroAngleCurrentPoint.x, y: handlePoint.y }
+      const zeroAngleMovePoint = {x: zeroAngleCurrentPoint.x, y: handlePoint.y}
       // 当前角度的移动点：以当前边中间点为圆心，正角度偏转
       const currentAngleMovePoint = getRotatedPoint(zeroAngleMovePoint, handlePoint, realRotation)
       //最新宽度：利用勾股定理求出斜边(不能直接zeroAngleMovePoint.x - this.diagonal.x相减，会有细微的差别)
@@ -1126,17 +1132,17 @@ export abstract class BaseShape {
   //拖动右边
   dragRight(point: P) {
     // console.log('拖动右边')
-    let { x, y, } = point
+    let {x, y,} = point
     let cu = CanvasUtil2.getInstance()
     let conf = this.conf
-    const { realRotation } = conf
+    const {realRotation} = conf
     let isReverseW = false
 
     if (realRotation) {
-      const current = { x, y }
+      const current = {x, y}
       const handlePoint = this.handLineCenterPoint
       const zeroAngleCurrentPoint = getRotatedPoint(current, handlePoint, -realRotation)
-      const zeroAngleMovePoint = { x: zeroAngleCurrentPoint.x, y: handlePoint.y }
+      const zeroAngleMovePoint = {x: zeroAngleCurrentPoint.x, y: handlePoint.y}
       const currentAngleMovePoint = getRotatedPoint(zeroAngleMovePoint, handlePoint, realRotation)
       const newWidth = Math.hypot(currentAngleMovePoint.x - this.diagonal.x, currentAngleMovePoint.y - this.diagonal.y)
       const newCenter = {
@@ -1193,7 +1199,7 @@ export abstract class BaseShape {
       conf.flipVertical = !conf.flipVertical
     }
     if (flipType === 'Symmetric') {
-      let { realRotation, } = conf
+      let {realRotation,} = conf
       conf.realRotation = -realRotation
       conf.rotation = (conf.realRotation - (this.parent?.conf?.realRotation ?? 0)).toFixed2(2)
     }
@@ -1230,12 +1236,12 @@ export abstract class BaseShape {
         // item.conf.center = helper.horizontalReversePoint(item.conf.center, pConf.center)
         // item.conf.center = helper.getRotatedPoint(item.conf.center, pConf.center, 2 * pConf.realRotation)
         let pOriginal = pConf.original
-        let center = { x: pOriginal.x + -item.conf.relativeCenter.x, y: pOriginal.y + item.conf.relativeCenter.y }
+        let center = {x: pOriginal.x + -item.conf.relativeCenter.x, y: pOriginal.y + item.conf.relativeCenter.y}
         item.conf.center = getRotatedPoint(center, pConf.center, pConf.realRotation)
         item.conf.flipHorizontal = !item.conf.flipHorizontal
       } else {
         let pOriginal = pConf.original
-        let center = { x: pOriginal.x + item.conf.relativeCenter.x, y: pOriginal.y + -item.conf.relativeCenter.y }
+        let center = {x: pOriginal.x + item.conf.relativeCenter.x, y: pOriginal.y + -item.conf.relativeCenter.y}
         item.conf.center = getRotatedPoint(center, pConf.center, pConf.realRotation)
         item.conf.flipVertical = !item.conf.flipVertical
       }

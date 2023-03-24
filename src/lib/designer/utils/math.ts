@@ -1,11 +1,11 @@
-import { clone, inRange } from "lodash"
-import { jiaodu2hudu } from "../../../utils"
-import { P, P2 } from "../types/type"
+import {clone, inRange} from "lodash"
+import {jiaodu2hudu} from "../../../utils"
+import {P, P2} from "../types/type"
 
 const Math2 = {
   getTan(p1: P | P2, p2: P | P2) {
-    let { x: p1X, y: p1Y } = p1
-    let { x: p2X, y: p2Y } = p2
+    let {x: p1X, y: p1Y} = p1
+    let {x: p2X, y: p2Y} = p2
     let a = Math.abs(p2Y - p1Y)
     let b = Math.abs(p2X - p1X)
     let c = Math.hypot(a, b)
@@ -14,9 +14,23 @@ const Math2 = {
     let r = this.hudu2juedu(d)
     console.log('r', r)
   },
+  getTan2(p1: P | P2, p2: P | P2, p3: P | P2) {
+    let {x: p1X, y: p1Y} = p1
+    let {x: p2X, y: p2Y} = p2
+    let a = Math.abs(p2Y - p1Y)
+    let b = Math.abs(p2X - p1X)
+    let line1 = this.getHypotenuse2(p3, p1)
+    let line2 = this.getHypotenuse2(p3, p2)
+    let m = a / b
+    let d = Math.min(line1, line2) * (1 / 5)
+    let p3_1x = p3.x - d
+    let p3_1y = m - d + p3.y
+    console.log(p3_1x, p3_1y)
+    return {x: p3_1x, y: p3_1y}
+  },
   getHypotenuse2(p1: any, p2: any) {
-    let { x: p1X, y: p1Y } = p1
-    let { x: p2X, y: p2Y } = p2
+    let {x: p1X, y: p1Y} = p1
+    let {x: p2X, y: p2Y} = p2
     return Math.hypot(p2X - p1X, p2Y - p1Y)
   },
   getHypotenuse(one: number[], two: number[]) {
@@ -29,8 +43,8 @@ const Math2 = {
   },
   //获取圆上的另一个点
   getRoundOtherPoint3(p1: any, c: any, angle: number) {
-    let { x, y } = p1
-    let { cx, cy } = c
+    let {x, y} = p1
+    let {cx, cy} = c
     let hypotenuse = this.getHypotenuse([cx, cy], [x, y])
     // console.log('hypotenuse', hypotenuse)
     let s = Math.abs(y) / Math.abs(hypotenuse)
@@ -181,8 +195,8 @@ const Math2 = {
    * //https://www.zhihu.com/question/30570430
    * */
   test(xTarget: any, cp1: any, cp2: any) {
-    let { x: x1, y: y1 } = cp1
-    let { x: x2, y: y2 } = cp2
+    let {x: x1, y: y1} = cp1
+    let {x: x2, y: y2} = cp2
     var tolerance = 0.00001,
       t0 = 0.6,
       x = 3 * (1 - t0) * (1 - t0) * t0 * x1 + 3 * (1 - t0) * t0 * t0 * x2 + t0 * t0 * t0,
@@ -269,9 +283,9 @@ const Math2 = {
 
   //获取两点之间角度
   getDegree(center: P, one: P, two: P) {
-    let { x: cx, y: cy } = center
-    let { x: x1, y: y1 } = one
-    let { x: x2, y: y2 } = two
+    let {x: cx, y: cy} = center
+    let {x: x1, y: y1} = one
+    let {x: x2, y: y2} = two
     //2个点之间的角度获取
     let c1 = Math.atan2(y1 - cy, x1 - cx) * 180 / (Math.PI)
     let c2 = Math.atan2(y2 - cy, x2 - cx) * 180 / (Math.PI)
@@ -287,7 +301,7 @@ const Math2 = {
   },
   //判断点是否在盒子内
   isInBox(target: P, box: any): boolean {
-    const { x, y } = target
+    const {x, y} = target
     return box.leftX < x && x < box.rightX
       && box.topY < y && y < box.bottomY
   },
@@ -329,7 +343,7 @@ const Math2 = {
     let y1 = (3 * yb - yc) / 72
     let x2 = (3 * xc - xb) / 72
     let y2 = (3 * yc - yb) / 72
-    return [{ x: x1, y: y1 }, { x: x2, y: y2 }]
+    return [{x: x1, y: y1}, {x: x2, y: y2}]
   },
 
   /**
@@ -343,8 +357,8 @@ const Math2 = {
       + 3 * (1 - t) * Math.pow(t, 2) * p3.x + Math.pow(t, 3) * p4.x
     let y = Math.pow(1 - t, 3) * p1.y + 3 * Math.pow(1 - t, 2) * t * p2.y
       + 3 * (1 - t) * Math.pow(t, 2) * p3.y + Math.pow(t, 3) * p4.y
-    return { x, y }
+    return {x, y}
   },
 }
-export { Math2 }
+export {Math2}
 

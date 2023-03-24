@@ -7,6 +7,7 @@ import {BezierPoint, BezierPointType, getP2, LineType, P2} from "../../lib/desig
 import draw from "../../lib/designer/utils/draw"
 import helper from "../../lib/designer/utils/helper"
 import {v4 as uuid} from "uuid"
+import { Math2 } from '../../lib/designer/utils/math'
 
 
 class T extends Component<any, any> {
@@ -216,7 +217,7 @@ class T extends Component<any, any> {
         //默认情况下，用于计算1/4点，3/4点，可以共用一条对应的线段
         bezierCurrent = bezierPrevious = getBezierControlPoint(intCurrentLength)
         //计算当前点必须用当前长度线段的4个控制点来算
-        currentPoint = helper.getBezierPointByLength(Math.decimal(currentLength), bezierCurrent)
+        currentPoint = Math2.getBezierPointByLength(Math.decimal(currentLength), bezierCurrent)
 
         //特殊情况
         //如果，1/4的长度，不在当前线段内，那么肯定在上一个线段内
@@ -229,11 +230,11 @@ class T extends Component<any, any> {
         }
 
         //计算1/4长度，3/4长度对应的点
-        length14Point = helper.getBezierPointByLength(Math.decimal(length14), bezierPrevious)
-        length34Point = helper.getBezierPointByLength(Math.decimal(length34), bezierCurrent)
+        length14Point = Math2.getBezierPointByLength(Math.decimal(length14), bezierPrevious)
+        length34Point = Math2.getBezierPointByLength(Math.decimal(length34), bezierCurrent)
 
         //利用1/4点、3/4点、起始点、终点，反推控制点
-        let cps = helper.getBezier3ControlPoints(length14Point, length34Point, lastPoint, currentPoint)
+        let cps = Math2.getBezier3ControlPoints(length14Point, length34Point, lastPoint, currentPoint)
 
         // 因为最后一个控制点（非数组的最后一个点）默认只需center和cp1与前一个点的center和cp2的4个点，组成贝塞尔曲线
         //所以cp2是无用的，所以添加当前点时，需要把上一个点的cp2为正确的值并启用
@@ -398,7 +399,7 @@ class T extends Component<any, any> {
       // ctx.closePath()
       ctx.stroke()
 
-      let p = helper.getBezierPointByLength(0.5, [p0, p1, p2, p3])
+      let p = Math2.getBezierPointByLength(0.5, [p0, p1, p2, p3])
       draw.drawRound(ctx, p)
       console.log('p', p)
       a = p3.x - 3 * p2.x + 3 * p1.x - p0.x
@@ -416,7 +417,7 @@ class T extends Component<any, any> {
       // draw.drawRound(ctx, p2)
       // draw.drawRound(ctx, p3)
       let ps = [p0, p1, p2, p3]
-      p = helper.getBezierPointByLength(0.5, ps)
+      p = Math2.getBezierPointByLength(0.5, ps)
       draw.drawRound(ctx, p)
       console.log('p', p)
 
@@ -455,10 +456,10 @@ class T extends Component<any, any> {
       let C = k * XC - YC
       let D = k * XD - YD
 
-      let t: any[] = helper.solveCubic(A, B, C, D)
+      let t: any[] = Math2.solveCubic(A, B, C, D)
       t = t.filter(v => 0 <= v && v <= 1.01)
       console.log('t', t)
-      let mousePoint2 = helper.getBezierPointByLength(t[0], ps)
+      let mousePoint2 = Math2.getBezierPointByLength(t[0], ps)
 
       draw.drawRound(ctx, mousePoint2)
 

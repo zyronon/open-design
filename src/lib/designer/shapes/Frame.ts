@@ -6,6 +6,7 @@ import draw from "../utils/draw"
 import {getRotatedPoint, jiaodu2hudu} from "../../../utils"
 import {Colors, defaultConfig} from "../utils/constant"
 import helper from "../utils/helper"
+import { Math2 } from "../utils/math"
 
 export class Frame extends BaseShape {
 
@@ -64,9 +65,9 @@ export class Frame extends BaseShape {
   isInShape(mousePoint: P, cu: CanvasUtil2): boolean {
     if (this.isOnlyHoverInName()) {
       // return this.isInName(mousePoint)
-      return this.isInName(mousePoint) || helper.isInBox(mousePoint, this.conf.box)
+      return this.isInName(mousePoint) || Math2.isInBox(mousePoint, this.conf.box)
     }
-    return helper.isInBox(mousePoint, this.conf.box)
+    return Math2.isInBox(mousePoint, this.conf.box)
   }
 
   onDbClick(event: BaseEvent2, parents: BaseShape[]): boolean {
@@ -85,7 +86,7 @@ export class Frame extends BaseShape {
       if (this.isInName(event.point, true)) {
         return false
       }
-      if (helper.isInBox(event.point, this.conf.box)) {
+      if (Math2.isInBox(event.point, this.conf.box)) {
         event.cancelStopPropagation()
       }
       return true

@@ -19,6 +19,7 @@ import { BaseConfig, Rect } from "../config/BaseConfig"
 import draw from "../utils/draw"
 import helper from "../utils/helper"
 import { v4 as uuid } from 'uuid'
+import { Math2 } from "../utils/math"
 
 export class Rectangle extends BaseShape {
   //最小拖动圆角。真实圆角可能为0，导致渲染的控制点和角重合，所以设置一个最小圆角
@@ -88,7 +89,7 @@ export class Rectangle extends BaseShape {
   }
 
   isInShape(mousePoint: P, cu: CanvasUtil2): boolean {
-    return helper.isInBox(mousePoint, this.conf.box)
+    return Math2.isInBox(mousePoint, this.conf.box)
   }
 
   drawShape(ctx: CanvasRenderingContext2D, layout: Rect, parent?: BaseConfig) {

@@ -28,6 +28,7 @@ import helper from "../utils/helper"
 import draw from "../utils/draw"
 import { defaultConfig } from "../utils/constant"
 import { v4 as uuid } from "uuid"
+import { Math2 } from "../utils/math"
 
 export abstract class BaseShape {
   hoverType: MouseOptionType = MouseOptionType.None
@@ -221,7 +222,7 @@ export abstract class BaseShape {
       let lineShape = lineShapes[lineIndex]
       for (let pointIndex = 0; pointIndex < lineShape.points.length; pointIndex++) {
         let currentPoint = this.getPoint(lineShape.points[pointIndex])
-        if (helper.isInPoint(fixMousePoint, currentPoint.center, 4)) {
+        if (Math2.isInPoint(fixMousePoint, currentPoint.center, 4)) {
           console.log('在点上')
           return { type: EditType.Point, lineIndex, pointIndex }
         }
@@ -236,15 +237,15 @@ export abstract class BaseShape {
           previousPoint = this.getPoint(lineShape.points[pointIndex - 1])
         }
         let line: any = [previousPoint.center, currentPoint.center]
-        if (helper.isInLine(fixMousePoint, line)) {
+        if (Math2.isInLine(fixMousePoint, line)) {
           console.log('在线上')
           let returnData = {
             type: EditType.Line,
             lineIndex,
             pointIndex,
-            lineCenterPoint: helper.getCenterPoint(previousPoint.center, currentPoint.center)
+            lineCenterPoint: Math2.getCenterPoint(previousPoint.center, currentPoint.center)
           }
-          if (helper.isInPoint(fixMousePoint, this.hoverLineCenterPoint, 4)) {
+          if (Math2.isInPoint(fixMousePoint, this.hoverLineCenterPoint, 4)) {
             console.log('hover在线的中点上')
             returnData.type = EditType.CenterPoint
           }
@@ -490,9 +491,9 @@ export abstract class BaseShape {
       const { lineIndex, pointIndex } = this.editStartPointInfo
       if (pointIndex !== -1) {
         let line = this.conf.lineShapes[lineIndex]
-
-        let previousPoint = line.points[pointIndex-1]
-        let nextPoint = line.points[pointIndex+1]
+        let currentPoint = line.points[pointIndex]
+        let previousPoint = line.points[pointIndex - 1]
+        let nextPoint = line.points[pointIndex + 1]
 
 
       } else {
@@ -892,7 +893,7 @@ export abstract class BaseShape {
     let { center, original, } = this.conf
     let current = { x, y }
     // console.log('x-------', x, '          y--------', y)
-    let newRotation = helper.getDegree(center, original, current)
+    let newRotation = Math2.getDegree(center, original, current)
 
     //这里要减去，父级的旋转角度
     let realRotation = (newRotation < 180 ? newRotation : newRotation - 360)
@@ -917,7 +918,7 @@ export abstract class BaseShape {
     let isReverseW = false
     let isReverseH = false
     let current = { x, y }
-    let newCenter = helper.getCenterPoint(current, this.diagonal)
+    let newCenter = Math2.getCenterPoint(current, this.diagonal)
     let zeroDegreeTopLeft = getRotatedPoint(current, newCenter, -realRotation)
     let zeroDegreeBottomRight = getRotatedPoint(this.diagonal, newCenter, -realRotation)
 

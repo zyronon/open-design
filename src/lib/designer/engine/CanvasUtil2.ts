@@ -408,7 +408,7 @@ export default class CanvasUtil2 {
               this.newShape.status = ShapeStatus.Select
             }
             // EventBus.emit(EventMapTypes.onMouseMove, this.newShape)
-            this.newShape.conf = helper.getPath(this.newShape.conf)
+            this.newShape.conf = helper.initConf(this.newShape.conf)
             this.render()
           } else {
             let x = this.mouseStart.x

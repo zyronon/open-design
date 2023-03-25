@@ -66,21 +66,18 @@ const Math2 = {
     console.log(...arguments)
     let {x: p1X, y: p1Y} = previousPoint
     let {x: p2X, y: p2Y} = nextPoint
-    let ax = (p2X - p1X)
-    let by = (p2Y - p1Y)
-    console.log('x', ax, 'y', by)
-    let line1 = this.getHypotenuse2(nextPoint, previousPoint)
-    let m = by / ax
+    let m = (p2Y - p1Y) / (p2X - p1X)
     console.log('m', m)
-    let da = line1 * 0.25
-    let s = this.calculatePointB(targetPoint, da, m)
+    let A = this.getHypotenuse2(nextPoint, previousPoint)
+    let X = A * 0.25
+    let s = this.calculatePointB(targetPoint, X, m)
     console.log('s', s)
     return s
-    // console.log('d', da)
-    // let p3_1a = da + targetPoint.x
-    // let p3_1b = da / m + targetPoint.y
-    // console.log(p3_1a, p3_1b)
-    // return {x: p3_1a, y: p3_1b}
+    //下面是直接将X加上b的x，代入直线方程求y，会出现方向正确，但d点与b点的长度不等于X的问题
+    // let dx = X + targetPoint.x
+    // let dy = X / m + targetPoint.y
+    // console.log(dx, dy)
+    // return {x: dx, y: dy}
   },
   calculatePointB(a: P | P2, X: number, m: number) {
     let x_B = a.x + (X / Math.sqrt(1 + Math.pow(m, 2)));

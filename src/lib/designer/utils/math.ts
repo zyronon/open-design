@@ -14,20 +14,80 @@ const Math2 = {
     let r = this.hudu2juedu(d)
     console.log('r', r)
   },
-  getTan2(p1: P | P2, p2: P | P2, p3: P | P2) {
-    let {x: p1X, y: p1Y} = p1
-    let {x: p2X, y: p2Y} = p2
-    let a = Math.abs(p2Y - p1Y)
-    let b = Math.abs(p2X - p1X)
-    let line1 = this.getHypotenuse2(p3, p1)
-    let line2 = this.getHypotenuse2(p3, p2)
-    let m = a / b
-    let d = Math.min(line1, line2) * (1 / 5)
-    let p3_1x = p3.x - d
-    let p3_1y = m - d + p3.y
-    console.log(p3_1x, p3_1y)
-    return {x: p3_1x, y: p3_1y}
+  /**
+   * #获取目标点的贝塞尔控制点
+   *
+   * 简介：求平行于目标点targetPoint（命名b）的对边（命名A）（previousPoint（命名a）-nextPoint（命名c）），长度为对边A的0.25倍（命名X）的点（命名d）的坐标
+   * 可以简化为：一个三角形，三条边分别命名为A,B,C，三个点分别为a,b,c。如何求出平行于A边，过b点的任一点d？
+   * 原理：分开两步，先算A边的斜率m，得到斜率之后，利用已经条件：b点坐标，长度X，斜率m。列方程组可求出d点坐标
+   *  - 首先计算出边A的斜率，即通过点a和点c的坐标计算得到。假设点a的坐标为(x1,y1)，点c的坐标为(x3,y3)，则边A的斜率为：
+   *  ```
+   *   m = (y3 - y1) / (x3 - x1)
+   *   ```
+   *  - 然后，以点b为起点，使用斜率m来计算直线的方程式。设过点b的直线上的任意一点的坐标为(x,y)，则直线的方程式为：
+   *  ```
+   *  y - yb = m(x - xb)
+   *  ```
+   *  - 然后，使用任意一个x值，代入上述方程式求出对应的y值，即可得到过点b且平行于边A的直线上的任意一点的坐标。
+   *  
+   *  - 但是此刻我们只有已知长度X，并没有x或y值去反向求对应值。如果直接将x等于xb + X代入直线方程求y。那么会出现方向正确，但d点与b点的长度不等于X的问题
+   *  所以又是一个新的问题：已知b点坐标，已知d点与b点的长度为X，斜率m。求d点的坐标？
+   *
+   *  -设点b的坐标为 (xb, yb)，点d的坐标为 (xd, yd)，则有：
+   *  -由于已知点b、斜率m和点d与点b的长度X，可以得到过点b且斜率为m的直线的方程为：
+   *  ```
+   *  yd - yb = m(xd - xb)
+   *  ```
+   *  - 又因为点d与点b的长度为X，所以可以列出点d在直线上的距离方程：
+   *  ```
+   *  f = sqrt((xd - xb)^2 + (yd - yb)^2) = X
+   *  ```
+   *  其中，f为点d到点b的距离，X为已知的长度。
+   *
+   *  - 将直线方程代入距离方程中，可以得到：
+   *  ```
+   *  sqrt((xd - xb)^2 + (m(xd - xb))^2) = X
+   *  ```
+   *  - 对上述方程进行变形，得到：
+   *  ```
+   *  (xd - xb)^2 + (m(xd - xb))^2 = X^2
+   *  ```
+   *  - 展开并化简，得到一个关于xd的二次方程：
+   *  ```
+   *  (m^2 + 1) xd^2 - 2(xb + m^2 xd) xd + (xb^2 + m^2 yb^2 - X^2) = 0
+   *
+   *  ```*
+   *  - 需要注意的是，如果边A的斜率不存在（即垂直于x轴），则需要使用其他方法来求解。此时，可以先通过点b和点c的坐标计算出边b的长度，
+   *  然后将直线向y轴正方向移动相应的距离即可得到过点b且平行于A的直线上的任意一点。
+   *
+   * */
+  getTargetPointBezierControlPoint(previousPoint: P | P2, targetPoint: P | P2, nextPoint: P | P2) {
+    // @ts-ignore
+    console.log(...arguments)
+    let {x: p1X, y: p1Y} = previousPoint
+    let {x: p2X, y: p2Y} = nextPoint
+    let ax = (p2X - p1X)
+    let by = (p2Y - p1Y)
+    console.log('x', ax, 'y', by)
+    let line1 = this.getHypotenuse2(nextPoint, previousPoint)
+    let m = by / ax
+    console.log('m', m)
+    let da = line1 * 0.25
+    let s = this.calculatePointB(targetPoint, da, m)
+    console.log('s', s)
+    return s
+    // console.log('d', da)
+    // let p3_1a = da + targetPoint.x
+    // let p3_1b = da / m + targetPoint.y
+    // console.log(p3_1a, p3_1b)
+    // return {x: p3_1a, y: p3_1b}
   },
+  calculatePointB(a: P | P2, X: number, m: number) {
+    let x_B = a.x + (X / Math.sqrt(1 + Math.pow(m, 2)));
+    let y_B = a.y + (m * (X / Math.sqrt(1 + Math.pow(m, 2))));
+    return {x: x_B, y: y_B};
+  },
+
   getHypotenuse2(p1: any, p2: any) {
     let {x: p1X, y: p1Y} = p1
     let {x: p2X, y: p2Y} = p2

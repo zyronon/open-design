@@ -496,7 +496,7 @@ export abstract class BaseShape {
         let nextPoint = line.points[pointIndex + 1]
         // Math2.getTan(currentPoint.point?.center!, previousPoint.point?.center!)
         // Math2.getTan(previousPoint.point?.center!, nextPoint.point?.center!)
-        let n = Math2.getTan2(previousPoint.point?.center!, nextPoint.point?.center!, currentPoint.point?.center!)
+        let n = Math2.getTargetPointBezierControlPoint(previousPoint.point?.center!, currentPoint.point?.center!, nextPoint.point?.center!)
         let ctx = CanvasUtil2.getInstance().ctx
         ctx.save()
         draw.calcPosition(ctx, this.conf)

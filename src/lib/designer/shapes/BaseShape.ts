@@ -516,7 +516,10 @@ export abstract class BaseShape {
         let {
           l,
           r
-        } = Math2.getTargetPointBezierControlPoint(previousPointInfo.point?.center!, currentPoint.point?.center!, nextPointInfo.point?.center!)
+        } = Math2.getTargetPointBezierControlPoint(
+          previousPointInfo.point?.center!,
+          currentPoint.point?.center!,
+          nextPointInfo.point?.center!)
         this.conf.lineShapes[lineIndex].points[pointIndex].point!.cp1 = {...getP2(true), ...l}
         this.conf.lineShapes[lineIndex].points[pointIndex].point!.cp2 = {...getP2(true), ...r}
         this.conf.lineShapes[lineIndex].points[pointIndex].point!.type = BezierPointType.MirrorAngleAndLength
@@ -795,22 +798,29 @@ export abstract class BaseShape {
           if (realRotation) {
             event.point = Math2.getRotatedPoint(event.point, center, -realRotation)
           }
+
+          let {x, y} = event.point
+          let dx = x - cu.fixMouseStart.x
+          let dy = y - cu.fixMouseStart.y
+
           if (type === EditType.Point || type === EditType.CenterPoint) {
             let point = this.getPoint(this.conf.lineShapes[lineIndex].points[pointIndex])
-            point.center = {
-              ...getP2(true), ...{
-                x: event.point.x - center.x,
-                y: event.point.y - center.y
-              }
+            let oldPoint = this.getPoint(this.original.lineShapes[lineIndex].points[pointIndex], this.original)
+            point.center.x = oldPoint.center.x + dx
+            point.center.y = oldPoint.center.y + dy
+            if (point.cp1.use) {
+              point.cp1.x = oldPoint.cp1.x + dx
+              point.cp1.y = oldPoint.cp1.y + dy
+            }
+            if (point.cp2.use) {
+              point.cp2.x = oldPoint.cp2.x + dx
+              point.cp2.y = oldPoint.cp2.y + dy
             }
             cu.render()
             return
           }
           if (type === EditType.Line) {
             console.log('onMouseMove-enterLineIndex')
-            let {x, y} = event.point
-            let dx = x - cu.fixMouseStart.x
-            let dy = y - cu.fixMouseStart.y
             console.log('dx', dx, 'dy', dy)
             let oldLine1Point = this.getPoint(this.original.lineShapes[lineIndex].points[pointIndex], this.original)
             let line1Point = this.getPoint(this.conf.lineShapes[lineIndex].points[pointIndex])

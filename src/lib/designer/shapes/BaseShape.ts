@@ -232,7 +232,7 @@ export abstract class BaseShape {
           if (lineShape.close) {
             previousPoint = this.getPoint(lineShape.points[lineShape.points.length - 1])
           } else {
-            return { lineIndex: -1, pointIndex: -1 }
+            continue
           }
         } else {
           previousPoint = this.getPoint(lineShape.points[pointIndex - 1])

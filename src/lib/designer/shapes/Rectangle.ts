@@ -1,4 +1,4 @@
-import { BaseShape } from "./BaseShape"
+import {BaseShape} from "./BaseShape"
 import CanvasUtil2 from "../engine/CanvasUtil2"
 import {
   BaseEvent2,
@@ -14,12 +14,11 @@ import {
   ShapeStatus,
   StrokeAlign
 } from "../types/type"
-import { Colors, defaultConfig } from "../utils/constant"
-import { BaseConfig, Rect } from "../config/BaseConfig"
+import {Colors, defaultConfig} from "../utils/constant"
+import {BaseConfig, Rect} from "../config/BaseConfig"
 import draw from "../utils/draw"
-import helper from "../utils/helper"
-import { v4 as uuid } from 'uuid'
-import { Math2 } from "../utils/math"
+import {v4 as uuid} from 'uuid'
+import {Math2} from "../utils/math"
 
 export class Rectangle extends BaseShape {
   //最小拖动圆角。真实圆角可能为0，导致渲染的控制点和角重合，所以设置一个最小圆角
@@ -200,9 +199,9 @@ export class Rectangle extends BaseShape {
     bezierCps.map(line => {
       line.points.map((pointInfo) => {
         let point = this.getPoint(pointInfo)
-        draw.drawRound(ctx, point.center)
         if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
         if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
+        draw.drawRound(ctx, point.center)
       })
     })
     if ((this.editHover.type === EditType.Line
@@ -215,9 +214,9 @@ export class Rectangle extends BaseShape {
     if (pointIndex !== -1) {
       let currentPoint = bezierCps[lineIndex].points[pointIndex]
       let point = this.getPoint(currentPoint)
-      draw.currentPoint(ctx, point.center)
       if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
       if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
+      draw.currentPoint(ctx, point.center)
     }
     ctx.restore()
   }

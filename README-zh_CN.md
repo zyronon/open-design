@@ -4,7 +4,7 @@
 
 [稳定版在线预览DEMO](http://design-v2.ttentau.top)
 
-[开发版在线预览DEMO](http://design.ttentau.top)
+[//]: # ([开发版在线预览DEMO]&#40;http://design.ttentau.top&#41;)
 
 
 ## Open-Design

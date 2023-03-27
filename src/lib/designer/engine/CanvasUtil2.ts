@@ -1,4 +1,4 @@
-import {BaseShape} from "../shapes/BaseShape"
+import { BaseShape } from "../shapes/BaseShape"
 import EventBus from "../utils/event-bus"
 import {
   BaseEvent2,
@@ -11,16 +11,16 @@ import {
   ShapeStatus,
   ShapeType
 } from "../types/type"
-import {cloneDeep} from "lodash"
-import {defaultConfig} from "../utils/constant"
-import {mat4} from "gl-matrix"
-import {getShapeFromConfig} from "../utils/common"
-import {Rectangle} from "../shapes/Rectangle"
-import {BaseConfig} from "../config/BaseConfig"
+import { cloneDeep } from "lodash"
+import { defaultConfig } from "../utils/constant"
+import { mat4 } from "gl-matrix"
+import { getShapeFromConfig } from "../utils/common"
+import { Rectangle } from "../shapes/Rectangle"
+import { BaseConfig } from "../config/BaseConfig"
 import helper from "../utils/helper"
 import draw from "../utils/draw"
 // import {Pen} from "../shapes/Pen"
-import {v4 as uuid} from "uuid"
+import { v4 as uuid } from "uuid"
 
 const out: any = new Float32Array([
   0, 0, 0, 0,
@@ -60,7 +60,7 @@ export default class CanvasUtil2 {
   //当hover时，传递这个就可以正确获得父级链
   hoverShapeParent: any
   //选中图形
-  selectedShape: any
+  _selectedShape: any
   //选中图形的父级链，选中新的图形时，需要把老的父级链的isCapture全部设为ture,
   //原因：选中新图形后，hover老图形时依然能hover中，所以需要把老的父级链isCapture全部设为ture
   //屏蔽事件向下传递
@@ -71,8 +71,8 @@ export default class CanvasUtil2 {
   // mode: ShapeType = ShapeType.PEN
   _mode: ShapeType = ShapeType.SELECT
   editModeType: EditModeType = EditModeType.Select
-  mouseStart: P = {x: 0, y: 0} //鼠标起点
-  fixMouseStart: P = {x: 0, y: 0} //修正后的鼠标起点（修正为0度）
+  mouseStart: P = { x: 0, y: 0 } //鼠标起点
+  fixMouseStart: P = { x: 0, y: 0 } //修正后的鼠标起点（修正为0度）
   isMouseDown: boolean = false
   drawShapeConfig: any = null
   newShape: BaseShape | undefined
@@ -98,11 +98,25 @@ export default class CanvasUtil2 {
     }
   }
 
+  get selectedShape() {
+    return this._selectedShape
+  }
+
+  set selectedShape(val) {
+    // console.log('val',val)
+    this._selectedShape = val
+  }
+
+
   init(canvas: HTMLCanvasElement) {
+    // @ts-ignore
+    window.test = () => {
+      console.log(this.selectedShape)
+    }
     this.children = []
     let ctx: CanvasRenderingContext2D = canvas.getContext('2d')!
     let canvasRect = canvas.getBoundingClientRect()
-    let {width, height} = canvasRect
+    let { width, height } = canvasRect
     let dpr = window.devicePixelRatio
     if (dpr) {
       canvas.style.width = width + "px"
@@ -121,7 +135,7 @@ export default class CanvasUtil2 {
 
   addChildren(rects: any) {
     cloneDeep(rects).map((conf: BaseConfig) => {
-      let r = getShapeFromConfig({conf})
+      let r = getShapeFromConfig({ conf })
       r && this.children.push(r)
     })
   }
@@ -147,6 +161,7 @@ export default class CanvasUtil2 {
 
   //设置选中的Shape
   setSelectShape(shape: BaseShape, parent?: BaseShape[]) {
+    // console.log('shape', shape)
     //如果当前选中的图形不是自己，那么把那个图形设为未选中
     if (this.selectedShape && this.selectedShape !== shape) {
       this.selectedShape.status = ShapeStatus.Normal
@@ -171,7 +186,7 @@ export default class CanvasUtil2 {
   render() {
     // console.log('重绘所有图形')
     EventBus.emit(EventTypes.onDraw)
-    draw.clear({x: 0, y: 0, w: this.canvas.width, h: this.canvas.height}, this.ctx)
+    draw.clear({ x: 0, y: 0, w: this.canvas.width, h: this.canvas.height }, this.ctx)
     this.ctx.save()
     if (this.currentMat) {
       // console.log('缩放：', currentMat[0], currentMat[5])
@@ -219,12 +234,12 @@ export default class CanvasUtil2 {
   // handleEvent = throttle(e => this._handleEvent(e), 0)
 
   handleEvent = async (e: any) => {
-    let screenPoint = {x: e.x, y: e.y}
-    let canvasPoint = {x: e.x - this.canvasRect.left, y: e.y - this.canvasRect.top}
+    let screenPoint = { x: e.x, y: e.y }
+    let canvasPoint = { x: e.x - this.canvasRect.left, y: e.y - this.canvasRect.top }
 
     //修正当前鼠标点为变换过后的点，确保和图形同一transform
-    const {x: handX, y: handY} = this.handMove
-    let point = {x: (canvasPoint.x - handX) / this.handScale, y: (canvasPoint.y - handY) / this.handScale}
+    const { x: handX, y: handY } = this.handMove
+    let point = { x: (canvasPoint.x - handX) / this.handScale, y: (canvasPoint.y - handY) / this.handScale }
     let event: BaseEvent2 = {
       capture: false,
       e,
@@ -342,7 +357,6 @@ export default class CanvasUtil2 {
     this.selectedShapeParent.map((shape: BaseShape) => shape.isCapture = true)
     if (this.selectedShape) {
       this.selectedShape.status = ShapeStatus.Normal
-      this.render()
       this.selectedShapeParent = []
       this.selectedShape = null
     }
@@ -353,37 +367,37 @@ export default class CanvasUtil2 {
 
       switch (this.mode) {
         case ShapeType.PEN:
-          // this.editShape = new Pen({
-          //   conf: helper.getDefaultShapeConfig({
-          //     layout: {x: this.mouseStart.x, y: this.mouseStart.y, w: 1, h: 1},
-          //     // layout: {x: 0, y: 0, w: 0, h: 0},
-          //     // center: {x: this.mouseStart.x, y: this.mouseStart.y},
-          //     name: 'Pen',
-          //     type: ShapeType.PEN,
-          //     isCustom: true,
-          //     lineShapes: [
-          //       {
-          //         close: false,
-          //         points: [
-          //           {
-          //             id: uuid(),
-          //             cp1: getP2(),
-          //             // center: {...getP2(true), ...this.mouseStart},
-          //             center: {...getP2(true), ...{x: 0, y: 0}},
-          //             cp2: getP2(),
-          //             type: BezierPointType.RightAngle
-          //           }
-          //         ]
-          //       }
-          //     ]
-          //   } as BaseConfig),
-          // })
-          // this.editShape.status = ShapeStatus.Edit
-          // this.editModeType = EditModeType.Edit
-          // EventBus.emit(EventTypes.onMouseDown, this.editShape)
-          // this.children.push(this.editShape)
-          // this.render()
-          // this.mode = ShapeType.EDIT
+        // this.editShape = new Pen({
+        //   conf: helper.getDefaultShapeConfig({
+        //     layout: {x: this.mouseStart.x, y: this.mouseStart.y, w: 1, h: 1},
+        //     // layout: {x: 0, y: 0, w: 0, h: 0},
+        //     // center: {x: this.mouseStart.x, y: this.mouseStart.y},
+        //     name: 'Pen',
+        //     type: ShapeType.PEN,
+        //     isCustom: true,
+        //     lineShapes: [
+        //       {
+        //         close: false,
+        //         points: [
+        //           {
+        //             id: uuid(),
+        //             cp1: getP2(),
+        //             // center: {...getP2(true), ...this.mouseStart},
+        //             center: {...getP2(true), ...{x: 0, y: 0}},
+        //             cp2: getP2(),
+        //             type: BezierPointType.RightAngle
+        //           }
+        //         ]
+        //       }
+        //     ]
+        //   } as BaseConfig),
+        // })
+        // this.editShape.status = ShapeStatus.Edit
+        // this.editModeType = EditModeType.Edit
+        // EventBus.emit(EventTypes.onMouseDown, this.editShape)
+        // this.children.push(this.editShape)
+        // this.render()
+        // this.mode = ShapeType.EDIT
       }
     }
   }
@@ -475,7 +489,7 @@ export default class CanvasUtil2 {
 
   onWheel = (e: any) => {
     // console.log('e', e)
-    let {clientX, clientY, deltaY} = e
+    let { clientX, clientY, deltaY } = e
 
     let x = clientX - this.canvasRect.left
     let y = clientY - this.canvasRect.top
@@ -525,7 +539,7 @@ export default class CanvasUtil2 {
       if (needId) {
         return item.conf
       }
-      return {...item.conf, id: null}
+      return { ...item.conf, id: null }
     })
   }
 

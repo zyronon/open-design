@@ -329,7 +329,7 @@ export class Ellipse extends BaseShape {
         intLastLength = Math.trunc(lastLength)
 
         //计算1/4，3/4长度
-        let length14 = (lastLength + perPart * (1 / 4))
+        let length14 = lastLength + perPart * (1 / 4)
         let length34 = perPart * (2 / 4) + length14
 
         //默认情况下，用于计算1/4点，3/4点，可以共用一条对应的线段

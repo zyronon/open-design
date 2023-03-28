@@ -1,5 +1,5 @@
-import {FontWeight, ShapeType, StrokeAlign} from "../types/type"
-import {FontFamily} from "../config/TextConfig"
+import { FontWeight, ShapeType, StrokeAlign } from "../types/type"
+import { FontFamily } from "../config/TextConfig"
 
 export const fontFamilies = [
   {
@@ -13,30 +13,30 @@ export const fontFamilies = [
 ]
 
 export const fontWeight = [
-  {label: 'Light', value: FontWeight.LIGHT,},
-  {label: 'Regular', value: FontWeight.REGULAR,},
-  {label: 'Normal', value: FontWeight.Normal},
-  {label: 'Medium', value: FontWeight.MEDIUM},
-  {label: 'Bold', value: FontWeight.BOLD,},
-  {label: 'Heavy', value: FontWeight.HEAVY,},
+  { label: 'Light', value: FontWeight.LIGHT, },
+  { label: 'Regular', value: FontWeight.REGULAR, },
+  { label: 'Normal', value: FontWeight.Normal },
+  { label: 'Medium', value: FontWeight.MEDIUM },
+  { label: 'Bold', value: FontWeight.BOLD, },
+  { label: 'Heavy', value: FontWeight.HEAVY, },
 ]
 
 export const fontSize = [
-  {label: '10', value: 10,},
-  {label: '12', value: 12,},
-  {label: '14', value: 14,},
-  {label: '16', value: 16,},
-  {label: '18', value: 18,},
-  {label: '20', value: 20,},
-  {label: '24', value: 24,},
-  {label: '32', value: 32,},
-  {label: '36', value: 36,},
-  {label: '40', value: 40,},
-  {label: '48', value: 48,},
-  {label: '64', value: 64,},
-  {label: '96', value: 96,},
-  {label: '128', value: 128,},
-  {label: '256', value: 256,},
+  { label: '10', value: 10, },
+  { label: '12', value: 12, },
+  { label: '14', value: 14, },
+  { label: '16', value: 16, },
+  { label: '18', value: 18, },
+  { label: '20', value: 20, },
+  { label: '24', value: 24, },
+  { label: '32', value: 32, },
+  { label: '36', value: 36, },
+  { label: '40', value: 40, },
+  { label: '48', value: 48, },
+  { label: '64', value: 64, },
+  { label: '96', value: 96, },
+  { label: '128', value: 128, },
+  { label: '256', value: 256, },
 ]
 
 export const Colors = {
@@ -973,7 +973,7 @@ let temp = {
   flipHorizontal: false,
   flipVertical: false
 }
-export const rects = [
+const old = [
   {
     "name": "容器1",
     layout: {
@@ -1015,6 +1015,29 @@ export const rects = [
     clip: false
   }
 ]
+export const rects = [
+  {
+    "name": "容器1",
+    layout: {
+      "x": 500,
+      "y": 250,
+      "w": 350,
+      "h": 300,
+    },
+    "rotation": 0,
+    "lineWidth": 2,
+    "type": ShapeType.RECTANGLE,
+    "color": "gray",
+    "radius": 0,
+    lineShapes: [],
+    children: [],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "rgb(241,238,238)",
+    flipHorizontal: false,
+    flipVertical: false,
+    clip: false
+  }
+]
 
 const defaultCurrentMat = [
   1, 0, 0, 0,
@@ -1022,7 +1045,7 @@ const defaultCurrentMat = [
   0, 0, 1, 0,
   0, 0, 0, 1,
 ]
-const defaultHandMove = {x: 0, y: 0}
+const defaultHandMove = { x: 0, y: 0 }
 export const defaultConfig = {
   // handScale: 3.0517578125,
   // handMove: {x: -1201.48828125, y: -872.4208984375},

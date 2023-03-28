@@ -1,6 +1,6 @@
-import {P, P2} from "../lib/designer/types/type"
-import {cloneDeep} from "lodash"
-import {Rect} from "../lib/designer/config/BaseConfig"
+import { P, P2 } from "../lib/designer/types/type"
+import { cloneDeep } from "lodash"
+import { Rect } from "../lib/designer/config/BaseConfig"
 
 export {}
 
@@ -75,7 +75,7 @@ for (const key in Context2D) {
   CanvasRenderingContext2D.prototype[key] = Context2D[key]
   Path2D.prototype[key] = Context2D[key]
 }
-
+//获取小数
 Math.decimal = (num: number) => {
   return num - Math.trunc(num)
 }

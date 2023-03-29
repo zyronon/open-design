@@ -1036,11 +1036,11 @@ export const rects = [
           {
             "type": "Single",
             "point": {
-              "id": "8a202b2b-d9de-4056-a134-4a7b4a77ccd2",
+              "id": "f0911103-24b0-475f-9818-f4f36068c9ca",
               "cp1": {
-                "use": false,
-                "x": 0,
-                "y": 0,
+                "use": true,
+                "x": -225,
+                "y": -74.99999999999999,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
@@ -1056,21 +1056,21 @@ export const rects = [
                 "ry": 0
               },
               "cp2": {
-                "use": false,
-                "x": 0,
-                "y": 0,
+                "use": true,
+                "x": -75,
+                "y": -225,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
                 "ry": 0
               },
-              "type": "RightAngle"
+              "type": "MirrorAngleAndLength"
             }
           },
           {
             "type": "Single",
             "point": {
-              "id": "e4dc1eba-9e4a-4965-a467-96975b3648dc",
+              "id": "50bfa889-9cbb-41cc-be36-ade0add9c3cc",
               "cp1": {
                 "use": false,
                 "x": 0,
@@ -1104,7 +1104,7 @@ export const rects = [
           {
             "type": "Single",
             "point": {
-              "id": "10f741f9-43e7-41a7-b65e-8956b6e0aabd",
+              "id": "e7177e5a-a3f9-4d41-b878-9c11241b9557",
               "cp1": {
                 "use": false,
                 "x": 0,
@@ -1138,7 +1138,7 @@ export const rects = [
           {
             "type": "Single",
             "point": {
-              "id": "a48d4350-00c0-48a8-86a4-d2da25deb6f8",
+              "id": "09525b6c-dc08-48dc-9bed-5cdb361ace3c",
               "cp1": {
                 "use": false,
                 "x": 0,
@@ -1178,7 +1178,7 @@ export const rects = [
     "flipHorizontal": false,
     "flipVertical": false,
     "clip": false,
-    "id": null,
+    "id": "6de3b789-1100-4b14-845c-dbe866cfe752",
     "percent": {
       "x": 0,
       "y": 0
@@ -1226,7 +1226,8 @@ export const rects = [
         "y": 500
       }
     },
-    "strokeAlign": "INSIDE"
+    "strokeAlign": "INSIDE",
+    "isCustom": true
   }
 ]
 

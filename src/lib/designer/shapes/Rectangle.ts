@@ -33,9 +33,9 @@ export class Rectangle extends BaseShape {
       let event: BaseEvent2 = {
         capture: false,
         e: {} as any,
-        point: { x: 0, y: 0 },
-        screenPoint: { x: 0, y: 0 },
-        canvasPoint: { x: 0, y: 0 },
+        point: {x: 0, y: 0},
+        screenPoint: {x: 0, y: 0},
+        canvasPoint: {x: 0, y: 0},
         type: '',
         stopPropagation() {
           this.capture = true
@@ -70,9 +70,9 @@ export class Rectangle extends BaseShape {
   }
 
   isInShapeOnSelect(mousePoint: P, cu: CanvasUtil2): boolean {
-    const { x, y } = mousePoint
-    const { radius, box } = this.conf
-    const { leftX, rightX, topY, bottomY, } = box
+    const {x, y} = mousePoint
+    const {radius, box} = this.conf
+    const {leftX, rightX, topY, bottomY,} = box
     let rr = 5 / cu.handScale
 
     let r = Math.max(radius, this.minDragRadius)
@@ -97,14 +97,14 @@ export class Rectangle extends BaseShape {
       radius,
       fillColor, borderColor, lineWidth, strokeAlign
     } = this.conf
-    let { x, y, w, h } = layout
+    let {x, y, w, h} = layout
 
     ctx.lineWidth = lineWidth ?? defaultConfig.lineWidth
 
     //填充图形
     ctx.fillStyle = fillColor
     let pathList = this.getShapePath(layout, this.conf.radius)
-    pathList.map(({ close, path }) => {
+    pathList.map(({close, path}) => {
       if (close) {
         ctx.fill(path)
       } else {
@@ -120,7 +120,7 @@ export class Rectangle extends BaseShape {
       x -= lw2, y -= lw2, w += lw2 * 2, h += lw2 * 2, radius += lw2
     }
     ctx.strokeStyle = borderColor
-    pathList = this.getShapePath({ x, y, w, h }, radius)
+    pathList = this.getShapePath({x, y, w, h}, radius)
     pathList.map(line => {
       ctx.stroke(line.path)
     })
@@ -142,8 +142,8 @@ export class Rectangle extends BaseShape {
   drawSelectedHover(ctx: CanvasRenderingContext2D, layout: Rect): void {
     if (this._config.isCustom) return
     // console.log('drawSelectedHover')
-    let { x, y, w, h } = layout
-    let { radius, } = this.conf
+    let {x, y, w, h} = layout
+    let {radius,} = this.conf
     ctx.strokeStyle = defaultConfig.strokeStyle
     ctx.fillStyle = Colors.White
 
@@ -195,29 +195,50 @@ export class Rectangle extends BaseShape {
     })
 
 
-    let bezierCps = this._config.lineShapes
-    bezierCps.map(line => {
-      line.points.map((pointInfo) => {
-        let point = this.getPoint(pointInfo)
-        if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
-        if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
-        draw.drawRound(ctx, point.center)
-      })
-    })
+    let lineShapes = this._config.lineShapes
+
     if ((this.editHover.type === EditType.Line
         || this.editHover.type === EditType.CenterPoint)
       && this.editHover.pointIndex !== -1
     ) {
       draw.drawRound(ctx, this.hoverLineCenterPoint)
     }
-    let { lineIndex, pointIndex } = this.editStartPointInfo
+    let {lineIndex, pointIndex} = this.editStartPointInfo
+    //先绘制控制线，好被后续的圆点遮盖
     if (pointIndex !== -1) {
-      let currentPoint = bezierCps[lineIndex].points[pointIndex]
+      let line = lineShapes[lineIndex]
+      let currentPoint = line.points[pointIndex]
+      let point
+      if (pointIndex !== 0) {
+        currentPoint = line.points[pointIndex - 1]
+        point = this.getPoint(currentPoint)
+        if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
+        if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
+      }
+      if (pointIndex !== line.points.length - 1) {
+        currentPoint = line.points[pointIndex + 1]
+        point = this.getPoint(currentPoint)
+        if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
+        if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
+      }
+    }
+    lineShapes.map(line => {
+      line.points.map((pointInfo) => {
+        let point = this.getPoint(pointInfo)
+        // if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
+        // if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
+        draw.drawRound(ctx, point.center)
+      })
+    })
+    if (pointIndex !== -1) {
+      let line = lineShapes[lineIndex]
+      let currentPoint = line.points[pointIndex]
       let point = this.getPoint(currentPoint)
       if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
       if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
       draw.currentPoint(ctx, point.center)
     }
+
     ctx.restore()
   }
 
@@ -225,8 +246,8 @@ export class Rectangle extends BaseShape {
   // todo 当水平翻转的时候不行
   dragRd1(point: P) {
     // console.log('th.enterRd1')
-    let { w, h } = this.conf.layout
-    let { x, y } = point
+    let {w, h} = this.conf.layout
+    let {x, y} = point
     let cu = CanvasUtil2.getInstance()
     let dx = (x - cu.mouseStart.x)
     if (this.original.radius < this.minDragRadius) {
@@ -249,7 +270,7 @@ export class Rectangle extends BaseShape {
   }
 
   getCustomPoint(): LineShape[] {
-    let { w, h } = this._config.layout
+    let {w, h} = this._config.layout
     //这里的xy这样设置是因为，渲染时的起点是center
     let x = -w / 2, y = -h / 2
     let points: PointInfo[] = []
@@ -258,7 +279,7 @@ export class Rectangle extends BaseShape {
       point: {
         id: uuid(),
         cp1: getP2(),
-        center: { ...getP2(true), x: x, y: y },
+        center: {...getP2(true), x: x, y: y},
         cp2: getP2(),
         type: BezierPointType.RightAngle
       }
@@ -268,7 +289,7 @@ export class Rectangle extends BaseShape {
       point: {
         id: uuid(),
         cp1: getP2(),
-        center: { ...getP2(true), x: x + w, y: y },
+        center: {...getP2(true), x: x + w, y: y},
         cp2: getP2(),
         type: BezierPointType.RightAngle
       }
@@ -278,7 +299,7 @@ export class Rectangle extends BaseShape {
       point: {
         id: uuid(),
         cp1: getP2(),
-        center: { ...getP2(true), x: x + w, y: y + h },
+        center: {...getP2(true), x: x + w, y: y + h},
         cp2: getP2(),
         type: BezierPointType.RightAngle
       }
@@ -288,12 +309,12 @@ export class Rectangle extends BaseShape {
       point: {
         id: uuid(),
         cp1: getP2(),
-        center: { ...getP2(true), x: x, y: y + h },
+        center: {...getP2(true), x: x, y: y + h},
         cp2: getP2(),
         type: BezierPointType.RightAngle
       }
     })
-    return [{ close: true, points: points }]
+    return [{close: true, points: points}]
   }
 
   onMouseDown(event: BaseEvent2, parents: BaseShape[]) {
@@ -322,7 +343,7 @@ export class Rectangle extends BaseShape {
     if (this._config.isCustom) {
       return super.getCustomShapePath()
     }
-    let { x, y, w, h } = layout
+    let {x, y, w, h} = layout
     let path = new Path2D()
     if (r > 0) {
       let w2 = w / 2, h2 = h / 2
@@ -335,7 +356,7 @@ export class Rectangle extends BaseShape {
       path.rect(x, y, w, h)
     }
     path.closePath()
-    return [{ close: true, path }]
+    return [{close: true, path}]
   }
 
 }

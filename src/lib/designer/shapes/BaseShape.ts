@@ -514,9 +514,9 @@ export abstract class BaseShape {
         let line = this.conf.lineShapes[lineIndex]
         let currentPoint = line.points[pointIndex]
         if (currentPoint.point!.type !== BezierPointType.RightAngle) {
-          this.conf.lineShapes[lineIndex].points[pointIndex].point!.cp1.use = false
-          this.conf.lineShapes[lineIndex].points[pointIndex].point!.cp2.use = false
-          this.conf.lineShapes[lineIndex].points[pointIndex].point!.type = BezierPointType.RightAngle
+          currentPoint.point!.cp1.use = false
+          currentPoint.point!.cp2.use = false
+          currentPoint.point!.type = BezierPointType.RightAngle
           cu.render()
           return
         }
@@ -533,16 +533,13 @@ export abstract class BaseShape {
           nextPointInfo = line.points[pointIndex + 1]
         }
         console.log(previousPointInfo, nextPointInfo)
-        let {
-          l,
-          r
-        } = Math2.getTargetPointBezierControlPoint(
+        let {l, r} = Math2.getTargetPointBezierControlPoint(
           previousPointInfo.point?.center!,
           currentPoint.point?.center!,
           nextPointInfo.point?.center!)
-        this.conf.lineShapes[lineIndex].points[pointIndex].point!.cp1 = {...getP2(true), ...l}
-        this.conf.lineShapes[lineIndex].points[pointIndex].point!.cp2 = {...getP2(true), ...r}
-        this.conf.lineShapes[lineIndex].points[pointIndex].point!.type = BezierPointType.MirrorAngleAndLength
+        currentPoint.point!.cp1 = {...getP2(true), ...l}
+        currentPoint.point!.cp2 = {...getP2(true), ...r}
+        currentPoint.point!.type = BezierPointType.MirrorAngleAndLength
         cu.render()
       } else {
         this.status = ShapeStatus.Select
@@ -836,10 +833,32 @@ export abstract class BaseShape {
             if (cpIndex === 1) {
               point.cp1.x = oldPoint.cp1.x + dx
               point.cp1.y = oldPoint.cp1.y + dy
+              if (point.type === BezierPointType.MirrorAngleAndLength) {
+                let p = Math2.getRotatedPoint(point.cp1, point.center, 180)
+                point.cp2.x = p.x
+                point.cp2.y = p.y
+              }
+              if (point.type === BezierPointType.MirrorAngle) {
+                let moveDegree = Math2.getDegree(point.center, oldPoint.cp1, point.cp1)
+                let p = Math2.getRotatedPoint(oldPoint.cp2, point.center, moveDegree)
+                point.cp2.x = p.x
+                point.cp2.y = p.y
+              }
             }
             if (cpIndex === 2) {
               point.cp2.x = oldPoint.cp2.x + dx
               point.cp2.y = oldPoint.cp2.y + dy
+              if (point.type === BezierPointType.MirrorAngleAndLength) {
+                let p = Math2.getRotatedPoint(point.cp2, point.center, 180)
+                point.cp1.x = p.x
+                point.cp1.y = p.y
+              }
+              if (point.type === BezierPointType.MirrorAngle) {
+                let moveDegree = Math2.getDegree(point.center, oldPoint.cp2, point.cp2)
+                let p = Math2.getRotatedPoint(oldPoint.cp1, point.center, moveDegree)
+                point.cp1.x = p.x
+                point.cp1.y = p.y
+              }
             }
             cu.render()
             return
@@ -965,10 +984,10 @@ export abstract class BaseShape {
     let {center, original,} = this.conf
     let current = {x, y}
     // console.log('x-------', x, '          y--------', y)
-    let newRotation = Math2.getDegree(center, original, current)
+    let moveDegree = Math2.getDegree(center, original, current)
 
     //这里要减去，父级的旋转角度
-    let realRotation = (newRotation < 180 ? newRotation : newRotation - 360)
+    let realRotation = (moveDegree < 180 ? moveDegree : moveDegree - 360)
     // console.log('旋转角度', realRotation)
 
     this.conf.realRotation = realRotation.toFixed2()

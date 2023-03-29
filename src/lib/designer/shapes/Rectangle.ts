@@ -207,17 +207,14 @@ export class Rectangle extends BaseShape {
     //先绘制控制线，好被后续的圆点遮盖
     if (pointIndex !== -1) {
       let line = lineShapes[lineIndex]
-      let currentPoint = line.points[pointIndex]
       let point
       if (pointIndex !== 0) {
-        currentPoint = line.points[pointIndex - 1]
-        point = this.getPoint(currentPoint)
+        point = this.getPoint(line.points[pointIndex - 1])
         if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
         if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
       }
       if (pointIndex !== line.points.length - 1) {
-        currentPoint = line.points[pointIndex + 1]
-        point = this.getPoint(currentPoint)
+        point = this.getPoint(line.points[pointIndex + 1])
         if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
         if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
       }
@@ -232,8 +229,7 @@ export class Rectangle extends BaseShape {
     })
     if (pointIndex !== -1) {
       let line = lineShapes[lineIndex]
-      let currentPoint = line.points[pointIndex]
-      let point = this.getPoint(currentPoint)
+      let point = this.getPoint(line.points[pointIndex])
       if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
       if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
       draw.currentPoint(ctx, point.center)

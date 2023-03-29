@@ -1,6 +1,6 @@
 import CanvasUtil2 from "../engine/CanvasUtil2"
-import { BaseConfig } from "../config/BaseConfig"
-import { BaseShape } from "../shapes/BaseShape"
+import {BaseConfig} from "../config/BaseConfig"
+import {BaseShape} from "../shapes/BaseShape"
 
 export type IState = {
   canvas: HTMLCanvasElement,
@@ -266,11 +266,14 @@ export enum EditType {
   Line = 'Line',
   Point = 'Point',
   CenterPoint = 'CenterPoint',
+  ControlPoint = 'ControlPoint',
 }
 
 //当前操作信息
 export type CurrentOperationInfo = {
-  type?: EditType,
+  type: EditType | undefined,
   lineIndex: number,
   pointIndex: number,
+  cpIndex: number
+  lineCenterPoint?: P,
 }

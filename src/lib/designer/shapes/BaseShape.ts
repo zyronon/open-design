@@ -1,7 +1,8 @@
 import {
   BaseEvent2,
   BezierPoint,
-  BezierPointType, CurrentOperationInfo,
+  BezierPointType,
+  CurrentOperationInfo,
   EditModeType,
   EditType,
   getP2,
@@ -19,7 +20,6 @@ import {
 } from "../types/type"
 import CanvasUtil2 from "../engine/CanvasUtil2"
 import {cloneDeep, merge} from "lodash"
-import {getRotatedPoint} from "../../../utils"
 import {getShapeFromConfig} from "../utils/common"
 import EventBus from "../utils/event-bus"
 import {EventMapTypes} from "../../../pages/canvas20221111/type"
@@ -64,10 +64,7 @@ export abstract class BaseShape {
     if (val !== this._status) {
       if (this._status === ShapeStatus.Edit) {
         this.calcNewCenterAndWidthAndHeight()
-        this.editStartPointInfo = {
-          lineIndex: -1,
-          pointIndex: -1,
-        }
+        this.editStartPointInfo = cloneDeep(this.defaultCurrentOperationInfo)
       }
       if (val === ShapeStatus.Select) {
         //TODO 会导致子组件选中后，再选中父组件时，无法取消子组件
@@ -197,27 +194,18 @@ export abstract class BaseShape {
     return !this.isCapture || !cu.isDesignMode()
   }
 
+  defaultCurrentOperationInfo: CurrentOperationInfo = {
+    type: undefined,
+    lineIndex: -1,
+    pointIndex: -1,
+    cpIndex: -1
+  }
   hoverLineCenterPoint: P = {x: 0, y: 0}
-  editStartPointInfo = {
-    lineIndex: -1,
-    pointIndex: -1,
-  }
-  editHover: CurrentOperationInfo = {
-    type: undefined,
-    lineIndex: -1,
-    pointIndex: -1,
-  }
-  editEnter: CurrentOperationInfo = {
-    type: undefined,
-    lineIndex: -1,
-    pointIndex: -1,
-  }
+  editStartPointInfo: CurrentOperationInfo = cloneDeep(this.defaultCurrentOperationInfo)
+  editHover: CurrentOperationInfo = cloneDeep(this.defaultCurrentOperationInfo)
+  editEnter: CurrentOperationInfo = cloneDeep(this.defaultCurrentOperationInfo)
 
-  checkMousePointOnEditStatus(point: P): CurrentOperationInfo &
-    {
-      lineCenterPoint?: P,
-      cpIndex?: number
-    } {
+  checkMousePointOnEditStatus(point: P): CurrentOperationInfo {
     let {center, lineShapes} = this.conf
     let fixMousePoint = {
       x: point.x - center.x,
@@ -229,7 +217,7 @@ export abstract class BaseShape {
         let currentPoint = this.getPoint(lineShape.points[pointIndex])
         if (Math2.isInPoint(fixMousePoint, currentPoint.center, 4)) {
           console.log('在点上')
-          return {type: EditType.Point, lineIndex, pointIndex}
+          return {type: EditType.Point, lineIndex, pointIndex, cpIndex: -1}
         }
         let previousPoint: BezierPoint
         if (pointIndex === 0) {
@@ -248,7 +236,8 @@ export abstract class BaseShape {
             type: EditType.Line,
             lineIndex,
             pointIndex,
-            lineCenterPoint: Math2.getCenterPoint(previousPoint.center, currentPoint.center)
+            lineCenterPoint: Math2.getCenterPoint(previousPoint.center, currentPoint.center),
+            cpIndex: -1
           }
           if (Math2.isInPoint(fixMousePoint, this.hoverLineCenterPoint, 4)) {
             console.log('hover在线的中点上')
@@ -260,23 +249,31 @@ export abstract class BaseShape {
     }
     let {lineIndex, pointIndex} = this.editStartPointInfo
     if (pointIndex !== -1) {
+      let waitCheckPoints: any[] = []
       let line = lineShapes[lineIndex]
-      let currentPoint = line.points[pointIndex]
-      let point = this.getPoint(currentPoint)
-      if (point.cp1.use) {
-        if (Math2.isInPoint(fixMousePoint, point.cp1, 3)) {
-          console.log('在点上')
-          return {type: EditType.Point, lineIndex, pointIndex, cpIndex: 1}
+      let point = this.getPoint(line.points[pointIndex])
+      if (point.cp1.use) waitCheckPoints.push({pointIndex, index: 1, point: point.cp1})
+      if (point.cp2.use) waitCheckPoints.push({pointIndex, index: 2, point: point.cp2})
+      if (pointIndex !== 0) {
+        point = this.getPoint(line.points[pointIndex - 1])
+        if (point.cp1.use) waitCheckPoints.push({pointIndex: pointIndex - 1, index: 1, point: point.cp1})
+        if (point.cp2.use) waitCheckPoints.push({pointIndex: pointIndex - 1, index: 2, point: point.cp2})
+      }
+      if (pointIndex !== line.points.length - 1) {
+        point = this.getPoint(line.points[pointIndex + 1])
+        if (point.cp1.use) waitCheckPoints.push({pointIndex: pointIndex + 1, index: 1, point: point.cp1})
+        if (point.cp2.use) waitCheckPoints.push({pointIndex: pointIndex + 1, index: 2, point: point.cp2})
+      }
+      for (let i = 0; i < waitCheckPoints.length; i++) {
+        let item = waitCheckPoints[i]
+        if (Math2.isInPoint(fixMousePoint, item.point, 4)) {
+          console.log('在cp点上')
+          return {type: EditType.ControlPoint, lineIndex, pointIndex: item.pointIndex, cpIndex: item.index}
         }
       }
-      if (point.cp2.use) {
-        if (Math2.isInPoint(fixMousePoint, point.cp2, 3)) {
-          console.log('在点上')
-          return {type: EditType.Point, lineIndex, pointIndex, cpIndex: 2}
-        }
-      }
+
     }
-    return {lineIndex: -1, pointIndex: -1}
+    return {type: undefined, lineIndex: -1, pointIndex: -1, cpIndex: -1}
   }
 
   _isInShape(mousePoint: P, cu: CanvasUtil2): boolean {
@@ -640,7 +637,7 @@ export abstract class BaseShape {
     if (this.status === ShapeStatus.Edit) {
       if (cu.editModeType === EditModeType.Select) {
         let result = this.checkMousePointOnEditStatus(event.point)
-        const {lineIndex, pointIndex, type} = result
+        const {lineIndex, pointIndex, cpIndex, type} = result
         //如果hover在点上，先处理hover
         if (pointIndex !== -1) {
           this.conf.isCustom = true
@@ -650,6 +647,7 @@ export abstract class BaseShape {
             type: undefined,
             lineIndex: -1,
             pointIndex: -1,
+            cpIndex: -1
           }
           this.editEnter = cloneDeep(result)
 
@@ -669,20 +667,19 @@ export abstract class BaseShape {
             cu.render()
           }
 
-          if (type === EditType.Point || type === EditType.CenterPoint) {
-            if (this.editStartPointInfo.lineIndex !== lineIndex
-              || this.editStartPointInfo.pointIndex !== pointIndex
-            ) {
-              this.editStartPointInfo = {lineIndex, pointIndex}
-              cu.render()
-            }
-            return
+          if (this.editStartPointInfo.lineIndex !== lineIndex
+            || this.editStartPointInfo.pointIndex !== pointIndex
+            || this.editStartPointInfo.cpIndex !== cpIndex
+          ) {
+            this.editStartPointInfo = result
+            cu.render()
           }
+          return
         }
 
         //能走到这，说明未选中任何点。那么判断是否已选中，选中就给取消掉
         if (this.editStartPointInfo.pointIndex !== -1) {
-          this.editStartPointInfo = {lineIndex: -1, pointIndex: -1}
+          this.editStartPointInfo = cloneDeep(this.defaultCurrentOperationInfo)
           cu.render()
         }
       }
@@ -798,13 +795,16 @@ export abstract class BaseShape {
       let cu = CanvasUtil2.getInstance()
       let {center, realRotation} = this.conf
       if (cu.editModeType === EditModeType.Select) {
-        const {lineIndex, pointIndex, type} = this.editEnter
+        const {lineIndex, pointIndex, cpIndex, type} = this.editEnter
         if (pointIndex === -1) {
           let result = this.checkMousePointOnEditStatus(event.point)
           //用于判断是否与之前保存的值不同，仅在不同时才重绘
           if (this.editHover.pointIndex !== result.pointIndex) {
             if (result.type === EditType.Line) {
               this.hoverLineCenterPoint = result.lineCenterPoint!
+            }
+            if (result.type === EditType.ControlPoint) {
+              this.editHover.cpIndex = result.cpIndex
             }
             this.editHover.type = result.type
             this.editHover.pointIndex = result.pointIndex
@@ -830,6 +830,20 @@ export abstract class BaseShape {
           let dx = x - cu.fixMouseStart.x
           let dy = y - cu.fixMouseStart.y
 
+          if (type === EditType.ControlPoint) {
+            let point = this.getPoint(this.conf.lineShapes[lineIndex].points[pointIndex])
+            let oldPoint = this.getPoint(this.original.lineShapes[lineIndex].points[pointIndex], this.original)
+            if (cpIndex === 1) {
+              point.cp1.x = oldPoint.cp1.x + dx
+              point.cp1.y = oldPoint.cp1.y + dy
+            }
+            if (cpIndex === 2) {
+              point.cp2.x = oldPoint.cp2.x + dx
+              point.cp2.y = oldPoint.cp2.y + dy
+            }
+            cu.render()
+            return
+          }
           if (type === EditType.Point || type === EditType.CenterPoint) {
             let point = this.getPoint(this.conf.lineShapes[lineIndex].points[pointIndex])
             let oldPoint = this.getPoint(this.original.lineShapes[lineIndex].points[pointIndex], this.original)
@@ -925,12 +939,8 @@ export abstract class BaseShape {
     // console.log('mouseup')
     if (this.onMouseUp(event, parents)) return
     this.enterType = MouseOptionType.None
-    this.editHover = {
-      type: EditType.Line,
-      lineIndex: -1,
-      pointIndex: -1,
-    }
-    this.editEnter = cloneDeep(this.editHover)
+    this.editHover = cloneDeep(this.defaultCurrentOperationInfo)
+    this.editEnter = cloneDeep(this.defaultCurrentOperationInfo)
     this.mouseDown = false
   }
 

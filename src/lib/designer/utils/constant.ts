@@ -1018,24 +1018,215 @@ const old = [
 export const rects = [
   {
     "name": "容器1",
-    layout: {
+    "layout": {
       "x": 500,
-      "y": 250,
-      "w": 350,
-      "h": 300,
+      "y": 200,
+      "w": 300,
+      "h": 300
     },
     "rotation": 0,
     "lineWidth": 2,
-    "type": ShapeType.RECTANGLE,
+    "type": "RECTANGLE",
     "color": "gray",
     "radius": 0,
-    lineShapes: [],
-    children: [],
+    "lineShapes": [
+      {
+        "close": true,
+        "points": [
+          {
+            "type": "Single",
+            "point": {
+              "id": "8a202b2b-d9de-4056-a134-4a7b4a77ccd2",
+              "cp1": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "center": {
+                "use": true,
+                "x": -150,
+                "y": -150,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "cp2": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "type": "RightAngle"
+            }
+          },
+          {
+            "type": "Single",
+            "point": {
+              "id": "e4dc1eba-9e4a-4965-a467-96975b3648dc",
+              "cp1": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "center": {
+                "use": true,
+                "x": 150,
+                "y": -150,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "cp2": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "type": "RightAngle"
+            }
+          },
+          {
+            "type": "Single",
+            "point": {
+              "id": "10f741f9-43e7-41a7-b65e-8956b6e0aabd",
+              "cp1": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "center": {
+                "use": true,
+                "x": 150,
+                "y": 150,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "cp2": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "type": "RightAngle"
+            }
+          },
+          {
+            "type": "Single",
+            "point": {
+              "id": "a48d4350-00c0-48a8-86a4-d2da25deb6f8",
+              "cp1": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "center": {
+                "use": true,
+                "x": -150,
+                "y": 150,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "cp2": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "type": "RightAngle"
+            }
+          }
+        ]
+      }
+    ],
+    "children": [],
     "borderColor": "rgb(216,216,216)",
     "fillColor": "rgb(241,238,238)",
-    flipHorizontal: false,
-    flipVertical: false,
-    clip: false
+    "flipHorizontal": false,
+    "flipVertical": false,
+    "clip": false,
+    "id": null,
+    "percent": {
+      "x": 0,
+      "y": 0
+    },
+    "relativeCenter": {
+      "x": 0,
+      "y": 0
+    },
+    "realRotation": 0,
+    "start": {
+      "x": 500,
+      "y": 200
+    },
+    "absolute": {
+      "x": 500,
+      "y": 200
+    },
+    "original": {
+      "x": 500,
+      "y": 200
+    },
+    "center": {
+      "x": 650,
+      "y": 350
+    },
+    "box": {
+      "leftX": 500,
+      "rightX": 800,
+      "topY": 200,
+      "bottomY": 500,
+      "topLeft": {
+        "x": 500,
+        "y": 200
+      },
+      "topRight": {
+        "x": 800,
+        "y": 200
+      },
+      "bottomLeft": {
+        "x": 500,
+        "y": 500
+      },
+      "bottomRight": {
+        "x": 800,
+        "y": 500
+      }
+    },
+    "strokeAlign": "INSIDE"
   }
 ]
 

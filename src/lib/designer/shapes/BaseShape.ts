@@ -254,12 +254,20 @@ export abstract class BaseShape {
       let point = this.getPoint(line.points[pointIndex])
       if (point.cp1.use) waitCheckPoints.push({pointIndex, index: 1, point: point.cp1})
       if (point.cp2.use) waitCheckPoints.push({pointIndex, index: 2, point: point.cp2})
-      if (pointIndex !== 0) {
+      if (pointIndex === 0) {
+        point = this.getPoint(line.points[line.points.length - 1])
+        if (point.cp1.use) waitCheckPoints.push({pointIndex: line.points.length - 1, index: 1, point: point.cp1})
+        if (point.cp2.use) waitCheckPoints.push({pointIndex: line.points.length - 1, index: 2, point: point.cp2})
+      } else {
         point = this.getPoint(line.points[pointIndex - 1])
         if (point.cp1.use) waitCheckPoints.push({pointIndex: pointIndex - 1, index: 1, point: point.cp1})
         if (point.cp2.use) waitCheckPoints.push({pointIndex: pointIndex - 1, index: 2, point: point.cp2})
       }
-      if (pointIndex !== line.points.length - 1) {
+      if (pointIndex === line.points.length - 1) {
+        point = this.getPoint(line.points[0])
+        if (point.cp1.use) waitCheckPoints.push({pointIndex: 0, index: 1, point: point.cp1})
+        if (point.cp2.use) waitCheckPoints.push({pointIndex: 0, index: 2, point: point.cp2})
+      } else {
         point = this.getPoint(line.points[pointIndex + 1])
         if (point.cp1.use) waitCheckPoints.push({pointIndex: pointIndex + 1, index: 1, point: point.cp1})
         if (point.cp2.use) waitCheckPoints.push({pointIndex: pointIndex + 1, index: 2, point: point.cp2})

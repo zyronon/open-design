@@ -208,12 +208,24 @@ export class Rectangle extends BaseShape {
     if (pointIndex !== -1) {
       let line = lineShapes[lineIndex]
       let point
-      if (pointIndex !== 0) {
+      if (pointIndex === 0) {
+        if (line.close) {
+          point = this.getPoint(line.points[line.points.length - 1])
+          if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
+          if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
+        }
+      } else {
         point = this.getPoint(line.points[pointIndex - 1])
         if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
         if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
       }
-      if (pointIndex !== line.points.length - 1) {
+      if (pointIndex === line.points.length - 1) {
+        if (line.close) {
+          point = this.getPoint(line.points[0])
+          if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
+          if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
+        }
+      } else {
         point = this.getPoint(line.points[pointIndex + 1])
         if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
         if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)

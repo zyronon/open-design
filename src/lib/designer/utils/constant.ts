@@ -1036,45 +1036,11 @@ export const rects = [
           {
             "type": "Single",
             "point": {
-              "id": "d48075d9-fd31-4924-9128-8b6adee7d51d",
-              "cp1": {
-                "use": false,
-                "x": 0,
-                "y": 0,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "center": {
-                "use": true,
-                "x": -187.5,
-                "y": -37.49999999999999,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "cp2": {
-                "use": false,
-                "x": 0,
-                "y": 0,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "type": "RightAngle"
-            }
-          },
-          {
-            "type": "Single",
-            "point": {
-              "id": "f0911103-24b0-475f-9818-f4f36068c9ca",
+              "id": "4f9f596b-7986-4ccf-a7e9-47dce57b28d4",
               "cp1": {
                 "use": true,
-                "x": -187.5,
-                "y": -112.5,
+                "x": -225,
+                "y": -74.99999999999999,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
@@ -1098,47 +1064,13 @@ export const rects = [
                 "rx": 0,
                 "ry": 0
               },
-              "type": "MirrorAngle"
+              "type": "MirrorAngleAndLength"
             }
           },
           {
             "type": "Single",
             "point": {
-              "id": "50bfa889-9cbb-41cc-be36-ade0add9c3cc",
-              "cp1": {
-                "use": true,
-                "x": 74.99999999999999,
-                "y": -225,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "center": {
-                "use": true,
-                "x": 150,
-                "y": -150,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "cp2": {
-                "use": true,
-                "x": 187.5,
-                "y": -112.5,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "type": "MirrorAngle"
-            }
-          },
-          {
-            "type": "Single",
-            "point": {
-              "id": "c49184b5-d7be-472a-ab27-ff19d11573b8",
+              "id": "986b6a03-bba7-4bba-bff0-faf24d3f064c",
               "cp1": {
                 "use": false,
                 "x": 0,
@@ -1150,8 +1082,8 @@ export const rects = [
               },
               "center": {
                 "use": true,
-                "x": 187.5,
-                "y": -37.5,
+                "x": 150,
+                "y": -150,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
@@ -1172,11 +1104,11 @@ export const rects = [
           {
             "type": "Single",
             "point": {
-              "id": "e7177e5a-a3f9-4d41-b878-9c11241b9557",
+              "id": "49e26fc1-a89c-4b0f-aeec-24655166e7a1",
               "cp1": {
-                "use": true,
-                "x": 187.5,
-                "y": 37.5,
+                "use": false,
+                "x": 0,
+                "y": 0,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
@@ -1200,13 +1132,13 @@ export const rects = [
                 "rx": 0,
                 "ry": 0
               },
-              "type": "NoMirror"
+              "type": "RightAngle"
             }
           },
           {
             "type": "Single",
             "point": {
-              "id": "09525b6c-dc08-48dc-9bed-5cdb361ace3c",
+              "id": "4574cbbc-dc9d-48e9-88f6-9b03627f8a00",
               "cp1": {
                 "use": false,
                 "x": 0,
@@ -1226,15 +1158,15 @@ export const rects = [
                 "ry": 0
               },
               "cp2": {
-                "use": true,
-                "x": -187.5,
-                "y": 37.5,
+                "use": false,
+                "x": 0,
+                "y": 0,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
                 "ry": 0
               },
-              "type": "NoMirror"
+              "type": "RightAngle"
             }
           }
         ]
@@ -1246,7 +1178,6 @@ export const rects = [
     "flipHorizontal": false,
     "flipVertical": false,
     "clip": false,
-    "id": "6de3b789-1100-4b14-845c-dbe866cfe752",
     "percent": {
       "x": 0,
       "y": 0
@@ -1295,7 +1226,8 @@ export const rects = [
       }
     },
     "strokeAlign": "INSIDE",
-    "isCustom": true
+    "isCustom": true,
+    "id": "5acd12d4-719b-452f-9eae-5bf75432a86c"
   }
 ]
 

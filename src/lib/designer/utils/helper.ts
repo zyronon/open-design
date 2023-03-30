@@ -369,12 +369,12 @@ export default {
       type: BezierPointType.RightAngle
     }
   },
-  judgeLineType({start, end}: Line): LineType {
+  judgeLineType({startPoint, endPoint}: Line): LineType {
     let lineType: LineType = LineType.Line
-    if (!start.cp2.use && !end.cp1.use) {
+    if (!startPoint.cp2.use && !endPoint.cp1.use) {
       lineType = LineType.Line
     } else {
-      if (start.cp2.use && end.cp1.use) {
+      if (startPoint.cp2.use && endPoint.cp1.use) {
         lineType = LineType.Bezier3
       } else {
         lineType = LineType.Bezier2
@@ -384,7 +384,7 @@ export default {
   },
   //获取线段的中间点
   getLineCenterPoint(line: Line, lineType: LineType) {
-    let {start: p0, end: p1} = line
+    let {startPoint: p0, endPoint: p1} = line
     switch (lineType) {
       case LineType.Line:
         return this.getStraightLineCenterPoint(p0.center, p1.center)
@@ -421,41 +421,41 @@ export default {
       (target.y - r < judge.y && judge.y < target.y + r)
   },
   isInLine(target: P, line: Line, lineType: LineType): boolean {
-    let p0 = line.start
-    let p1 = line.end
-    let line1 = Math2.getHypotenuse2(target, p0.center)
-    let line2 = Math2.getHypotenuse2(target, p1.center)
-    let line3 = Math2.getHypotenuse2(p0.center, p1.center)
+    let start = line.startPoint
+    let end = line.endPoint
+    let line1 = Math2.getHypotenuse2(target, start.center)
+    let line2 = Math2.getHypotenuse2(target, end.center)
+    let line3 = Math2.getHypotenuse2(start.center, end.center)
     if (lineType === LineType.Line) {
       // let d = 0.02
       let d = 0.04
       return inRange(line1 + line2, line3 - d, line3 + d);
     }
-    if (lineType === LineType.Bezier3) {
-      let t1 = Bezier.getTByPoint_3(p0.center.x, p0.cp2.x, p1.cp1.x, p1.center.x, target.x)
-      let t2 = Bezier.getTByPoint_3(p0.center.y, p0.cp2.y, p1.cp1.y, p1.center.y, target.y)
-      if (t1.length || t2.length) {
-        let t = t1[0] ?? t2[0]
-        let p = Bezier.getPointByT_3(t, [p0.center, p0.cp2, p1.cp1, p1.center])
-        let r = this.isInPoint(target, p, 4)
-        // console.log('p', target, p, r)
-        return r
-      }
-    }
     if (lineType === LineType.Bezier2) {
       let cp: P2
-      if (p0.cp2.use) cp = p0.cp2
-      if (p1.cp1.use) cp = p1.cp1
-      let t1 = Bezier.getTByPoint_2(p0.center.x, cp!.x, p1.center.x, target.x)
-      let t2 = Bezier.getTByPoint_2(p0.center.y, cp!.y, p1.center.y, target.y)
+      if (start.cp2.use) cp = start.cp2
+      if (end.cp1.use) cp = end.cp1
+      let t1 = Bezier.getTByPoint_2(start.center.x, cp!.x, end.center.x, target.x)
+      let t2 = Bezier.getTByPoint_2(start.center.y, cp!.y, end.center.y, target.y)
       let t = -1
       if (t1.length === 1) t = t1[0]
       if (t2.length === 1) t = t2[0]
       if (t !== -1) {
-        let p = Bezier.getPointByT_2(t, [p0.center, cp!, p1.center])
+        let p = Bezier.getPointByT_2(t, [start.center, cp!, end.center])
         let r = this.isInPoint(target, p, 4)
         // console.log('p', target, p, r)
         // console.log('t', t)
+        return r
+      }
+    }
+    if (lineType === LineType.Bezier3) {
+      let t1 = Bezier.getTByPoint_3(start.center.x, start.cp2.x, end.cp1.x, end.center.x, target.x)
+      let t2 = Bezier.getTByPoint_3(start.center.y, start.cp2.y, end.cp1.y, end.center.y, target.y)
+      if (t1.length || t2.length) {
+        let t = t1[0] ?? t2[0]
+        let p = Bezier.getPointByT_3(t, [start.center, start.cp2, end.cp1, end.center])
+        let r = this.isInPoint(target, p, 4)
+        // console.log('p', target, p, r)
         return r
       }
     }

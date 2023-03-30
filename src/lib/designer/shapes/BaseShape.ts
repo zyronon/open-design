@@ -217,22 +217,22 @@ export abstract class BaseShape {
     for (let lineIndex = 0; lineIndex < lineShapes.length; lineIndex++) {
       let lineShape = lineShapes[lineIndex]
       for (let pointIndex = 0; pointIndex < lineShape.points.length; pointIndex++) {
-        let lineEndPoint = this.getPoint(lineShape.points[pointIndex])
-        if (helper.isInPoint(fixMousePoint, lineEndPoint.center, 4)) {
-          // console.log('在点上')
+        let startPoint = this.getPoint(lineShape.points[pointIndex])
+        if (helper.isInPoint(fixMousePoint, startPoint.center, 4)) {
+          console.log('在点上')
           return {type: EditType.Point, lineIndex, pointIndex, cpIndex: -1}
         }
-        let lineStartPoint: BezierPoint
-        if (pointIndex === 0) {
+        let endPoint: BezierPoint
+        if (pointIndex === lineShape.points.length - 1) {
           if (lineShape.close) {
-            lineStartPoint = this.getPoint(lineShape.points[lineShape.points.length - 1])
+            endPoint = this.getPoint(lineShape.points[0])
           } else {
-            continue
+            break
           }
         } else {
-          lineStartPoint = this.getPoint(lineShape.points[pointIndex - 1])
+          endPoint = this.getPoint(lineShape.points[pointIndex + 1])
         }
-        let line: any = {start: lineStartPoint, end: lineEndPoint}
+        let line: Line = {startPoint, endPoint}
         let lineType = helper.judgeLineType(line)
         if (helper.isInLine(fixMousePoint, line, lineType)) {
           // console.log('在线上')
@@ -647,7 +647,8 @@ export abstract class BaseShape {
     if (this.status === ShapeStatus.Edit) {
       if (cu.editModeType === EditModeType.Select) {
         let result = this.checkMousePointOnEditStatus(event.point)
-        const {lineIndex, pointIndex, cpIndex, type, lineType} = result
+        let {lineIndex, pointIndex, cpIndex, type, lineType} = result
+        console.log('pointIndex',pointIndex)
         //如果hover在点上，先处理hover
         if (pointIndex !== -1) {
           this.conf.isCustom = true
@@ -659,73 +660,61 @@ export abstract class BaseShape {
             pointIndex: -1,
             cpIndex: -1
           }
-          this.editEnter = cloneDeep(result)
 
+
+          let point: BezierPoint = {
+            id: uuid(),
+            cp1: getP2(),
+            center: {...getP2(true), ...this.hoverLineCenterPoint},
+            cp2: getP2(),
+            type: BezierPointType.RightAngle
+          }
           if (type === EditType.CenterPoint) {
             if (lineType === LineType.Line) {
-              this.conf.lineShapes[lineIndex].points.splice(pointIndex, 0, {
-                type: PointType.Single,
-                point: {
-                  id: uuid(),
-                  cp1: getP2(),
-                  center: {...getP2(true), ...this.hoverLineCenterPoint},
-                  cp2: getP2(),
-                  type: BezierPointType.RightAngle
-                }
-              })
+              this.conf.lineShapes[lineIndex].points.splice(pointIndex + 1, 0, {type: PointType.Single, point})
             } else {
               let lineShape = this.conf.lineShapes[lineIndex]
-              let lineEndPoint = this.getPoint(lineShape.points[pointIndex])
-              let lineStartPoint: BezierPoint
-              if (pointIndex === 0) {
-                lineStartPoint = this.getPoint(lineShape.points[lineShape.points.length - 1])
+              let startPoint = this.getPoint(lineShape.points[pointIndex])
+              let endPoint: BezierPoint
+              if (pointIndex === lineShape.points.length - 1) {
+                endPoint = this.getPoint(lineShape.points[0])
               } else {
-                lineStartPoint = this.getPoint(lineShape.points[pointIndex - 1])
+                endPoint = this.getPoint(lineShape.points[pointIndex + 1])
               }
-              let line: Line = {start: lineStartPoint, end: lineEndPoint}
               let b: BezierJs
               if (lineType === LineType.Bezier2) {
                 let cp: P2
-                if (line.start.cp2.use) cp = line.start.cp2
-                if (line.end.cp1.use) cp = line.end.cp1
-                b = new BezierJs(lineStartPoint.center, cp!, lineEndPoint.center)
+                if (startPoint.cp2.use) cp = startPoint.cp2
+                if (endPoint.cp1.use) cp = endPoint.cp1
+                b = new BezierJs(startPoint.center, cp!, endPoint.center)
               }
               if (lineType === LineType.Bezier3) {
-                b = new BezierJs(lineStartPoint.center, line.start.cp2, line.end.cp1, lineEndPoint.center)
+                b = new BezierJs(startPoint.center, startPoint.cp2, endPoint.cp1, endPoint.center)
               }
               let {left, right} = b!.split(0.5)
 
+              startPoint.cp2.x = left.points[1].x
+              startPoint.cp2.y = left.points[1].y
+              startPoint.cp2.use = true
+              if (startPoint.type === BezierPointType.MirrorAngleAndLength) {
+                startPoint.type = BezierPointType.MirrorAngle
+              } else {
+                startPoint.type = BezierPointType.NoMirror
+              }
+
               //如果是三次曲线，会在多出的中间点出加上控制点。所以这里要取第2个值，第一个值是中间点的控制点
               if (lineType === LineType.Bezier3) {
-                lineEndPoint.cp1.x = right.points[2].x
-                lineEndPoint.cp1.y = right.points[2].y
+                endPoint.cp1.x = right.points[2].x
+                endPoint.cp1.y = right.points[2].y
               } else {
-                lineEndPoint.cp1.x = right.points[1].x
-                lineEndPoint.cp1.y = right.points[1].y
+                endPoint.cp1.x = right.points[1].x
+                endPoint.cp1.y = right.points[1].y
               }
-
-              lineEndPoint.cp1.use = true
-              if (lineEndPoint.type === BezierPointType.MirrorAngleAndLength) {
-                lineEndPoint.type = BezierPointType.MirrorAngle
+              endPoint.cp1.use = true
+              if (endPoint.type === BezierPointType.MirrorAngleAndLength) {
+                endPoint.type = BezierPointType.MirrorAngle
               } else {
-                lineEndPoint.type = BezierPointType.NoMirror
-              }
-
-              lineStartPoint.cp2.x = left.points[1].x
-              lineStartPoint.cp2.y = left.points[1].y
-              lineStartPoint.cp2.use = true
-              if (lineStartPoint.type === BezierPointType.MirrorAngleAndLength) {
-                lineStartPoint.type = BezierPointType.MirrorAngle
-              } else {
-                lineStartPoint.type = BezierPointType.NoMirror
-              }
-
-              let point: BezierPoint = {
-                id: uuid(),
-                cp1: getP2(),
-                center: {...getP2(true), ...this.hoverLineCenterPoint},
-                cp2: getP2(),
-                type: BezierPointType.RightAngle
+                endPoint.type = BezierPointType.NoMirror
               }
 
               if (lineType === LineType.Bezier3) {
@@ -733,18 +722,18 @@ export abstract class BaseShape {
                 point.cp1 = {...getP2(true), ...left.points[2]}
                 point.cp2 = {...getP2(true), ...right.points[1]}
               }
-              this.conf.lineShapes[lineIndex].points.splice(pointIndex, 0, {
-                type: PointType.Single,
-                point
-              })
+              this.conf.lineShapes[lineIndex].points.splice(pointIndex + 1, 0, {type: PointType.Single, point})
               console.log('b2', b!.split(0.5))
               console.log('this.hoverLineCenterPoint', this.hoverLineCenterPoint)
             }
             //这里新增了一个点，但是老配置如果不更新。后面移动时就会找错点
             this.original = cloneDeep(this.conf)
             cu.render()
+            //新增一个点，下标也要加1，以选中它
+            result.pointIndex += 1
           }
 
+          this.editEnter = cloneDeep(result)
           if (this.editStartPointInfo.lineIndex !== lineIndex
             || this.editStartPointInfo.pointIndex !== pointIndex
             || this.editStartPointInfo.cpIndex !== cpIndex
@@ -1474,7 +1463,7 @@ export abstract class BaseShape {
         } else {
           endPoint = this.getPoint(array[index + 1])
         }
-        let lineType = helper.judgeLineType({start: startPoint, end: endPoint})
+        let lineType = helper.judgeLineType({startPoint, endPoint})
 
         //未闭合的情况下，只需绘制一个终点即可
         if (index === array.length - 1 && !line.close) {

@@ -10,11 +10,11 @@ declare global {
     bezierCurveTo2(cp1: P, cp2: P, end: P): void
 
     //二次贝塞尔曲线
-    quadraticCurveTo2(cp1: P | P2, end: P): void
+    quadraticCurveTo2(cp1: P , end: P): void
 
-    moveTo2(cp1: P | P2): void
+    moveTo2(cp1: P ): void
 
-    lineTo2(cp1: P | P2): void
+    lineTo2(cp1: P ): void
 
     translate2(p: P): void
 
@@ -26,11 +26,11 @@ declare global {
     bezierCurveTo2(cp1: P, cp2: P, end: P): void
 
     //二次贝塞尔曲线
-    quadraticCurveTo2(cp1: P | P2, end: P): void
+    quadraticCurveTo2(cp1: P , end: P): void
 
-    moveTo2(cp1: P | P2): void
+    moveTo2(cp1: P ): void
 
-    lineTo2(cp1: P | P2): void
+    lineTo2(cp1: P ): void
 
     translate2(p: P): void
 

@@ -214,29 +214,29 @@ export abstract class BaseShape {
     for (let lineIndex = 0; lineIndex < lineShapes.length; lineIndex++) {
       let lineShape = lineShapes[lineIndex]
       for (let pointIndex = 0; pointIndex < lineShape.points.length; pointIndex++) {
-        let currentPoint = this.getPoint(lineShape.points[pointIndex])
-        if (Math2.isInPoint(fixMousePoint, currentPoint.center, 4)) {
+        let lineEndPoint = this.getPoint(lineShape.points[pointIndex])
+        if (Math2.isInPoint(fixMousePoint, lineEndPoint.center, 4)) {
           console.log('在点上')
           return {type: EditType.Point, lineIndex, pointIndex, cpIndex: -1}
         }
-        let previousPoint: BezierPoint
+        let lineStartPoint: BezierPoint
         if (pointIndex === 0) {
           if (lineShape.close) {
-            previousPoint = this.getPoint(lineShape.points[lineShape.points.length - 1])
+            lineStartPoint = this.getPoint(lineShape.points[lineShape.points.length - 1])
           } else {
             continue
           }
         } else {
-          previousPoint = this.getPoint(lineShape.points[pointIndex - 1])
+          lineStartPoint = this.getPoint(lineShape.points[pointIndex - 1])
         }
-        let line: any = [previousPoint.center, currentPoint.center]
+        let line: any = [lineStartPoint, lineEndPoint]
         if (Math2.isInLine(fixMousePoint, line)) {
           console.log('在线上')
           let returnData = {
             type: EditType.Line,
             lineIndex,
             pointIndex,
-            lineCenterPoint: Math2.getCenterPoint(previousPoint.center, currentPoint.center),
+            lineCenterPoint: Math2.getCenterPoint(lineStartPoint.center, lineEndPoint.center),
             cpIndex: -1
           }
           if (Math2.isInPoint(fixMousePoint, this.hoverLineCenterPoint, 4)) {

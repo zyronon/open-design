@@ -1,15 +1,15 @@
-import {clone, inRange} from "lodash"
-import {jiaodu2hudu} from "../../../utils"
-import {P, P2} from "../types/type"
+import { clone, inRange } from "lodash"
+import { jiaodu2hudu } from "../../../utils"
+import { BezierPoint, BezierPointType, LineType, P, P2 } from "../types/type"
 import helper from "./helper";
 
 const Math2 = {
-  getControlPoint(P0: P | P2, P3: P | P2, Pt: P | P2, t: number) {
+  getControlPoint(P0: P , P3: P , Pt: P , t: number) {
     const P1x = P0.x + (4 / 3) * (Pt.x - P0.x);
     const P1y = P0.y + (4 / 3) * (Pt.y - P0.y);
     const P2x = P3.x - (4 / 3) * (P3.x - Pt.x);
     const P2y = P3.y - (4 / 3) * (P3.y - Pt.y);
-    return [{x: P1x, y: P1y}, {x: P2x, y: P2y}];
+    return [{ x: P1x, y: P1y }, { x: P2x, y: P2y }];
   },
   /**
    * #获取目标点的贝塞尔控制点
@@ -58,35 +58,35 @@ const Math2 = {
    *  然后将直线向y轴正方向移动相应的距离即可得到过点b且平行于A的直线上的任意一点。
    *
    * */
-  getTargetPointBezierControlPoint(previousPoint: P | P2, targetPoint: P | P2, nextPoint: P | P2) {
+  getTargetPointBezierControlPoint(previousPoint: P , targetPoint: P , nextPoint: P ) {
     // @ts-ignore
     // console.log(...arguments)
-    let {x: p1X, y: p1Y} = previousPoint
-    let {x: p2X, y: p2Y} = nextPoint
+    let { x: p1X, y: p1Y } = previousPoint
+    let { x: p2X, y: p2Y } = nextPoint
     let m = (p2Y - p1Y) / (p2X - p1X)
     // console.log('m', m)
     let A = this.getHypotenuse2(nextPoint, previousPoint)
     let X = A * 0.25
     let rx = targetPoint.x + (X / Math.sqrt(1 + Math.pow(m, 2)));
     let ry = targetPoint.y + (m * (X / Math.sqrt(1 + Math.pow(m, 2))));
-    let cpR = {x: rx, y: ry}
+    let cpR = { x: rx, y: ry }
     let cpL = this.getRotatedPoint(cpR, targetPoint, 180)
     //这里计算出的cpR，是固定的在当前点的右边。比较哪个控制点离previousPoint近，需要视情况调换两个值用于绘制曲线。
     let cpAndPreviousPointLength1 = this.getHypotenuse2(cpL, previousPoint)
     let cpAndPreviousPointLength2 = this.getHypotenuse2(cpR, previousPoint)
     if (cpAndPreviousPointLength1 < cpAndPreviousPointLength2) {
-      return {l: cpL, r: cpR}
+      return { l: cpL, r: cpR }
     }
-    return {l: cpR, r: cpL}
+    return { l: cpR, r: cpL }
     //下面是直接将X加上b的x，代入直线方程求y，会出现方向正确，但d点与b点的长度不等于X的问题
     // let dx = X + targetPoint.x
     // let dy = X / m + targetPoint.y
     // console.log(dx, dy)
     // return {x: dx, y: dy}
   },
-  getHypotenuse2(p1: any, p2: any) {
-    let {x: p1X, y: p1Y} = p1
-    let {x: p2X, y: p2Y} = p2
+  getHypotenuse2(p1: P, p2: P): number {
+    let { x: p1X, y: p1Y } = p1
+    let { x: p2X, y: p2Y } = p2
     return Math.hypot(p2X - p1X, p2Y - p1Y)
   },
   getHypotenuse(one: number[], two: number[]) {
@@ -99,8 +99,8 @@ const Math2 = {
   },
   //获取圆上的另一个点
   getRoundOtherPoint3(p1: any, c: any, angle: number) {
-    let {x, y} = p1
-    let {cx, cy} = c
+    let { x, y } = p1
+    let { cx, cy } = c
     let hypotenuse = this.getHypotenuse([cx, cy], [x, y])
     // console.log('hypotenuse', hypotenuse)
     let s = Math.abs(y) / Math.abs(hypotenuse)
@@ -249,8 +249,8 @@ const Math2 = {
    * //https://www.zhihu.com/question/30570430
    * */
   test(xTarget: any, cp1: any, cp2: any) {
-    let {x: x1, y: y1} = cp1
-    let {x: x2, y: y2} = cp2
+    let { x: x1, y: y1 } = cp1
+    let { x: x2, y: y2 } = cp2
     var tolerance = 0.00001,
       t0 = 0.6,
       x = 3 * (1 - t0) * (1 - t0) * t0 * x1 + 3 * (1 - t0) * t0 * t0 * x2 + t0 * t0 * t0,
@@ -337,9 +337,9 @@ const Math2 = {
 
   //获取两点之间角度
   getDegree(center: P, one: P, two: P): number {
-    let {x: cx, y: cy} = center
-    let {x: x1, y: y1} = one
-    let {x: x2, y: y2} = two
+    let { x: cx, y: cy } = center
+    let { x: x1, y: y1 } = one
+    let { x: x2, y: y2 } = two
     //2个点之间的角度获取
     let c1 = Math.atan2(y1 - cy, x1 - cx) * 180 / (Math.PI)
     let c2 = Math.atan2(y2 - cy, x2 - cx) * 180 / (Math.PI)
@@ -355,14 +355,15 @@ const Math2 = {
   },
   //判断点是否在盒子内
   isInBox(target: P, box: any): boolean {
-    const {x, y} = target
+    const { x, y } = target
     return box.leftX < x && x < box.rightX
       && box.topY < y && y < box.bottomY
   },
-  isInLine(target: P, line: [p1: P, p2: P]) {
-    let line1 = Math2.getHypotenuse2(target, line[0])
-    let line2 = Math2.getHypotenuse2(target, line[1])
-    let line3 = Math2.getHypotenuse2(line[0], line[1])
+  isInLine(target: P, line: [p1: BezierPoint, p2: BezierPoint]) {
+    // let lineType = helper.judgeLineType(line[0], line[1])
+    let line1 = Math2.getHypotenuse2(target, line[0].center)
+    let line2 = Math2.getHypotenuse2(target, line[1].center)
+    let line3 = Math2.getHypotenuse2(line[0].center, line[1].center)
     // let d = 0.02
     let d = 0.04
     if (inRange(line1 + line2, line3 - d, line3 + d)) {
@@ -397,7 +398,7 @@ const Math2 = {
     let y1 = (3 * yb - yc) / 72
     let x2 = (3 * xc - xb) / 72
     let y2 = (3 * yc - yb) / 72
-    return [{x: x1, y: y1}, {x: x2, y: y2}]
+    return [{ x: x1, y: y1 }, { x: x2, y: y2 }]
   },
 
   /**
@@ -411,8 +412,8 @@ const Math2 = {
       + 3 * (1 - t) * Math.pow(t, 2) * p3.x + Math.pow(t, 3) * p4.x
     let y = Math.pow(1 - t, 3) * p1.y + 3 * Math.pow(1 - t, 2) * t * p2.y
       + 3 * (1 - t) * Math.pow(t, 2) * p3.y + Math.pow(t, 3) * p4.y
-    return {x, y}
+    return { x, y }
   },
 }
-export {Math2}
+export { Math2 }
 

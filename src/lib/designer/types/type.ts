@@ -1,6 +1,6 @@
 import CanvasUtil2 from "../engine/CanvasUtil2"
-import {BaseConfig} from "../config/BaseConfig"
-import {BaseShape} from "../shapes/BaseShape"
+import { BaseConfig } from "../config/BaseConfig"
+import { BaseShape } from "../shapes/BaseShape"
 
 export type IState = {
   canvas: HTMLCanvasElement,
@@ -152,10 +152,8 @@ export interface P {
 }
 
 //复杂的点
-export interface P2 {
+export interface P2 extends P {
   use: boolean
-  x: number,
-  y: number,
   px: number//相对于父级的百分比x
   py: number//相对于父级的百分比y
   rx: number//相对于父级的相对值x

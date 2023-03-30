@@ -2,7 +2,7 @@ import { BaseConfig } from "../config/BaseConfig"
 import { getRotatedPoint } from "../../../utils"
 import { v4 as uuid } from 'uuid'
 import { cloneDeep, merge } from "lodash"
-import { BezierPointType, getP2, P, P2, StrokeAlign } from "../types/type"
+import { BezierPoint, BezierPointType, getP2, LineType, P, P2, StrokeAlign } from "../types/type"
 import { Colors, defaultConfig } from "./constant"
 
 export default {
@@ -358,7 +358,7 @@ export default {
       effects: [],
     } as any, newConfig)
   },
-  getDefaultBezierPoint(p: P | P2) {
+  getDefaultBezierPoint(p: P ) {
     return {
       id: uuid(),
       cp1: getP2(),
@@ -366,5 +366,25 @@ export default {
       cp2: getP2(),
       type: BezierPointType.RightAngle
     }
+  },
+  judgeLineType(lineStartPoint: BezierPoint, lineEndPoint: BezierPoint): LineType {
+    let lineType: LineType = LineType.Line
+    if (
+      lineEndPoint.type === BezierPointType.RightAngle &&
+      lineStartPoint.type === BezierPointType.RightAngle
+    ) {
+      lineType = LineType.Line
+    } else if (
+      lineEndPoint.type !== BezierPointType.RightAngle &&
+      lineStartPoint.type !== BezierPointType.RightAngle) {
+      lineType = LineType.Bezier3
+    } else {
+      if (lineStartPoint.cp2.use || lineEndPoint.cp1.use) {
+        lineType = LineType.Bezier2
+      } else {
+        lineType = LineType.Line
+      }
+    }
+    return lineType
   }
 }

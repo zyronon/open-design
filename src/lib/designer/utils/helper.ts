@@ -358,7 +358,7 @@ export default {
       effects: [],
     } as any, newConfig)
   },
-  getDefaultBezierPoint(p: P ) {
+  getDefaultBezierPoint(p: P) {
     return {
       id: uuid(),
       cp1: getP2(),

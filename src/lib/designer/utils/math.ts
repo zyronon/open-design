@@ -1,7 +1,8 @@
 import { clone, inRange } from "lodash"
 import { jiaodu2hudu } from "../../../utils"
-import { BezierPoint, BezierPointType, LineType, P, P2 } from "../types/type"
+import { BezierPoint, LineType, P, P2 } from "../types/type"
 import helper from "./helper";
+import { Bezier } from "./bezier"
 
 const Math2 = {
   getHypotenuse2(p1: P, p2: P): number {
@@ -98,16 +99,6 @@ const Math2 = {
       y: p1.y + ((p2.y - p1.y) / 2)
     }
   },
-  /**
-   * @desc 判断鼠标m是否在p点内
-   * @param m 鼠标坐标
-   * @param p 判断点坐标
-   * @param r 半径
-   * */
-  isInPoint(m: P, p: P, r: number) {
-    return (p.x - r < m.x && m.x < p.x + r) &&
-      (p.y - r < m.y && m.y < p.y + r)
-  },
   cuberoot(x: any) {
     var y = Math.pow(Math.abs(x), 1 / 3)
     return x < 0 ? -y : y
@@ -188,20 +179,61 @@ const Math2 = {
     return box.leftX < x && x < box.rightX
       && box.topY < y && y < box.bottomY
   },
-  isInLine(target: P, line: [p1: BezierPoint, p2: BezierPoint]) {
-    let lineType = helper.judgeLineType(line[0], line[1])
-    let line1 = Math2.getHypotenuse2(target, line[0].center)
-    let line2 = Math2.getHypotenuse2(target, line[1].center)
-    let line3 = Math2.getHypotenuse2(line[0].center, line[1].center)
-    // let d = 0.02
-    let d = 0.04
-    if (inRange(line1 + line2, line3 - d, line3 + d)) {
-      // console.log('在线上')
-      return true
-    }
-    return false
+  /**
+   * @desc 判断鼠标m是否在p点内
+   * @param judge 鼠标坐标
+   * @param target 判断点坐标
+   * @param r 半径
+   * */
+  isInPoint(judge: P, target: P, r: number) {
+    return (target.x - r < judge.x && judge.x < target.x + r) &&
+      (target.y - r < judge.y && judge.y < target.y + r)
   },
-
+  isInLine(target: P, line: [BezierPoint, BezierPoint]) {
+    let p0 = line[0]
+    let p1 = line[1]
+    let lineType = helper.judgeLineType(p0, p1)
+    let line1 = Math2.getHypotenuse2(target, p0.center)
+    let line2 = Math2.getHypotenuse2(target, p1.center)
+    let line3 = Math2.getHypotenuse2(p0.center, p1.center)
+    if (lineType === LineType.Line) {
+      // let d = 0.02
+      let d = 0.04
+      return inRange(line1 + line2, line3 - d, line3 + d);
+    }
+    if (lineType === LineType.Bezier3) {
+      let t1 = Bezier.getTByPoint3(p0.center.x, p0.cp2.x, p1.cp1.x, p1.center.x, target.x)
+      let t2 = Bezier.getTByPoint3(p0.center.y, p0.cp2.y, p1.cp1.y, p1.center.y, target.y)
+      if (t1.length || t2.length) {
+        let t = t1[0] ?? t2[0]
+        let p = Bezier.getPointByT(t, [p0.center, p0.cp2, p1.cp1, p1.center])
+        let r = this.isInPoint(target, p, 4)
+        console.log('p', target, p, r)
+      }
+    }
+    if (lineType === LineType.Bezier2) {
+      let cp: P2
+      if (p0.cp2.use) cp = p0.cp2
+      if (p1.cp1.use) cp = p1.cp1
+      let t1 = Bezier.getTByPoint2(p0.center.x, cp!.x, p1.center.x, target.x)
+      let t2 = Bezier.getTByPoint2(p0.center.y, cp!.y, p1.center.y, target.y)
+      // if (t1.length || t2.length) {
+      //   let t = t1[0] ?? t2[0]
+      //   let p = Bezier.getPointByT(t, [p0.center, p0.cp2, p1.cp1, p1.center])
+      //   let r = this.isInPoint(target, p, 4)
+      //   console.log('p', target, p, r)
+      // }
+      // if (t.length) {
+      //   let p = Bezier.getPointByT(t[0], [line[0].center,
+      //     line[0].cp2,
+      //     p1.cp1,
+      //     p1.center,])
+      //   let r = this.isInPoint(target, p, 4)
+      //   console.log('p', target, p, r)
+      // }
+      console.log('t', t1, t2)
+    }
+  },
 }
 export { Math2 }
 

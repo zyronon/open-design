@@ -542,7 +542,7 @@ export abstract class BaseShape {
           nextPointInfo = line.points[pointIndex + 1]
         }
         console.log(previousPointInfo, nextPointInfo)
-        let {l, r} = Bezier.getTargetPointBezierControlPoint(
+        let {l, r} = Bezier.getTargetPointControlPoint(
           previousPointInfo.point?.center!,
           currentPoint.point?.center!,
           nextPointInfo.point?.center!)

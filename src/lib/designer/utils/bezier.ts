@@ -49,7 +49,7 @@ const Bezier = {
    *  然后将直线向y轴正方向移动相应的距离即可得到过点b且平行于A的直线上的任意一点。
    *
    * */
-  getTargetPointBezierControlPoint(previousPoint: P , targetPoint: P , nextPoint: P ) {
+  getTargetPointControlPoint(previousPoint: P, targetPoint: P, nextPoint: P) {
     // @ts-ignore
     // console.log(...arguments)
     let { x: p1X, y: p1Y } = previousPoint
@@ -90,7 +90,7 @@ const Bezier = {
    * @param start 起始点
    * @param end 终点
    * */
-  getBezier3ControlPoints(tp1: any, tp2: any, start: any, end: any) {
+  getControlPoints(tp1: any, tp2: any, start: any, end: any) {
     let xb = 64 * tp1.x - 27 * start.x - end.x
     let yb = 64 * tp1.y - 27 * start.y - end.y
     let xc = 64 * tp2.x - start.x - 27 * end.x
@@ -102,19 +102,112 @@ const Bezier = {
     let y2 = (3 * yc - yb) / 72
     return [{ x: x1, y: y1 }, { x: x2, y: y2 }]
   },
-
   /**
    * @description 根据长度（即T）获取对应的点
-   *  //P = (1−t)3P1 + 3(1−t)2tP2 +3(1−t)t2P3 + t3P4
+   *  //P = (1−t)3P0 + 3(1−t)2tP1 +3(1−t)t2P2 + t3P3
    * //x = (1−t)3x + 3(1−t)2tx +3(1−t)t2x + t3x
    * */
-  getBezierPointByLength(t: number, points: any) {
-    let [p1, p2, p3, p4] = points
-    let x = Math.pow(1 - t, 3) * p1.x + 3 * Math.pow(1 - t, 2) * t * p2.x
-      + 3 * (1 - t) * Math.pow(t, 2) * p3.x + Math.pow(t, 3) * p4.x
-    let y = Math.pow(1 - t, 3) * p1.y + 3 * Math.pow(1 - t, 2) * t * p2.y
-      + 3 * (1 - t) * Math.pow(t, 2) * p3.y + Math.pow(t, 3) * p4.y
+  getPointByT(t: number, points: [P, P, P, P]) {
+    let [p0, p1, p2, p3] = points
+    let x = Math.pow(1 - t, 3) * p0.x + 3 * Math.pow(1 - t, 2) * t * p1.x
+      + 3 * (1 - t) * Math.pow(t, 2) * p2.x + Math.pow(t, 3) * p3.x
+    let y = Math.pow(1 - t, 3) * p0.y + 3 * Math.pow(1 - t, 2) * t * p1.y
+      + 3 * (1 - t) * Math.pow(t, 2) * p2.y + Math.pow(t, 3) * p3.y
     return { x, y }
   },
+  /**
+   * #####三次曲线#####
+   * 已知四个控制点，及曲线中的某一个点的 x/y，反推求 t
+   * @param {number} p0 起点 x/y
+   * @param {number} p1 控制点1 x/y
+   * @param {number} p2 控制点2 x/y
+   * @param {number} p3 终点 x/y
+   * @param {number} target 曲线中的某个点 x/y
+   * @returns {number[]} t[]
+   */
+  getTByPoint3(p0: number, p1: number, p2: number, p3: number, target: number): number[] {
+    const a = -p0 + 3 * p1 - 3 * p2 + p3
+    const b = 3 * p0 - 6 * p1 + 3 * p2
+    const c = -3 * p0 + 3 * p1
+    const d = p0 - target
+
+    // 盛金公式, 预先需满足, a !== 0
+    // 判别式
+    const A = Math.pow(b, 2) - 3 * a * c
+    const B = b * c - 9 * a * d
+    const C = Math.pow(c, 2) - 3 * b * d
+    const delta = Math.pow(B, 2) - 4 * A * C
+
+    let t1 = -100, t2 = -100, t3 = -100
+
+    // 3个相同实数根
+    if (A === B && A === 0) {
+      t1 = -b / (3 * a)
+      t2 = -c / b
+      t3 = -3 * d / c
+      return [t1, t2, t3].filter(v => 0 <= v && v <= 1.01)
+    }
+
+    // 1个实数根和1对共轭复数根
+    if (delta > 0) {
+      const v = Math.pow(B, 2) - 4 * A * C
+      const xsv = v < 0 ? -1 : 1
+
+      const m1 = A * b + 3 * a * (-B + (v * xsv) ** (1 / 2) * xsv) / 2
+      const m2 = A * b + 3 * a * (-B - (v * xsv) ** (1 / 2) * xsv) / 2
+
+      const xs1 = m1 < 0 ? -1 : 1
+      const xs2 = m2 < 0 ? -1 : 1
+
+      t1 = (-b - (m1 * xs1) ** (1 / 3) * xs1 - (m2 * xs2) ** (1 / 3) * xs2) / (3 * a)
+      // 涉及虚数，可不考虑。i ** 2 = -1
+    }
+
+    // 3个实数根
+    if (delta === 0) {
+      const K = B / A
+      t1 = -b / a + K
+      t2 = t3 = -K / 2
+    }
+
+    // 3个不相等实数根
+    if (delta < 0) {
+      const xsA = A < 0 ? -1 : 1
+      const T = (2 * A * b - 3 * a * B) / (2 * (A * xsA) ** (3 / 2) * xsA)
+      const theta = Math.acos(T)
+
+      if (A > 0 && T < 1 && T > -1) {
+        t1 = (-b - 2 * A ** (1 / 2) * Math.cos(theta / 3)) / (3 * a)
+        t2 = (-b + A ** (1 / 2) * (Math.cos(theta / 3) + 3 ** (1 / 2) * Math.sin(theta / 3))) / (3 * a)
+        t3 = (-b + A ** (1 / 2) * (Math.cos(theta / 3) - 3 ** (1 / 2) * Math.sin(theta / 3))) / (3 * a)
+      }
+    }
+    return [t1, t2, t3].filter(v => 0 <= v && v <= 1.01)
+  },
+  /**
+   * #####二次曲线#####
+   * 已知三个控制点，及曲线中的某一个点的 x/y，反推求 t
+   * P = (1−t)2P0 + 2(1−t)tP1 + t2P2
+   * 将上面的方程改写成标准形式，得到：
+   * at^2 + bt + c = 0
+   * 其中
+   * a =  p0 - 2 * p1 + p2
+   * b = 2 * (p1 - p0)
+   * c = p0 - target
+   * */
+  getTByPoint2(p0: number, p1: number, p2: number, target: number): number[] {
+    let a = p0 - 2 * p1 + p2
+    let b = 2 * (p1 - p0)
+    let c = p0 - target
+
+    // 求解二次方程
+    let delta = b * b - 4 * a * c;
+    if (delta < 0) {
+      return [];
+    }
+    let t1 = (-b + Math.sqrt(delta)) / (2 * a);
+    let t2 = (-b - Math.sqrt(delta)) / (2 * a);
+    return [t1, t2].filter(v => 0 <= v && v <= 1.01)
+  }
 }
 export { Bezier }

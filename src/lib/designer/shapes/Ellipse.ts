@@ -187,7 +187,7 @@ export class Ellipse extends BaseShape {
       cp8,
     ]
     //获取第几条曲线的所有控制点
-    const getBezierControlPoint = (length: number) => {
+    const getBezierControlPoint = (length: number): [p1: P, p2: P, p3: P, p4: P] => {
       switch (length) {
         //特殊情况，当startLength不为0时，startLength + totalLength 可能会等于4
         //等于4，直接用第一段就行
@@ -201,6 +201,7 @@ export class Ellipse extends BaseShape {
         case 3:
           return [top, cp7, cp8, start]
       }
+      return [] as any
     }
     this._config.getCps = getBezierControlPoint
 
@@ -226,7 +227,7 @@ export class Ellipse extends BaseShape {
     if (startLength) {
       let intStartLength = Math.trunc(startLength)
       let startLengthCps = getBezierControlPoint(intStartLength)
-      this._config.startPoint = Bezier.getBezierPointByLength(Math.decimal(startLength), startLengthCps)
+      this._config.startPoint = Bezier.getPointByT(Math.decimal(startLength), startLengthCps)
     }
 
     //是否是整圆
@@ -336,7 +337,7 @@ export class Ellipse extends BaseShape {
         //默认情况下，用于计算1/4点，3/4点，可以共用一条对应的线段
         bezierCurrent = bezierPrevious = getBezierControlPoint(intCurrentLength)
         //计算当前点必须用当前长度线段的4个控制点来算
-        currentPoint = Bezier.getBezierPointByLength(Math.decimal(currentLength), bezierCurrent)
+        currentPoint = Bezier.getPointByT(Math.decimal(currentLength), bezierCurrent)
 
         //特殊情况
         //如果，1/4的长度，不在当前线段内，那么肯定在上一个线段内
@@ -349,11 +350,11 @@ export class Ellipse extends BaseShape {
         }
 
         //计算1/4长度，3/4长度对应的点
-        length14Point = Bezier.getBezierPointByLength(Math.decimal(length14), bezierPrevious)
-        length34Point = Bezier.getBezierPointByLength(Math.decimal(length34), bezierCurrent)
+        length14Point = Bezier.getPointByT(Math.decimal(length14), bezierPrevious)
+        length34Point = Bezier.getPointByT(Math.decimal(length34), bezierCurrent)
 
         //利用1/4点、3/4点、起始点、终点，反推控制点
-        let cps = Bezier.getBezier3ControlPoints(length14Point, length34Point, lastPoint, currentPoint)
+        let cps = Bezier.getControlPoints(length14Point, length34Point, lastPoint, currentPoint)
 
         // 因为最后一个控制点（非数组的最后一个点）默认只需center和cp1与前一个点的center和cp2的4个点，组成贝塞尔曲线
         //所以cp2是无用的，所以添加当前点时，需要把上一个点的cp2为正确的值并启用

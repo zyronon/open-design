@@ -235,7 +235,7 @@ export abstract class BaseShape {
         let line: Line = {startPoint, endPoint}
         let lineType = helper.judgeLineType(line)
         if (helper.isInLine(fixMousePoint, line, lineType)) {
-          // console.log('在线上')
+          console.log('在线上')
           let returnData = {
             type: EditType.Line,
             lineType,

@@ -88,7 +88,7 @@ export class Rectangle extends BaseShape {
   }
 
   isInShape(mousePoint: P, cu: CanvasUtil2): boolean {
-    return Math2.isInBox(mousePoint, this.conf.box)
+    return helper.isInBox(mousePoint, this.conf.box)
   }
 
   drawShape(ctx: CanvasRenderingContext2D, layout: Rect, parent?: BaseConfig) {

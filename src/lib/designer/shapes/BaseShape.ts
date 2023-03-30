@@ -216,7 +216,7 @@ export abstract class BaseShape {
       let lineShape = lineShapes[lineIndex]
       for (let pointIndex = 0; pointIndex < lineShape.points.length; pointIndex++) {
         let lineEndPoint = this.getPoint(lineShape.points[pointIndex])
-        if (Math2.isInPoint(fixMousePoint, lineEndPoint.center, 4)) {
+        if (helper.isInPoint(fixMousePoint, lineEndPoint.center, 4)) {
           console.log('在点上')
           return {type: EditType.Point, lineIndex, pointIndex, cpIndex: -1}
         }
@@ -232,7 +232,7 @@ export abstract class BaseShape {
         }
         let line: any = {start: lineStartPoint, end: lineEndPoint}
         let lineType = helper.judgeLineType(line)
-        if (Math2.isInLine(fixMousePoint, line, lineType)) {
+        if (helper.isInLine(fixMousePoint, line, lineType)) {
           console.log('在线上')
           let returnData = {
             type: EditType.Line,
@@ -241,7 +241,7 @@ export abstract class BaseShape {
             lineCenterPoint: helper.getLineCenterPoint(line, lineType),
             cpIndex: -1
           }
-          if (Math2.isInPoint(fixMousePoint, this.hoverLineCenterPoint, 4)) {
+          if (helper.isInPoint(fixMousePoint, this.hoverLineCenterPoint, 4)) {
             console.log('hover在线的中点上')
             returnData.type = EditType.CenterPoint
           }
@@ -276,7 +276,7 @@ export abstract class BaseShape {
       }
       for (let i = 0; i < waitCheckPoints.length; i++) {
         let item = waitCheckPoints[i]
-        if (Math2.isInPoint(fixMousePoint, item.point, 4)) {
+        if (helper.isInPoint(fixMousePoint, item.point, 4)) {
           console.log('在cp点上')
           return {type: EditType.ControlPoint, lineIndex, pointIndex: item.pointIndex, cpIndex: item.index}
         }
@@ -1019,7 +1019,7 @@ export abstract class BaseShape {
     let isReverseW = false
     let isReverseH = false
     let current = {x, y}
-    let newCenter = Math2.getCenterPoint(current, this.diagonal)
+    let newCenter = helper.getStraightLineCenterPoint(current, this.diagonal)
     let zeroDegreeTopLeft = Math2.getRotatedPoint(current, newCenter, -realRotation)
     let zeroDegreeBottomRight = Math2.getRotatedPoint(this.diagonal, newCenter, -realRotation)
 

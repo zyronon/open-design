@@ -8,6 +8,7 @@ import { Math2 } from "../utils/math"
 import CanvasUtil2 from "../engine/CanvasUtil2"
 import { v4 as uuid } from "uuid"
 import { Bezier } from "../utils/bezier"
+import helper from "../utils/helper"
 
 /**
  * @desc 获取长度对应的 鼠标控制点
@@ -89,7 +90,7 @@ export class Ellipse extends BaseShape {
       x: this._config.endMouseControlPoint.x + x + w / 2,
       y: this._config.endMouseControlPoint.y + y + h / 2,
     }
-    if (Math2.isInPoint(mousePoint, absoluteEndMouseControlPoint, 4)) {
+    if (helper.isInPoint(mousePoint, absoluteEndMouseControlPoint, 4)) {
       document.body.style.cursor = "pointer"
       this.hoverEndMouseControlPoint = true
       return true
@@ -99,7 +100,7 @@ export class Ellipse extends BaseShape {
   }
 
   isHoverIn(mousePoint: P, cu: CanvasUtil2): boolean {
-    return Math2.isInBox(mousePoint, mousePoint)
+    return helper.isInBox(mousePoint, mousePoint)
   }
 
   drawShape(ctx: CanvasRenderingContext2D, p: P, parent?: BaseConfig) {

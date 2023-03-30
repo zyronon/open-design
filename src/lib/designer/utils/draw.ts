@@ -1,8 +1,7 @@
-import {IState, P, P2, ShapeType} from "../types/type"
+import {P, P2} from "../types/type"
 import {BaseConfig, Rect} from "../config/BaseConfig"
 import {Colors, defaultConfig} from "./constant"
 import {jiaodu2hudu} from "../../../utils"
-import {BaseShape} from "../shapes/BaseShape"
 import CanvasUtil2 from "../engine/CanvasUtil2"
 
 export default {

@@ -1,13 +1,13 @@
-import { clone, inRange } from "lodash"
-import { jiaodu2hudu } from "../../../utils"
-import { BezierPoint, Line, LineType, P, P2 } from "../types/type"
+import {clone, inRange} from "lodash"
+import {jiaodu2hudu} from "../../../utils"
+import {BezierPoint, Line, LineType, P, P2} from "../types/type"
 import helper from "./helper";
-import { Bezier } from "./bezier"
+import {Bezier} from "./bezier"
 
 const Math2 = {
   getHypotenuse2(p1: P, p2: P): number {
-    let { x: p1X, y: p1Y } = p1
-    let { x: p2X, y: p2Y } = p2
+    let {x: p1X, y: p1Y} = p1
+    let {x: p2X, y: p2Y} = p2
     return Math.hypot(p2X - p1X, p2Y - p1Y)
   },
   getHypotenuse(one: number[], two: number[]) {
@@ -20,8 +20,8 @@ const Math2 = {
   },
   //获取圆上的另一个点
   getRoundOtherPoint3(p1: any, c: any, angle: number) {
-    let { x, y } = p1
-    let { cx, cy } = c
+    let {x, y} = p1
+    let {cx, cy} = c
     let hypotenuse = this.getHypotenuse([cx, cy], [x, y])
     // console.log('hypotenuse', hypotenuse)
     let s = Math.abs(y) / Math.abs(hypotenuse)
@@ -158,9 +158,9 @@ const Math2 = {
   },
   //获取两点之间角度
   getDegree(center: P, one: P, two: P): number {
-    let { x: cx, y: cy } = center
-    let { x: x1, y: y1 } = one
-    let { x: x2, y: y2 } = two
+    let {x: cx, y: cy} = center
+    let {x: x1, y: y1} = one
+    let {x: x2, y: y2} = two
     //2个点之间的角度获取
     let c1 = Math.atan2(y1 - cy, x1 - cx) * 180 / (Math.PI)
     let c2 = Math.atan2(y2 - cy, x2 - cx) * 180 / (Math.PI)
@@ -176,7 +176,7 @@ const Math2 = {
   },
   //判断点是否在盒子内
   isInBox(target: P, box: any): boolean {
-    const { x, y } = target
+    const {x, y} = target
     return box.leftX < x && x < box.rightX
       && box.topY < y && y < box.bottomY
   },
@@ -190,10 +190,9 @@ const Math2 = {
     return (target.x - r < judge.x && judge.x < target.x + r) &&
       (target.y - r < judge.y && judge.y < target.y + r)
   },
-  isInLine(target: P, line: Line): boolean {
+  isInLine(target: P, line: Line, lineType: LineType): boolean {
     let p0 = line.start
     let p1 = line.end
-    let lineType = helper.judgeLineType(line)
     let line1 = Math2.getHypotenuse2(target, p0.center)
     let line2 = Math2.getHypotenuse2(target, p1.center)
     let line3 = Math2.getHypotenuse2(p0.center, p1.center)
@@ -209,7 +208,7 @@ const Math2 = {
         let t = t1[0] ?? t2[0]
         let p = Bezier.getPointByT_3(t, [p0.center, p0.cp2, p1.cp1, p1.center])
         let r = this.isInPoint(target, p, 4)
-        console.log('p', target, p, r)
+        // console.log('p', target, p, r)
         return r
       }
     }
@@ -233,5 +232,5 @@ const Math2 = {
     return false
   },
 }
-export { Math2 }
+export {Math2}
 

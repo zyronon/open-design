@@ -1,9 +1,10 @@
-import { BaseConfig } from "../config/BaseConfig"
-import { getRotatedPoint } from "../../../utils"
-import { v4 as uuid } from 'uuid'
-import { cloneDeep, merge } from "lodash"
-import { BezierPoint, BezierPointType, getP2, Line, LineType, P, P2, StrokeAlign } from "../types/type"
-import { Colors, defaultConfig } from "./constant"
+import {BaseConfig} from "../config/BaseConfig"
+import {getRotatedPoint} from "../../../utils"
+import {v4 as uuid} from 'uuid'
+import {cloneDeep, merge} from "lodash"
+import {BezierPoint, BezierPointType, getP2, Line, LineType, P, P2, StrokeAlign} from "../types/type"
+import {Colors, defaultConfig} from "./constant"
+import {Bezier} from "./bezier"
 
 export default {
   /**
@@ -22,7 +23,7 @@ export default {
   reversePoint(point: any, center: P): P {
     let x = this._reversePoint(point.x, center.x)
     let y = this._reversePoint(point.y, center.y)
-    return { x, y }
+    return {x, y}
   },
   /**
    * @desc 水平翻转点
@@ -57,7 +58,7 @@ export default {
    * 只适合初始化是计算角度
    * */
   getRotationByInitConf(conf: BaseConfig, rotation?: number): number {
-    let { flipHorizontal, flipVertical } = conf
+    let {flipHorizontal, flipVertical} = conf
     let r = rotation || conf.rotation
     if (flipHorizontal) r = this.getRotationByFlipHorizontal(r)
     if (flipVertical) r = this.getRotationByFlipVertical(r)
@@ -66,19 +67,19 @@ export default {
   initConf(conf: BaseConfig, pConf?: BaseConfig) {
     if (conf.id) return conf
     let {
-      layout: { x, y, w, h }, flipHorizontal, flipVertical
+      layout: {x, y, w, h}, flipHorizontal, flipVertical
     } = conf
     conf.id = uuid()
     const w2 = w / 2, h2 = h / 2
 
     //默认中心点
-    let center = { x: x + w2, y: y + h2 }
+    let center = {x: x + w2, y: y + h2}
 
     if (pConf) {
       conf.realRotation = pConf.realRotation + conf.rotation
-      conf.percent = { x: x / pConf.layout.w, y: y / pConf.layout.h, }
+      conf.percent = {x: x / pConf.layout.w, y: y / pConf.layout.h,}
       //如果有父级，那么中心点加要上自己的xy和父级的start的xy值
-      center = { x: (pConf.start.x + x) + w2, y: (pConf.start.y + y) + h2 }
+      center = {x: (pConf.start.x + x) + w2, y: (pConf.start.y + y) + h2}
       conf.relativeCenter = {
         x: center.x - pConf.original.x,
         y: center.y - pConf.original.y,
@@ -86,15 +87,15 @@ export default {
       //根据父级的角度旋转，就是最终的中心点
       center = getRotatedPoint(center, pConf.center, pConf.realRotation)
     } else {
-      conf.relativeCenter = conf.percent = { x: 0, y: 0, }
+      conf.relativeCenter = conf.percent = {x: 0, y: 0,}
       conf.realRotation = conf.rotation
     }
 
-    const { x: cx, y: cy } = center
-    let topLeft = { x: cx - w2, y: cy - h2 }
-    let topRight = { x: cx + w2, y: cy - h2 }
-    let bottomLeft = { x: cx - w2, y: cy + h2 }
-    let bottomRight = { x: cx + w2, y: cy + h2 }
+    const {x: cx, y: cy} = center
+    let topLeft = {x: cx - w2, y: cy - h2}
+    let topRight = {x: cx + w2, y: cy - h2}
+    let bottomLeft = {x: cx - w2, y: cy + h2}
+    let bottomRight = {x: cx + w2, y: cy + h2}
 
     conf.start = cloneDeep(topLeft)
     //水平翻转所有的点
@@ -153,16 +154,16 @@ export default {
   },
   calcConf(conf: BaseConfig, pConf?: BaseConfig): BaseConfig {
     let {
-      layout: { x, y, w, h },
+      layout: {x, y, w, h},
       center, flipHorizontal, flipVertical, realRotation
     } = conf
     const w2 = w / 2, h2 = h / 2
 
-    const { x: cx, y: cy } = center
-    let topLeft = { x: cx - w2, y: cy - h2 }
-    let topRight = { x: cx + w2, y: cy - h2 }
-    let bottomLeft = { x: cx - w2, y: cy + h2 }
-    let bottomRight = { x: cx + w2, y: cy + h2 }
+    const {x: cx, y: cy} = center
+    let topLeft = {x: cx - w2, y: cy - h2}
+    let topRight = {x: cx + w2, y: cy - h2}
+    let bottomLeft = {x: cx - w2, y: cy + h2}
+    let bottomRight = {x: cx + w2, y: cy + h2}
 
     //水平翻转所有的点
     if (flipHorizontal) {
@@ -229,7 +230,7 @@ export default {
 
   calcConfByParent(conf: BaseConfig, pConf?: BaseConfig): BaseConfig {
     let {
-      layout: { x, y, w, h },
+      layout: {x, y, w, h},
       original,
       center,
       relativeCenter,
@@ -248,16 +249,16 @@ export default {
       // if (pConf.flipVertical) {
       //   pOriginal = this.verticalReversePoint(pOriginal, pConf.center)
       // }
-      center = { x: pOriginal.x + relativeCenter.x, y: pOriginal.y + relativeCenter.y }
+      center = {x: pOriginal.x + relativeCenter.x, y: pOriginal.y + relativeCenter.y}
       //根据父级的角度旋转 ，就是最终的中心点
       center = getRotatedPoint(center, pConf.center, pConf.realRotation)
     }
 
-    const { x: cx, y: cy } = center
-    let topLeft = { x: cx - w2, y: cy - h2 }
-    let topRight = { x: cx + w2, y: cy - h2 }
-    let bottomLeft = { x: cx - w2, y: cy + h2 }
-    let bottomRight = { x: cx + w2, y: cy + h2 }
+    const {x: cx, y: cy} = center
+    let topLeft = {x: cx - w2, y: cy - h2}
+    let topRight = {x: cx + w2, y: cy - h2}
+    let bottomLeft = {x: cx - w2, y: cy + h2}
+    let bottomRight = {x: cx + w2, y: cy + h2}
 
     //水平翻转所有的点
     if (flipHorizontal) {
@@ -322,7 +323,7 @@ export default {
     })
   },
   getXy() {
-    return { x: 0, y: 0 }
+    return {x: 0, y: 0}
   },
   getDefaultShapeConfig(newConfig?: BaseConfig): BaseConfig {
     return merge({
@@ -362,12 +363,12 @@ export default {
     return {
       id: uuid(),
       cp1: getP2(),
-      center: { ...getP2(true), ...p },
+      center: {...getP2(true), ...p},
       cp2: getP2(),
       type: BezierPointType.RightAngle
     }
   },
-  judgeLineType(line:Line): LineType {
+  judgeLineType(line: Line): LineType {
     let lineType: LineType = LineType.Line
     if (
       line.end.type === BezierPointType.RightAngle &&
@@ -387,7 +388,22 @@ export default {
     }
     return lineType
   },
-  getLineCenterPoint(line:Line) {
+  getLineCenterPoint(line: Line, lineType: LineType) {
+    let {start: p0, end: p1} = line
+    switch (lineType) {
+      case LineType.Line:
+        return {
+          x: p0.center.x + ((p1.center.x - p0.center.x) / 2),
+          y: p0.center.y + ((p1.center.y - p0.center.y) / 2)
+        }
+      case LineType.Bezier2:
+        let cp: P2
+        if (p0.cp2.use) cp = p0.cp2
+        if (p1.cp1.use) cp = p1.cp1
+        return Bezier.getPointByT_2(0.5, [p0.center, cp!, p1.center])
+      case LineType.Bezier3:
+        return Bezier.getPointByT_3(0.5, [p0.center, p0.cp2, p1.cp1, p1.center])
+    }
 
   }
 }

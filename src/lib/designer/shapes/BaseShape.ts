@@ -231,13 +231,14 @@ export abstract class BaseShape {
           lineStartPoint = this.getPoint(lineShape.points[pointIndex - 1])
         }
         let line: any = {start: lineStartPoint, end: lineEndPoint}
-        if (Math2.isInLine(fixMousePoint, line)) {
+        let lineType = helper.judgeLineType(line)
+        if (Math2.isInLine(fixMousePoint, line, lineType)) {
           console.log('在线上')
           let returnData = {
             type: EditType.Line,
             lineIndex,
             pointIndex,
-            lineCenterPoint: Math2.getCenterPoint(lineStartPoint.center, lineEndPoint.center),
+            lineCenterPoint: helper.getLineCenterPoint(line, lineType),
             cpIndex: -1
           }
           if (Math2.isInPoint(fixMousePoint, this.hoverLineCenterPoint, 4)) {

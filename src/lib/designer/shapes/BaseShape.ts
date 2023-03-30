@@ -1456,7 +1456,6 @@ export abstract class BaseShape {
               if (startPoint.cp2.use) cp = startPoint.cp2
               if (endPoint.cp1.use) cp = endPoint.cp1
               let b2 = new BezierJs(startPoint.center, cp!, endPoint.center)
-              console.log('b2', b2.bbox())
               checkBezier(b2.bbox())
               break
           }
@@ -1465,7 +1464,7 @@ export abstract class BaseShape {
       previousValue.push({maxX, minX, maxY, minY})
       return previousValue
     }, [])
-    console.log('temp', temp)
+    // console.log('temp', temp)
     let maxX = Math.max(...temp.map((a: any) => a.maxX))
     let minX = Math.min(...temp.map((a: any) => a.minX))
     let maxY = Math.max(...temp.map((a: any) => a.maxY))

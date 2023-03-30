@@ -217,7 +217,7 @@ export abstract class BaseShape {
       for (let pointIndex = 0; pointIndex < lineShape.points.length; pointIndex++) {
         let lineEndPoint = this.getPoint(lineShape.points[pointIndex])
         if (helper.isInPoint(fixMousePoint, lineEndPoint.center, 4)) {
-          console.log('在点上')
+          // console.log('在点上')
           return {type: EditType.Point, lineIndex, pointIndex, cpIndex: -1}
         }
         let lineStartPoint: BezierPoint
@@ -233,7 +233,7 @@ export abstract class BaseShape {
         let line: any = {start: lineStartPoint, end: lineEndPoint}
         let lineType = helper.judgeLineType(line)
         if (helper.isInLine(fixMousePoint, line, lineType)) {
-          console.log('在线上')
+          // console.log('在线上')
           let returnData = {
             type: EditType.Line,
             lineIndex,
@@ -242,7 +242,7 @@ export abstract class BaseShape {
             cpIndex: -1
           }
           if (helper.isInPoint(fixMousePoint, this.hoverLineCenterPoint, 4)) {
-            console.log('hover在线的中点上')
+            // console.log('hover在线的中点上')
             returnData.type = EditType.CenterPoint
           }
           return returnData

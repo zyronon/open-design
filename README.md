@@ -4,7 +4,7 @@
 
 [Stable version online demo](http://design-v2.ttentau.top)
 
-[//]: # ([Development version online demo]&#40;http://design.ttentau.top&#41;)
+[Development version online demo](http://design.ttentau.top)
 
 
 ## Open-Design

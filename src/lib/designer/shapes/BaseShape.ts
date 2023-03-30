@@ -1467,42 +1467,33 @@ export abstract class BaseShape {
     this.conf.lineShapes.map((line) => {
       let path = new Path2D()
       line.points.map((pointInfo: PointInfo, index: number, array: PointInfo[]) => {
-        let currentPoint = this.getPoint(pointInfo)
-        let previousPoint: BezierPoint
-        if (index === 0) {
-          previousPoint = this.getPoint(array[array.length - 1])
+        let startPoint = this.getPoint(pointInfo)
+        let endPoint: BezierPoint
+        if (index === array.length - 1) {
+          endPoint = this.getPoint(array[0])
         } else {
-          previousPoint = this.getPoint(array[index - 1])
+          endPoint = this.getPoint(array[index + 1])
         }
-        let lineType = helper.judgeLineType({start: previousPoint, end: currentPoint})
+        let lineType = helper.judgeLineType({start: startPoint, end: endPoint})
 
-        //未闭合的情况下，只需绘制一个起点即可
-        if (index === 0 && !line.close) {
-          path.lineTo2(currentPoint.center)
+        //未闭合的情况下，只需绘制一个终点即可
+        if (index === array.length - 1 && !line.close) {
+          path.lineTo2(startPoint.center)
         } else {
           switch (lineType) {
             case LineType.Line:
-              // ctx.beginPath()
-              path.lineTo2(currentPoint.center)
-              // ctx.stroke()
+              path.lineTo2(startPoint.center)
               break
             case LineType.Bezier3:
-              // ctx.beginPath()
-              path.lineTo2(previousPoint.center)
-              path.bezierCurveTo2(
-                previousPoint.cp2,
-                currentPoint.cp1,
-                currentPoint.center)
-              // ctx.stroke()
+              path.lineTo2(startPoint.center)
+              path.bezierCurveTo2(startPoint.cp2, endPoint.cp1, endPoint.center)
               break
             case LineType.Bezier2:
               let cp: P2
-              if (previousPoint.cp2.use) cp = previousPoint.cp2
-              if (currentPoint.cp1.use) cp = currentPoint.cp1
-              // ctx.beginPath()
-              path.lineTo2(previousPoint.center)
-              path.quadraticCurveTo2(cp!, currentPoint.center)
-              // ctx.stroke()
+              if (startPoint.cp2.use) cp = startPoint.cp2
+              if (endPoint.cp1.use) cp = endPoint.cp1
+              path.lineTo2(startPoint.center)
+              path.quadraticCurveTo2(cp!, endPoint.center)
               break
           }
         }

@@ -1036,11 +1036,45 @@ export const rects = [
           {
             "type": "Single",
             "point": {
+              "id": "d48075d9-fd31-4924-9128-8b6adee7d51d",
+              "cp1": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "center": {
+                "use": true,
+                "x": -187.5,
+                "y": -37.49999999999999,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "cp2": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "type": "RightAngle"
+            }
+          },
+          {
+            "type": "Single",
+            "point": {
               "id": "f0911103-24b0-475f-9818-f4f36068c9ca",
               "cp1": {
                 "use": true,
-                "x": -225,
-                "y": -74.99999999999999,
+                "x": -187.5,
+                "y": -112.5,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
@@ -1064,13 +1098,47 @@ export const rects = [
                 "rx": 0,
                 "ry": 0
               },
-              "type": "MirrorAngleAndLength"
+              "type": "MirrorAngle"
             }
           },
           {
             "type": "Single",
             "point": {
               "id": "50bfa889-9cbb-41cc-be36-ade0add9c3cc",
+              "cp1": {
+                "use": true,
+                "x": 74.99999999999999,
+                "y": -225,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "center": {
+                "use": true,
+                "x": 150,
+                "y": -150,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "cp2": {
+                "use": true,
+                "x": 187.5,
+                "y": -112.5,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "type": "MirrorAngle"
+            }
+          },
+          {
+            "type": "Single",
+            "point": {
+              "id": "c49184b5-d7be-472a-ab27-ff19d11573b8",
               "cp1": {
                 "use": false,
                 "x": 0,
@@ -1082,8 +1150,8 @@ export const rects = [
               },
               "center": {
                 "use": true,
-                "x": 150,
-                "y": -150,
+                "x": 187.5,
+                "y": -37.5,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
@@ -1106,9 +1174,9 @@ export const rects = [
             "point": {
               "id": "e7177e5a-a3f9-4d41-b878-9c11241b9557",
               "cp1": {
-                "use": false,
-                "x": 0,
-                "y": 0,
+                "use": true,
+                "x": 187.5,
+                "y": 37.5,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
@@ -1132,7 +1200,7 @@ export const rects = [
                 "rx": 0,
                 "ry": 0
               },
-              "type": "RightAngle"
+              "type": "NoMirror"
             }
           },
           {
@@ -1158,15 +1226,15 @@ export const rects = [
                 "ry": 0
               },
               "cp2": {
-                "use": false,
-                "x": 0,
-                "y": 0,
+                "use": true,
+                "x": -187.5,
+                "y": 37.5,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
                 "ry": 0
               },
-              "type": "RightAngle"
+              "type": "NoMirror"
             }
           }
         ]

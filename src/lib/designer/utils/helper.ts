@@ -369,22 +369,15 @@ export default {
       type: BezierPointType.RightAngle
     }
   },
-  judgeLineType(line: Line): LineType {
+  judgeLineType({start, end}: Line): LineType {
     let lineType: LineType = LineType.Line
-    if (
-      line.end.type === BezierPointType.RightAngle &&
-      line.start.type === BezierPointType.RightAngle
-    ) {
+    if (!start.cp2.use && !end.cp1.use) {
       lineType = LineType.Line
-    } else if (
-      line.end.type !== BezierPointType.RightAngle &&
-      line.start.type !== BezierPointType.RightAngle) {
-      lineType = LineType.Bezier3
     } else {
-      if (line.start.cp2.use || line.end.cp1.use) {
-        lineType = LineType.Bezier2
+      if (start.cp2.use && end.cp1.use) {
+        lineType = LineType.Bezier3
       } else {
-        lineType = LineType.Line
+        lineType = LineType.Bezier2
       }
     }
     return lineType

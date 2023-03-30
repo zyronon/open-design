@@ -1,6 +1,6 @@
 import CanvasUtil2 from "../engine/CanvasUtil2"
-import { BaseConfig } from "../config/BaseConfig"
-import { BaseShape } from "../shapes/BaseShape"
+import {BaseConfig} from "../config/BaseConfig"
+import {BaseShape} from "../shapes/BaseShape"
 
 export type IState = {
   canvas: HTMLCanvasElement,
@@ -33,7 +33,7 @@ export type IState = {
   },
   handScale: number,
   oldHandScale: number,
-  sPoint: { x: number, y: number },
+  sPoint: {x: number, y: number},
   activeHand: boolean,
   fps: number,
   currentMat: any
@@ -275,6 +275,7 @@ export enum EditType {
 //当前操作信息
 export type CurrentOperationInfo = {
   type: EditType | undefined,
+  lineType?: LineType,
   lineIndex: number,
   pointIndex: number,
   cpIndex: number

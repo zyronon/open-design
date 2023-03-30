@@ -236,6 +236,7 @@ export abstract class BaseShape {
           // console.log('在线上')
           let returnData = {
             type: EditType.Line,
+            lineType,
             lineIndex,
             pointIndex,
             lineCenterPoint: helper.getLineCenterPoint(line, lineType),
@@ -644,7 +645,7 @@ export abstract class BaseShape {
     if (this.status === ShapeStatus.Edit) {
       if (cu.editModeType === EditModeType.Select) {
         let result = this.checkMousePointOnEditStatus(event.point)
-        const {lineIndex, pointIndex, cpIndex, type} = result
+        const {lineIndex, pointIndex, cpIndex, type, lineType} = result
         //如果hover在点上，先处理hover
         if (pointIndex !== -1) {
           this.conf.isCustom = true
@@ -659,16 +660,18 @@ export abstract class BaseShape {
           this.editEnter = cloneDeep(result)
 
           if (type === EditType.CenterPoint) {
-            this.conf.lineShapes[lineIndex].points.splice(pointIndex, 0, {
-              type: PointType.Single,
-              point: {
-                id: uuid(),
-                cp1: getP2(),
-                center: {...getP2(true), ...this.hoverLineCenterPoint},
-                cp2: getP2(),
-                type: BezierPointType.RightAngle
-              }
-            })
+            if (lineType === LineType.Line) {
+              this.conf.lineShapes[lineIndex].points.splice(pointIndex, 0, {
+                type: PointType.Single,
+                point: {
+                  id: uuid(),
+                  cp1: getP2(),
+                  center: {...getP2(true), ...this.hoverLineCenterPoint},
+                  cp2: getP2(),
+                  type: BezierPointType.RightAngle
+                }
+              })
+            }
             //这里新增了一个点，但是老配置如果不更新。后面移动时就会找错点
             this.original = cloneDeep(this.conf)
             cu.render()

@@ -31,7 +31,7 @@ import {defaultConfig} from "../utils/constant"
 import {v4 as uuid} from "uuid"
 import {Math2} from "../utils/math"
 import {Bezier} from "../utils/bezier"
-import {Bezier as BezierJs} from "bezier-js";
+import {BBox, Bezier as BezierJs} from "bezier-js";
 
 export abstract class BaseShape {
   hoverType: MouseOptionType = MouseOptionType.None
@@ -648,7 +648,7 @@ export abstract class BaseShape {
       if (cu.editModeType === EditModeType.Select) {
         let result = this.checkMousePointOnEditStatus(event.point)
         let {lineIndex, pointIndex, cpIndex, type, lineType} = result
-        console.log('pointIndex',pointIndex)
+        console.log('pointIndex', pointIndex)
         //如果hover在点上，先处理hover
         if (pointIndex !== -1) {
           this.conf.isCustom = true
@@ -723,8 +723,7 @@ export abstract class BaseShape {
                 point.cp2 = {...getP2(true), ...right.points[1]}
               }
               this.conf.lineShapes[lineIndex].points.splice(pointIndex + 1, 0, {type: PointType.Single, point})
-              console.log('b2', b!.split(0.5))
-              console.log('this.hoverLineCenterPoint', this.hoverLineCenterPoint)
+              // console.log('b2', b!.bbox())
             }
             //这里新增了一个点，但是老配置如果不更新。后面移动时就会找错点
             this.original = cloneDeep(this.conf)
@@ -1408,13 +1407,62 @@ export abstract class BaseShape {
     // return
     if (!this.conf.isCustom) return
     let center = this.conf.center
+
     let temp: any = this.conf.lineShapes.reduce((previousValue: any[], currentValue) => {
-      previousValue.push({
-        maxX: Math.max(...currentValue.points.map(p => center.x + this.getPoint(p).center.x)),
-        minX: Math.min(...currentValue.points.map(p => center.x + this.getPoint(p).center.x)),
-        maxY: Math.max(...currentValue.points.map(p => center.y + this.getPoint(p).center.y)),
-        minY: Math.min(...currentValue.points.map(p => center.y + this.getPoint(p).center.y)),
+      let maxX: number, minX: number, maxY: number, minY: number
+      maxX = maxY = 0
+      minX = minY = Infinity
+      let checkLine = (startPoint: BezierPoint) => {
+        let x = center.x + startPoint.center.x
+        let y = center.y + startPoint.center.y
+        if (x > maxX) maxX = x
+        if (x < minX) minX = x
+        if (y > maxY) maxY = y
+        if (y < minY) minY = y
+      }
+      let checkBezier = (info: BBox) => {
+        let _maxX = center.x + info.x.max
+        let _minX = center.x + info.x.min
+        let _maxY = center.y + info.y.max
+        let _minY = center.y + info.y.min
+        if (_maxX > maxX) maxX = _maxX
+        if (_minX < minX) minX = _minX
+        if (_maxY > maxY) maxY = _maxY
+        if (_minY < minY) minY = _minY
+      }
+      currentValue.points.map((pointInfo, index, array) => {
+        let startPoint = this.getPoint(pointInfo)
+        //未闭合的情况下，只需绘制一个终点即可
+        if (index === array.length - 1 && !currentValue.close) {
+          checkLine(startPoint)
+        } else {
+          let endPoint: BezierPoint
+          if (index === array.length - 1) {
+            endPoint = this.getPoint(array[0])
+          } else {
+            endPoint = this.getPoint(array[index + 1])
+          }
+          let lineType = helper.judgeLineType({startPoint, endPoint})
+          switch (lineType) {
+            case LineType.Line:
+              checkLine(startPoint)
+              break
+            case LineType.Bezier3:
+              let b3 = new BezierJs(startPoint.center, startPoint.cp2, endPoint.cp1, endPoint.center)
+              checkBezier(b3.bbox())
+              break
+            case LineType.Bezier2:
+              let cp: P2
+              if (startPoint.cp2.use) cp = startPoint.cp2
+              if (endPoint.cp1.use) cp = endPoint.cp1
+              let b2 = new BezierJs(startPoint.center, cp!, endPoint.center)
+              console.log('b2', b2.bbox())
+              checkBezier(b2.bbox())
+              break
+          }
+        }
       })
+      previousValue.push({maxX, minX, maxY, minY})
       return previousValue
     }, [])
     console.log('temp', temp)
@@ -1457,18 +1505,17 @@ export abstract class BaseShape {
       let path = new Path2D()
       line.points.map((pointInfo: PointInfo, index: number, array: PointInfo[]) => {
         let startPoint = this.getPoint(pointInfo)
-        let endPoint: BezierPoint
-        if (index === array.length - 1) {
-          endPoint = this.getPoint(array[0])
-        } else {
-          endPoint = this.getPoint(array[index + 1])
-        }
-        let lineType = helper.judgeLineType({startPoint, endPoint})
-
         //未闭合的情况下，只需绘制一个终点即可
         if (index === array.length - 1 && !line.close) {
           path.lineTo2(startPoint.center)
         } else {
+          let endPoint: BezierPoint
+          if (index === array.length - 1) {
+            endPoint = this.getPoint(array[0])
+          } else {
+            endPoint = this.getPoint(array[index + 1])
+          }
+          let lineType = helper.judgeLineType({startPoint, endPoint})
           switch (lineType) {
             case LineType.Line:
               path.lineTo2(startPoint.center)

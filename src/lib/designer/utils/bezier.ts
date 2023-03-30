@@ -107,12 +107,21 @@ const Bezier = {
    *  //P = (1−t)3P0 + 3(1−t)2tP1 +3(1−t)t2P2 + t3P3
    * //x = (1−t)3x + 3(1−t)2tx +3(1−t)t2x + t3x
    * */
-  getPointByT(t: number, points: [P, P, P, P]) {
+  getPointByT_3(t: number, points: [P, P, P, P]) {
     let [p0, p1, p2, p3] = points
     let x = Math.pow(1 - t, 3) * p0.x + 3 * Math.pow(1 - t, 2) * t * p1.x
       + 3 * (1 - t) * Math.pow(t, 2) * p2.x + Math.pow(t, 3) * p3.x
     let y = Math.pow(1 - t, 3) * p0.y + 3 * Math.pow(1 - t, 2) * t * p1.y
       + 3 * (1 - t) * Math.pow(t, 2) * p2.y + Math.pow(t, 3) * p3.y
+    return { x, y }
+  }, /**
+   * @description 根据长度（即T）获取对应的点
+   *  //P = (1−t)2P0 + 2(1−t)tP1 + t2P2
+   * */
+  getPointByT_2(t: number, points: [P, P, P]) {
+    let [p0, p1, p2] = points
+    let x = Math.pow(1 - t, 2) * p0.x + 2 * (1 - t) * t * p1.x + Math.pow(t, 2) * p2.x
+    let y = Math.pow(1 - t, 2) * p0.y + 2 * (1 - t) * t * p1.y + Math.pow(t, 2) * p2.y
     return { x, y }
   },
   /**
@@ -125,7 +134,7 @@ const Bezier = {
    * @param {number} target 曲线中的某个点 x/y
    * @returns {number[]} t[]
    */
-  getTByPoint3(p0: number, p1: number, p2: number, p3: number, target: number): number[] {
+  getTByPoint_3(p0: number, p1: number, p2: number, p3: number, target: number): number[] {
     const a = -p0 + 3 * p1 - 3 * p2 + p3
     const b = 3 * p0 - 6 * p1 + 3 * p2
     const c = -3 * p0 + 3 * p1
@@ -195,7 +204,7 @@ const Bezier = {
    * b = 2 * (p1 - p0)
    * c = p0 - target
    * */
-  getTByPoint2(p0: number, p1: number, p2: number, target: number): number[] {
+  getTByPoint_2(p0: number, p1: number, p2: number, target: number): number[] {
     let a = p0 - 2 * p1 + p2
     let b = 2 * (p1 - p0)
     let c = p0 - target

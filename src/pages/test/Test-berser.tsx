@@ -218,7 +218,7 @@ class T extends Component<any, any> {
         //默认情况下，用于计算1/4点，3/4点，可以共用一条对应的线段
         bezierCurrent = bezierPrevious = getBezierControlPoint(intCurrentLength)
         //计算当前点必须用当前长度线段的4个控制点来算
-        currentPoint = Bezier.getPointByT(Math.decimal(currentLength), bezierCurrent)
+        currentPoint = Bezier.getPointByT_3(Math.decimal(currentLength), bezierCurrent)
 
         //特殊情况
         //如果，1/4的长度，不在当前线段内，那么肯定在上一个线段内
@@ -231,8 +231,8 @@ class T extends Component<any, any> {
         }
 
         //计算1/4长度，3/4长度对应的点
-        length14Point = Bezier.getPointByT(Math.decimal(length14), bezierPrevious)
-        length34Point = Bezier.getPointByT(Math.decimal(length34), bezierCurrent)
+        length14Point = Bezier.getPointByT_3(Math.decimal(length14), bezierPrevious)
+        length34Point = Bezier.getPointByT_3(Math.decimal(length34), bezierCurrent)
 
         //利用1/4点、3/4点、起始点、终点，反推控制点
         let cps = Bezier.getControlPoints(length14Point, length34Point, lastPoint, currentPoint)
@@ -400,7 +400,7 @@ class T extends Component<any, any> {
       // ctx.closePath()
       ctx.stroke()
 
-      let p = Bezier.getPointByT(0.5, [p0, p1, p2, p3])
+      let p = Bezier.getPointByT_3(0.5, [p0, p1, p2, p3])
       draw.drawRound(ctx, p)
       console.log('p', p)
       a = p3.x - 3 * p2.x + 3 * p1.x - p0.x
@@ -418,7 +418,7 @@ class T extends Component<any, any> {
       // draw.drawRound(ctx, p2)
       // draw.drawRound(ctx, p3)
       let ps: any = [p0, p1, p2, p3]
-      p = Bezier.getPointByT(0.5, ps)
+      p = Bezier.getPointByT_3(0.5, ps)
       draw.drawRound(ctx, p)
       console.log('p', p)
 
@@ -460,7 +460,7 @@ class T extends Component<any, any> {
       let t: any[] = Math2.solveCubic(A, B, C, D)
       t = t.filter(v => 0 <= v && v <= 1.01)
       console.log('t', t)
-      let mousePoint2 = Bezier.getPointByT(t[0], ps)
+      let mousePoint2 = Bezier.getPointByT_3(t[0], ps)
 
       draw.drawRound(ctx, mousePoint2)
 

@@ -191,6 +191,11 @@ export interface PointInfo {
   point?: BezierPoint
 }
 
+export type Line = {
+  start: BezierPoint,
+  end: BezierPoint
+}
+
 export type LineShape = {
   close: boolean,
   points: PointInfo[]

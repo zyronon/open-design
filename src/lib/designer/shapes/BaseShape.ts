@@ -29,6 +29,7 @@ import draw from "../utils/draw"
 import {defaultConfig} from "../utils/constant"
 import {v4 as uuid} from "uuid"
 import {Math2} from "../utils/math"
+import { Bezier } from "../utils/bezier"
 
 export abstract class BaseShape {
   hoverType: MouseOptionType = MouseOptionType.None
@@ -541,7 +542,7 @@ export abstract class BaseShape {
           nextPointInfo = line.points[pointIndex + 1]
         }
         console.log(previousPointInfo, nextPointInfo)
-        let {l, r} = Math2.getTargetPointBezierControlPoint(
+        let {l, r} = Bezier.getTargetPointBezierControlPoint(
           previousPointInfo.point?.center!,
           currentPoint.point?.center!,
           nextPointInfo.point?.center!)
@@ -1401,29 +1402,7 @@ export abstract class BaseShape {
         } else {
           previousPoint = this.getPoint(array[index - 1])
         }
-        let lineType: LineType = LineType.Line
-        if (
-          currentPoint.type === BezierPointType.RightAngle &&
-          previousPoint.type === BezierPointType.RightAngle
-        ) {
-          lineType = LineType.Line
-        } else if (
-          currentPoint.type !== BezierPointType.RightAngle &&
-          previousPoint.type !== BezierPointType.RightAngle) {
-          lineType = LineType.Bezier3
-        } else {
-          if (previousPoint.cp2.use || currentPoint.cp1.use) {
-            lineType = LineType.Bezier2
-          } else {
-            lineType = LineType.Line
-          }
-        }
-
-        // let fixPreviousPoint = cloneDeep(previousPoint)
-        // fixPreviousPoint.center.x = fixPreviousPoint.center.x - center.x
-        // fixPreviousPoint.center.y = fixPreviousPoint.center.y - center.y
-        // let  fixPreviousPoint.center = this.getPointRelativeToCenter(previousPoint.center, center)
-        // console.log('lineType', fixPreviousPoint.center, fixCurrentPoint.center)
+        let lineType = helper.judgeLineType(previousPoint, currentPoint)
 
         //未闭合的情况下，只需绘制一个起点即可
         if (index === 0 && !line.close) {

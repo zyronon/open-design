@@ -1,4 +1,3 @@
-import {getBezierPointByLength} from "./utils"
 import CanvasUtil2 from "./CanvasUtil2"
 
 export type IState = {

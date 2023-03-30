@@ -7,6 +7,7 @@ import { BaseEvent2, BezierPoint, BezierPointType, getP2, LineShape, LineType, P
 import { Math2 } from "../utils/math"
 import CanvasUtil2 from "../engine/CanvasUtil2"
 import { v4 as uuid } from "uuid"
+import { Bezier } from "../utils/bezier"
 
 /**
  * @desc 获取长度对应的 鼠标控制点
@@ -225,7 +226,7 @@ export class Ellipse extends BaseShape {
     if (startLength) {
       let intStartLength = Math.trunc(startLength)
       let startLengthCps = getBezierControlPoint(intStartLength)
-      this._config.startPoint = Math2.getBezierPointByLength(Math.decimal(startLength), startLengthCps)
+      this._config.startPoint = Bezier.getBezierPointByLength(Math.decimal(startLength), startLengthCps)
     }
 
     //是否是整圆
@@ -335,7 +336,7 @@ export class Ellipse extends BaseShape {
         //默认情况下，用于计算1/4点，3/4点，可以共用一条对应的线段
         bezierCurrent = bezierPrevious = getBezierControlPoint(intCurrentLength)
         //计算当前点必须用当前长度线段的4个控制点来算
-        currentPoint = Math2.getBezierPointByLength(Math.decimal(currentLength), bezierCurrent)
+        currentPoint = Bezier.getBezierPointByLength(Math.decimal(currentLength), bezierCurrent)
 
         //特殊情况
         //如果，1/4的长度，不在当前线段内，那么肯定在上一个线段内
@@ -348,11 +349,11 @@ export class Ellipse extends BaseShape {
         }
 
         //计算1/4长度，3/4长度对应的点
-        length14Point = Math2.getBezierPointByLength(Math.decimal(length14), bezierPrevious)
-        length34Point = Math2.getBezierPointByLength(Math.decimal(length34), bezierCurrent)
+        length14Point = Bezier.getBezierPointByLength(Math.decimal(length14), bezierPrevious)
+        length34Point = Bezier.getBezierPointByLength(Math.decimal(length34), bezierCurrent)
 
         //利用1/4点、3/4点、起始点、终点，反推控制点
-        let cps = Math2.getBezier3ControlPoints(length14Point, length34Point, lastPoint, currentPoint)
+        let cps = Bezier.getBezier3ControlPoints(length14Point, length34Point, lastPoint, currentPoint)
 
         // 因为最后一个控制点（非数组的最后一个点）默认只需center和cp1与前一个点的center和cp2的4个点，组成贝塞尔曲线
         //所以cp2是无用的，所以添加当前点时，需要把上一个点的cp2为正确的值并启用

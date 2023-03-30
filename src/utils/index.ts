@@ -2,6 +2,7 @@
 //给一个圆心点和其他点
 import { P } from "../lib/designer/types/type"
 import { Math2 } from "../lib/designer/utils/math"
+import helper from "../lib/designer/utils/helper"
 
 //废弃
 export function jiaodu2hudu(v: number) {
@@ -18,6 +19,6 @@ export function getRotatedPoint(point: any, center: any, rotate: number) {
 }
 
 export default function getCenterPoint(p1: P, p2: P) {
-  return Math2.getCenterPoint(p1, p2)
+  return helper.getStraightLineCenterPoint(p1, p2)
 
 }

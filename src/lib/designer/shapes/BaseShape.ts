@@ -6,6 +6,7 @@ import {
   EditModeType,
   EditType,
   getP2,
+  Line,
   LinePath,
   LineShape,
   LineType,
@@ -30,6 +31,7 @@ import {defaultConfig} from "../utils/constant"
 import {v4 as uuid} from "uuid"
 import {Math2} from "../utils/math"
 import {Bezier} from "../utils/bezier"
+import {Bezier as BezierJs} from "bezier-js";
 
 export abstract class BaseShape {
   hoverType: MouseOptionType = MouseOptionType.None
@@ -671,6 +673,72 @@ export abstract class BaseShape {
                   type: BezierPointType.RightAngle
                 }
               })
+            } else {
+              let lineShape = this.conf.lineShapes[lineIndex]
+              let lineEndPoint = this.getPoint(lineShape.points[pointIndex])
+              let lineStartPoint: BezierPoint
+              if (pointIndex === 0) {
+                lineStartPoint = this.getPoint(lineShape.points[lineShape.points.length - 1])
+              } else {
+                lineStartPoint = this.getPoint(lineShape.points[pointIndex - 1])
+              }
+              let line: Line = {start: lineStartPoint, end: lineEndPoint}
+              let b: BezierJs
+              if (lineType === LineType.Bezier2) {
+                let cp: P2
+                if (line.start.cp2.use) cp = line.start.cp2
+                if (line.end.cp1.use) cp = line.end.cp1
+                b = new BezierJs(lineStartPoint.center, cp!, lineEndPoint.center)
+              }
+              if (lineType === LineType.Bezier3) {
+                b = new BezierJs(lineStartPoint.center, line.start.cp2, line.end.cp1, lineEndPoint.center)
+              }
+              let {left, right} = b!.split(0.5)
+
+              //如果是三次曲线，会在多出的中间点出加上控制点。所以这里要取第2个值，第一个值是中间点的控制点
+              if (lineType === LineType.Bezier3) {
+                lineEndPoint.cp1.x = right.points[2].x
+                lineEndPoint.cp1.y = right.points[2].y
+              } else {
+                lineEndPoint.cp1.x = right.points[1].x
+                lineEndPoint.cp1.y = right.points[1].y
+              }
+
+              lineEndPoint.cp1.use = true
+              if (lineEndPoint.type === BezierPointType.MirrorAngleAndLength) {
+                lineEndPoint.type = BezierPointType.MirrorAngle
+              } else {
+                lineEndPoint.type = BezierPointType.NoMirror
+              }
+
+              lineStartPoint.cp2.x = left.points[1].x
+              lineStartPoint.cp2.y = left.points[1].y
+              lineStartPoint.cp2.use = true
+              if (lineStartPoint.type === BezierPointType.MirrorAngleAndLength) {
+                lineStartPoint.type = BezierPointType.MirrorAngle
+              } else {
+                lineStartPoint.type = BezierPointType.NoMirror
+              }
+
+              let point: BezierPoint = {
+                id: uuid(),
+                cp1: getP2(),
+                center: {...getP2(true), ...this.hoverLineCenterPoint},
+                cp2: getP2(),
+                type: BezierPointType.RightAngle
+              }
+
+              if (lineType === LineType.Bezier3) {
+                point.type = BezierPointType.MirrorAngle
+                point.cp1 = {...getP2(true), ...left.points[2]}
+                point.cp2 = {...getP2(true), ...right.points[1]}
+              }
+              this.conf.lineShapes[lineIndex].points.splice(pointIndex, 0, {
+                type: PointType.Single,
+                point
+              })
+              console.log('b2', b!.split(0.5))
+              console.log('this.hoverLineCenterPoint', this.hoverLineCenterPoint)
             }
             //这里新增了一个点，但是老配置如果不更新。后面移动时就会找错点
             this.original = cloneDeep(this.conf)

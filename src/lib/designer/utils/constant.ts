@@ -1056,7 +1056,7 @@ export const rects = [
                 "ry": 0
               },
               "cp2": {
-                "use": false,
+                "use": true,
                 "x": -75,
                 "y": -225,
                 "px": 0,

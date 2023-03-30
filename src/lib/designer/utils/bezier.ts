@@ -90,7 +90,7 @@ const Bezier = {
    * @param start 起始点
    * @param end 终点
    * */
-  getControlPoints(tp1: any, tp2: any, start: any, end: any) {
+  getControlPointsByLinePoint(tp1: any, tp2: any, start: any, end: any) {
     let xb = 64 * tp1.x - 27 * start.x - end.x
     let yb = 64 * tp1.y - 27 * start.y - end.y
     let xc = 64 * tp2.x - start.x - 27 * end.x

@@ -1,5 +1,5 @@
-import { FontWeight, ShapeType, StrokeAlign } from "../types/type"
-import { FontFamily } from "../config/TextConfig"
+import {FontWeight, ShapeType, StrokeAlign} from "../types/type"
+import {FontFamily} from "../config/TextConfig"
 
 export const fontFamilies = [
   {
@@ -13,30 +13,30 @@ export const fontFamilies = [
 ]
 
 export const fontWeight = [
-  { label: 'Light', value: FontWeight.LIGHT, },
-  { label: 'Regular', value: FontWeight.REGULAR, },
-  { label: 'Normal', value: FontWeight.Normal },
-  { label: 'Medium', value: FontWeight.MEDIUM },
-  { label: 'Bold', value: FontWeight.BOLD, },
-  { label: 'Heavy', value: FontWeight.HEAVY, },
+  {label: 'Light', value: FontWeight.LIGHT,},
+  {label: 'Regular', value: FontWeight.REGULAR,},
+  {label: 'Normal', value: FontWeight.Normal},
+  {label: 'Medium', value: FontWeight.MEDIUM},
+  {label: 'Bold', value: FontWeight.BOLD,},
+  {label: 'Heavy', value: FontWeight.HEAVY,},
 ]
 
 export const fontSize = [
-  { label: '10', value: 10, },
-  { label: '12', value: 12, },
-  { label: '14', value: 14, },
-  { label: '16', value: 16, },
-  { label: '18', value: 18, },
-  { label: '20', value: 20, },
-  { label: '24', value: 24, },
-  { label: '32', value: 32, },
-  { label: '36', value: 36, },
-  { label: '40', value: 40, },
-  { label: '48', value: 48, },
-  { label: '64', value: 64, },
-  { label: '96', value: 96, },
-  { label: '128', value: 128, },
-  { label: '256', value: 256, },
+  {label: '10', value: 10,},
+  {label: '12', value: 12,},
+  {label: '14', value: 14,},
+  {label: '16', value: 16,},
+  {label: '18', value: 18,},
+  {label: '20', value: 20,},
+  {label: '24', value: 24,},
+  {label: '32', value: 32,},
+  {label: '36', value: 36,},
+  {label: '40', value: 40,},
+  {label: '48', value: 48,},
+  {label: '64', value: 64,},
+  {label: '96', value: 96,},
+  {label: '128', value: 128,},
+  {label: '256', value: 256,},
 ]
 
 export const Colors = {
@@ -1019,10 +1019,10 @@ export const rects = [
   {
     "name": "容器1",
     "layout": {
-      "x": 487.8939824059952,
-      "y": 140.45645393623144,
-      "w": 337.5,
-      "h": 337.5
+      "x": 507.5241429351097,
+      "y": 493.46857894406855,
+      "w": 100,
+      "h": 100
     },
     "rotation": 8.08,
     "lineWidth": 2,
@@ -1036,11 +1036,11 @@ export const rects = [
           {
             "type": "Single",
             "point": {
-              "id": "4f9f596b-7986-4ccf-a7e9-47dce57b28d4",
+              "id": "bead2dbf-e43f-43ba-bf35-f56c64f9533f",
               "cp1": {
-                "use": true,
-                "x": -206.25,
-                "y": -56.249999999999986,
+                "use": false,
+                "x": 0,
+                "y": 0,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
@@ -1048,42 +1048,8 @@ export const rects = [
               },
               "center": {
                 "use": true,
-                "x": -131.25,
-                "y": -131.25,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "cp2": {
-                "use": true,
-                "x": -56.25,
-                "y": -206.25,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "type": "MirrorAngleAndLength"
-            }
-          },
-          {
-            "type": "Single",
-            "point": {
-              "id": "986b6a03-bba7-4bba-bff0-faf24d3f064c",
-              "cp1": {
-                "use": false,
-                "x": 18.75,
-                "y": 18.75,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "center": {
-                "use": true,
-                "x": 168.75,
-                "y": -131.25,
+                "x": -50,
+                "y": -50,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
@@ -1091,8 +1057,8 @@ export const rects = [
               },
               "cp2": {
                 "use": false,
-                "x": 18.75,
-                "y": 18.75,
+                "x": 0,
+                "y": 0,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
@@ -1104,11 +1070,11 @@ export const rects = [
           {
             "type": "Single",
             "point": {
-              "id": "49e26fc1-a89c-4b0f-aeec-24655166e7a1",
+              "id": "697f96b2-9b47-4633-83cb-c8c95038a196",
               "cp1": {
                 "use": false,
-                "x": 18.75,
-                "y": 18.75,
+                "x": 0,
+                "y": 0,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
@@ -1116,8 +1082,8 @@ export const rects = [
               },
               "center": {
                 "use": true,
-                "x": 168.75,
-                "y": 168.75,
+                "x": 50,
+                "y": -50,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
@@ -1125,8 +1091,8 @@ export const rects = [
               },
               "cp2": {
                 "use": false,
-                "x": 18.75,
-                "y": 18.75,
+                "x": 0,
+                "y": 0,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
@@ -1138,11 +1104,11 @@ export const rects = [
           {
             "type": "Single",
             "point": {
-              "id": "4574cbbc-dc9d-48e9-88f6-9b03627f8a00",
+              "id": "895e7984-62dd-460c-8834-f5da1d276983",
               "cp1": {
                 "use": false,
-                "x": 18.75,
-                "y": 18.75,
+                "x": 0,
+                "y": 0,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
@@ -1150,8 +1116,8 @@ export const rects = [
               },
               "center": {
                 "use": true,
-                "x": -131.25,
-                "y": 168.75,
+                "x": 50,
+                "y": 50,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
@@ -1159,8 +1125,42 @@ export const rects = [
               },
               "cp2": {
                 "use": false,
-                "x": 18.75,
-                "y": 18.75,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "type": "RightAngle"
+            }
+          },
+          {
+            "type": "Single",
+            "point": {
+              "id": "c093a095-f4a7-4188-a751-9847ad970bdb",
+              "cp1": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "center": {
+                "use": true,
+                "x": -50,
+                "y": 50,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "cp2": {
+                "use": false,
+                "x": 0,
+                "y": 0,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
@@ -1189,45 +1189,45 @@ export const rects = [
     "realRotation": 8.08,
     "start": {
       "x": 500,
-      "y": 200
+      "y": 500
     },
     "absolute": {
-      "x": 487.8939824059952,
-      "y": 140.45645393623144
+      "x": 507.5241429351097,
+      "y": 493.46857894406855
     },
     "original": {
-      "x": 462.5,
-      "y": 162.5
+      "x": 500,
+      "y": 500
     },
     "center": {
-      "x": 631.25,
-      "y": 331.25
+      "x": 550,
+      "y": 550
     },
     "box": {
-      "leftX": 462.5,
-      "rightX": 800,
-      "topY": 162.5,
-      "bottomY": 500,
+      "leftX": 500,
+      "rightX": 600,
+      "topY": 500,
+      "bottomY": 600,
       "topLeft": {
-        "x": 487.8939824059952,
-        "y": 140.45645393623144
+        "x": 507.5241429351097,
+        "y": 493.46857894406855
       },
       "topRight": {
-        "x": 822.0435460637685,
-        "y": 187.89398240599516
+        "x": 606.5314210559314,
+        "y": 507.5241429351097
       },
       "bottomLeft": {
-        "x": 440.45645393623147,
-        "y": 474.6060175940048
+        "x": 493.46857894406855,
+        "y": 592.4758570648903
       },
       "bottomRight": {
-        "x": 774.6060175940048,
-        "y": 522.0435460637685
+        "x": 592.4758570648903,
+        "y": 606.5314210559314
       }
     },
     "strokeAlign": "INSIDE",
     "isCustom": true,
-    "id": "5acd12d4-719b-452f-9eae-5bf75432a86c"
+    "id": "2fba43e4-7fd0-4818-9db5-5b4d10e21baa"
   }
 ]
 
@@ -1237,7 +1237,7 @@ const defaultCurrentMat = [
   0, 0, 1, 0,
   0, 0, 0, 1,
 ]
-const defaultHandMove = { x: 0, y: 0 }
+const defaultHandMove = {x: 0, y: 0}
 export const defaultConfig = {
   // handScale: 3.0517578125,
   // handMove: {x: -1201.48828125, y: -872.4208984375},

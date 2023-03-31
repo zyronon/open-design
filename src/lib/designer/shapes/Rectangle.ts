@@ -183,12 +183,10 @@ export class Rectangle extends BaseShape {
   drawEdit(ctx: CanvasRenderingContext2D, layout: Rect): void {
     // this.log('drawEdit')
     let {
-      fillColor,
-      center
+      fillColor,lineShapes
     } = this.conf
 
     ctx.save()
-
     ctx.strokeStyle = Colors.Line2
     ctx.fillStyle = fillColor
 
@@ -197,9 +195,6 @@ export class Rectangle extends BaseShape {
       linePath.close && ctx.fill(linePath.path)
       ctx.stroke(linePath.path)
     })
-
-
-    let lineShapes = this._config.lineShapes
 
     if ((this.editHover.type === EditType.Line
         || this.editHover.type === EditType.CenterPoint)

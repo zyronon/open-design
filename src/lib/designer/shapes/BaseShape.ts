@@ -212,7 +212,11 @@ export abstract class BaseShape {
   editEnter: CurrentOperationInfo = cloneDeep(this.defaultCurrentOperationInfo)
 
   checkMousePointOnEditStatus(point: P): CurrentOperationInfo {
-    let {center, lineShapes} = this.conf
+    let {center, lineShapes, realRotation} = this.conf
+    //反转到0度，好判断
+    if (realRotation) {
+      point = Math2.getRotatedPoint(point, center, -realRotation)
+    }
     let fixMousePoint = {
       x: point.x - center.x,
       y: point.y - center.y
@@ -395,6 +399,7 @@ export abstract class BaseShape {
       draw.drawRound(ctx, this.conf.center)
       draw.drawRound(ctx, this.conf.original)
     }
+    draw.drawRound(ctx, this.conf.center)
 
     for (let i = 0; i < this.children.length; i++) {
       let shape = this.children[i]
@@ -889,7 +894,8 @@ export abstract class BaseShape {
           }
 
           let {x, y} = event.point
-          let move = {x: x - cu.fixMouseStart.x, y: y - cu.fixMouseStart.y}
+          // let move = {x: x - cu.fixMouseStart.x, y: y - cu.fixMouseStart.y}
+          let move = {x: 0, y: y - cu.fixMouseStart.y}
 
           if (type === EditType.ControlPoint) {
             let point = this.getPoint(this.conf.lineShapes[lineIndex].points[pointIndex])

@@ -480,31 +480,24 @@ export default {
    * 参考：https://juejin.cn/post/6963596759742283807
    * */
   isInPolygon(p: P, polygon: BezierPoint[], center: P) {
-    let px = p.x,
-      py = p.y,
-      flag = false
-
+    let px = p.x, py = p.y, flag = false
     for (let i = 0, l = polygon.length, j = l - 1; i < l; j = i, i++) {
       let sx = polygon[i].center.x + center.x,
         sy = polygon[i].center.y + center.y,
         tx = polygon[j].center.x + center.x,
         ty = polygon[j].center.y + center.y
-
       // 点与多边形顶点重合
       if ((sx === px && sy === py) || (tx === px && ty === py)) {
         return true
       }
-
       // 判断线段两端点是否在射线两侧
       if ((sy < py && ty >= py) || (sy >= py && ty < py)) {
         // 线段上与射线 Y 坐标相同的点的 X 坐标
         let x = sx + (py - sy) * (tx - sx) / (ty - sy)
-
         // 点在多边形的边上
         if (x === px) {
           return true
         }
-
         // 射线穿过多边形的边界
         if (x > px) {
           flag = !flag

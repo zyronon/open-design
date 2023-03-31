@@ -73,6 +73,7 @@ export abstract class BaseShape {
         this.editStartPointInfo = cloneDeep(this.defaultCurrentOperationInfo)
       }
       if (val === ShapeStatus.Select) {
+        this.editStartPointInfo = cloneDeep(this.defaultCurrentOperationInfo)
         //TODO 会导致子组件选中后，再选中父组件时，无法取消子组件
         // cu.selectedShape = this
         cu.editShape = undefined

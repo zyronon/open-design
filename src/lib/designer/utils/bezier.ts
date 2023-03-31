@@ -191,7 +191,8 @@ const Bezier = {
         t3 = (-b + A ** (1 / 2) * (Math.cos(theta / 3) - 3 ** (1 / 2) * Math.sin(theta / 3))) / (3 * a)
       }
     }
-    return [t1, t2, t3].filter(v => 0 <= v && v <= 1)
+    //0到0.02和0.98到1的范围是起点和终点。写0-1会导致点选不上
+    return [t1, t2, t3].filter(v => 0.02 <= v && v <= 0.98)
   },
   /**
    * #####二次曲线#####
@@ -216,7 +217,8 @@ const Bezier = {
     }
     let t1 = (-b + Math.sqrt(delta)) / (2 * a);
     let t2 = (-b - Math.sqrt(delta)) / (2 * a);
-    return [t1, t2].filter(v => 0 <= v && v <= 1)
+    //0到0.02和0.98到1的范围是起点和终点。写0-1会导致点选不上
+    return [t1, t2].filter(v => 0.02 <= v && v <= 0.98)
   }
 }
 export { Bezier }

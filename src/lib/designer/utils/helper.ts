@@ -437,7 +437,7 @@ export default {
       if (end.cp1.use) cp = end.cp1
       let t1 = Bezier.getTByPoint_2(start.center.x, cp!.x, end.center.x, target.x)
       let t2 = Bezier.getTByPoint_2(start.center.y, cp!.y, end.center.y, target.y)
-      // console.log(t1, t2)
+      console.log(t1, t2)
       let t = -1
       if (t1.length === 1) t = t1[0]
       if (t2.length === 1) t = t2[0]

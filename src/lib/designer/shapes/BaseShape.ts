@@ -213,6 +213,7 @@ export abstract class BaseShape {
   editEnter: CurrentOperationInfo = cloneDeep(this.defaultCurrentOperationInfo)
 
   checkMousePointOnEditStatus(point: P): CurrentOperationInfo {
+    console.log('------------------')
     let {center, lineShapes, realRotation, flipVertical, flipHorizontal} = this.conf
     //反转到0度，好判断
     if (realRotation) {
@@ -220,7 +221,8 @@ export abstract class BaseShape {
     }
     if (flipHorizontal) point.x = helper._reversePoint(point.x, center.x)
     if (flipVertical) point.y = helper._reversePoint(point.y, center.y)
-
+    let cu = CanvasUtil2.getInstance()
+    let judgePointDistance = 5 / 1
     let fixMousePoint = {
       x: point.x - center.x,
       y: point.y - center.y
@@ -229,8 +231,10 @@ export abstract class BaseShape {
       let lineShape = lineShapes[lineIndex]
       for (let pointIndex = 0; pointIndex < lineShape.points.length; pointIndex++) {
         let startPoint = this.getPoint(lineShape.points[pointIndex])
-        if (helper.isInPoint(fixMousePoint, startPoint.center, 4)) {
-          console.log('在点上')
+        // console.log('isInPoint', fixMousePoint, startPoint.center)
+        // console.log('s',helper.isInPoint(fixMousePoint, startPoint.center, judgePointDistance))
+        if (helper.isInPoint(fixMousePoint, startPoint.center, judgePointDistance)) {
+          // console.log('在点上')
           return {type: EditType.Point, lineIndex, pointIndex, cpIndex: -1}
         }
         let endPoint: BezierPoint
@@ -255,7 +259,7 @@ export abstract class BaseShape {
             lineCenterPoint: helper.getLineCenterPoint(line, lineType),
             cpIndex: -1
           }
-          if (helper.isInPoint(fixMousePoint, this.hoverLineCenterPoint, 4)) {
+          if (helper.isInPoint(fixMousePoint, this.hoverLineCenterPoint, judgePointDistance)) {
             // console.log('hover在线的中点上')
             returnData.type = EditType.CenterPoint
           }
@@ -290,7 +294,7 @@ export abstract class BaseShape {
       }
       for (let i = 0; i < waitCheckPoints.length; i++) {
         let item = waitCheckPoints[i]
-        if (helper.isInPoint(fixMousePoint, item.point, 4)) {
+        if (helper.isInPoint(fixMousePoint, item.point, judgePointDistance)) {
           console.log('在cp点上')
           return {type: EditType.ControlPoint, lineIndex, pointIndex: item.pointIndex, cpIndex: item.index}
         }

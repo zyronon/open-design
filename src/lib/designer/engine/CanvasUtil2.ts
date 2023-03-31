@@ -1,26 +1,15 @@
-import { BaseShape } from "../shapes/BaseShape"
+import {BaseShape} from "../shapes/BaseShape"
 import EventBus from "../utils/event-bus"
-import {
-  BaseEvent2,
-  BezierPointType,
-  EditModeType,
-  EventTypes,
-  getP2,
-  P,
-  ShapeEditStatus,
-  ShapeStatus,
-  ShapeType
-} from "../types/type"
-import { cloneDeep } from "lodash"
-import { defaultConfig } from "../utils/constant"
-import { mat4 } from "gl-matrix"
-import { getShapeFromConfig } from "../utils/common"
-import { Rectangle } from "../shapes/Rectangle"
-import { BaseConfig } from "../config/BaseConfig"
+import {BaseEvent2, EditModeType, EventTypes, P, ShapeStatus, ShapeType} from "../types/type"
+import {cloneDeep} from "lodash"
+import {Colors, defaultConfig} from "../utils/constant"
+import {mat4} from "gl-matrix"
+import {getShapeFromConfig} from "../utils/common"
+import {Rectangle} from "../shapes/Rectangle"
+import {BaseConfig} from "../config/BaseConfig"
 import helper from "../utils/helper"
 import draw from "../utils/draw"
 // import {Pen} from "../shapes/Pen"
-import { v4 as uuid } from "uuid"
 
 const out: any = new Float32Array([
   0, 0, 0, 0,
@@ -71,8 +60,8 @@ export default class CanvasUtil2 {
   // mode: ShapeType = ShapeType.PEN
   _mode: ShapeType = ShapeType.SELECT
   editModeType: EditModeType = EditModeType.Select
-  mouseStart: P = { x: 0, y: 0 } //鼠标起点
-  fixMouseStart: P = { x: 0, y: 0 } //修正后的鼠标起点（修正为0度）
+  mouseStart: P = {x: 0, y: 0} //鼠标起点
+  fixMouseStart: P = {x: 0, y: 0} //修正后的鼠标起点（修正为0度）
   isMouseDown: boolean = false
   drawShapeConfig: any = null
   newShape: BaseShape | undefined
@@ -116,7 +105,7 @@ export default class CanvasUtil2 {
     this.children = []
     let ctx: CanvasRenderingContext2D = canvas.getContext('2d')!
     let canvasRect = canvas.getBoundingClientRect()
-    let { width, height } = canvasRect
+    let {width, height} = canvasRect
     let dpr = window.devicePixelRatio
     if (dpr) {
       canvas.style.width = width + "px"
@@ -135,7 +124,7 @@ export default class CanvasUtil2 {
 
   addChildren(rects: any) {
     cloneDeep(rects).map((conf: BaseConfig) => {
-      let r = getShapeFromConfig({ conf })
+      let r = getShapeFromConfig({conf})
       r && this.children.push(r)
     })
   }
@@ -186,7 +175,7 @@ export default class CanvasUtil2 {
   render() {
     // console.log('重绘所有图形')
     EventBus.emit(EventTypes.onDraw)
-    draw.clear({ x: 0, y: 0, w: this.canvas.width, h: this.canvas.height }, this.ctx)
+    draw.clear({x: 0, y: 0, w: this.canvas.width, h: this.canvas.height}, this.ctx)
     this.ctx.save()
     if (this.currentMat) {
       // console.log('缩放：', currentMat[0], currentMat[5])
@@ -234,12 +223,12 @@ export default class CanvasUtil2 {
   // handleEvent = throttle(e => this._handleEvent(e), 0)
 
   handleEvent = async (e: any) => {
-    let screenPoint = { x: e.x, y: e.y }
-    let canvasPoint = { x: e.x - this.canvasRect.left, y: e.y - this.canvasRect.top }
+    let screenPoint = {x: e.x, y: e.y}
+    let canvasPoint = {x: e.x - this.canvasRect.left, y: e.y - this.canvasRect.top}
 
     //修正当前鼠标点为变换过后的点，确保和图形同一transform
-    const { x: handX, y: handY } = this.handMove
-    let point = { x: (canvasPoint.x - handX) / this.handScale, y: (canvasPoint.y - handY) / this.handScale }
+    const {x: handX, y: handY} = this.handMove
+    let point = {x: (canvasPoint.x - handX) / this.handScale, y: (canvasPoint.y - handY) / this.handScale}
     let event: BaseEvent2 = {
       capture: false,
       e,
@@ -353,18 +342,17 @@ export default class CanvasUtil2 {
     if (e.capture) return
     // console.log('onMouseDown', e)
     if (this.editShape) return
-    // console.log('cu-onMouseDown', e)
+    console.log('cu-onMouseDown', e)
     this.selectedShapeParent.map((shape: BaseShape) => shape.isCapture = true)
     if (this.selectedShape) {
       this.selectedShape.status = ShapeStatus.Normal
       this.selectedShapeParent = []
       this.selectedShape = null
     }
+    this.mouseStart.x = e.point.x
+    this.mouseStart.y = e.point.y
+    this.isMouseDown = true
     if (!this.isDesignMode()) {
-      this.mouseStart.x = e.point.x
-      this.mouseStart.y = e.point.y
-      this.isMouseDown = true
-
       switch (this.mode) {
         case ShapeType.PEN:
         // this.editShape = new Pen({
@@ -466,6 +454,22 @@ export default class CanvasUtil2 {
           this.render()
           break
         case ShapeType.PEN:
+        case ShapeType.SELECT:
+          this.render()
+          this.ctx.strokeStyle = Colors.Primary
+          this.ctx.fillStyle = Colors.Select
+          this.ctx.fillRect(
+            this.mouseStart.x,
+            this.mouseStart.y,
+            w,
+            h
+          )
+          this.ctx.strokeRect(
+            this.mouseStart.x,
+            this.mouseStart.y,
+            w,
+            h
+          )
       }
     }
   }
@@ -479,6 +483,9 @@ export default class CanvasUtil2 {
         this.setSelectShape(this.newShape!, [])
         this.newShape = undefined
       }
+      if (this.mode === ShapeType.SELECT) {
+        this.render()
+      }
       if (this.mode !== ShapeType.MOVE && this.mode !== ShapeType.EDIT) {
         this.setMode(ShapeType.SELECT)
       }
@@ -489,7 +496,7 @@ export default class CanvasUtil2 {
 
   onWheel = (e: any) => {
     // console.log('e', e)
-    let { clientX, clientY, deltaY } = e
+    let {clientX, clientY, deltaY} = e
 
     let x = clientX - this.canvasRect.left
     let y = clientY - this.canvasRect.top
@@ -539,7 +546,7 @@ export default class CanvasUtil2 {
       if (needId) {
         return item.conf
       }
-      return { ...item.conf, id: null }
+      return {...item.conf, id: null}
     })
   }
 
@@ -553,7 +560,7 @@ export default class CanvasUtil2 {
   }
 
   setMode(mode: ShapeType) {
-    console.log('mode', mode)
+    // console.log('mode', mode)
     this.mode = mode
   }
 }

@@ -41,6 +41,7 @@ export const fontSize = [
 
 export const Colors = {
   Primary: '#4B75F6FF',
+  Select: 'rgba(75,117,246,0.1)',
   Line: 'rgb(217,217,217)',
   Line2: 'rgb(140,140,140)',
   FillColor: 'rgb(241,238,238)',

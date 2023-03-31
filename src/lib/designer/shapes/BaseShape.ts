@@ -576,7 +576,7 @@ export abstract class BaseShape {
   }
 
   _mousedown(event: BaseEvent2, parents: BaseShape[] = []) {
-    this.log('base-mousedown')
+    // this.log('base-mousedown')
     // console.log('mousedown', this.conf.name, this.enterType, this.hoverType)
     EventBus.emit(EventMapTypes.onMouseDown, this)
     if (this.onMouseDown(event, parents)) return
@@ -1019,7 +1019,7 @@ export abstract class BaseShape {
   }
 
   _mouseup(event: BaseEvent2, parents: BaseShape[] = []) {
-    this.log('base-mouseup')
+    // this.log('base-mouseup')
     // if (e.capture) return
     // console.log('mouseup')
     if (this.onMouseUp(event, parents)) return

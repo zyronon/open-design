@@ -461,4 +461,16 @@ export default {
     }
     return false
   },
+  movePoint(target: BezierPoint, oldPoint: BezierPoint, move: P) {
+    target.center.x = oldPoint.center.x + move.x
+    target.center.y = oldPoint.center.y + move.y
+    if (target.cp1.use) {
+      target.cp1.x = oldPoint.cp1.x + move.x
+      target.cp1.y = oldPoint.cp1.y + move.y
+    }
+    if (target.cp2.use) {
+      target.cp2.x = oldPoint.cp2.x + move.x
+      target.cp2.y = oldPoint.cp2.y + move.y
+    }
+  }
 }

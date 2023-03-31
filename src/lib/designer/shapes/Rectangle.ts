@@ -18,7 +18,6 @@ import {Colors, defaultConfig} from "../utils/constant"
 import {BaseConfig, Rect} from "../config/BaseConfig"
 import draw from "../utils/draw"
 import {v4 as uuid} from 'uuid'
-import {Math2} from "../utils/math"
 import helper from "../utils/helper"
 
 export class Rectangle extends BaseShape {
@@ -204,9 +203,9 @@ export class Rectangle extends BaseShape {
     ) {
       draw.drawRound(ctx, this.hoverLineCenterPoint)
     }
-    let {lineIndex, pointIndex} = this.editStartPointInfo
+    let {lineIndex, pointIndex, type} = this.editStartPointInfo
     //先绘制控制线，好被后续的圆点遮盖
-    if (pointIndex !== -1) {
+    if (pointIndex !== -1 && type !== EditType.Line) {
       let line = lineShapes[lineIndex]
       let point
       if (pointIndex === 0) {
@@ -240,7 +239,7 @@ export class Rectangle extends BaseShape {
         draw.drawRound(ctx, point.center)
       })
     })
-    if (pointIndex !== -1) {
+    if (pointIndex !== -1 && type !== EditType.Line) {
       let line = lineShapes[lineIndex]
       let point = this.getPoint(line.points[pointIndex])
       if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)

@@ -50,6 +50,9 @@ export abstract class BaseShape {
   constructor(props: ShapeProps) {
     // console.log('props', clone(props))
     this.conf = helper.initConf(props.conf, props.parent?.conf)
+    if (this.conf.isCustom) {
+      this.calcNewCenterAndWidthAndHeight()
+    }
     this.parent = props.parent
     this.original = cloneDeep(this.conf)
     // console.log('config', clone(this.config))
@@ -654,14 +657,7 @@ export abstract class BaseShape {
           this.conf.isCustom = true
           //图省事儿，直接把editHover设为默认值。不然鼠标移动点或线时。还会渲染hoverLineCenterPoint
           //但hoverLineCenterPoint的点又不正确
-          this.editHover = {
-            type: undefined,
-            lineIndex: -1,
-            pointIndex: -1,
-            cpIndex: -1
-          }
-
-
+          this.editHover = cloneDeep(this.defaultCurrentOperationInfo)
           let point: BezierPoint = {
             id: uuid(),
             cp1: getP2(),
@@ -732,7 +728,7 @@ export abstract class BaseShape {
             result.pointIndex += 1
           }
 
-          this.editEnter = cloneDeep(result)
+          this.editEnter = result
           if (this.editStartPointInfo.lineIndex !== lineIndex
             || this.editStartPointInfo.pointIndex !== pointIndex
             || this.editStartPointInfo.cpIndex !== cpIndex
@@ -859,7 +855,7 @@ export abstract class BaseShape {
 
     if (this.status === ShapeStatus.Edit) {
       let cu = CanvasUtil2.getInstance()
-      let {center, realRotation} = this.conf
+      let {center, realRotation, lineShapes} = this.conf
       if (cu.editModeType === EditModeType.Select) {
         const {lineIndex, pointIndex, cpIndex, type} = this.editEnter
         if (pointIndex === -1) {
@@ -895,6 +891,7 @@ export abstract class BaseShape {
           let {x, y} = event.point
           let dx = x - cu.fixMouseStart.x
           let dy = y - cu.fixMouseStart.y
+          let move = {x: dx, y: dy}
 
           if (type === EditType.ControlPoint) {
             let point = this.getPoint(this.conf.lineShapes[lineIndex].points[pointIndex])
@@ -935,38 +932,26 @@ export abstract class BaseShape {
           if (type === EditType.Point || type === EditType.CenterPoint) {
             let point = this.getPoint(this.conf.lineShapes[lineIndex].points[pointIndex])
             let oldPoint = this.getPoint(this.original.lineShapes[lineIndex].points[pointIndex], this.original)
-            point.center.x = oldPoint.center.x + dx
-            point.center.y = oldPoint.center.y + dy
-            if (point.cp1.use) {
-              point.cp1.x = oldPoint.cp1.x + dx
-              point.cp1.y = oldPoint.cp1.y + dy
-            }
-            if (point.cp2.use) {
-              point.cp2.x = oldPoint.cp2.x + dx
-              point.cp2.y = oldPoint.cp2.y + dy
-            }
+            helper.movePoint(point, oldPoint, move)
             cu.render()
             return
           }
           if (type === EditType.Line) {
             console.log('onMouseMove-enterLineIndex')
             console.log('dx', dx, 'dy', dy)
-            let oldLine1Point = this.getPoint(this.original.lineShapes[lineIndex].points[pointIndex], this.original)
-            let line1Point = this.getPoint(this.conf.lineShapes[lineIndex].points[pointIndex])
-            line1Point.center.x = oldLine1Point.center.x + dx
-            line1Point.center.y = oldLine1Point.center.y + dy
-            let line0Point: BezierPoint
-            let oldLine0Point: BezierPoint
-            if (pointIndex === 0) {
-              let length = this.conf.lineShapes[lineIndex].points.length
-              line0Point = this.getPoint(this.conf.lineShapes[lineIndex].points[length - 1])
-              oldLine0Point = this.getPoint(this.original.lineShapes[lineIndex].points[length - 1], this.original)
+            let oldStartPoint = this.getPoint(this.original.lineShapes[lineIndex].points[pointIndex], this.original)
+            let startPoint = this.getPoint(this.conf.lineShapes[lineIndex].points[pointIndex])
+            helper.movePoint(startPoint, oldStartPoint, move)
+            let endPoint: BezierPoint
+            let oldEndPoint: BezierPoint
+            if (pointIndex === lineShapes[lineIndex].points.length - 1) {
+              endPoint = this.getPoint(this.conf.lineShapes[lineIndex].points[0])
+              oldEndPoint = this.getPoint(this.original.lineShapes[lineIndex].points[0], this.original)
             } else {
-              line0Point = this.getPoint(this.conf.lineShapes[lineIndex].points[pointIndex - 1])
-              oldLine0Point = this.getPoint(this.original.lineShapes[lineIndex].points[pointIndex - 1], this.original)
+              endPoint = this.getPoint(this.conf.lineShapes[lineIndex].points[pointIndex + 1])
+              oldEndPoint = this.getPoint(this.original.lineShapes[lineIndex].points[pointIndex + 1], this.original)
             }
-            line0Point.center.x = oldLine0Point.center.x + dx
-            line0Point.center.y = oldLine0Point.center.y + dy
+            helper.movePoint(endPoint, oldEndPoint, move)
             cu.render()
             return
           }

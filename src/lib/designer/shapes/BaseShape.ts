@@ -889,16 +889,14 @@ export abstract class BaseShape {
           }
 
           let {x, y} = event.point
-          let dx = x - cu.fixMouseStart.x
-          let dy = y - cu.fixMouseStart.y
-          let move = {x: dx, y: dy}
+          let move = {x: x - cu.fixMouseStart.x, y: y - cu.fixMouseStart.y}
 
           if (type === EditType.ControlPoint) {
             let point = this.getPoint(this.conf.lineShapes[lineIndex].points[pointIndex])
             let oldPoint = this.getPoint(this.original.lineShapes[lineIndex].points[pointIndex], this.original)
             if (cpIndex === 1) {
-              point.cp1.x = oldPoint.cp1.x + dx
-              point.cp1.y = oldPoint.cp1.y + dy
+              point.cp1.x = oldPoint.cp1.x + move.x
+              point.cp1.y = oldPoint.cp1.y + move.y
               if (point.type === BezierPointType.MirrorAngleAndLength) {
                 let p = Math2.getRotatedPoint(point.cp1, point.center, 180)
                 point.cp2.x = p.x
@@ -912,8 +910,8 @@ export abstract class BaseShape {
               }
             }
             if (cpIndex === 2) {
-              point.cp2.x = oldPoint.cp2.x + dx
-              point.cp2.y = oldPoint.cp2.y + dy
+              point.cp2.x = oldPoint.cp2.x + move.x
+              point.cp2.y = oldPoint.cp2.y + move.y
               if (point.type === BezierPointType.MirrorAngleAndLength) {
                 let p = Math2.getRotatedPoint(point.cp2, point.center, 180)
                 point.cp1.x = p.x
@@ -938,7 +936,6 @@ export abstract class BaseShape {
           }
           if (type === EditType.Line) {
             console.log('onMouseMove-enterLineIndex')
-            console.log('dx', dx, 'dy', dy)
             let oldStartPoint = this.getPoint(this.original.lineShapes[lineIndex].points[pointIndex], this.original)
             let startPoint = this.getPoint(this.conf.lineShapes[lineIndex].points[pointIndex])
             helper.movePoint(startPoint, oldStartPoint, move)

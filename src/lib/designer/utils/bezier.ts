@@ -191,7 +191,7 @@ const Bezier = {
         t3 = (-b + A ** (1 / 2) * (Math.cos(theta / 3) - 3 ** (1 / 2) * Math.sin(theta / 3))) / (3 * a)
       }
     }
-    return [t1, t2, t3].filter(v => 0 <= v && v <= 1.01)
+    return [t1, t2, t3].filter(v => 0 <= v && v <= 1)
   },
   /**
    * #####二次曲线#####
@@ -216,7 +216,7 @@ const Bezier = {
     }
     let t1 = (-b + Math.sqrt(delta)) / (2 * a);
     let t2 = (-b - Math.sqrt(delta)) / (2 * a);
-    return [t1, t2].filter(v => 0 <= v && v <= 1.01)
+    return [t1, t2].filter(v => 0 <= v && v <= 1)
   }
 }
 export { Bezier }

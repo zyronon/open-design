@@ -212,11 +212,14 @@ export abstract class BaseShape {
   editEnter: CurrentOperationInfo = cloneDeep(this.defaultCurrentOperationInfo)
 
   checkMousePointOnEditStatus(point: P): CurrentOperationInfo {
-    let {center, lineShapes, realRotation} = this.conf
+    let {center, lineShapes, realRotation, flipVertical, flipHorizontal} = this.conf
     //反转到0度，好判断
     if (realRotation) {
       point = Math2.getRotatedPoint(point, center, -realRotation)
     }
+    if (flipHorizontal) point.x = helper._reversePoint(point.x, center.x)
+    if (flipVertical) point.y = helper._reversePoint(point.y, center.y)
+
     let fixMousePoint = {
       x: point.x - center.x,
       y: point.y - center.y
@@ -310,9 +313,6 @@ export abstract class BaseShape {
     let {x, y} = mousePoint
     if (this.status === ShapeStatus.Select) {
       const {leftX, rightX, topY, bottomY,} = this.conf.box
-      /*
-      * 同上原因，判断是否在图形内，不需要翻转点。
-      * */
       if (flipHorizontal) x = helper._reversePoint(x, center.x)
       if (flipVertical) y = helper._reversePoint(y, center.y)
       let edge = 10 / cu.handScale
@@ -580,10 +580,12 @@ export abstract class BaseShape {
     this.original = cloneDeep(this.conf)
     cu.mouseStart = cloneDeep(event.point)
     cu.fixMouseStart = cloneDeep(event.point)
-    let {center, realRotation,} = this.conf
+    let {center, realRotation, flipHorizontal, flipVertical} = this.conf
     if (realRotation) {
       cu.fixMouseStart = Math2.getRotatedPoint(cu.fixMouseStart, center, -realRotation)
     }
+    if (flipHorizontal) cu.fixMouseStart.x = helper._reversePoint(cu.fixMouseStart.x, center.x)
+    if (flipVertical) cu.fixMouseStart.y = helper._reversePoint(cu.fixMouseStart.y, center.y)
 
     if (this.status === ShapeStatus.Normal) {
 
@@ -860,7 +862,7 @@ export abstract class BaseShape {
 
     if (this.status === ShapeStatus.Edit) {
       let cu = CanvasUtil2.getInstance()
-      let {center, realRotation, lineShapes} = this.conf
+      let {center, realRotation, lineShapes, flipHorizontal, flipVertical} = this.conf
       if (cu.editModeType === EditModeType.Select) {
         const {lineIndex, pointIndex, cpIndex, type} = this.editEnter
         if (pointIndex === -1) {
@@ -892,6 +894,8 @@ export abstract class BaseShape {
           if (realRotation) {
             event.point = Math2.getRotatedPoint(event.point, center, -realRotation)
           }
+          if (flipHorizontal) event.point.x = helper._reversePoint(event.point.x, center.x)
+          if (flipVertical) event.point.y = helper._reversePoint(event.point.y, center.y)
 
           let {x, y} = event.point
           let move = {x: x - cu.fixMouseStart.x, y: y - cu.fixMouseStart.y}
@@ -1394,7 +1398,7 @@ export abstract class BaseShape {
     console.log('重新计算中心点和宽高')
     // return
     if (!this.conf.isCustom) return
-    let {center, realRotation} = this.conf
+    let {center, realRotation, flipHorizontal, flipVertical} = this.conf
 
     let temp: any = this.conf.lineShapes.reduce((previousValue: any[], currentValue) => {
       let maxX: number, minX: number, maxY: number, minY: number
@@ -1474,20 +1478,23 @@ export abstract class BaseShape {
         let p = this.getPoint(pointInfo)
         p.center.x -= dx
         p.center.y -= dy
-        if (p.cp1.use){
+        if (p.cp1.use) {
           p.cp1.x -= dx
           p.cp1.y -= dy
         }
-        if (p.cp2.use){
+        if (p.cp2.use) {
           p.cp2.x -= dx
           p.cp2.y -= dy
         }
       })
     })
+    if (flipHorizontal) newCenter.x = helper._reversePoint(newCenter.x, center.x)
+    if (flipVertical) newCenter.y = helper._reversePoint(newCenter.y, center.y)
+
     //如果有旋转，那么新center要相对于老center旋转。因为所有的点和老中心点是没有度数的
     //所以计算出来的最大值和最小值都是0度情况下的值，对应算出来的新中心点也是0度。
     //如果直接使用会导致偏移。
-    if (realRotation){
+    if (realRotation) {
       newCenter = Math2.getRotatedPoint(newCenter, center, realRotation)
     }
     this.conf.center = newCenter

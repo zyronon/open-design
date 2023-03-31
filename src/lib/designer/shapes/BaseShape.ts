@@ -894,8 +894,8 @@ export abstract class BaseShape {
           }
 
           let {x, y} = event.point
-          // let move = {x: x - cu.fixMouseStart.x, y: y - cu.fixMouseStart.y}
-          let move = {x: 0, y: y - cu.fixMouseStart.y}
+          let move = {x: x - cu.fixMouseStart.x, y: y - cu.fixMouseStart.y}
+          // let move = {x: 0, y: y - cu.fixMouseStart.y}
 
           if (type === EditType.ControlPoint) {
             let point = this.getPoint(this.conf.lineShapes[lineIndex].points[pointIndex])
@@ -1394,7 +1394,7 @@ export abstract class BaseShape {
     console.log('重新计算中心点和宽高')
     // return
     if (!this.conf.isCustom) return
-    let center = this.conf.center
+    let {center, realRotation} = this.conf
 
     let temp: any = this.conf.lineShapes.reduce((previousValue: any[], currentValue) => {
       let maxX: number, minX: number, maxY: number, minY: number
@@ -1474,12 +1474,22 @@ export abstract class BaseShape {
         let p = this.getPoint(pointInfo)
         p.center.x -= dx
         p.center.y -= dy
-        p.cp1.x -= dx
-        p.cp1.y -= dy
-        p.cp2.x -= dx
-        p.cp2.y -= dy
+        if (p.cp1.use){
+          p.cp1.x -= dx
+          p.cp1.y -= dy
+        }
+        if (p.cp2.use){
+          p.cp2.x -= dx
+          p.cp2.y -= dy
+        }
       })
     })
+    //如果有旋转，那么新center要相对于老center旋转。因为所有的点和老中心点是没有度数的
+    //所以计算出来的最大值和最小值都是0度情况下的值，对应算出来的新中心点也是0度。
+    //如果直接使用会导致偏移。
+    if (realRotation){
+      newCenter = Math2.getRotatedPoint(newCenter, center, realRotation)
+    }
     this.conf.center = newCenter
     this.conf.layout.w = newWidth
     this.conf.layout.h = newHeight

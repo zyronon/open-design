@@ -89,6 +89,10 @@ export class Rectangle extends BaseShape {
 
   isInShape(mousePoint: P, cu: CanvasUtil2): boolean {
     return helper.isInBox(mousePoint, this.conf.box)
+    // @ts-ignore
+    let r =  helper.isInPolygon(mousePoint, this.conf.lineShapes[0].points.map(v=>v.point!),this.conf.center)
+    console.log('r',r)
+    return r
   }
 
   drawShape(ctx: CanvasRenderingContext2D, layout: Rect, parent?: BaseConfig) {

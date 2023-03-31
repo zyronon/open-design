@@ -473,5 +473,45 @@ export default {
       target.cp2.x = oldPoint.cp2.x + move.x
       target.cp2.y = oldPoint.cp2.y + move.y
     }
+  },
+  /**
+   * 判断点是否在图形内
+   * 参考：https://myst729.github.io/posts/2013/two-solutions-for-point-in-polygon-problem/
+   * 参考：https://juejin.cn/post/6963596759742283807
+   * */
+  isInPolygon(p: P, polygon: BezierPoint[], center: P) {
+    let px = p.x,
+      py = p.y,
+      flag = false
+
+    for (let i = 0, l = polygon.length, j = l - 1; i < l; j = i, i++) {
+      let sx = polygon[i].center.x + center.x,
+        sy = polygon[i].center.y + center.y,
+        tx = polygon[j].center.x + center.x,
+        ty = polygon[j].center.y + center.y
+
+      // 点与多边形顶点重合
+      if ((sx === px && sy === py) || (tx === px && ty === py)) {
+        return true
+      }
+
+      // 判断线段两端点是否在射线两侧
+      if ((sy < py && ty >= py) || (sy >= py && ty < py)) {
+        // 线段上与射线 Y 坐标相同的点的 X 坐标
+        let x = sx + (py - sy) * (tx - sx) / (ty - sy)
+
+        // 点在多边形的边上
+        if (x === px) {
+          return true
+        }
+
+        // 射线穿过多边形的边界
+        if (x > px) {
+          flag = !flag
+        }
+      }
+    }
+    // 射线穿过多边形边界的次数为奇数时点在多边形内
+    return flag
   }
 }

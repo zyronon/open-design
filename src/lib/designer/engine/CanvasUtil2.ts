@@ -9,6 +9,7 @@ import {Rectangle} from "../shapes/Rectangle"
 import {BaseConfig} from "../config/BaseConfig"
 import helper from "../utils/helper"
 import draw from "../utils/draw"
+import {BoxSelection} from "../shapes/BoxSelection";
 // import {Pen} from "../shapes/Pen"
 
 const out: any = new Float32Array([
@@ -69,8 +70,8 @@ export default class CanvasUtil2 {
   _data: any = {}
   private renderTime: any = undefined
   waitRenderOtherStatusFunc: any[] = []
-  //选中的图形们
-  selectedShapes: BaseShape[] = []
+  //框选实例
+  boxSelection?: BoxSelection
 
   constructor(canvas: HTMLCanvasElement) {
     this.init(canvas)
@@ -195,6 +196,7 @@ export default class CanvasUtil2 {
     }
     this.waitRenderOtherStatusFunc.map(cb => cb())
     this.waitRenderOtherStatusFunc = []
+    this.boxSelection?.render()
     this.ctx.restore()
   }
 
@@ -474,20 +476,27 @@ export default class CanvasUtil2 {
             topY: y,
             bottomY: y + h,
           }
-          let ss: BaseShape[] = []
+          let selectionShapes: BaseShape[] = []
 
           this.children.map(shape => {
             if (helper.isInBox(shape.conf.absolute, layout)) {
-              ss.push(shape)
+              selectionShapes.push(shape)
               shape.status = ShapeStatus.Hover
             }
           })
-          if (ss.length === 1) {
-            ss[0].status = ShapeStatus.Select
-          }else {
-            ss[0].status = ShapeStatus.Hover
+          if (selectionShapes.length === 1) {
+            selectionShapes[0].status = ShapeStatus.Select
           }
-          console.log('ss', ss)
+          if (selectionShapes.length > 1) {
+            if (this.boxSelection) {
+              this.boxSelection.setChildren(selectionShapes)
+            } else {
+              this.boxSelection = new BoxSelection(selectionShapes)
+            }
+          } else {
+            this.boxSelection = undefined
+          }
+          console.log('ss', selectionShapes)
           this.ctx.fillRect2(layout)
           this.ctx.strokeRect2(layout)
       }

@@ -47,6 +47,7 @@ export const Colors = {
   FillColor: 'rgb(241,238,238)',
   Border: 'rgb(140,140,140)',
   White: 'white',
+  Transparent: 'transparent',
 }
 
 export const rects2 = [

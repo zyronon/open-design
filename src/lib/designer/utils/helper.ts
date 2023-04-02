@@ -506,5 +506,5 @@ export default {
     }
     // 射线穿过多边形边界的次数为奇数时点在多边形内
     return flag
-  }
+  },
 }

@@ -78,6 +78,8 @@ export abstract class BaseShape {
         // cu.selectedShape = this
         cu.editShape = undefined
         cu.mode = ShapeType.SELECT
+        // TODO　先这样。一时半会儿用不到parents
+        cu.setSelectShape(this,[])
       }
       if (val === ShapeStatus.Edit) {
         if (!this.conf.isCustom) {

@@ -69,11 +69,12 @@ export default class CanvasUtil2 {
   _data: any = {}
   private renderTime: any = undefined
   waitRenderOtherStatusFunc: any[] = []
+  //选中的图形们
+  selectedShapes: BaseShape[] = []
 
   constructor(canvas: HTMLCanvasElement) {
     this.init(canvas)
   }
-
 
   get mode() {
     return this._mode
@@ -95,7 +96,6 @@ export default class CanvasUtil2 {
     // console.log('val',val)
     this._selectedShape = val
   }
-
 
   init(canvas: HTMLCanvasElement) {
     // @ts-ignore
@@ -346,7 +346,7 @@ export default class CanvasUtil2 {
     if (e.capture) return
     // console.log('onMouseDown', e)
     if (this.editShape) return
-    console.log('cu-onMouseDown', e)
+    // console.log('cu-onMouseDown', e)
     this.selectedShapeParent.map((shape: BaseShape) => shape.isCapture = true)
     if (this.selectedShape) {
       this.selectedShape.status = ShapeStatus.Normal
@@ -474,13 +474,20 @@ export default class CanvasUtil2 {
             topY: y,
             bottomY: y + h,
           }
+          let ss: BaseShape[] = []
+
           this.children.map(shape => {
             if (helper.isInBox(shape.conf.absolute, layout)) {
-              shape.status = ShapeStatus.Select
-            }else {
-              shape.status = ShapeStatus.Normal
+              ss.push(shape)
+              shape.status = ShapeStatus.Hover
             }
           })
+          if (ss.length === 1) {
+            ss[0].status = ShapeStatus.Select
+          }else {
+            ss[0].status = ShapeStatus.Hover
+          }
+          console.log('ss', ss)
           this.ctx.fillRect2(layout)
           this.ctx.strokeRect2(layout)
       }

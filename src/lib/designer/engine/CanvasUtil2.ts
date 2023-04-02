@@ -247,24 +247,27 @@ export default class CanvasUtil2 {
     if (e.type === 'dblclick') {
       console.log('handleEvent', e.type)
     }
-    if (this.mode === ShapeType.EDIT) {
-      if (this.editShape) {
-        this.editShape.event(event, [], false, 'edit')
-      }
-    } else {
-      if (this.isDesignMode()) {
-        //有hoverShape就单传，没有遍历所有组件
-        if (this.hoverShape) {
-          this.hoverShape.event(event, this.hoverShapeParent, false, 'hover')
-        } else {
-          for (let i = 0; i < this.children.length; i++) {
-            let shape = this.children[i]
-            shape.event(event, [], false, 'for')
-            if (event.capture) break
+    if (!this.isMouseDown) {
+      if (this.mode === ShapeType.EDIT) {
+        if (this.editShape) {
+          this.editShape.event(event, [], false, 'edit')
+        }
+      } else {
+        if (this.isDesignMode()) {
+          //有hoverShape就单传，没有遍历所有组件
+          if (this.hoverShape) {
+            this.hoverShape.event(event, this.hoverShapeParent, false, 'hover')
+          } else {
+            for (let i = 0; i < this.children.length; i++) {
+              let shape = this.children[i]
+              shape.event(event, [], false, 'for')
+              if (event.capture) break
+            }
           }
         }
       }
     }
+
 
     switch (event.type) {
       case EventTypes.onMouseMove:
@@ -283,6 +286,7 @@ export default class CanvasUtil2 {
   }
 
   onKeyDown = (e: any) => {
+    if (this.isMouseDown) return
     console.log('onKeyDown', e.keyCode)
     //Esc
     if (e.keyCode === 27) {
@@ -458,18 +462,27 @@ export default class CanvasUtil2 {
           this.render()
           this.ctx.strokeStyle = Colors.Primary
           this.ctx.fillStyle = Colors.Select
-          this.ctx.fillRect(
-            this.mouseStart.x,
-            this.mouseStart.y,
+          let x = this.mouseStart.x
+          let y = this.mouseStart.y
+          let layout = {
+            x,
+            y,
             w,
-            h
-          )
-          this.ctx.strokeRect(
-            this.mouseStart.x,
-            this.mouseStart.y,
-            w,
-            h
-          )
+            h,
+            leftX: x,
+            rightX: x + w,
+            topY: y,
+            bottomY: y + h,
+          }
+          this.children.map(shape => {
+            if (helper.isInBox(shape.conf.absolute, layout)) {
+              shape.status = ShapeStatus.Select
+            }else {
+              shape.status = ShapeStatus.Normal
+            }
+          })
+          this.ctx.fillRect2(layout)
+          this.ctx.strokeRect2(layout)
       }
     }
   }

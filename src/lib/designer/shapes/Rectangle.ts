@@ -140,6 +140,8 @@ export class Rectangle extends BaseShape {
   }
 
   drawSelected(ctx: CanvasRenderingContext2D, layout: Rect): void {
+    // if (!this.mouseDown){
+    // }
     draw.selected(ctx, layout)
   }
 

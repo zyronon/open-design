@@ -1,7 +1,7 @@
 import React, {RefObject} from "react"
 import './index.scss'
 import BaseInput from "../../components/BaseInput"
-import {AlignTextLeft, Down, FullScreen, PreviewClose, Unlock,} from "@icon-park/react"
+import {Down, FullScreen, PreviewClose, Unlock,} from "@icon-park/react"
 import BaseIcon from "../../components/BaseIcon"
 import BaseButton from "../../components/BaseButton"
 import FlipIcon from "../../assets/icon/FlipIcon"
@@ -22,6 +22,7 @@ import CanvasUtil2 from "../../lib/designer/engine/CanvasUtil2"
 import {BaseConfig} from "../../lib/designer/config/BaseConfig"
 import {BaseRadio, BaseRadioGroup} from "../../components/BaseRadio"
 import {TextAlign} from "../canvas-old/type"
+import helper from "../../lib/designer/utils/helper";
 
 
 class Design extends React.Component<any, IState> {
@@ -78,7 +79,23 @@ class Design extends React.Component<any, IState> {
     let canvas: HTMLCanvasElement = this.canvasRef.current!
     const c = CanvasUtil2.getInstance(canvas)
     c.clear()
-    c.addChildren(rects)
+    let r = []
+    for (let i = 0; i < 50; i++) {
+      let w = 100, h = 100
+      let j = Math.trunc(i / 10)
+      console.log('j', j)
+      r.push(helper.getDefaultShapeConfig({
+        layout: {
+          x: (i % 10) * (40 + w),
+          y: j * (40 + w),
+          w,
+          h
+        },
+        type: ShapeType.RECTANGLE
+      } as any))
+    }
+    // c.addChildren(rects)
+    c.addChildren(r)
     c.render()
     this.setState({cu: c})
   }

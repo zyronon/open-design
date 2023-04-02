@@ -1,6 +1,6 @@
-import { P, P2 } from "../lib/designer/types/type"
-import { cloneDeep } from "lodash"
-import { Rect } from "../lib/designer/config/BaseConfig"
+import {P, P2} from "../lib/designer/types/type"
+import {cloneDeep} from "lodash"
+import {Rect} from "../lib/designer/config/BaseConfig"
 
 export {}
 
@@ -10,15 +10,19 @@ declare global {
     bezierCurveTo2(cp1: P, cp2: P, end: P): void
 
     //二次贝塞尔曲线
-    quadraticCurveTo2(cp1: P , end: P): void
+    quadraticCurveTo2(cp1: P, end: P): void
 
-    moveTo2(cp1: P ): void
+    moveTo2(cp1: P): void
 
-    lineTo2(cp1: P ): void
+    lineTo2(cp1: P): void
 
     translate2(p: P): void
 
     rect2(p: Rect): void
+
+    fillRect2(p: Rect): void
+
+    strokeRect2(p: Rect): void
   }
 
   interface Path2D {
@@ -26,11 +30,11 @@ declare global {
     bezierCurveTo2(cp1: P, cp2: P, end: P): void
 
     //二次贝塞尔曲线
-    quadraticCurveTo2(cp1: P , end: P): void
+    quadraticCurveTo2(cp1: P, end: P): void
 
-    moveTo2(cp1: P ): void
+    moveTo2(cp1: P): void
 
-    lineTo2(cp1: P ): void
+    lineTo2(cp1: P): void
 
     translate2(p: P): void
 
@@ -68,6 +72,12 @@ let Context2D: CanvasRenderingContext2D = {
   },
   rect2: function (p) {
     this.rect(p.x, p.y, p.w, p.h)
+  },
+  fillRect2: function (p) {
+    this.fillRect(p.x, p.y, p.w, p.h)
+  },
+  strokeRect2: function (p) {
+    this.strokeRect(p.x, p.y, p.w, p.h)
   }
 }
 

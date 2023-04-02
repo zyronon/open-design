@@ -404,7 +404,7 @@ export abstract class BaseShape {
       draw.drawRound(ctx, this.conf.center)
       draw.drawRound(ctx, this.conf.original)
     }
-    draw.drawRound(ctx, this.conf.center)
+    // draw.drawRound(ctx, this.conf.center)
 
     for (let i = 0; i < this.children.length; i++) {
       let shape = this.children[i]

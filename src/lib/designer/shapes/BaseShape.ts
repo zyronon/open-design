@@ -386,6 +386,7 @@ export abstract class BaseShape {
   }
 
   render(ctx: CanvasRenderingContext2D, parent?: BaseConfig) {
+
     ctx.save()
     let {x, y} = draw.calcPosition(ctx, this.conf)
     let newLayout = {...this.conf.layout, x, y}

@@ -40,6 +40,7 @@ export class BoxSelection extends BaseShape {
     }
     this.setChildren(selectionShapes)
 
+    console.log('render')
     cu.render()
     cu.ctx.strokeStyle = Colors.Primary
     cu.ctx.fillStyle = Colors.Select

@@ -196,7 +196,7 @@ export default class CanvasUtil2 {
     }
     this.waitRenderOtherStatusFunc.map(cb => cb())
     this.waitRenderOtherStatusFunc = []
-    this.boxSelection?.render()
+    // this.boxSelection?.render()
     this.ctx.restore()
   }
 
@@ -461,44 +461,14 @@ export default class CanvasUtil2 {
           break
         case ShapeType.PEN:
         case ShapeType.SELECT:
-          this.render()
-          this.ctx.strokeStyle = Colors.Primary
-          this.ctx.fillStyle = Colors.Select
-          let x = this.mouseStart.x
-          let y = this.mouseStart.y
-          let layout = {
-            x,
-            y,
-            w,
-            h,
-            leftX: x,
-            rightX: x + w,
-            topY: y,
-            bottomY: y + h,
+          if (!this.boxSelection) {
+            this.boxSelection = new BoxSelection({
+              conf: helper.getDefaultShapeConfig({
+                type: ShapeType.BOX_SELECTION
+              } as any)
+            })
           }
-          let selectionShapes: BaseShape[] = []
-
-          this.children.map(shape => {
-            if (helper.isInBox(shape.conf.absolute, layout)) {
-              selectionShapes.push(shape)
-              shape.status = ShapeStatus.Hover
-            }
-          })
-          if (selectionShapes.length === 1) {
-            selectionShapes[0].status = ShapeStatus.Select
-          }
-          if (selectionShapes.length > 1) {
-            if (this.boxSelection) {
-              this.boxSelection.setChildren(selectionShapes)
-            } else {
-              this.boxSelection = new BoxSelection(selectionShapes)
-            }
-          } else {
-            this.boxSelection = undefined
-          }
-          console.log('ss', selectionShapes)
-          this.ctx.fillRect2(layout)
-          this.ctx.strokeRect2(layout)
+          this.boxSelection.checkChildren(this.mouseStart, e.point, this)
       }
     }
   }

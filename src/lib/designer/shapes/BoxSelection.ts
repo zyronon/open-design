@@ -1,15 +1,50 @@
 import {BaseShape} from "./BaseShape";
-import {BaseEvent2, LineShape, P} from "../types/type";
+import {BaseEvent2, LineShape, P, ShapeStatus} from "../types/type";
 import draw from "../utils/draw";
 import CanvasUtil2 from "../engine/CanvasUtil2";
 import {BaseConfig, Rect} from "../config/BaseConfig";
+import helper from "../utils/helper"
+import {Colors} from "../utils/constant"
 
 export class BoxSelection extends BaseShape {
 
-  constructor(children: BaseShape[]) {
-    // this.children = children
-    // this.calcLayout()
-    // this.render()
+  // constructor(children: BaseShape[]) {
+  // this.children = children
+  // this.calcLayout()
+  // this.render()
+  // }
+
+  checkChildren(startPoint: P, endPoint: P, cu: CanvasUtil2) {
+    let {x, y} = startPoint
+    let w = endPoint.x - x
+    let h = endPoint.y - y
+    let layout = {
+      x,
+      y,
+      w,
+      h,
+      leftX: x,
+      rightX: x + w,
+      topY: y,
+      bottomY: y + h,
+    }
+    let selectionShapes: BaseShape[] = []
+    cu.children.map(shape => {
+      if (helper.isInBox(shape.conf.absolute, layout)) {
+        selectionShapes.push(shape)
+        shape.status = ShapeStatus.Hover
+      }
+    })
+    if (selectionShapes.length === 1) {
+      selectionShapes[0].status = ShapeStatus.Select
+    }
+    this.setChildren(selectionShapes)
+
+    cu.render()
+    cu.ctx.strokeStyle = Colors.Primary
+    cu.ctx.fillStyle = Colors.Select
+    cu.ctx.fillRect2(layout)
+    cu.ctx.strokeRect2(layout)
   }
 
   calcLayout() {

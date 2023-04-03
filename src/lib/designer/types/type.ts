@@ -89,13 +89,13 @@ export enum ShapeType {
   RULER_LINE = 'RULER_LINE',
   HOVER = 'HOVER',
   EDIT = 'EDIT',
+  BOX_SELECTION = 'BOX_SELECTION',
 }
 
 
 export interface ShapeProps {
   conf: BaseConfig,
   parent?: BaseShape,
-  // parent?: BaseShapeProps,
 }
 
 export enum FontWeight {

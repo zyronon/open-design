@@ -83,7 +83,7 @@ class Design extends React.Component<any, IState> {
     for (let i = 0; i < 50; i++) {
       let w = 100, h = 100
       let j = Math.trunc(i / 10)
-      console.log('j', j)
+      // console.log('j', j)
       r.push(helper.getDefaultShapeConfig({
         layout: {
           x: (i % 10) * (40 + w),

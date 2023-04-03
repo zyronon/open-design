@@ -194,9 +194,9 @@ export default class CanvasUtil2 {
       let shape = this.children[i]
       shape.render(this.ctx)
     }
+    this.boxSelection?.render(this.ctx)
     this.waitRenderOtherStatusFunc.map(cb => cb())
     this.waitRenderOtherStatusFunc = []
-    this.boxSelection?.render(this.ctx)
     this.ctx.restore()
   }
 

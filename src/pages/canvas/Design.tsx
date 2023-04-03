@@ -10,7 +10,7 @@ import AngleIcon from "../../assets/icon/AngleIcon"
 import {withRouter} from "../../components/WithRouter"
 import Fps from "../../components/Fps"
 import {BaseOption, BaseSelect} from "../../components/BaseSelect2"
-import {defaultConfig, rects} from "../../lib/designer/utils/constant"
+import {Colors, defaultConfig, rects} from "../../lib/designer/utils/constant"
 import {EditModeType, EventTypes, IState, RectColorType, ShapeType} from "../../lib/designer/types/type"
 import BaseSlotButton from "../../components/BaseSlotButton"
 import Icon from '@icon-park/react/es/all'
@@ -85,6 +85,7 @@ class Design extends React.Component<any, IState> {
       let j = Math.trunc(i / 10)
       // console.log('j', j)
       r.push(helper.getDefaultShapeConfig({
+        fillColor:Colors.Transparent,
         layout: {
           x: (i % 10) * (40 + w),
           y: j * (40 + w),

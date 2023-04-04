@@ -48,7 +48,7 @@ const ShapeInfo = (props: any) => {
   const shape = useRef<BaseShape>()
 
   useEffect(() => {
-    console.log('useEffect-start')
+    // console.log('useEffect-start')
     let keys = [
       EventKeys.ON_CONF_CHANGE,
       EventKeys.SELECT_SHAPE

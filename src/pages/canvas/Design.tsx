@@ -81,24 +81,24 @@ class Design extends React.Component<any, IState> {
     let canvas: HTMLCanvasElement = this.canvasRef.current!
     const c = CanvasUtil2.getInstance(canvas)
     c.clear()
-    // let r = []
-    // for (let i = 0; i < 50; i++) {
-    //   let w = 100, h = 100
-    //   let j = Math.trunc(i / 10)
-    //   // console.log('j', j)
-    //   r.push(helper.getDefaultShapeConfig({
-    //     fillColor:Colors.Transparent,
-    //     layout: {
-    //       x: (i % 10) * (40 + w),
-    //       y: j * (40 + w),
-    //       w,
-    //       h
-    //     },
-    //     type: ShapeType.RECTANGLE
-    //   } as any))
-    // }
-    // c.addChildren(r)
-    c.addChildren(rects)
+    let r = []
+    for (let i = 0; i < 50; i++) {
+      let w = 100, h = 100
+      let j = Math.trunc(i / 10)
+      // console.log('j', j)
+      r.push(helper.getDefaultShapeConfig({
+        fillColor:Colors.Transparent,
+        layout: {
+          x: (i % 10) * (40 + w),
+          y: j * (40 + w),
+          w,
+          h
+        },
+        type: ShapeType.RECTANGLE
+      } as any))
+    }
+    c.addChildren(r)
+    // c.addChildren(rects)
     c.render()
     this.setState({cu: c})
   }

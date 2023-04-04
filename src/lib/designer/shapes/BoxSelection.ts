@@ -72,6 +72,7 @@ export class BoxSelection extends BaseShape {
       w: newWidth,
       h: newHeight
     }
+    this.conf = helper.calcConf(this.conf)
   }
 
   setChildren(children: BaseShape[]) {
@@ -110,7 +111,7 @@ export class BoxSelection extends BaseShape {
   }
 
   isInShape(mousePoint: P, cu: CanvasUtil2): boolean {
-    return false;
+    return helper.isInBox(mousePoint, this.conf.box)
   }
 
   isInShapeOnSelect(p: P, cu: CanvasUtil2): boolean {

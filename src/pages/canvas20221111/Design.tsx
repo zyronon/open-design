@@ -49,7 +49,7 @@ import Left from "./components/Left/left"
 import {CanvasUtil} from "./utils/CanvasUtil";
 // import { Frame } from "./utils/Frame";
 import Frame from "./utils/Frame";
-import EventBus from "../../lib/designer/utils/event-bus";
+import EventBus from "../../lib/designer/event/eventBus";
 import cx from "classnames";
 import Ellipse from "./utils/Ellipse";
 

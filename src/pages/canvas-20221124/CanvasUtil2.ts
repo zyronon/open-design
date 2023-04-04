@@ -1,5 +1,5 @@
 import {BaseShape} from "./shapes/BaseShape"
-import EventBus from "../../lib/designer/utils/event-bus"
+import EventBus from "../../lib/designer/event/eventBus"
 import {clear} from "./utils"
 import {BaseEvent2, EventMapTypes, EventTypes, P, ShapeConfig, ShapeType} from "./type"
 import {cloneDeep, throttle} from "lodash"

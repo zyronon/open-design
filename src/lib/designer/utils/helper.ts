@@ -6,6 +6,8 @@ import {BezierPoint, BezierPointType, getP2, Line, LineType, P, P2, StrokeAlign}
 import {Colors, defaultConfig} from "./constant"
 import {Bezier} from "./bezier"
 import {Math2} from "./math"
+import EventBus from "../event/eventBus";
+import {EventKeys} from "../event/eventKeys";
 
 export default {
   /**

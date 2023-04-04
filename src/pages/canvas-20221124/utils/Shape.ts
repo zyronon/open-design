@@ -1,6 +1,6 @@
 import {getPath} from "../utils"
 import {CanvasUtil2} from "./CanvasUtil"
-import EventBus from "../../../lib/designer/utils/event-bus"
+import EventBus from "../../../lib/designer/event/eventBus"
 import {EventMapTypes, ShapeConfig} from "../type"
 import {clone} from "lodash"
 

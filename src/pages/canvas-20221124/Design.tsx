@@ -16,7 +16,7 @@ import BaseSlotButton from "../../components/BaseSlotButton"
 import Icon from '@icon-park/react/es/all'
 import {message} from "antd"
 import Left from "./components/Left/left"
-import EventBus from "../../lib/designer/utils/event-bus"
+import EventBus from "../../lib/designer/event/eventBus"
 import cx from "classnames"
 import CanvasUtil2 from "./CanvasUtil2"
 

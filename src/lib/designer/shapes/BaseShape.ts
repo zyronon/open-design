@@ -4,7 +4,7 @@ import {
   BezierPointType,
   CurrentOperationInfo,
   EditModeType,
-  EditType,
+  EditType, EventTypes,
   getP2,
   Line,
   LinePath,
@@ -22,8 +22,7 @@ import {
 import CanvasUtil2 from "../engine/CanvasUtil2"
 import {cloneDeep, merge} from "lodash"
 import {getShapeFromConfig} from "../utils/common"
-import EventBus from "../utils/event-bus"
-import {EventMapTypes} from "../../../pages/canvas20221111/type"
+import EventBus from "../event/eventBus"
 import {BaseConfig, Rect} from "../config/BaseConfig"
 import helper from "../utils/helper"
 import draw from "../utils/draw"
@@ -32,6 +31,7 @@ import {v4 as uuid} from "uuid"
 import {Math2} from "../utils/math"
 import {Bezier} from "../utils/bezier"
 import {BBox, Bezier as BezierJs} from "bezier-js";
+import {EventKeys} from "../event/eventKeys";
 
 export abstract class BaseShape {
   hoverType: MouseOptionType = MouseOptionType.None
@@ -79,7 +79,7 @@ export abstract class BaseShape {
         cu.editShape = undefined
         cu.mode = ShapeType.SELECT
         // TODO　先这样。一时半会儿用不到parents
-        cu.setSelectShape(this,[])
+        cu.setSelectShape(this, [])
       }
       if (val === ShapeStatus.Edit) {
         if (!this.conf.isCustom) {
@@ -386,7 +386,6 @@ export abstract class BaseShape {
   }
 
   render(ctx: CanvasRenderingContext2D, parent?: BaseConfig) {
-
     ctx.save()
     let {x, y} = draw.calcPosition(ctx, this.conf)
     let newLayout = {...this.conf.layout, x, y}
@@ -581,7 +580,7 @@ export abstract class BaseShape {
   _mousedown(event: BaseEvent2, parents: BaseShape[] = []) {
     // this.log('base-mousedown')
     // console.log('mousedown', this.conf.name, this.enterType, this.hoverType)
-    EventBus.emit(EventMapTypes.onMouseDown, this)
+    EventBus.emit(EventKeys.SELECT_SHAPE, this)
     if (this.onMouseDown(event, parents)) return
 
     let cu = CanvasUtil2.getInstance()
@@ -1041,6 +1040,7 @@ export abstract class BaseShape {
     this.conf.center.y = this.original.center.y + (y - cu.mouseStart.y)
 
     this.conf = helper.calcConf(this.conf, this.parent?.conf)
+    this.notifyConfUpdate()
     this.calcChildrenConf()
     cu.render()
   }
@@ -1064,6 +1064,7 @@ export abstract class BaseShape {
 
     // console.log('dragTopLeftRotation', this.conf)
     this.conf = helper.calcConf(this.conf, this.parent?.conf)
+    this.notifyConfUpdate()
     this.calcChildrenConf()
     cu.render()
   }
@@ -1119,6 +1120,7 @@ export abstract class BaseShape {
     }
     // console.log(conf)
     this.conf = helper.calcConf(conf, this.parent?.conf)
+    this.notifyConfUpdate()
     this.calcChildrenConf()
     cu.render()
   }
@@ -1169,6 +1171,7 @@ export abstract class BaseShape {
       if (conf.flipVertical !== this.original.flipVertical) this.flip(1, 'Diagonal')
     }
     this.conf = helper.calcConf(conf, this.parent?.conf)
+    this.notifyConfUpdate()
     this.calcChildrenConf()
     cu.render()
   }
@@ -1219,6 +1222,7 @@ export abstract class BaseShape {
       if (conf.flipVertical !== this.original.flipVertical) this.flip(1, 'Diagonal')
     }
     this.conf = helper.calcConf(conf, this.parent?.conf)
+    this.notifyConfUpdate()
     this.calcChildrenConf()
     cu.render()
   }
@@ -1277,6 +1281,7 @@ export abstract class BaseShape {
       if (conf.flipHorizontal !== this.original.flipHorizontal) this.flip(0, 'Diagonal')
     }
     this.conf = helper.calcConf(this.conf, this.parent?.conf)
+    this.notifyConfUpdate()
     this.calcChildrenConf()
     cu.render()
   }
@@ -1328,6 +1333,7 @@ export abstract class BaseShape {
       if (conf.flipHorizontal !== this.original.flipHorizontal) this.flip(0, 'Diagonal')
     }
     this.conf = helper.calcConf(conf, this.parent?.conf)
+    this.notifyConfUpdate()
     this.calcChildrenConf()
     cu.render()
   }
@@ -1362,6 +1368,7 @@ export abstract class BaseShape {
     } else {
       this.childrenDiagonalFlip(type, this.conf)
     }
+    this.notifyConfUpdate()
   }
 
   //对称翻转
@@ -1509,6 +1516,7 @@ export abstract class BaseShape {
     this.conf.layout.w = newWidth
     this.conf.layout.h = newHeight
     this.conf = helper.calcConf(this.conf, this.parent?.conf)
+    this.notifyConfUpdate()
   }
 
   getCustomShapePath(): LinePath[] {
@@ -1561,5 +1569,9 @@ export abstract class BaseShape {
     } else {
       return this.conf.commonPoints[this.conf.commonPoints.findIndex(v => v.id === pointInfo.targetId)!]
     }
+  }
+
+  protected notifyConfUpdate() {
+    EventBus.emit(EventKeys.ON_CONF_CHANGE)
   }
 }

@@ -16,14 +16,14 @@ import BaseSlotButton from "../../components/BaseSlotButton"
 import Icon from '@icon-park/react/es/all'
 import {message} from "antd"
 import Left from "./components/Left/left"
-import EventBus from "../../lib/designer/utils/event-bus"
+import EventBus from "../../lib/designer/event/eventBus"
 import cx from "classnames"
 import CanvasUtil2 from "../../lib/designer/engine/CanvasUtil2"
 import {BaseConfig} from "../../lib/designer/config/BaseConfig"
 import {BaseRadio, BaseRadioGroup} from "../../components/BaseRadio"
 import {TextAlign} from "../canvas-old/type"
 import helper from "../../lib/designer/utils/helper";
-import ShapeInfo from "./components/Info"
+import ShapeInfo from "./components/ShapeInfo"
 
 
 class Design extends React.Component<any, IState> {
@@ -55,20 +55,21 @@ class Design extends React.Component<any, IState> {
   }
 
   componentWillUnmount() {
-    EventBus.offAll()
+    // EventBus.offAll()
     // console.log('componentWillUnmount')
   }
 
   init() {
-    EventBus.offAll()
+    EventBus.off([
+      EventTypes.onDraw,
+      EventTypes.onWheel,
+      EventTypes.onModeChange
+    ])
     //这个绘制会刷新整个render...,从而获取到最新的selectShape，凑合着用吧
     EventBus.on(EventTypes.onDraw, () => {
       this.setState(s => {
         return {drawCount: s.drawCount + 1}
       })
-    })
-    EventBus.on([EventTypes.onMouseDown, EventTypes.onMouseMove, EventTypes.onMouseUp], (val: any) => {
-      this.setState({selectShape: val})
     })
     EventBus.on([EventTypes.onWheel], (val: any) => {
       val && this.setState({handScale: val})
@@ -328,9 +329,7 @@ class Design extends React.Component<any, IState> {
           <div className="right">
             {/*<img src={require('../../assets/image/a.jpg')} alt=""/>*/}
             <div className="config-wrapper">
-              {
-                selectShape && <ShapeInfo selectShape={selectShape}/>
-              }
+              <ShapeInfo/>
             </div>
           </div>
         </div>

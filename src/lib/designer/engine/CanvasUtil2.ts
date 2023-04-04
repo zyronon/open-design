@@ -1,5 +1,5 @@
 import {BaseShape} from "../shapes/BaseShape"
-import EventBus from "../utils/event-bus"
+import EventBus from "../event/eventBus"
 import {BaseEvent2, EditModeType, EventTypes, P, ShapeStatus, ShapeType} from "../types/type"
 import {cloneDeep} from "lodash"
 import {Colors, defaultConfig} from "../utils/constant"
@@ -10,6 +10,7 @@ import {BaseConfig} from "../config/BaseConfig"
 import helper from "../utils/helper"
 import draw from "../utils/draw"
 import {BoxSelection} from "../shapes/BoxSelection";
+import {EventKeys} from "../event/eventKeys";
 // import {Pen} from "../shapes/Pen"
 
 const out: any = new Float32Array([
@@ -174,7 +175,7 @@ export default class CanvasUtil2 {
   }
 
   render() {
-    // console.log('重绘所有图形')
+    // console.log('重绘所有图形',this)
     EventBus.emit(EventTypes.onDraw)
     draw.clear({x: 0, y: 0, w: this.canvas.width, h: this.canvas.height}, this.ctx)
     this.ctx.save()
@@ -219,6 +220,11 @@ export default class CanvasUtil2 {
     this.canvas[fn](EventTypes.onMouseLeave, () => {
       document.body.style.cursor = 'default'
     })
+    if (isClear) {
+      EventBus.off(EventKeys.RENDER)
+    } else {
+      EventBus.on(EventKeys.RENDER, this.render.bind(this))
+    }
   }
 
   //TODO　这里过滤会导致mouseup丢失
@@ -269,7 +275,6 @@ export default class CanvasUtil2 {
         }
       }
     }
-
 
     switch (event.type) {
       case EventTypes.onMouseMove:

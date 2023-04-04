@@ -160,7 +160,6 @@ export interface P2 extends P {
   ry: number//相对于父级的相对值y
 }
 
-
 //贝塞尔点的类型
 export enum BezierPointType {
   RightAngle = 'RightAngle',//直角
@@ -263,7 +262,6 @@ export enum StrokeAlign {
   INSIDE = 'INSIDE',
   OUTSIDE = 'OUTSIDE',
 }
-
 
 export enum EditType {
   Line = 'Line',

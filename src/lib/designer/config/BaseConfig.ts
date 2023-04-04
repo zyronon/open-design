@@ -83,7 +83,7 @@ interface Geometry {
 }
 
 
-export interface BaseConfig extends Layout, Geometry {
+export interface BaseConfig extends Layout, Geometry, Text {
   id: number | string,
   /**
    * 存放一些组件额外，但又不是必须的数据。
@@ -131,6 +131,51 @@ export interface BaseConfig extends Layout, Geometry {
   blendMode: number//图层的混合模式。
   isMask: boolean//图层是否是蒙版。
   effects: any[]//返回一个特效数组，具体数据结构可以查看 Effect。
+}
+
+export enum FontFamily {
+  SourceHanSerifCN = 'SourceHanSerifCN',
+  SourceHanSansCN = 'SourceHanSansCN',
+}
+
+export enum FontWeight {
+  LIGHT = 300,
+  REGULAR = 400,
+  Normal = 500,
+  MEDIUM = 600,
+  BOLD = 700,
+  HEAVY = 900,
+}
+
+export enum TextMode {
+  AUTO_W = 1,
+  AUTO_H = 2,
+  FIXED = 3,
+}
+
+export enum TextBaseline {
+  LEFT = 1,
+  RIGHT = 2,
+  CENTER = 3,
+}
+
+export enum TextAlign {
+  LEFT = 'left',
+  RIGHT = 'right',
+  CENTER = 'center',
+}
+
+export interface Text {
+  brokenTexts: string[],
+  texts: string[],
+  textLineHeight: number,
+  letterSpacing: number,
+  textMode: TextMode,
+  textBaseline: TextBaseline,
+  textAlign: TextAlign,
+  fontFamily: FontFamily,
+  fontWeight: FontWeight,
+  fontSize: number,
 }
 
 export interface Rect {

@@ -1,13 +1,14 @@
 @import '/src/assets/css/variable.scss';
 
 .d-button {
-  width: 100%;
+  flex: 1;
   height: $input-height;
   border-radius: 6px;
   background: $input-bg;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 14rem;
 
   &:hover {
     background: rgb(80, 80, 80);

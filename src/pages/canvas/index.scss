@@ -212,23 +212,10 @@
           padding: 10rem 0;
           border-bottom: 1px solid #464646;
 
-          .row {
-            margin-bottom: 6rem;
-            width: 100%;
-            grid-gap: 6rem;
-            display: grid;
-            grid-template-columns: 1fr 1fr 30rem;
-
-            .col {
-              grid-gap: 6rem;
-              display: flex;
-            }
-          }
-
-          .row-single {
-            @extend .row;
-            grid-template-columns: 1fr 30rem;
-          }
+          //.row-single {
+          //  @extend .row;
+          //  grid-template-columns: 1fr 30rem;
+          //}
         }
       }
     }

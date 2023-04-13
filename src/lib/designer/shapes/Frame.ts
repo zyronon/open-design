@@ -199,4 +199,8 @@ export class Frame extends BaseShape {
   getCustomPoint(): LineShape[] {
     return []
   }
+
+  onMouseDowned(event: BaseEvent2, parents: BaseShape[]): boolean {
+    return false;
+  }
 }

@@ -615,4 +615,8 @@ export class Ellipse extends BaseShape {
   onMouseUp(event: BaseEvent2, parents: BaseShape[]): boolean {
     return false
   }
+
+  onMouseDowned(event: BaseEvent2, parents: BaseShape[]): boolean {
+    return false;
+  }
 }

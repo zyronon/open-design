@@ -1,10 +1,11 @@
 import {BaseShape} from "./BaseShape";
-import {BaseEvent2, LineShape, P, ShapeStatus} from "../types/type";
+import {BaseEvent2, LineShape, MouseOptionType, P, ShapeStatus} from "../types/type";
 import draw from "../utils/draw";
 import CanvasUtil2 from "../engine/CanvasUtil2";
 import {BaseConfig, Rect} from "../config/BaseConfig";
 import helper from "../utils/helper"
 import {Colors} from "../utils/constant"
+import {cloneDeep} from "lodash";
 
 export class BoxSelection extends BaseShape {
 
@@ -14,20 +15,7 @@ export class BoxSelection extends BaseShape {
   // this.render()
   // }
 
-  checkChildren(startPoint: P, endPoint: P, cu: CanvasUtil2) {
-    let {x, y} = startPoint
-    let w = endPoint.x - x
-    let h = endPoint.y - y
-    let layout = {
-      x,
-      y,
-      w,
-      h,
-      leftX: x,
-      rightX: x + w,
-      topY: y,
-      bottomY: y + h,
-    }
+  checkChildren(layout: Rect, cu: CanvasUtil2) {
     let selectionShapes: BaseShape[] = []
     cu.children.map(shape => {
       if (helper.isInBox(shape.conf.absolute, layout)) {
@@ -39,13 +27,6 @@ export class BoxSelection extends BaseShape {
       selectionShapes[0].status = ShapeStatus.Select
     }
     this.setChildren(selectionShapes)
-
-    console.log('render')
-    cu.render()
-    cu.ctx.strokeStyle = Colors.Primary
-    cu.ctx.fillStyle = Colors.Select
-    cu.ctx.fillRect2(layout)
-    cu.ctx.strokeRect2(layout)
   }
 
   calcLayout() {
@@ -82,10 +63,6 @@ export class BoxSelection extends BaseShape {
     }
   }
 
-  beforeEvent(event: BaseEvent2): boolean {
-    return false;
-  }
-
   beforeIsInShape(): boolean {
     return false;
   }
@@ -118,6 +95,10 @@ export class BoxSelection extends BaseShape {
     return false;
   }
 
+  beforeEvent(event: BaseEvent2): boolean {
+    return false;
+  }
+
   onDbClick(event: BaseEvent2, parents: BaseShape[]): boolean {
     return false;
   }
@@ -126,11 +107,23 @@ export class BoxSelection extends BaseShape {
     return false;
   }
 
+  onMouseDowned(event: BaseEvent2, parents: BaseShape[]): boolean {
+    console.log('onMouseDowned')
+
+    return false;
+  }
+
   onMouseMove(event: BaseEvent2, parents: BaseShape[]): boolean {
     return false;
   }
 
   onMouseUp(event: BaseEvent2, parents: BaseShape[]): boolean {
+    if (!this.mouseDown && this.enterType === MouseOptionType.None) {
+      let cu = CanvasUtil2.getInstance()
+      cu.boxSelection = undefined
+      cu.render()
+    }
     return false;
   }
+
 }

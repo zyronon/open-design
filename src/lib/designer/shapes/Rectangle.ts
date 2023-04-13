@@ -368,4 +368,8 @@ export class Rectangle extends BaseShape {
     return [{close: true, path}]
   }
 
+  onMouseDowned(event: BaseEvent2, parents: BaseShape[]): boolean {
+    return false;
+  }
+
 }

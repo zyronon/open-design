@@ -256,6 +256,9 @@ export default class CanvasUtil2 {
       console.log('handleEvent', e.type)
     }
     if (!this.isMouseDown) {
+      if (this.boxSelection) {
+        this.boxSelection.event(event, [], false, 'box')
+      }
       if (this.mode === ShapeType.EDIT) {
         if (this.editShape) {
           this.editShape.event(event, [], false, 'edit')
@@ -264,7 +267,9 @@ export default class CanvasUtil2 {
         if (this.isDesignMode()) {
           //有hoverShape就单传，没有遍历所有组件
           if (this.hoverShape) {
-            this.hoverShape.event(event, this.hoverShapeParent, false, 'hover')
+            if (this.hoverShape !== this.boxSelection){
+              this.hoverShape.event(event, this.hoverShapeParent, false, 'hover')
+            }
           } else {
             for (let i = 0; i < this.children.length; i++) {
               let shape = this.children[i]
@@ -469,11 +474,28 @@ export default class CanvasUtil2 {
           if (!this.boxSelection) {
             this.boxSelection = new BoxSelection({
               conf: helper.getDefaultShapeConfig({
-                type: ShapeType.BOX_SELECTION
+                type: ShapeType.BOX_SELECTION,
+                name:'box',
               } as any)
             })
           }
-          this.boxSelection.checkChildren(this.mouseStart, e.point, this)
+          let {x, y} = this.mouseStart
+          let layout = {
+            x,
+            y,
+            w,
+            h,
+            leftX: x,
+            rightX: x + w,
+            topY: y,
+            bottomY: y + h,
+          }
+          this.boxSelection.checkChildren(layout, this)
+          this.render()
+          this.ctx.strokeStyle = Colors.Primary
+          this.ctx.fillStyle = Colors.Select
+          this.ctx.fillRect2(layout)
+          this.ctx.strokeRect2(layout)
       }
     }
   }

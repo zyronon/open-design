@@ -344,8 +344,8 @@ export default {
       layout: {
         "x": 0,
         "y": 0,
-        "w": 200,
-        "h": 200,
+        "w": 0,
+        "h": 0,
       },
       isCustom: false,
       isVisible: false,

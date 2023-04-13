@@ -116,6 +116,8 @@ export abstract class BaseShape {
 
   abstract onMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean
 
+  abstract onMouseDowned(event: BaseEvent2, parents: BaseShape[]): boolean
+
   abstract onMouseMove(event: BaseEvent2, parents: BaseShape[]): boolean
 
   abstract onMouseUp(event: BaseEvent2, parents: BaseShape[]): boolean
@@ -387,6 +389,10 @@ export abstract class BaseShape {
 
   render(ctx: CanvasRenderingContext2D, parent?: BaseConfig) {
     ctx.save()
+    let {w, h} = this.conf.layout
+    if (w === 0 || h === 0) {
+      return
+    }
     let {x, y} = draw.calcPosition(ctx, this.conf)
     let newLayout = {...this.conf.layout, x, y}
     // let newLayout = {...this.conf.layout, }
@@ -451,7 +457,10 @@ export abstract class BaseShape {
    * @param from
    * */
   event(event: BaseEvent2, parents?: BaseShape[], isParentDbClick?: boolean, from?: string): boolean {
+    //TODO 感觉应该在这里先判断是否被消费了
+
     let {e, point, type} = event
+
     // if (type !== 'mousemove') {
     // if (type === 'dblclick') {
     //   console.log(this.conf.name, event.type, from)
@@ -657,8 +666,10 @@ export abstract class BaseShape {
         case MouseOptionType.TopRightRotation:
         case MouseOptionType.BottomLeftRotation:
         case MouseOptionType.BottomRightRotation:
+          return;
+        default:
+          break
       }
-      return
     }
 
     if (this.status === ShapeStatus.Edit) {
@@ -819,8 +830,9 @@ export abstract class BaseShape {
         }
         CanvasUtil2.getInstance().render()
       }
-      return
     }
+
+    if (this.onMouseDowned(event, parents)) return
   }
 
   _mousemove(event: BaseEvent2, parents: BaseShape[] = []) {

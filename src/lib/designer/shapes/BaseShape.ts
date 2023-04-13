@@ -1351,13 +1351,10 @@ export abstract class BaseShape {
   }
 
   //计算子组件的配置
-  calcChildrenConf(cb?: Function) {
+  calcChildrenConf(parent = this) {
     this.children.map((shape: BaseShape) => {
-      if (cb) shape = cb(shape)
-      else {
-        shape.conf = helper.calcConfByParent(shape.conf, shape?.parent?.conf)
-      }
-      shape.calcChildrenConf(cb)
+      shape.conf = helper.calcConfByParent(shape.conf, parent?.conf)
+      shape.calcChildrenConf(shape)
     })
   }
 

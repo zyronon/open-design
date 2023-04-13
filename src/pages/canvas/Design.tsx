@@ -82,15 +82,16 @@ class Design extends React.Component<any, IState> {
     const c = CanvasUtil2.getInstance(canvas)
     c.clear()
     let r = []
-    for (let i = 0; i < 50; i++) {
+    // for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 2; i++) {
       let w = 100, h = 100
       let j = Math.trunc(i / 10)
       // console.log('j', j)
       r.push(helper.getDefaultShapeConfig({
-        fillColor:Colors.Transparent,
+        fillColor: Colors.Transparent,
         layout: {
-          x: (i % 10) * (40 + w),
-          y: j * (40 + w),
+          x: 100 + (i % 10) * (40 + w),
+          y: 100 + j * (40 + w),
           w,
           h
         },

@@ -53,6 +53,15 @@ export class BoxSelection extends BaseShape {
       w: newWidth,
       h: newHeight
     }
+
+    this.children.map((currentValue) => {
+      const {center} = currentValue.conf
+      currentValue.conf.relativeCenter = {
+        x: center.x - this.conf.layout.x,
+        y: center.y - this.conf.layout.y,
+      }
+    })
+
     this.conf = helper.calcConf(this.conf)
   }
 

@@ -127,7 +127,9 @@ export class BoxSelection extends BaseShape {
   }
 
   onMouseUp(event: BaseEvent2, parents: BaseShape[]): boolean {
-    if (!this.mouseDown && this.enterType === MouseOptionType.None) {
+    console.log(this.mouseDown)
+    console.log(this.enterType)
+    if (!this.moved && this.enterType === MouseOptionType.None) {
       let cu = CanvasUtil2.getInstance()
       cu.boxSelection = undefined
       cu.render()

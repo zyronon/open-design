@@ -42,6 +42,7 @@ export abstract class BaseShape {
   _isSelectHover: boolean = false
   isCapture: boolean = true//是否捕获事件，为true不会再往下传递事件
   mouseDown: boolean = false
+  moved: boolean = false
   original: BaseConfig
   diagonal: P = {x: 0, y: 0}//对面的点（和handlePoint相反的点），如果handlePoint是中间点，那么这个也是中间点
   handLineCenterPoint: P = {x: 0, y: 0}//鼠标按住那条边的中间点（当前角度），非鼠标点
@@ -1041,12 +1042,14 @@ export abstract class BaseShape {
     this.editHover = cloneDeep(this.defaultCurrentOperationInfo)
     this.editEnter = cloneDeep(this.defaultCurrentOperationInfo)
     this.mouseDown = false
+    this.moved = false
   }
 
   //移动图形
   move(point: P) {
     let cu = CanvasUtil2.getInstance()
     let {x, y,} = point
+    this.moved = true
 
     this.conf.center.x = this.original.center.x + (x - cu.mouseStart.x)
     this.conf.center.y = this.original.center.y + (y - cu.mouseStart.y)

@@ -2,9 +2,9 @@ import {P} from "../../types/type";
 import CanvasUtil2 from "../../engine/CanvasUtil2";
 import helper from "../../utils/helper";
 import {Math2} from "../../utils/math";
-import {BaseShape} from "./BaseShape";
+import {ShapeEdit} from "./ShapeEdit";
 
-export class ShapeSelect extends BaseShape {
+export class ShapeSelect extends ShapeEdit {
   //移动图形
   move(point: P) {
     let cu = CanvasUtil2.getInstance()

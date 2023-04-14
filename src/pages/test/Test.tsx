@@ -3,34 +3,9 @@ import './index.scss'
 import {withRouter} from "../../components/WithRouter"
 import {Button} from "antd";
 
-class Parent {
-
-  test() {
-    console.log('parent-test')
-  }
-
-  init() {
-    console.log('init')
-    this.render()
-  }
-
-  render() {
-    console.log('parent-render',)
-  }
-}
-
-class Child extends Parent {
-
-  test() {
-    console.log('child-test')
-  }
-}
-
 class T extends Component<any, any> {
 
   componentDidMount() {
-    let c = new Child()
-    c.init()
 
   }
 

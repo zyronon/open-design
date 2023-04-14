@@ -4,7 +4,7 @@ import {
   BezierPointType,
   CurrentOperationInfo,
   EditModeType,
-  EditType, EventTypes,
+  EditType,
   getP2,
   Line,
   LinePath,

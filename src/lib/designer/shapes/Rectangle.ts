@@ -19,9 +19,9 @@ import {BaseConfig, Rect} from "../config/BaseConfig"
 import draw from "../utils/draw"
 import {v4 as uuid} from 'uuid'
 import helper from "../utils/helper"
-import {ShapeSelect} from "./core/ShapeSelect";
+import {ParentShape} from "./core/ParentShape";
 
-export class Rectangle extends ShapeSelect {
+export class Rectangle extends ParentShape {
   //最小拖动圆角。真实圆角可能为0，导致渲染的控制点和角重合，所以设置一个最小圆角
   minDragRadius = 15
   rectHoverType: MouseOptionType = MouseOptionType.None

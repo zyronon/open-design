@@ -4,10 +4,9 @@ import draw from "../utils/draw";
 import CanvasUtil2 from "../engine/CanvasUtil2";
 import {BaseConfig, Rect} from "../config/BaseConfig";
 import helper from "../utils/helper"
-import {Colors} from "../utils/constant"
-import {cloneDeep} from "lodash";
+import {ParentShape} from "./core/ParentShape";
 
-export class BoxSelection extends BaseShape {
+export class BoxSelection extends ParentShape {
 
   // constructor(children: BaseShape[]) {
   // this.children = children
@@ -118,7 +117,6 @@ export class BoxSelection extends BaseShape {
 
   onMouseDowned(event: BaseEvent2, parents: BaseShape[]): boolean {
     console.log('onMouseDowned')
-
     return false;
   }
 

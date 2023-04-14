@@ -1,6 +1,6 @@
 import CanvasUtil2 from "../engine/CanvasUtil2"
 import {BaseConfig} from "../config/BaseConfig"
-import {BaseShape} from "../shapes/BaseShape"
+import {BaseShape} from "../shapes/core/BaseShape"
 
 export type IState = {
   canvas: HTMLCanvasElement,

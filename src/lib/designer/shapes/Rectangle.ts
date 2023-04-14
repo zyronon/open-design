@@ -1,4 +1,4 @@
-import {BaseShape} from "./BaseShape"
+import {BaseShape} from "./core/BaseShape"
 import CanvasUtil2 from "../engine/CanvasUtil2"
 import {
   BaseEvent2,
@@ -19,8 +19,9 @@ import {BaseConfig, Rect} from "../config/BaseConfig"
 import draw from "../utils/draw"
 import {v4 as uuid} from 'uuid'
 import helper from "../utils/helper"
+import {ShapeSelect} from "./core/ShapeSelect";
 
-export class Rectangle extends BaseShape {
+export class Rectangle extends ShapeSelect {
   //最小拖动圆角。真实圆角可能为0，导致渲染的控制点和角重合，所以设置一个最小圆角
   minDragRadius = 15
   rectHoverType: MouseOptionType = MouseOptionType.None
@@ -90,8 +91,8 @@ export class Rectangle extends BaseShape {
   isInShape(mousePoint: P, cu: CanvasUtil2): boolean {
     return helper.isInBox(mousePoint, this.conf.box)
     // @ts-ignore
-    let r =  helper.isInPolygon(mousePoint, this.conf.lineShapes[0].points.map(v=>v.point!),this.conf.center)
-    console.log('r',r)
+    let r = helper.isInPolygon(mousePoint, this.conf.lineShapes[0].points.map(v => v.point!), this.conf.center)
+    console.log('r', r)
     return r
   }
 
@@ -185,7 +186,7 @@ export class Rectangle extends BaseShape {
   drawEdit(ctx: CanvasRenderingContext2D, layout: Rect): void {
     // this.log('drawEdit')
     let {
-      fillColor,lineShapes
+      fillColor, lineShapes
     } = this.conf
 
     ctx.save()

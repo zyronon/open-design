@@ -1,4 +1,4 @@
-import {BaseShape} from "../shapes/BaseShape"
+import {BaseShape} from "../shapes/core/BaseShape"
 import EventBus from "../event/eventBus"
 import {BaseEvent2, EditModeType, EventTypes, P, ShapeStatus, ShapeType} from "../types/type"
 import {cloneDeep} from "lodash"
@@ -267,7 +267,7 @@ export default class CanvasUtil2 {
         if (this.isDesignMode()) {
           //有hoverShape就单传，没有遍历所有组件
           if (this.hoverShape) {
-            if (this.hoverShape !== this.boxSelection){
+            if (this.hoverShape !== this.boxSelection) {
               this.hoverShape.event(event, this.hoverShapeParent, false, 'hover')
             }
           } else {
@@ -475,7 +475,7 @@ export default class CanvasUtil2 {
             this.boxSelection = new BoxSelection({
               conf: helper.getDefaultShapeConfig({
                 type: ShapeType.BOX_SELECTION,
-                name:'box',
+                name: 'box',
               } as any)
             })
           }
@@ -510,6 +510,7 @@ export default class CanvasUtil2 {
         this.newShape = undefined
       }
       if (this.mode === ShapeType.SELECT) {
+        // this.boxSelection = undefined
         this.render()
       }
       if (this.mode !== ShapeType.MOVE && this.mode !== ShapeType.EDIT) {

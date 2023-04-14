@@ -28,7 +28,7 @@ export default React.memo((props: any) => {
 
   return (
     // @ts-ignore
-    <div className={'base-picker'} style={style} ref={elRef}>
+    <div className={'core-picker'} style={style} ref={elRef}>
       <SketchPicker
         color={color || 'white'}
         onChange={onChange}

@@ -5,7 +5,7 @@ import {BaseRadio, BaseRadioGroup} from "../../../../components/BaseRadio"
 import {TextAlign} from "../../../canvas-old/type"
 import BaseButton from "../../../../components/BaseButton"
 import {BaseConfig} from "../../../../lib/designer/config/BaseConfig"
-import {BaseShape} from "../../../../lib/designer/shapes/BaseShape"
+import {BaseShape} from "../../../../lib/designer/shapes/core/BaseShape"
 import './index.scss'
 import {ShapeType} from "../../../../lib/designer/types/type"
 import BaseIcon from "../../../../components/BaseIcon"

@@ -1,4 +1,4 @@
-import {BaseShape} from "./BaseShape"
+import {BaseShape} from "./core/BaseShape"
 import CanvasUtil2 from "../engine/CanvasUtil2"
 import {BaseEvent2, LineShape, P, ShapeProps, ShapeStatus, ShapeType, StrokeAlign} from "../types/type"
 import {BaseConfig, Rect} from "../config/BaseConfig"

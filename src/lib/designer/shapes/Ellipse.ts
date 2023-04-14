@@ -1,4 +1,4 @@
-import { BaseShape } from "./BaseShape"
+import { BaseShape } from "./core/BaseShape"
 import { jiaodu2hudu } from "../../../utils"
 import { EllipseConfig } from "../config/EllipseConfig"
 import { BaseConfig, Rect } from "../config/BaseConfig"

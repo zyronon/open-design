@@ -1,4 +1,4 @@
-import {BaseShape} from "./BaseShape";
+import {BaseShape} from "./core/BaseShape";
 import {BaseEvent2, LineShape, MouseOptionType, P, ShapeStatus} from "../types/type";
 import draw from "../utils/draw";
 import CanvasUtil2 from "../engine/CanvasUtil2";

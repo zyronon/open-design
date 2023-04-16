@@ -96,19 +96,19 @@ export class Rectangle extends ParentShape {
     return r
   }
 
-  drawShape(ctx: CanvasRenderingContext2D, layout: Rect, parent?: BaseConfig) {
+  drawShape(ctx: CanvasRenderingContext2D, newLayout: Rect, parent?: BaseConfig) {
     if (this.status === ShapeStatus.Edit) return
     let {
       radius,
       fillColor, borderColor, lineWidth, strokeAlign
     } = this.conf
-    let {x, y, w, h} = layout
+    let {x, y, w, h} = newLayout
 
     ctx.lineWidth = lineWidth ?? defaultConfig.lineWidth
 
     //填充图形
     ctx.fillStyle = fillColor
-    let pathList = this.getShapePath(layout, this.conf.radius)
+    let pathList = this.getShapePath(newLayout, this.conf.radius)
     pathList.map(({close, path}) => {
       if (close) {
         ctx.fill(path)

@@ -1,5 +1,5 @@
 import {FontWeight, ShapeType, StrokeAlign} from "../types/type"
-import {FontFamily} from "../config/TextConfig"
+import {FontFamily, TextAlign} from "../config/TextConfig"
 
 export const fontFamilies = [
   {
@@ -50,261 +50,6 @@ export const Colors = {
   Transparent: 'transparent',
 }
 
-export const rects2 = [
-  {
-    "x": 1248,
-    "y": 50,
-    "rx": 1248,
-    "ry": 50,
-    "w": 280,
-    "h": 580,
-    "rotation": 0,
-    "lineWidth": 2,
-    "type": 102,
-    "color": "gray",
-    "radius": 40,
-    "children": [
-      {
-        "rx": -58,
-        "ry": 7,
-        "x": 1190,
-        "y": 57,
-        "w": 200,
-        "h": 400,
-        "rotation": 0,
-        "lineWidth": 2,
-        "type": 102,
-        "color": "gray",
-        "radius": 40,
-        "children": [
-          {
-            "rx": 20,
-            "ry": 10,
-            "x": 1210,
-            "y": 67,
-            "w": 100,
-            "h": 200,
-            "rotation": 0,
-            "lineWidth": 2,
-            "type": 102,
-            "color": "gray",
-            "radius": 40,
-            "children": [
-              {
-                "rx": 20,
-                "ry": 10,
-                "x": 1230,
-                "y": 77,
-                "w": 50,
-                "h": 100,
-                "rotation": 0,
-                "lineWidth": 2,
-                "type": 102,
-                "color": "gray",
-                "radius": 20,
-                "children": [],
-                "brokenTexts": [],
-                "borderColor": "rgb(216,216,216)",
-                "fillColor": "rgb(216,216,216)",
-                "fontSize": 0,
-                "texts": [],
-                "name": "孙矩形111111",
-                "leftX": 1230,
-                "rightX": 1280,
-                "topY": 77,
-                "bottomY": 177,
-                "id": "bb3b6d65-008b-431a-92f3-55f3d4f987b1",
-                "centerX": 1255,
-                "centerY": 127
-              }
-            ],
-            "brokenTexts": [],
-            "borderColor": "rgb(216,216,216)",
-            "fillColor": "rgb(216,216,216)",
-            "fontSize": 0,
-            "texts": [],
-            "name": "子组件111111111",
-            "leftX": 1210,
-            "rightX": 1310,
-            "topY": 67,
-            "bottomY": 267,
-            "id": "207d7573-5d38-46ec-b80f-ef73fdd25573",
-            "centerX": 1260,
-            "centerY": 167
-          },
-          {
-            "rx": 20,
-            "ry": 250,
-            "x": 1210,
-            "y": 307,
-            "w": 100,
-            "h": 200,
-            "rotation": 0,
-            "lineWidth": 2,
-            "type": 102,
-            "color": "gray",
-            "radius": 40,
-            "children": [
-              {
-                "rx": -40.80000000000001,
-                "ry": 95.39999999999998,
-                "x": 1169.2,
-                "y": 402.4,
-                "w": 183,
-                "h": 100,
-                "rotation": 10,
-                "lineWidth": 2,
-                "type": 102,
-                "color": "gray",
-                "radius": 20,
-                "children": [],
-                "brokenTexts": [],
-                "borderColor": "rgb(216,216,216)",
-                "fillColor": "rgb(216,216,216)",
-                "fontSize": 0,
-                "texts": [],
-                "name": "孙矩形222222222",
-                "leftX": 1169.2,
-                "rightX": 1352.2,
-                "topY": 402.4,
-                "bottomY": 502.4,
-                "id": "997d0f37-4f52-4bc4-a081-ac8a305722d0",
-                "centerX": 1260.7,
-                "centerY": 452.4
-              }
-            ],
-            "brokenTexts": [],
-            "borderColor": "rgb(216,216,216)",
-            "fillColor": "rgb(216,216,216)",
-            "fontSize": 0,
-            "texts": [],
-            "name": "子组件222222",
-            "leftX": 1210,
-            "rightX": 1310,
-            "topY": 307,
-            "bottomY": 507,
-            "id": "3c8bb38f-b1ec-43a0-b149-dcb169404773",
-            "centerX": 1260,
-            "centerY": 407
-          }
-        ],
-        "brokenTexts": [],
-        "borderColor": "rgb(216,216,216)",
-        "fillColor": "rgb(216,216,216)",
-        "fontSize": 0,
-        "texts": [],
-        "name": "父组件",
-        "leftX": 1190,
-        "rightX": 1390,
-        "topY": 57,
-        "bottomY": 457,
-        "id": "9c2ed082-7b4e-4798-8a2a-addaf01c3b95",
-        "centerX": 1290,
-        "centerY": 257
-      }
-    ],
-    "brokenTexts": [],
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "rgb(216,216,216)",
-    "fontSize": 16,
-    "fontWeight": 500,
-    "fontFamily": "SourceHanSansCN",
-    "texts": [],
-    "name": "容器",
-    "leftX": 1248,
-    "rightX": 1528,
-    "topY": 50,
-    "bottomY": 630,
-    "id": "cd973e70-08e8-471a-814d-61966b891d5a",
-    "centerX": 1388,
-    "centerY": 340
-  },
-  {
-    "x": 300,
-    "y": 100,
-    "rx": 338,
-    "ry": 104,
-    "w": 500,
-    "h": 500,
-    "rotation": 0,
-    "lineWidth": 2,
-    "type": 102,
-    "color": "gray",
-    "radius": 10,
-    "children": [
-      {
-        "rx": 34,
-        "ry": 43,
-        "x": 334,
-        "y": 143,
-        "w": 150,
-        "h": 170,
-        "rotation": 351,
-        "lineWidth": 2,
-        "type": 102,
-        "color": "gray",
-        "radius": 10,
-        "children": [
-          {
-            "rx": 22,
-            "ry": 35,
-            "x": 356,
-            "y": 178,
-            "w": 40,
-            "h": 56,
-            "rotation": 344,
-            "lineWidth": 2,
-            "type": 102,
-            "color": "gray",
-            "radius": 10,
-            "brokenTexts": [],
-            "borderColor": "rgb(216,216,216)",
-            "fillColor": "rgb(216,216,216)",
-            "fontSize": 0,
-            "texts": [],
-            "name": "子组件2----111111111",
-            "leftX": 356,
-            "rightX": 396,
-            "topY": 178,
-            "bottomY": 234,
-            "children": [],
-            "id": "7e7b6267-0c82-422b-9b62-1232483da749",
-            "centerX": 376,
-            "centerY": 206
-          }
-        ],
-        "brokenTexts": [],
-        "borderColor": "rgb(216,216,216)",
-        "fillColor": "rgb(216,216,216)",
-        "fontSize": 0,
-        "texts": [],
-        "name": "父组件1",
-        "leftX": 334,
-        "rightX": 484,
-        "topY": 143,
-        "bottomY": 313,
-        "id": "bfe543b4-2ffa-4f22-9b75-efa13b00b834",
-        "centerX": 409,
-        "centerY": 228
-      }
-    ],
-    "brokenTexts": [],
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "rgb(216,216,216)",
-    "fontSize": 16,
-    "fontWeight": 500,
-    "fontFamily": "SourceHanSansCN",
-    "texts": [],
-    "name": "容器2",
-    "leftX": 300,
-    "rightX": 800,
-    "topY": 100,
-    "bottomY": 600,
-    "id": "8e45d15c-28ca-452d-80f5-766f870c854a",
-    "centerX": 550,
-    "centerY": 350
-  }
-]
 export const r = [
   {
     "x": 0,
@@ -849,59 +594,6 @@ export const r = [
     }
   }
 ]
-const noId = [
-  {
-    "name": "容器",
-    "x": 800,
-    "y": 250,
-    "w": 700,
-    "h": 400,
-    "rotation": 0,
-    "lineWidth": 2,
-    "type": "FRAME",
-    "color": "gray",
-    "radius": 0,
-    "children": [],
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "white",
-    flipHorizontal: false
-  },
-]
-const children = [
-  {
-    "name": "矩形",
-    "x": 50,
-    "y": 70,
-    "w": 500,
-    "h": 250,
-    "rotation": 15,
-    "lineWidth": 2,
-    "type": "FRAME",
-    "color": "gray",
-    "radius": 0,
-    "brokenTexts": [],
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "rgb(252,230,230)",
-    "children": [
-      {
-        "name": "矩形2",
-        "x": 30,
-        "y": 50,
-        "w": 200,
-        "h": 150,
-        "rotation": 15,
-        "lineWidth": 2,
-        "type": "RECTANGLE",
-        "color": "gray",
-        "radius": 0,
-        "children": [],
-        "brokenTexts": [],
-        "borderColor": "rgb(216,216,216)",
-        "fillColor": "rgb(255,82,82)",
-      }
-    ],
-  }
-]
 const rule = [
   {
     "x": 0,
@@ -975,37 +667,116 @@ let temp = {
   flipHorizontal: false,
   flipVertical: false
 }
-const old = [
+export const rects = [
   {
-    "name": "容器1",
+    "name": "容器",
     layout: {
-      "x": 500,
+      "x": 1248,
       "y": 50,
-      "w": 350,
-      "h": 500,
+      "w": 280,
+      "h": 580,
     },
     "rotation": 0,
     "lineWidth": 2,
     "type": ShapeType.FRAME,
     "color": "gray",
-    "radius": 0,
+    "radius": 40,
     children: [
       {
-        "name": "子组件1",
+        "name": "父组件",
         layout: {
-          "x": 50,
-          "y": 50,
+          "x": -58,
+          "y": 7,
           "w": 200,
-          "h": 200,
+          "h": 400,
         },
         "rotation": 0,
         "lineWidth": 2,
-        "type": ShapeType.RECTANGLE,
+        "type": ShapeType.FRAME,
         "color": "gray",
-        "radius": 0,
-        children: [],
+        "radius": 40,
+        children: [
+          {
+            "name": "子组件111111111",
+            layout: {
+              "x": 20,
+              "y": 30,
+              "w": 100,
+              "h": 200,
+            },
+            "rotation": 0,
+            "lineWidth": 2,
+            "type": ShapeType.FRAME,
+            "color": "gray",
+            "radius": 0,
+            children: [
+              {
+                "name": "孙矩形111111",
+                layout: {
+                  "x": 20,
+                  "y": 30,
+                  "w": 50,
+                  "h": 100,
+                },
+                "rotation": 0,
+                "lineWidth": 2,
+                "type": ShapeType.RECTANGLE,
+                "color": "gray",
+                "radius": 0,
+                children: [],
+                "borderColor": "rgb(216,216,216)",
+                "fillColor": "red",
+                flipHorizontal: false,
+                flipVertical: false
+              }
+            ],
+            "borderColor": "rgb(216,216,216)",
+            "fillColor": "red",
+            flipHorizontal: false,
+            flipVertical: false
+          },
+          {
+            "name": "子组件222222",
+            layout: {
+              "x": 20,
+              "y": 250,
+              "w": 100,
+              "h": 200,
+            },
+            "rotation": 0,
+            "lineWidth": 2,
+            "type": ShapeType.FRAME,
+            "color": "gray",
+            "radius": 0,
+            children: [
+              {
+                "name": "孙矩形111111",
+                layout: {
+                  "x": 20,
+                  "y": 30,
+                  "w": 50,
+                  "h": 100,
+                },
+                "rotation": 0,
+                "lineWidth": 2,
+                "type": ShapeType.RECTANGLE,
+                "color": "gray",
+                "radius": 0,
+                children: [],
+                "borderColor": "rgb(216,216,216)",
+                "fillColor": "red",
+                flipHorizontal: false,
+                flipVertical: false
+              }
+            ],
+            "borderColor": "rgb(216,216,216)",
+            "fillColor": "red",
+            flipHorizontal: false,
+            flipVertical: false
+          }
+        ],
         "borderColor": "rgb(216,216,216)",
-        "fillColor": "rgb(197,95,95)",
+        "fillColor": "rgb(216,216,216)",
         flipHorizontal: false,
         flipVertical: false
       }
@@ -1013,224 +784,133 @@ const old = [
     "borderColor": "rgb(216,216,216)",
     "fillColor": "rgb(241,238,238)",
     flipHorizontal: false,
-    flipVertical: false,
-    clip: false
-  }
-]
-export const rects =[
+    flipVertical: false
+  },
   {
-    "name": "容器1",
-    "layout": {
-      "x": 664.453716027565,
-      "y": 177.90236154360394,
-      "w": 250.91106936107803,
-      "h": 248.93092379866138
+    "name": "星星",
+    layout: {
+      "x": 50,
+      "y": 50,
+      "w": 200,
+      "h": 200,
     },
-    "rotation": -8.08,
+    "rotation": 0,
     "lineWidth": 2,
-    "type": "RECTANGLE",
+    "type": ShapeType.STAR,
     "color": "gray",
     "radius": 0,
-    "lineShapes": [
-      {
-        "close": true,
-        "points": [
-          {
-            "type": "Single",
-            "point": {
-              "id": "bead2dbf-e43f-43ba-bf35-f56c64f9533f",
-              "cp1": {
-                "use": false,
-                "x": 0,
-                "y": 0,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "center": {
-                "use": true,
-                "x": -125.45553468053902,
-                "y": -122.61516567545644,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "cp2": {
-                "use": false,
-                "x": 0,
-                "y": 0,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "type": "RightAngle"
-            }
-          },
-          {
-            "type": "Single",
-            "point": {
-              "id": "697f96b2-9b47-4633-83cb-c8c95038a196",
-              "cp1": {
-                "use": false,
-                "x": 0,
-                "y": 0,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "center": {
-                "use": true,
-                "x": 122.75572131536683,
-                "y": -124.46546189933068,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "cp2": {
-                "use": false,
-                "x": 0,
-                "y": 0,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "type": "RightAngle"
-            }
-          },
-          {
-            "type": "Single",
-            "point": {
-              "id": "895e7984-62dd-460c-8834-f5da1d276983",
-              "cp1": {
-                "use": false,
-                "x": 0,
-                "y": 0,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "center": {
-                "use": true,
-                "x": 125.45553468053902,
-                "y": 122.61516567545647,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "cp2": {
-                "use": false,
-                "x": 0,
-                "y": 0,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "type": "RightAngle"
-            }
-          },
-          {
-            "type": "Single",
-            "point": {
-              "id": "c093a095-f4a7-4188-a751-9847ad970bdb",
-              "cp1": {
-                "use": false,
-                "x": 0,
-                "y": 0,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "center": {
-                "use": true,
-                "x": -122.75572131536683,
-                "y": 124.4654618993307,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "cp2": {
-                "use": false,
-                "x": 0,
-                "y": 0,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "type": "RightAngle"
-            }
-          }
-        ]
-      }
-    ],
-    "children": [],
     "borderColor": "rgb(216,216,216)",
     "fillColor": "rgb(241,238,238)",
-    "flipHorizontal": true,
-    "flipVertical": false,
-    "clip": false,
-    "percent": {
-      "x": 0,
-      "y": 0
+    flipHorizontal: false,
+    flipVertical: false
+  },
+  {
+    "name": "圆",
+    layout: {
+      "x": 300,
+      "y": 50,
+      "w": 200,
+      "h": 200,
     },
-    "relativeCenter": {
-      "x": 0,
-      "y": 0
+    "rotation": 0,
+    "lineWidth": 2,
+    "type": ShapeType.ELLIPSE,
+    "color": "gray",
+    "radius": 0,
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "rgb(241,238,238)",
+    flipHorizontal: false,
+    flipVertical: false
+  },
+  {
+    "name": "圆",
+    layout: {
+      "x": 300,
+      "y": 300,
+      "w": 200,
+      "h": 200,
     },
-    "realRotation": -8.08,
-    "start": {
-      "x": 500,
-      "y": 500
+    "rotation": 0,
+    "lineWidth": 2,
+    totalLength: 2.5,
+    startLength: 0,
+    "type": ShapeType.ELLIPSE,
+    "color": "gray",
+    "radius": 0,
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "rgb(241,238,238)",
+    flipHorizontal: false,
+    flipVertical: false
+  },
+  {
+    "name": "多边形",
+    layout: {
+      "x": 550,
+      "y": 50,
+      "w": 200,
+      "h": 200,
     },
-    "absolute": {
-      "x": 664.453716027565,
-      "y": 177.90236154360394
+    "rotation": 0,
+    "lineWidth": 2,
+    "type": ShapeType.POLYGON,
+    "color": "gray",
+    "radius": 0,
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "rgb(241,238,238)",
+    flipHorizontal: false,
+    flipVertical: false
+  },
+  {
+    "name": "图片",
+    layout: {
+      "x": 800,
+      "y": 50,
+      "w": 200,
+      "h": 200,
     },
-    "original": {
-      "x": 683.193463212984,
-      "y": 194.30024862863496
+    "rotation": 0,
+    "lineWidth": 2,
+    "type": ShapeType.IMAGE,
+    src: 'a.jpg',
+    "color": "gray",
+    "radius": 0,
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "rgb(241,238,238)",
+    flipHorizontal: false,
+    flipVertical: false
+  },
+  {
+    "name": "文字",
+    layout: {
+      "x": 50,
+      "y": 550,
+      "w": 300,
+      "h": 300,
     },
-    "center": {
-      "x": 557.737928532445,
-      "y": 318.76571052796567
-    },
-    "box": {
-      "leftX": 432.282393851906,
-      "rightX": 683.193463212984,
-      "topY": 194.30024862863496,
-      "bottomY": 443.23117242729637,
-      "topLeft": {
-        "x": 664.453716027565,
-        "y": 177.90236154360394
-      },
-      "topRight": {
-        "x": 416.0334957493145,
-        "y": 213.1693274582558
-      },
-      "bottomLeft": {
-        "x": 699.4423613155756,
-        "y": 424.36209359767554
-      },
-      "bottomRight": {
-        "x": 451.0221410373251,
-        "y": 459.6290595123274
-      }
-    },
-    "strokeAlign": "INSIDE",
-    "isCustom": true,
-    "id": "2fba43e4-7fd0-4818-9db5-5b4d10e21baa"
-  }
+    "rotation": 0,
+    "lineWidth": 2,
+    "type": ShapeType.TEXT,
+    "fontFamily": "SourceHanSansCN",
+    "textAlign": TextAlign.LEFT,
+    "textBaseline": 1,
+    "fontSize": 20,
+    "fontWeight": 500,
+    "letterSpacing": 0,
+    "textLineHeight": 20,
+    "textMode": 2,
+    "texts": [
+      "输入文本"
+    ],
+    "brokenTexts": [
+      "输入文本"
+    ],
+    "color": "gray",
+    "radius": 0,
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "rgb(241,238,238)",
+    flipHorizontal: false,
+    flipVertical: false
+  },
 ]
 
 const defaultCurrentMat = [

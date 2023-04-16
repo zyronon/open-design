@@ -1,14 +1,14 @@
 import {BaseShape} from "./core/BaseShape"
 import CanvasUtil2 from "../engine/CanvasUtil2"
-import {BaseEvent2, LineShape, P, ShapeProps, ShapeStatus, ShapeType, StrokeAlign} from "../types/type"
+import {BaseEvent2, LineShape, P, ShapeProps, ShapeStatus, StrokeAlign} from "../types/type"
 import {BaseConfig, Rect} from "../config/BaseConfig"
 import draw from "../utils/draw"
-import {getRotatedPoint, jiaodu2hudu} from "../../../utils"
-import {Colors, defaultConfig} from "../utils/constant"
+import {getRotatedPoint} from "../../../utils"
+import {defaultConfig} from "../utils/constant"
 import helper from "../utils/helper"
-import { Math2 } from "../utils/math"
+import {ParentShape} from "./core/ParentShape";
 
-export class Frame extends BaseShape {
+export class Frame extends ParentShape {
 
   constructor(props: ShapeProps) {
     super(props)

@@ -1,14 +1,15 @@
-import { BaseShape } from "./core/BaseShape"
-import { jiaodu2hudu } from "../../../utils"
-import { EllipseConfig } from "../config/EllipseConfig"
-import { BaseConfig, Rect } from "../config/BaseConfig"
+import {BaseShape} from "./core/BaseShape"
+import {jiaodu2hudu} from "../../../utils"
+import {EllipseConfig} from "../config/EllipseConfig"
+import {BaseConfig, Rect} from "../config/BaseConfig"
 import draw from "../utils/draw"
-import { BaseEvent2, BezierPoint, BezierPointType, getP2, LineShape, LineType, P, P2 } from "../types/type"
-import { Math2 } from "../utils/math"
+import {BaseEvent2, BezierPoint, BezierPointType, getP2, LineShape, LineType, P, P2} from "../types/type"
+import {Math2} from "../utils/math"
 import CanvasUtil2 from "../engine/CanvasUtil2"
-import { v4 as uuid } from "uuid"
-import { Bezier } from "../utils/bezier"
+import {v4 as uuid} from "uuid"
+import {Bezier} from "../utils/bezier"
 import helper from "../utils/helper"
+import {ParentShape} from "./core/ParentShape";
 
 /**
  * @desc 获取长度对应的 鼠标控制点
@@ -44,7 +45,7 @@ const getMouseControlPointByLength = (length: number, p: P) => {
   return { x: sx, y: sy }
 }
 
-export class Ellipse extends BaseShape {
+export class Ellipse extends ParentShape {
   hoverEndMouseControlPoint: boolean = false
   enterEndMouseControlPoint: boolean = false
 
@@ -103,13 +104,12 @@ export class Ellipse extends BaseShape {
     return helper.isInBox(mousePoint, mousePoint)
   }
 
-  drawShape(ctx: CanvasRenderingContext2D, p: P, parent?: BaseConfig) {
+  drawShape(ctx: CanvasRenderingContext2D, newLayout: Rect, parent?: BaseConfig | undefined): void {
     let {
-      w, h,
       fillColor, borderColor, rotation, flipVertical, flipHorizontal,
-      totalLength, startLength
+      totalLength = 4, startLength = 0
     } = this._config
-    const { x, y } = p
+    let {x, y, w, h} = newLayout
     let w2 = w / 2, h2 = h / 2
 
     ctx.save()

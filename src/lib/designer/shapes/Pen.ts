@@ -5,8 +5,9 @@
 // import helper from "../utils/helper"
 // import {Colors, defaultConfig} from "../utils/constant"
 // import draw from "../utils/draw"
+// import {ParentShape} from "./core/ParentShape";
 //
-// export class Pen extends BaseShape {
+// export class Pen extends ParentShape {
 //   mouseDown: boolean = false
 //
 //   get _config(): BaseConfig {

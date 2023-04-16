@@ -7,7 +7,7 @@ import BaseButton from "../../../../components/BaseButton"
 import {BaseConfig} from "../../../../lib/designer/config/BaseConfig"
 import {BaseShape} from "../../../../lib/designer/shapes/core/BaseShape"
 import './index.scss'
-import {ShapeType} from "../../../../lib/designer/types/type"
+import {ShapeType, TextMode} from "../../../../lib/designer/types/type"
 import BaseIcon from "../../../../components/BaseIcon"
 import {
   AlignTextLeft,
@@ -25,13 +25,12 @@ import RotateIcon from "../../../../assets/icon/RotateIcon"
 import FlipIcon from "../../../../assets/icon/FlipIcon"
 import BaseSlotButton from "../../../../components/BaseSlotButton"
 import {BaseOption, BaseSelect} from "../../../../components/BaseSelect2"
-import {fontFamilies, fontSize, fontWeight} from "../../../canvas20221111/constant"
-import {TextMode} from "../../../canvas20221111/type"
 import BasePicker from "../../../../components/BasePicker";
 import {useCreation, useMount} from "ahooks";
 import EventBus from "../../../../lib/designer/event/eventBus";
 import {EventKeys} from "../../../../lib/designer/event/eventKeys";
 import {clone, cloneDeep} from "lodash";
+import {fontFamilies, fontSize, fontWeight} from "../../../../lib/designer/utils/constant";
 
 enum ChangeColorType {
   Border = 'Border',

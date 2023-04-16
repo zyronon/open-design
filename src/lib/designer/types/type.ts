@@ -98,14 +98,6 @@ export interface ShapeProps {
   parent?: BaseShape,
 }
 
-export enum FontWeight {
-  LIGHT = 300,
-  REGULAR = 400,
-  Normal = 500,
-  MEDIUM = 600,
-  BOLD = 700,
-  HEAVY = 900,
-}
 
 export enum RectColorType {
   FillColor = 'fillColor',
@@ -278,4 +270,35 @@ export type CurrentOperationInfo = {
   pointIndex: number,
   cpIndex: number
   lineCenterPoint?: P,
+}
+
+export enum TextMode {
+  AUTO_W = 1,
+  AUTO_H = 2,
+  FIXED = 3,
+}
+
+export enum TextBaseline {
+  LEFT = 1,
+  RIGHT = 2,
+  CENTER = 3,
+}
+
+export enum TextAlign {
+  LEFT = 'left',
+  RIGHT = 'right',
+  CENTER = 'center',
+}
+
+export enum FontWeight {
+  LIGHT = 300,
+  REGULAR = 400,
+  Normal = 500,
+  MEDIUM = 600,
+  BOLD = 700,
+  HEAVY = 900,
+}
+export enum FontFamily {
+  SourceHanSerifCN = 'SourceHanSerifCN',
+  SourceHanSansCN = 'SourceHanSansCN',
 }

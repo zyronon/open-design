@@ -6,7 +6,7 @@ import {
   getBezierPointByLength,
   getDecimal,
   getPath,
-  renderRound
+  renderRound, solveCubic
 } from "../utils"
 import {
   BaseEvent2,
@@ -23,7 +23,6 @@ import {
 } from "../type"
 import CanvasUtil2 from "../CanvasUtil2"
 import {jiaodu2hudu} from "../../../utils"
-import {solveCubic} from "../../canvas20221111/utils"
 
 /**
  * @desc 获取长度对应的 鼠标控制点
@@ -74,6 +73,7 @@ export class Ellipse extends BaseShape {
   childDbClick(event: BaseEvent2, p: BaseShape[]): boolean {
     return false
   }
+
   childMouseDown() {
     if (this.hoverEndMouseControlPoint) {
       this.enterEndMouseControlPoint = true
@@ -125,7 +125,7 @@ export class Ellipse extends BaseShape {
       let t: any[] = solveCubic(A, B, C, D)
       t = t.filter(v => 0 <= v && v <= 1.01)
       console.log('t', t)
-      if (t.length){
+      if (t.length) {
         // @ts-ignore
         this.config.totalLength = 3 + t[0] ?? 0.5
         cu.render()
@@ -545,8 +545,12 @@ export class Ellipse extends BaseShape {
 
     ctx.restore()
   }
-  renderHover(ctx: CanvasRenderingContext2D,xy: P, parent?: ShapeConfig): void {}
-  renderSelected(ctx: CanvasRenderingContext2D,xy: P, parent?: ShapeConfig): void {}
+
+  renderHover(ctx: CanvasRenderingContext2D, xy: P, parent?: ShapeConfig): void {
+  }
+
+  renderSelected(ctx: CanvasRenderingContext2D, xy: P, parent?: ShapeConfig): void {
+  }
 
   renderSelectedHover(ctx: CanvasRenderingContext2D, conf: EllipseConfig): void {
     let {

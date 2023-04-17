@@ -669,6 +669,38 @@ let temp = {
 }
 export const rects = [
   {
+    "name": "文字",
+    layout: {
+      "x": 50,
+      "y": 50,
+      "w": 300,
+      "h": 300,
+    },
+    "rotation": 0,
+    "lineWidth": 2,
+    "type": ShapeType.TEXT,
+    "fontFamily": "SourceHanSansCN",
+    "textAlign": TextAlign.LEFT,
+    "textBaseline": 1,
+    "fontSize": 20,
+    "fontWeight": 500,
+    "letterSpacing": 0,
+    "textLineHeight": 20,
+    "textMode": 2,
+    "texts": [
+      "输入文本"
+    ],
+    "brokenTexts": [
+      "输入文本"
+    ],
+    "color": "gray",
+    "radius": 0,
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "rgb(241,238,238)",
+    flipHorizontal: false,
+    flipVertical: false
+  },
+  {
     "name": "容器",
     layout: {
       "x": 1248,
@@ -872,38 +904,6 @@ export const rects = [
     "lineWidth": 2,
     "type": ShapeType.IMAGE,
     src: 'a.jpg',
-    "color": "gray",
-    "radius": 0,
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "rgb(241,238,238)",
-    flipHorizontal: false,
-    flipVertical: false
-  },
-  {
-    "name": "文字",
-    layout: {
-      "x": 50,
-      "y": 550,
-      "w": 300,
-      "h": 300,
-    },
-    "rotation": 0,
-    "lineWidth": 2,
-    "type": ShapeType.TEXT,
-    "fontFamily": "SourceHanSansCN",
-    "textAlign": TextAlign.LEFT,
-    "textBaseline": 1,
-    "fontSize": 20,
-    "fontWeight": 500,
-    "letterSpacing": 0,
-    "textLineHeight": 20,
-    "textMode": 2,
-    "texts": [
-      "输入文本"
-    ],
-    "brokenTexts": [
-      "输入文本"
-    ],
     "color": "gray",
     "radius": 0,
     "borderColor": "rgb(216,216,216)",

@@ -142,7 +142,7 @@ export class BaseShape {
 
   //子类判断是否在图形上
   isInShape(mousePoint: P, cu: CanvasUtil2): boolean {
-    return false
+    return helper.isInBox(mousePoint, this.conf.box)
   }
 
   //当select时，判断是否在图形上

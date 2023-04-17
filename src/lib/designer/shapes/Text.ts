@@ -1,6 +1,8 @@
 import {TextAlign, TextConfig} from "../config/TextConfig"
 import {BaseConfig, Rect} from "../config/BaseConfig"
 import {ParentShape} from "./core/ParentShape";
+import draw from "../utils/draw"
+import {Colors} from "../utils/constant"
 
 export class Text extends ParentShape {
 
@@ -41,6 +43,17 @@ export class Text extends ParentShape {
       }
       text && ctx.fillText(text, lX, y + (index * textLineHeight))
     })
+  }
+
+  drawHover(ctx: CanvasRenderingContext2D, newLayout: Rect) {
+    let {x, y, w, h,} = newLayout
+    ctx.rect(x, y, w, h)
+    ctx.strokeStyle = Colors.Primary
+    ctx.stroke()
+  }
+
+  drawSelected(ctx: CanvasRenderingContext2D, newLayout: Rect) {
+    draw.selected(ctx, newLayout)
   }
 
 }

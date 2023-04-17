@@ -99,7 +99,7 @@ class Design extends React.Component<any, IState> {
     //   } as any))
     // }
     // c.addChildren(r)
-    c.addChildren(rects)
+    c.addChildren(rects.slice(0, 1))
     c.render()
     this.setState({cu: c})
   }

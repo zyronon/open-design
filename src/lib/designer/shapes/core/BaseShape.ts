@@ -422,7 +422,11 @@ export class BaseShape {
     let {x, y} = draw.calcPosition(ctx, this.conf)
     let newLayout = {...this.conf.layout, x, y}
     // let newLayout = {...this.conf.layout, }
-    this.drawShape(ctx, newLayout, parent,)
+    if (this.status === ShapeStatus.Edit) {
+      this.drawEdit(ctx, newLayout)
+    } else {
+      this.drawShape(ctx, newLayout, parent,)
+    }
     // ctx.globalCompositeOperation = 'source-atop'
     //恢复本次图形渲染前的矩阵变换。
     //可以用ctx.restore() 来恢复，但那样会导致clip方法裁剪的区域也被恢复（即仅作用于本组件）。
@@ -465,9 +469,6 @@ export class BaseShape {
       if (this.isSelectHover) {
         this.drawSelectedHover(ctx, newLayout)
       }
-    }
-    if (this.status === ShapeStatus.Edit) {
-      this.drawEdit(ctx, newLayout)
     }
     ctx.restore()
   }

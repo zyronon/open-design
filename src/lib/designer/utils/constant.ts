@@ -671,7 +671,7 @@ export const rects = [
   {
     "name": "文字",
     layout: {
-      "x": 50,
+      "x": 1050,
       "y": 50,
       "w": 300,
       "h": 300,

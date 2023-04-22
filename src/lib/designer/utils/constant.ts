@@ -1,4 +1,4 @@
-import {FontWeight, ShapeType, StrokeAlign} from "../types/type"
+import {FontWeight, ShapeType, StrokeAlign, TextMode} from "../types/type"
 import {FontFamily, TextAlign} from "../config/TextConfig"
 
 export const fontFamilies = [
@@ -673,8 +673,8 @@ export const rects = [
     layout: {
       "x": 1050,
       "y": 50,
-      "w": 300,
-      "h": 300,
+      "w": 100,
+      "h": 50,
     },
     "rotation": 0,
     "lineWidth": 2,
@@ -686,7 +686,7 @@ export const rects = [
     "fontWeight": 500,
     "letterSpacing": 0,
     "textLineHeight": 20,
-    "textMode": 2,
+    "textMode": TextMode.AUTO_H,
     "texts": [
       "输入文本"
     ],

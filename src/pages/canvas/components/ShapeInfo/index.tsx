@@ -241,58 +241,6 @@ const ShapeInfo = (props: any) => {
               </div>
             </div>
         }
-        <div className="base-info">
-          <div className="header">填充</div>
-          <div className="row grid1">
-            <div className="col">
-              <BaseSlotButton value={conf?.x?.toFixed(0)}
-                              prefix={
-                                <div className={'color-block'}
-                                     style={{background: conf?.fillColor}}
-                                     onClick={setFillColor}
-                                />
-                              }
-                // suffix={<PreviewOpen fill="#929596"/>}
-                              suffix={<PreviewClose fill="#929596"/>}
-              >
-                <div className={'test'}>
-                  <input type="text" value={conf?.fillColor} onChange={inputOnChange}/>
-                  <input type="text"/>
-                </div>
-              </BaseSlotButton>
-            </div>
-            <div className="col">
-              <BaseIcon active={false}>
-                <Unlock theme="outline" size="16" fill="#929596"/>
-              </BaseIcon>
-            </div>
-          </div>
-        </div>
-        <div className="base-info">
-          <div className="header">描边</div>
-          <div className="row grid1">
-            <div className="col">
-              <BaseSlotButton value={conf?.x?.toFixed(0)}
-                              prefix={
-                                <div className={'color-block'}
-                                     style={{background: conf?.borderColor}}
-                                     onClick={setBorderColor}/>}
-                // suffix={<PreviewOpen fill="#929596"/>}
-                              suffix={<PreviewClose fill="#929596"/>}
-              >
-                <div className={'test'}>
-                  <input type="text" value={conf?.borderColor} onChange={inputOnChange}/>
-                  <input type="text"/>
-                </div>
-              </BaseSlotButton>
-            </div>
-            <div className="col">
-              <BaseIcon active={false}>
-                <Unlock theme="outline" size="16" fill="#929596"/>
-              </BaseIcon>
-            </div>
-          </div>
-        </div>
         {
           conf.type === ShapeType.TEXT &&
           <div className="base-info">
@@ -376,6 +324,58 @@ const ShapeInfo = (props: any) => {
         }
         <div className="base-info" style={{lineBreak: 'anywhere'}}>
           <div dangerouslySetInnerHTML={{__html: shape.current!.getStatus()}}>
+          </div>
+        </div>
+        <div className="base-info">
+          <div className="header">填充</div>
+          <div className="row grid1">
+            <div className="col">
+              <BaseSlotButton value={conf?.x?.toFixed(0)}
+                              prefix={
+                                <div className={'color-block'}
+                                     style={{background: conf?.fillColor}}
+                                     onClick={setFillColor}
+                                />
+                              }
+                // suffix={<PreviewOpen fill="#929596"/>}
+                              suffix={<PreviewClose fill="#929596"/>}
+              >
+                <div className={'test'}>
+                  <input type="text" value={conf?.fillColor} onChange={inputOnChange}/>
+                  <input type="text"/>
+                </div>
+              </BaseSlotButton>
+            </div>
+            <div className="col">
+              <BaseIcon active={false}>
+                <Unlock theme="outline" size="16" fill="#929596"/>
+              </BaseIcon>
+            </div>
+          </div>
+        </div>
+        <div className="base-info">
+          <div className="header">描边</div>
+          <div className="row grid1">
+            <div className="col">
+              <BaseSlotButton value={conf?.x?.toFixed(0)}
+                              prefix={
+                                <div className={'color-block'}
+                                     style={{background: conf?.borderColor}}
+                                     onClick={setBorderColor}/>}
+                // suffix={<PreviewOpen fill="#929596"/>}
+                              suffix={<PreviewClose fill="#929596"/>}
+              >
+                <div className={'test'}>
+                  <input type="text" value={conf?.borderColor} onChange={inputOnChange}/>
+                  <input type="text"/>
+                </div>
+              </BaseSlotButton>
+            </div>
+            <div className="col">
+              <BaseIcon active={false}>
+                <Unlock theme="outline" size="16" fill="#929596"/>
+              </BaseIcon>
+            </div>
           </div>
         </div>
         {

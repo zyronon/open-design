@@ -93,9 +93,9 @@ export interface Rect extends RectText, RectImg {
 }
 
 export enum TextMode {
-  AUTO_W = 1,
-  AUTO_H = 2,
-  FIXED = 3,
+  AUTO_W = 1,//宽度不固定，随一行文字的长度增长。高度换行自动调整高度
+  AUTO_H = 2,//宽度固定，高度随总行数自动调整
+  FIXED = 3,//固定宽高
 }
 
 export enum TextBaseline {

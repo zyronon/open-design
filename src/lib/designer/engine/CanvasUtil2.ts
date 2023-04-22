@@ -591,3 +591,13 @@ export default class CanvasUtil2 {
     this.mode = mode
   }
 }
+
+export class CU extends CanvasUtil2 {
+  static r() {
+    this.getInstance().render()
+  }
+
+  static i() {
+    return this.getInstance()
+  }
+}

@@ -686,7 +686,7 @@ export const rects = [
     "fontWeight": 500,
     "letterSpacing": 0,
     "textLineHeight": 20,
-    "textMode": TextMode.AUTO_W,
+    "textMode": TextMode.AUTO_H,
     "texts": [
       "输入文本"
     ],

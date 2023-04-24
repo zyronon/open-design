@@ -8,6 +8,7 @@ import {BaseShape} from "./core/BaseShape";
 import {Cancer} from "@icon-park/react";
 import CanvasUtil2, {CU} from "../engine/CanvasUtil2";
 import {TextMode} from "../../../pages/canvas-old/type";
+import helper from "../utils/helper"
 
 export class Text extends ParentShape {
 
@@ -45,7 +46,7 @@ export class Text extends ParentShape {
 
   calcText(texts: string[]) {
     console.log('text', texts)
-    let {textMode, textLineHeight,fontWeight,fontSize,fontFamily} = this.conf
+    let {textMode, textLineHeight, fontWeight, fontSize, fontFamily} = this.conf
     let {x, y, w, h,} = this.conf.layout
     let ctx = CU.i().ctx
     this.conf.brokenTexts = texts
@@ -56,12 +57,22 @@ export class Text extends ParentShape {
         let measureText = ctx.measureText(text)
         return measureText.width
       })
-      this.conf.layout.w = Math.max(...widths)
-      this.conf.layout.h = this.conf.brokenTexts.length * textLineHeight
+      let {w: ow, h: oh} = this.original.layout
+      let maxW = Math.max(...widths)
+      let newH = this.conf.brokenTexts.length * textLineHeight
+      //老中心点加上w\h的增量除2，就是新中心
+      this.conf.center.x = this.original.center.x + (maxW - ow) / 2
+      this.conf.center.y = this.original.center.y + (newH - oh) / 2
+      this.conf.layout.w = maxW
+      this.conf.layout.h = newH
       this.conf.brokenTexts = texts
+      this.conf = helper.calcConf(this.conf, this.parent?.conf)
     }
     if (textMode === TextMode.AUTO_H) {
       this.conf.brokenTexts = this.getTextModeAutoHTexts(texts, ctx, w)
+      let {h: oh} = this.original.layout
+      let newH = this.conf.brokenTexts.length * textLineHeight
+      this.conf.center.y = this.original.center.y + (newH - oh) / 2
       this.conf.layout.h = this.conf.brokenTexts.length * textLineHeight
     }
     this.notifyConfUpdate()

@@ -45,18 +45,19 @@ export class Text extends ParentShape {
 
   calcText(texts: string[]) {
     console.log('text', texts)
-    let {textMode, textLineHeight} = this.conf
+    let {textMode, textLineHeight,fontWeight,fontSize,fontFamily} = this.conf
     let {x, y, w, h,} = this.conf.layout
     let ctx = CU.i().ctx
     this.conf.brokenTexts = texts
     this.conf.texts = texts
+    ctx.font = `${fontWeight} ${fontSize}rem "${fontFamily}", sans-serif`;
     if (textMode === TextMode.AUTO_W) {
       let widths = texts.map((text: string) => {
         let measureText = ctx.measureText(text)
         return measureText.width
       })
       this.conf.layout.w = Math.max(...widths)
-      this.conf.layout.h = texts.length * textLineHeight
+      this.conf.layout.h = this.conf.brokenTexts.length * textLineHeight
       this.conf.brokenTexts = texts
     }
     if (textMode === TextMode.AUTO_H) {

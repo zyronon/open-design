@@ -44,7 +44,6 @@ const out = new Float32Array([
   0, 0, 0, 0,
 ]);
 
-
 class Canvas extends React.Component<any, IState> {
   canvasRef: RefObject<HTMLCanvasElement> = React.createRef()
   // @ts-ignore
@@ -66,7 +65,6 @@ class Canvas extends React.Component<any, IState> {
     rectColor: null,
     rectColorType: null,
   } as IState
-
 
   componentDidMount() {
     // console.log('componentDidMount', this.state.fpsTimer)

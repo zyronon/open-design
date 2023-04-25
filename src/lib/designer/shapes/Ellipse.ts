@@ -11,7 +11,7 @@ import {
   LineShape,
   P,
   PointInfo,
-  PointType,
+  PointType, ShapeProps,
   ShapeStatus,
   StrokeAlign
 } from "../types/type"
@@ -62,6 +62,11 @@ export class Ellipse extends ParentShape {
   hoverEndMouseControlPoint: boolean = false
   enterEndMouseControlPoint: boolean = false
   cpMap = new Map()
+
+  constructor(props: ShapeProps) {
+    super(props)
+    this.init()
+  }
 
   init() {
     let {layout,} = this._config
@@ -640,21 +645,19 @@ export class Ellipse extends ParentShape {
     //圆内径
     let ratioPoint = {x: 0, y: 0}
 
-    // startPoint = getMouseControlPointByLength(startLength, this._config.startPoint)
-    // endPoint = getMouseControlPointByLength(startLength + totalLength, this._config.endPoint)
-    // startPoint = getMouseControlPointByLength(startLength, startPoint)
-    // endPoint = getMouseControlPointByLength(startLength + totalLength, endPoint)
-    // startPoint = helper.getStraightLineCenterPoint(ratioPoint, startPoint)
-    endPoint = helper.getStraightLineCenterPoint(ratioPoint, endPoint)
+    startPoint = helper.getStraightLineCenterPoint(ratioPoint, this._config.startPoint)
+    endPoint = helper.getStraightLineCenterPoint(ratioPoint, this._config.endPoint)
     // console.log('startPoint', startPoint)
     // console.log('endPoint', endPoint)
     // ratioPoint = {x: 0, y: 0,}
-    if (totalLength){
-
+    if (totalLength !== 4) {
+      draw.drawRound(ctx, ratioPoint, r2,)
+      draw.drawRound(ctx, startPoint, r2,)
+      draw.drawRound(ctx, endPoint, r2,)
+    } else {
+      endPoint = getMouseControlPointByLength(0, this._config.endPoint)
+      draw.drawRound(ctx, endPoint, r2,)
     }
-    // draw.drawRound(ctx, startPoint, r2)
-    draw.drawRound(ctx, ratioPoint, r2,)
-    draw.drawRound(ctx, endPoint, r2,)
     this._config.startMouseControlPoint = startPoint
     this._config.endMouseControlPoint = endPoint
     ctx.restore()

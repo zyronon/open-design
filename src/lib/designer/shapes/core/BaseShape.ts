@@ -60,7 +60,6 @@ export class BaseShape {
     this.children = this.conf.children?.map((conf: BaseConfig) => {
       return getShapeFromConfig({conf, parent: this})
     }) ?? []
-    this.init()
   }
 
   get status() {

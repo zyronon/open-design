@@ -669,6 +669,25 @@ let temp = {
 }
 export const rects = [
   {
+    "name": "圆",
+    layout: {
+      "x": 300,
+      "y": 50,
+      "w": 300,
+      "h": 200,
+    },
+    "rotation": 0,
+    "lineWidth": 2,
+    "type": ShapeType.ELLIPSE,
+    "color": "gray",
+    "radius": 0,
+    "borderColor": Colors.Border,
+    "fillColor": "rgb(241,238,238)",
+    strokeAlign:StrokeAlign.OUTSIDE,
+    flipHorizontal: false,
+    flipVertical: false
+  },
+  {
     "name": "文字",
     layout: {
       "x": 1050,
@@ -829,24 +848,6 @@ export const rects = [
     "rotation": 0,
     "lineWidth": 2,
     "type": ShapeType.STAR,
-    "color": "gray",
-    "radius": 0,
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "rgb(241,238,238)",
-    flipHorizontal: false,
-    flipVertical: false
-  },
-  {
-    "name": "圆",
-    layout: {
-      "x": 300,
-      "y": 50,
-      "w": 200,
-      "h": 200,
-    },
-    "rotation": 0,
-    "lineWidth": 2,
-    "type": ShapeType.ELLIPSE,
     "color": "gray",
     "radius": 0,
     "borderColor": "rgb(216,216,216)",

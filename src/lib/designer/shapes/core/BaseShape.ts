@@ -83,7 +83,7 @@ export class BaseShape {
         cu.setSelectShape(this, [])
       }
       if (val === ShapeStatus.Edit) {
-        if (!this.conf.isCustom) {
+        if (!this.conf.lineShapes.length) {
           this.conf.lineShapes = this.getCustomPoint()
         }
         cu.editShape = this

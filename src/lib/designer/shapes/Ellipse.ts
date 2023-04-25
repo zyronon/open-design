@@ -734,7 +734,6 @@ export class Ellipse extends ParentShape {
     if (this.enterEndMouseControlPoint) {
       const {x, y, w, h} = this.conf.layout
       let w2 = w / 2, h2 = h / 2
-      let ox = 0.5522848 * w2, oy = .5522848 * h2;
       let bs: any = this.getLineCps(3)
 
       let a, b, c, d = 0
@@ -770,9 +769,8 @@ export class Ellipse extends ParentShape {
       t = t.filter(v => 0 <= v && v <= 1.01)
       console.log('t', t)
       if (t.length) {
-        // @ts-ignore
-        this.conf.totalLength = 3 + t[0] ?? 0.5
-        this._conf.isComplete = false
+        this._conf.totalLength = 3 + t[0] ?? 0.5
+        this._conf.isComplete = true
         this.conf.lineShapes = this.getCustomPoint()
         cu.render()
       }

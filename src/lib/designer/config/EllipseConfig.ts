@@ -17,4 +17,5 @@ export interface EllipseConfig extends BaseConfig {
   /** @desc 所有控制点，总的12个*/
   cps: P[]
   getCps: Function
+  isComplete: boolean
 }

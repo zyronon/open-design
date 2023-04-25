@@ -318,7 +318,6 @@ export default {
     // console.log('initConf', conf)
     return conf
   },
-
   calcConfByParent(conf: BaseConfig, pConf?: BaseConfig): BaseConfig {
     let {
       layout: {x, y, w, h},

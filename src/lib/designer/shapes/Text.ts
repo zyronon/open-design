@@ -70,6 +70,7 @@ export class Text extends ParentShape {
     }
     if (textMode === TextMode.AUTO_H) {
       this.conf.brokenTexts = this.getTextModeAutoHTexts(texts, ctx, w)
+      console.log('brokenTexts', this.conf.brokenTexts)
       let {h: oh} = this.original.layout
       let newH = this.conf.brokenTexts.length * textLineHeight
       this.conf.center.y = this.original.center.y + (newH - oh) / 2
@@ -83,7 +84,10 @@ export class Text extends ParentShape {
     let newTexts: string[] = []
     for (let i = 0; i < texts.length; i++) {
       let text = texts[i]
-      if (!text) continue
+      if (!text) {
+        newTexts.push(text)
+        continue
+      }
       let measureText = ctx.measureText(text)
       if (measureText.width <= w) {
         newTexts.push(text)
@@ -113,24 +117,9 @@ export class Text extends ParentShape {
       textLineHeight
     } = this._config
     let {x, y, w, h} = newLayout
-    // ctx.fillStyle = 'white'
-    ctx.font = `${fontWeight} ${fontSize}rem "${fontFamily}", sans-serif`
-    ctx.textBaseline = 'top'
-    // ctx.textAlign = rect.textAlign
 
-    // console.log('render', rect.texts)
-    brokenTexts?.map((text, index) => {
-      let lX = x
-      if (textAlign === TextAlign.CENTER) {
-        let m = ctx.measureText(text)
-        lX = x + w / 2 - m.width / 2
-      }
-      if (textAlign === TextAlign.RIGHT) {
-        let m = ctx.measureText(text)
-        lX = x + w - m.width
-      }
-      text && ctx.fillText(text, lX, y + (index * textLineHeight))
-    })
+    this.drawText(ctx, newLayout)
+
   }
 
   drawText(ctx: CanvasRenderingContext2D, newLayout: Rect) {
@@ -160,7 +149,11 @@ export class Text extends ParentShape {
         let m = ctx.measureText(text)
         lX = x + w - m.width
       }
-      text && ctx.fillText(text, lX, y + (index * textLineHeight))
+      if (textAlign === TextAlign.LEFT) {
+        let m = ctx.measureText(text)
+        lX = x + w - m.width
+      }
+      text && ctx.fillText(text, lX, y + 10 + (index * textLineHeight))
     })
   }
 

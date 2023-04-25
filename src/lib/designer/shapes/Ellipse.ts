@@ -509,7 +509,7 @@ export class Ellipse extends ParentShape {
     draw.selected(ctx, newLayout)
   }
 
-  drawSelectedHover(ctx: CanvasRenderingContext2D, conf: EllipseConfig): void {
+  drawSelectedHover(ctx: CanvasRenderingContext2D, newLayout: Rect) {
     let {
       layout,
       radius,
@@ -517,25 +517,28 @@ export class Ellipse extends ParentShape {
       type, flipVertical, flipHorizontal, children,
       totalLength = 4,
       startLength = 0
-    } = conf
+    } = this._config
     let {x, y, w, h} = layout
+    let w2 = w / 2, h2 = h / 2
     ctx.strokeStyle = 'rgb(139,80,255)'
     ctx.save()
 
     let r2 = 4
     //圆终点
-    let endPoint = {x: 0, y: 0}
+    let endPoint = {x: w2, y: 0}
     //圆起点
-    let startPoint = {x: 0, y: 0}
+    let startPoint = {x: w2, y: 0}
     //圆内径
     let ratioPoint = {x: 0, y: 0}
 
-    let w2 = w / 2, h2 = h / 2
+    // startPoint = getMouseControlPointByLength(startLength, this._config.startPoint)
+    // endPoint = getMouseControlPointByLength(startLength + totalLength, this._config.endPoint)
+    startPoint = getMouseControlPointByLength(startLength, startPoint)
+    endPoint = getMouseControlPointByLength(startLength + totalLength, endPoint)
 
-    startPoint = getMouseControlPointByLength(startLength, this._config.startPoint)
-    endPoint = getMouseControlPointByLength(startLength + totalLength, this._config.endPoint)
-
-    ratioPoint = {x: 0, y: 0,}
+    console.log('startPoint',startPoint)
+    console.log('endPoint',endPoint)
+    // ratioPoint = {x: 0, y: 0,}
     draw.drawRound(ctx, startPoint, r2)
     draw.drawRound(ctx, ratioPoint, r2,)
     draw.drawRound(ctx, endPoint, r2,)
@@ -1016,7 +1019,7 @@ export class Ellipse extends ParentShape {
   }
 
   getShapePath(layout: Rect, r: number): LinePath[] {
-    if (this.conf.lineShapes.length) {
+    if (this.conf.isCustom) {
       return super.getCustomShapePath()
     }
     let {x, y, w, h} = layout

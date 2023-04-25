@@ -1,19 +1,19 @@
 import {BaseShape} from "./core/BaseShape"
-import {jiaodu2hudu} from "../../../utils"
 import {EllipseConfig} from "../config/EllipseConfig"
 import {BaseConfig, Rect} from "../config/BaseConfig"
 import draw from "../utils/draw"
 import {
   BaseEvent2,
-  BezierPoint,
-  BezierPointType, EditType,
-  getP2, LinePath,
+  BezierPointType,
+  EditType,
+  getP2,
+  LinePath,
   LineShape,
-  LineType,
   P,
-  P2,
   PointInfo,
-  PointType, ShapeStatus, StrokeAlign
+  PointType,
+  ShapeStatus,
+  StrokeAlign
 } from "../types/type"
 import {Math2} from "../utils/math"
 import CanvasUtil2 from "../engine/CanvasUtil2"
@@ -22,6 +22,7 @@ import {Bezier} from "../utils/bezier"
 import helper from "../utils/helper"
 import {ParentShape} from "./core/ParentShape";
 import {Colors, defaultConfig} from "../utils/constant"
+import {cloneDeep} from "lodash"
 
 /**
  * @desc 获取长度对应的 鼠标控制点
@@ -60,6 +61,73 @@ const getMouseControlPointByLength = (length: number, p: P) => {
 export class Ellipse extends ParentShape {
   hoverEndMouseControlPoint: boolean = false
   enterEndMouseControlPoint: boolean = false
+  cpMap = new Map()
+
+  init() {
+    let {layout,} = this._config
+    let {x, y, w, h} = layout
+    let w2 = w / 2, h2 = h / 2
+    let ox = 0.5522848 * w2, oy = 0.5522848 * h2
+
+    //图形为整圆时的，4个线段中间点，以及相邻两个控制点。
+    let right = {
+      x: w2,
+      y: 0
+    }
+    let cp1 = {
+      x: right.x,
+      y: right.y + oy
+    }
+    let bottom = {
+      x: 0,
+      y: h2
+    }
+    let cp2 = {
+      x: bottom.x + ox,
+      y: bottom.y
+    }
+    let cp3 = {
+      x: bottom.x - ox,
+      y: bottom.y
+    }
+    let left = {
+      x: -w2,
+      y: 0
+    }
+    let cp4 = {
+      x: left.x,
+      y: left.y + oy
+    }
+    let cp5 = {
+      x: left.x,
+      y: left.y - oy
+    }
+    let top = {
+      x: 0,
+      y: -h2
+    }
+    let cp6 = {
+      x: top.x - ox,
+      y: top.y
+    }
+    let cp7 = {
+      x: top.x + ox,
+      y: top.y
+    }
+    let cp8 = {
+      x: right.x,
+      y: right.y - oy
+    }
+    this.cpMap.set('line1', [cp1, cp2])
+    this.cpMap.set('line2', [cp3, cp4])
+    this.cpMap.set('line3', [cp5, cp6])
+    this.cpMap.set('line4', [cp7, cp8])
+    this.cpMap.set('right', right)
+    this.cpMap.set('bottom', bottom)
+    this.cpMap.set('left', left)
+    this.cpMap.set('top', top)
+    this.getStartAndEndPoint()
+  }
 
   get _config(): EllipseConfig {
     return this.conf as EllipseConfig
@@ -69,22 +137,63 @@ export class Ellipse extends ParentShape {
     this.conf = val
   }
 
-  isInOnSelect(mousePoint: P, cu: CanvasUtil2): boolean {
+  //获取起点和终点
+  getStartAndEndPoint() {
     let {
-      x, y, w, h
+      layout,
+      totalLength = 4,
+      startLength = 0,
     } = this._config
-    //绝对点
-    let absoluteEndMouseControlPoint = {
-      x: this._config.endMouseControlPoint.x + x + w / 2,
-      y: this._config.endMouseControlPoint.y + y + h / 2,
+
+    if (startLength === 0) {
+      this._config.startPoint = this.cpMap.get('right')
+    } else {
+      let lineIndex = Math.trunc(startLength)
+      let lineCps = this.getLineCps(lineIndex)
+      this._config.startPoint = Bezier.getPointByT_3(Math.decimal(startLength), lineCps)
     }
-    if (helper.isInPoint(mousePoint, absoluteEndMouseControlPoint, 4)) {
-      document.body.style.cursor = "pointer"
-      this.hoverEndMouseControlPoint = true
-      return true
+
+    if (totalLength === 4) {
+      this._config.endPoint = cloneDeep(this._config.startPoint)
+    } else {
+      let lineIndex = Math.trunc(totalLength)
+      let lineCps = this.getLineCps(lineIndex)
+      this._config.endPoint = Bezier.getPointByT_3(Math.decimal(totalLength), lineCps)
     }
-    this.hoverEndMouseControlPoint = false
-    return false
+  }
+
+  //获取圆上的4条线段中某一条的控制点
+  getLineCps(lineIndex: number): [p1: P, p2: P, p3: P, p4: P] {
+    switch (lineIndex) {
+      //特殊情况，当startLength不为0时，startLength + totalLength 可能会等于4
+      //等于4，直接用第一段就行
+      case 4:
+      case 0:
+        return [
+          this.cpMap.get('right'),
+          this.cpMap.get('line1')[0],
+          this.cpMap.get('line1')[1],
+          this.cpMap.get('bottom')]
+      case 1:
+        return [
+          this.cpMap.get('bottom'),
+          this.cpMap.get('line2')[0],
+          this.cpMap.get('line2')[1],
+          this.cpMap.get('left')]
+      case 2:
+        return [
+          this.cpMap.get('left'),
+          this.cpMap.get('line3')[0],
+          this.cpMap.get('line3')[1],
+          this.cpMap.get('top')]
+      case 3:
+        return [
+          this.cpMap.get('top'),
+          this.cpMap.get('line4')[0],
+          this.cpMap.get('line4')[1],
+          this.cpMap.get('right')]
+    }
+    return [] as any
   }
 
   drawShape(ctx: CanvasRenderingContext2D, newLayout: Rect, parent?: BaseConfig): void {
@@ -533,13 +642,17 @@ export class Ellipse extends ParentShape {
 
     // startPoint = getMouseControlPointByLength(startLength, this._config.startPoint)
     // endPoint = getMouseControlPointByLength(startLength + totalLength, this._config.endPoint)
-    startPoint = getMouseControlPointByLength(startLength, startPoint)
-    endPoint = getMouseControlPointByLength(startLength + totalLength, endPoint)
-
-    console.log('startPoint',startPoint)
-    console.log('endPoint',endPoint)
+    // startPoint = getMouseControlPointByLength(startLength, startPoint)
+    // endPoint = getMouseControlPointByLength(startLength + totalLength, endPoint)
+    // startPoint = helper.getStraightLineCenterPoint(ratioPoint, startPoint)
+    endPoint = helper.getStraightLineCenterPoint(ratioPoint, endPoint)
+    // console.log('startPoint', startPoint)
+    // console.log('endPoint', endPoint)
     // ratioPoint = {x: 0, y: 0,}
-    draw.drawRound(ctx, startPoint, r2)
+    if (totalLength){
+
+    }
+    // draw.drawRound(ctx, startPoint, r2)
     draw.drawRound(ctx, ratioPoint, r2,)
     draw.drawRound(ctx, endPoint, r2,)
     this._config.startMouseControlPoint = startPoint
@@ -615,6 +728,96 @@ export class Ellipse extends ParentShape {
     }
 
     ctx.restore()
+  }
+
+  onDbClick(event: BaseEvent2, parents: BaseShape[]): boolean {
+    return false
+  }
+
+  onMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean {
+    if (this.hoverEndMouseControlPoint) {
+      this.enterEndMouseControlPoint = true
+      return true
+    }
+    return false
+  }
+
+  onMouseMove(event: BaseEvent2, parents: BaseShape[]): boolean {
+    let {x, y,} = event.point
+    let cu = CanvasUtil2.getInstance()
+    let cx = x
+    let cy = y
+    if (this.enterEndMouseControlPoint) {
+
+      const {x, y, w, h} = this.conf
+      let w2 = w / 2, h2 = h / 2
+      let ox = 0.5522848 * w2, oy = .5522848 * h2;
+      let bs: any = this._config.getCps(3)
+
+      let a, b, c, d = 0
+      let p0, p1, p2, p3, p = null
+      p3 = bs[3]
+      p2 = bs[2]
+      p1 = bs[1]
+      p0 = bs[0]
+
+      let mousePoint2 = {x: cx, y: cy}
+      let k = mousePoint2.y / mousePoint2.x
+      console.log('k', k, mousePoint2)
+      k = (mousePoint2.y - y - h2) / (mousePoint2.x - x - w2)
+      console.log('k2', k)
+      draw.drawRound(cu.ctx, mousePoint2)
+
+      let ps = [p0, p1, p2, p3]
+
+      let XA = p3.x - 3 * p2.x + 3 * p1.x - p0.x,
+        XB = 3 * (p2.x - 2 * p1.x + p0.x),
+        XC = 3 * (p1.x - p0.x),
+        XD = p0.x
+      let YA = p3.y - 3 * p2.y + 3 * p1.y - p0.y,
+        YB = 3 * (p2.y - 2 * p1.y + p0.y),
+        YC = 3 * (p1.y - p0.y),
+        YD = p0.y
+      let A = k * XA - YA
+      let B = k * XB - YB
+      let C = k * XC - YC
+      let D = k * XD - YD
+
+      let t: any[] = Math2.solveCubic(A, B, C, D)
+      t = t.filter(v => 0 <= v && v <= 1.01)
+      console.log('t', t)
+      if (t.length) {
+        // @ts-ignore
+        this.conf.totalLength = 3 + t[0] ?? 0.5
+        cu.render()
+      }
+      // let mousePoint2 = helper.getBezierPointByLength(t[0], ps)
+      // console.log('mousePoint2', mousePoint2)
+      // draw.drawRound(cu.ctx, mousePoint2)
+
+      return true;
+    }
+    return false
+  }
+
+  onMouseUp(event: BaseEvent2, parents: BaseShape[]): boolean {
+    this.enterEndMouseControlPoint = false
+    return false
+  }
+
+  onMouseDowned(event: BaseEvent2, parents: BaseShape[]): boolean {
+    return false;
+  }
+
+  getShapePath(layout: Rect, r: number): LinePath[] {
+    if (this.conf.isCustom) {
+      return super.getCustomShapePath()
+    }
+    let {x, y, w, h} = layout
+    let path = new Path2D()
+    path.ellipse(0, 0, w / 2, h / 2, 0, 0, 2 * Math.PI);
+    path.closePath()
+    return [{close: true, path}]
   }
 
   beforeEvent(event: BaseEvent2): boolean {
@@ -935,98 +1138,33 @@ export class Ellipse extends ParentShape {
     return helper.isInBox(mousePoint, this.conf.box)
   }
 
-  isInShapeOnSelect(p: P, cu: CanvasUtil2): boolean {
-    return false
-  }
-
-  onDbClick(event: BaseEvent2, parents: BaseShape[]): boolean {
-    return false
-  }
-
-  onMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean {
-    if (this.hoverEndMouseControlPoint) {
-      this.enterEndMouseControlPoint = true
+  isInShapeOnSelect(mousePoint: P, cu: CanvasUtil2): boolean {
+    let {
+      layout: {x, y, w, h},
+      center
+    } = this._config
+    //绝对点
+    let absoluteEndMouseControlPoint = {
+      x: this._config.startMouseControlPoint.x + center.x,
+      y: this._config.startMouseControlPoint.y + center.y,
+    }
+    if (helper.isInPoint(mousePoint, absoluteEndMouseControlPoint, 4)) {
+      document.body.style.cursor = "pointer"
+      this.hoverEndMouseControlPoint = true
       return true
     }
+    // //绝对点
+    // let startMouseControlPoint = {
+    //   x: this._config.startMouseControlPoint.x + center.x,
+    //   y: this._config.startMouseControlPoint.y + center.y,
+    // }
+    // if (helper.isInPoint(mousePoint, startMouseControlPoint, 4)) {
+    //   document.body.style.cursor = "pointer"
+    //   this.hoverEndMouseControlPoint = true
+    //   return true
+    // }
+    this.hoverEndMouseControlPoint = false
     return false
-  }
-
-  onMouseMove(event: BaseEvent2, parents: BaseShape[]): boolean {
-    let {x, y,} = event.point
-    let cu = CanvasUtil2.getInstance()
-    let cx = x
-    let cy = y
-    if (this.enterEndMouseControlPoint) {
-
-      const {x, y, w, h} = this.conf
-      let w2 = w / 2, h2 = h / 2
-      let ox = 0.5522848 * w2, oy = .5522848 * h2;
-      let bs: any = this._config.getCps(3)
-
-      let a, b, c, d = 0
-      let p0, p1, p2, p3, p = null
-      p3 = bs[3]
-      p2 = bs[2]
-      p1 = bs[1]
-      p0 = bs[0]
-
-      let mousePoint2 = {x: cx, y: cy}
-      let k = mousePoint2.y / mousePoint2.x
-      console.log('k', k, mousePoint2)
-      k = (mousePoint2.y - y - h2) / (mousePoint2.x - x - w2)
-      console.log('k2', k)
-      draw.drawRound(cu.ctx, mousePoint2)
-
-      let ps = [p0, p1, p2, p3]
-
-      let XA = p3.x - 3 * p2.x + 3 * p1.x - p0.x,
-        XB = 3 * (p2.x - 2 * p1.x + p0.x),
-        XC = 3 * (p1.x - p0.x),
-        XD = p0.x
-      let YA = p3.y - 3 * p2.y + 3 * p1.y - p0.y,
-        YB = 3 * (p2.y - 2 * p1.y + p0.y),
-        YC = 3 * (p1.y - p0.y),
-        YD = p0.y
-      let A = k * XA - YA
-      let B = k * XB - YB
-      let C = k * XC - YC
-      let D = k * XD - YD
-
-      let t: any[] = Math2.solveCubic(A, B, C, D)
-      t = t.filter(v => 0 <= v && v <= 1.01)
-      console.log('t', t)
-      if (t.length) {
-        // @ts-ignore
-        this.conf.totalLength = 3 + t[0] ?? 0.5
-        cu.render()
-      }
-      // let mousePoint2 = helper.getBezierPointByLength(t[0], ps)
-      // console.log('mousePoint2', mousePoint2)
-      // draw.drawRound(cu.ctx, mousePoint2)
-
-      return true;
-    }
-    return false
-  }
-
-  onMouseUp(event: BaseEvent2, parents: BaseShape[]): boolean {
-    this.enterEndMouseControlPoint = false
-    return false
-  }
-
-  onMouseDowned(event: BaseEvent2, parents: BaseShape[]): boolean {
-    return false;
-  }
-
-  getShapePath(layout: Rect, r: number): LinePath[] {
-    if (this.conf.isCustom) {
-      return super.getCustomShapePath()
-    }
-    let {x, y, w, h} = layout
-    let path = new Path2D()
-    path.ellipse(0, 0, w / 2, h / 2, 0, 0, 2 * Math.PI);
-    path.closePath()
-    return [{close: true, path}]
   }
 
 }

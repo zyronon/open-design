@@ -60,6 +60,7 @@ export class BaseShape {
     this.children = this.conf.children?.map((conf: BaseConfig) => {
       return getShapeFromConfig({conf, parent: this})
     }) ?? []
+    this.init()
   }
 
   get status() {
@@ -103,6 +104,9 @@ export class BaseShape {
       this._isSelectHover = val
       CanvasUtil2.getInstance().render()
     }
+  }
+
+  init() {
   }
 
   drawShape(ctx: CanvasRenderingContext2D, newLayout: Rect, parent?: BaseConfig) {

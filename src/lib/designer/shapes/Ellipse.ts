@@ -69,7 +69,7 @@ export class Ellipse extends ParentShape {
   }
 
   init() {
-    let {layout,} = this._config
+    let {layout,} = this._conf
     let {x, y, w, h} = layout
     let w2 = w / 2, h2 = h / 2
     let ox = 0.5522848 * w2, oy = 0.5522848 * h2
@@ -134,11 +134,11 @@ export class Ellipse extends ParentShape {
     this.getStartAndEndPoint()
   }
 
-  get _config(): EllipseConfig {
+  get _conf(): EllipseConfig {
     return this.conf as EllipseConfig
   }
 
-  set _config(val) {
+  set _conf(val) {
     this.conf = val
   }
 
@@ -148,22 +148,32 @@ export class Ellipse extends ParentShape {
       layout,
       totalLength = 4,
       startLength = 0,
-    } = this._config
+    } = this._conf
+    let {x, y, w, h} = layout
+    let w2 = w / 2, h2 = h / 2
 
     if (startLength === 0) {
-      this._config.startPoint = this.cpMap.get('right')
+      this._conf.startPoint = this.cpMap.get('right')
     } else {
       let lineIndex = Math.trunc(startLength)
       let lineCps = this.getLineCps(lineIndex)
-      this._config.startPoint = Bezier.getPointByT_3(Math.decimal(startLength), lineCps)
+      this._conf.startPoint = Bezier.getPointByT_3(Math.decimal(startLength), lineCps)
     }
 
     if (totalLength === 4) {
-      this._config.endPoint = cloneDeep(this._config.startPoint)
+      this._conf.endPoint = cloneDeep(this._conf.startPoint)
     } else {
       let lineIndex = Math.trunc(totalLength)
       let lineCps = this.getLineCps(lineIndex)
-      this._config.endPoint = Bezier.getPointByT_3(Math.decimal(totalLength), lineCps)
+      this._conf.endPoint = Bezier.getPointByT_3(Math.decimal(totalLength), lineCps)
+    }
+
+    let center = {x: 0, y: 0}
+
+    this._conf.startMouseControlPoint = helper.getStraightLineCenterPoint(center, this._conf.startPoint)
+    this._conf.endMouseControlPoint = helper.getStraightLineCenterPoint(center, this._conf.endPoint)
+    if (totalLength === 4) {
+      this._conf.endMouseControlPoint = getMouseControlPointByLength(0, this._conf.endPoint)
     }
   }
 
@@ -624,43 +634,16 @@ export class Ellipse extends ParentShape {
   }
 
   drawSelectedHover(ctx: CanvasRenderingContext2D, newLayout: Rect) {
-    let {
-      layout,
-      radius,
-      fillColor, borderColor, rotation,
-      type, flipVertical, flipHorizontal, children,
-      totalLength = 4,
-      startLength = 0
-    } = this._config
-    let {x, y, w, h} = layout
-    let w2 = w / 2, h2 = h / 2
+    let {totalLength = 4} = this._conf
     ctx.strokeStyle = 'rgb(139,80,255)'
-    ctx.save()
-
     let r2 = 4
-    //圆终点
-    let endPoint = {x: w2, y: 0}
-    //圆起点
-    let startPoint = {x: w2, y: 0}
-    //圆内径
-    let ratioPoint = {x: 0, y: 0}
-
-    startPoint = helper.getStraightLineCenterPoint(ratioPoint, this._config.startPoint)
-    endPoint = helper.getStraightLineCenterPoint(ratioPoint, this._config.endPoint)
-    // console.log('startPoint', startPoint)
-    // console.log('endPoint', endPoint)
-    // ratioPoint = {x: 0, y: 0,}
     if (totalLength !== 4) {
-      draw.drawRound(ctx, ratioPoint, r2,)
-      draw.drawRound(ctx, startPoint, r2,)
-      draw.drawRound(ctx, endPoint, r2,)
+      draw.drawRound(ctx, {x: 0, y: 0}, r2,)
+      draw.drawRound(ctx, this._conf.startMouseControlPoint, r2,)
+      draw.drawRound(ctx, this._conf.endMouseControlPoint, r2,)
     } else {
-      endPoint = getMouseControlPointByLength(0, this._config.endPoint)
-      draw.drawRound(ctx, endPoint, r2,)
+      draw.drawRound(ctx, this._conf.endMouseControlPoint, r2,)
     }
-    this._config.startMouseControlPoint = startPoint
-    this._config.endMouseControlPoint = endPoint
-    ctx.restore()
   }
 
   drawEdit(ctx: CanvasRenderingContext2D, newLayout: Rect): any {
@@ -746,16 +729,13 @@ export class Ellipse extends ParentShape {
   }
 
   onMouseMove(event: BaseEvent2, parents: BaseShape[]): boolean {
-    let {x, y,} = event.point
+    let {x: cx, y: cy,} = event.point
     let cu = CanvasUtil2.getInstance()
-    let cx = x
-    let cy = y
     if (this.enterEndMouseControlPoint) {
-
-      const {x, y, w, h} = this.conf
+      const {x, y, w, h} = this.conf.layout
       let w2 = w / 2, h2 = h / 2
       let ox = 0.5522848 * w2, oy = .5522848 * h2;
-      let bs: any = this._config.getCps(3)
+      let bs: any = this.getLineCps(3)
 
       let a, b, c, d = 0
       let p0, p1, p2, p3, p = null
@@ -792,6 +772,8 @@ export class Ellipse extends ParentShape {
       if (t.length) {
         // @ts-ignore
         this.conf.totalLength = 3 + t[0] ?? 0.5
+        this._conf.isComplete = false
+        this.conf.lineShapes = this.getCustomPoint()
         cu.render()
       }
       // let mousePoint2 = helper.getBezierPointByLength(t[0], ps)
@@ -813,7 +795,7 @@ export class Ellipse extends ParentShape {
   }
 
   getShapePath(layout: Rect, r: number): LinePath[] {
-    if (this.conf.isCustom) {
+    if (this.conf.isCustom || this._conf.isComplete) {
       return super.getCustomShapePath()
     }
     let {x, y, w, h} = layout
@@ -838,8 +820,8 @@ export class Ellipse extends ParentShape {
     let {
       fillColor, borderColor, rotation, flipVertical, flipHorizontal,
       totalLength = 4, startLength = 0
-    } = this._config
-    let {w, h} = this._config.layout
+    } = this._conf
+    let {w, h} = this._conf.layout
     let w2 = w / 2, h2 = h / 2
     let x = -w / 2, y = -h / 2
 
@@ -897,7 +879,7 @@ export class Ellipse extends ParentShape {
       x: start.x,
       y: start.y - oy
     }
-    this._config.cps = [
+    this._conf.cps = [
       start,
       cp1,
       cp2,
@@ -928,12 +910,12 @@ export class Ellipse extends ParentShape {
       }
       return [] as any
     }
-    this._config.getCps = getBezierControlPoint
+    this._conf.getCps = getBezierControlPoint
 
     if (startLength) {
       let intStartLength = Math.trunc(startLength)
       let startLengthCps = getBezierControlPoint(intStartLength)
-      this._config.startPoint = Bezier.getPointByT_3(Math.decimal(startLength), startLengthCps)
+      this._conf.startPoint = Bezier.getPointByT_3(Math.decimal(startLength), startLengthCps)
     }
 
     //是否是整圆
@@ -1004,7 +986,7 @@ export class Ellipse extends ParentShape {
         //曲线长度与角度间的比例
         // let k = 100 / 90
         // startLength = k * startLength / 100
-        lastPoint = this._config.startPoint
+        lastPoint = this._conf.startPoint
         lastLength = startLength
         currentLength = lastLength + perPart
         points.push({
@@ -1014,8 +996,8 @@ export class Ellipse extends ParentShape {
             cp1: getP2(),
             center: {
               use: true,
-              x: this._config.startPoint.x,
-              y: this._config.startPoint.y,
+              x: this._conf.startPoint.x,
+              y: this._conf.startPoint.y,
               px: 0,
               py: 0,
               rx: 0,
@@ -1121,7 +1103,7 @@ export class Ellipse extends ParentShape {
         currentLength += perPart
       }
 
-      this._config.endPoint = points[points.length - 1].point!.center
+      this._conf.endPoint = points[points.length - 1].point!.center
 
       points.push({
         type: PointType.Single,
@@ -1145,11 +1127,11 @@ export class Ellipse extends ParentShape {
     let {
       layout: {x, y, w, h},
       center
-    } = this._config
+    } = this._conf
     //绝对点
     let absoluteEndMouseControlPoint = {
-      x: this._config.startMouseControlPoint.x + center.x,
-      y: this._config.startMouseControlPoint.y + center.y,
+      x: this._conf.endMouseControlPoint.x + center.x,
+      y: this._conf.endMouseControlPoint.y + center.y,
     }
     if (helper.isInPoint(mousePoint, absoluteEndMouseControlPoint, 4)) {
       document.body.style.cursor = "pointer"

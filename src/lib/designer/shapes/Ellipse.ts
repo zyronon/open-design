@@ -58,9 +58,16 @@ const getMouseControlPointByLength = (length: number, p: P) => {
   return {x: sx, y: sy}
 }
 
+//圆的鼠标hover类型
+enum EllipseHoverType {
+  End = 'End',//终点
+  Start = 'Start',//起点
+  InsideDiameter = 'InsideDiameter'//内径
+}
+
 export class Ellipse extends ParentShape {
-  hoverEndMouseControlPoint: boolean = false
-  enterEndMouseControlPoint: boolean = false
+  ellipseHoverType?: EllipseHoverType
+  ellipseEnterType?: EllipseHoverType
   cpMap = new Map()
 
   constructor(props: ShapeProps) {
@@ -132,6 +139,9 @@ export class Ellipse extends ParentShape {
     this.cpMap.set('left', left)
     this.cpMap.set('top', top)
     this.getStartAndEndPoint()
+    if (!this._conf.isComplete){
+      this.conf.lineShapes = this.getCustomPoint()
+    }
   }
 
   get _conf(): EllipseConfig {
@@ -235,8 +245,10 @@ export class Ellipse extends ParentShape {
     //描边
     let lw2 = ctx.lineWidth / 2
     if (strokeAlign === StrokeAlign.INSIDE) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       x += lw2, y += lw2, w -= lw2 * 2, h -= lw2 * 2, radius -= lw2
     } else if (strokeAlign === StrokeAlign.OUTSIDE) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       x -= lw2, y -= lw2, w += lw2 * 2, h += lw2 * 2, radius += lw2
     }
     ctx.strokeStyle = borderColor
@@ -721,8 +733,9 @@ export class Ellipse extends ParentShape {
   }
 
   onMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean {
-    if (this.hoverEndMouseControlPoint) {
-      this.enterEndMouseControlPoint = true
+    if (this.ellipseHoverType) {
+      this.ellipseEnterType = this.ellipseHoverType
+      this.ellipseHoverType = undefined
       return true
     }
     return false
@@ -731,7 +744,7 @@ export class Ellipse extends ParentShape {
   onMouseMove(event: BaseEvent2, parents: BaseShape[]): boolean {
     let {x: cx, y: cy,} = event.point
     let cu = CanvasUtil2.getInstance()
-    if (this.enterEndMouseControlPoint) {
+    if (this.ellipseEnterType === EllipseHoverType.End) {
       const {layout: {x, y, w, h}, center} = this.conf
       let lineIndex = -1
       if (cx > center.x) {
@@ -775,7 +788,7 @@ export class Ellipse extends ParentShape {
       console.log('t', t)
       if (t.length) {
         this._conf.totalLength = lineIndex + t[0] ?? 0.5
-        this._conf.isComplete = true
+        this._conf.isComplete = false
         this.conf.lineShapes = this.getCustomPoint()
         cu.render()
       }
@@ -787,11 +800,63 @@ export class Ellipse extends ParentShape {
 
       return true;
     }
+    if (this.ellipseEnterType === EllipseHoverType.Start) {
+      const {layout: {x, y, w, h}, center} = this.conf
+      let lineIndex = -1
+      if (cx > center.x) {
+        if (cy > center.y) lineIndex = 0
+        else lineIndex = 3
+      } else {
+        if (cy > center.y) lineIndex = 1
+        else lineIndex = 2
+      }
+      let bs: any = this.getLineCps(lineIndex)
+
+      let p0, p1, p2, p3, p = null
+      p0 = bs[0]
+      p1 = bs[1]
+      p2 = bs[2]
+      p3 = bs[3]
+
+      let k = (cy - center.y) / (cx - center.x)
+
+      //一元三次方程：ax^3+bx^2+cx+d=0
+      // 三次函数公式：P = (1−t)3P0 + 3(1−t)2tP1 +3(1−t)t2P2 + t3P3
+      //P = (1−t)3P0 + 3(1−t)2tP1 +3(1−t)t2P2 + t3P3
+      //可以化简为ax^3+bx^2+cx+d=0
+      // 下面4个值是由上面的公式化简为ax^3+bx^2+cx+d=0的结果
+      // XA是ax^3的值，XB是bx^2的值
+      let XA = p3.x - 3 * p2.x + 3 * p1.x - p0.x,
+        XB = 3 * (p2.x - 2 * p1.x + p0.x),
+        XC = 3 * (p1.x - p0.x),
+        XD = p0.x
+      let YA = p3.y - 3 * p2.y + 3 * p1.y - p0.y,
+        YB = 3 * (p2.y - 2 * p1.y + p0.y),
+        YC = 3 * (p1.y - p0.y),
+        YD = p0.y
+      let A = k * XA - YA
+      let B = k * XB - YB
+      let C = k * XC - YC
+      let D = k * XD - YD
+
+      let t: any[] = Math2.solveCubic(A, B, C, D)
+      t = t.filter(v => 0 <= v && v <= 1.01)
+      console.log('t', t)
+      if (t.length) {
+        this._conf.startLength = lineIndex + t[0] ?? 0.5
+        this._conf.isComplete = false
+        this.conf.lineShapes = this.getCustomPoint()
+        cu.render()
+      }
+      draw.drawRound(cu.ctx, event.point)
+
+      return true;
+    }
     return false
   }
 
   onMouseUp(event: BaseEvent2, parents: BaseShape[]): boolean {
-    this.enterEndMouseControlPoint = false
+    this.ellipseEnterType = this.ellipseHoverType = undefined
     return false
   }
 
@@ -800,7 +865,7 @@ export class Ellipse extends ParentShape {
   }
 
   getShapePath(layout: Rect, r: number): LinePath[] {
-    if (this.conf.isCustom || this._conf.isComplete) {
+    if (this.conf.isCustom || !this._conf.isComplete) {
       return super.getCustomShapePath()
     }
     let {x, y, w, h} = layout
@@ -815,7 +880,7 @@ export class Ellipse extends ParentShape {
   }
 
   beforeIsInShape(): boolean {
-    if (this.enterEndMouseControlPoint) {
+    if (this.ellipseEnterType) {
       return true
     }
     return false
@@ -884,36 +949,8 @@ export class Ellipse extends ParentShape {
       x: start.x,
       y: start.y - oy
     }
-    this._conf.cps = [
-      start,
-      cp1,
-      cp2,
-      bottom,
-      cp3,
-      cp4,
-      left,
-      cp5,
-      cp6,
-      top,
-      cp7,
-      cp8,
-    ]
-    //获取第几条曲线的所有控制点
     const getBezierControlPoint = (length: number): [p1: P, p2: P, p3: P, p4: P] => {
-      switch (length) {
-        //特殊情况，当startLength不为0时，startLength + totalLength 可能会等于4
-        //等于4，直接用第一段就行
-        case 4:
-        case 0:
-          return [start, cp1, cp2, bottom]
-        case 1:
-          return [bottom, cp3, cp4, left]
-        case 2:
-          return [left, cp5, cp6, top]
-        case 3:
-          return [top, cp7, cp8, start]
-      }
-      return [] as any
+      return this.getLineCps(length)
     }
     this._conf.getCps = getBezierControlPoint
 
@@ -1130,7 +1167,6 @@ export class Ellipse extends ParentShape {
 
   isInShapeOnSelect(mousePoint: P, cu: CanvasUtil2): boolean {
     let {
-      layout: {x, y, w, h},
       center
     } = this._conf
     //绝对点
@@ -1140,20 +1176,20 @@ export class Ellipse extends ParentShape {
     }
     if (helper.isInPoint(mousePoint, absoluteEndMouseControlPoint, 4)) {
       document.body.style.cursor = "pointer"
-      this.hoverEndMouseControlPoint = true
+      this.ellipseHoverType = EllipseHoverType.End
       return true
     }
-    // //绝对点
-    // let startMouseControlPoint = {
-    //   x: this._config.startMouseControlPoint.x + center.x,
-    //   y: this._config.startMouseControlPoint.y + center.y,
-    // }
-    // if (helper.isInPoint(mousePoint, startMouseControlPoint, 4)) {
-    //   document.body.style.cursor = "pointer"
-    //   this.hoverEndMouseControlPoint = true
-    //   return true
-    // }
-    this.hoverEndMouseControlPoint = false
+    //绝对点
+    let startMouseControlPoint = {
+      x: this._conf.startMouseControlPoint.x + center.x,
+      y: this._conf.startMouseControlPoint.y + center.y,
+    }
+    if (helper.isInPoint(mousePoint, startMouseControlPoint, 4)) {
+      document.body.style.cursor = "pointer"
+      this.ellipseHoverType = EllipseHoverType.Start
+      return true
+    }
+    this.ellipseHoverType = undefined
     return false
   }
 

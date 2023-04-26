@@ -683,7 +683,10 @@ export const rects = [
     "radius": 0,
     "borderColor": Colors.Border,
     "fillColor": "rgb(241,238,238)",
-    strokeAlign:StrokeAlign.OUTSIDE,
+    strokeAlign: StrokeAlign.OUTSIDE,
+    totalLength: 2.5,
+    startLength: 1.4,
+    isComplete: false,
     flipHorizontal: false,
     flipVertical: false
   },

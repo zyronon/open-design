@@ -91,7 +91,7 @@ const Math2 = {
     var y = Math.pow(Math.abs(x), 1 / 3)
     return x < 0 ? -y : y
   },
-  //网上找的，解一元三次方程
+  //网上找的，解一元三次方程：ax^3+bx^2+cx+d=0
   solveCubic(a: number, b: number, c: number, d: number) {
     // console.log(arguments)
     if (Math.abs(a) < 1e-8) { // Quadratic case, ax^2+bx+c=0

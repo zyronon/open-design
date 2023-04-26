@@ -733,25 +733,30 @@ export class Ellipse extends ParentShape {
     let cu = CanvasUtil2.getInstance()
     if (this.enterEndMouseControlPoint) {
       const {layout: {x, y, w, h}, center} = this.conf
-      let w2 = w / 2, h2 = h / 2
-      let bs: any = this.getLineCps(3)
+      let lineIndex = -1
+      if (cx > center.x) {
+        if (cy > center.y) lineIndex = 0
+        else lineIndex = 3
+      } else {
+        if (cy > center.y) lineIndex = 1
+        else lineIndex = 2
+      }
+      let bs: any = this.getLineCps(lineIndex)
 
-      let a, b, c, d = 0
       let p0, p1, p2, p3, p = null
       p0 = bs[0]
       p1 = bs[1]
       p2 = bs[2]
       p3 = bs[3]
 
-      let mousePoint2 = {x: cx, y: cy}
-      let k = mousePoint2.y / mousePoint2.x
-      console.log('k', k, mousePoint2)
-      k = (mousePoint2.y - center.y) / (mousePoint2.x - center.x)
-      console.log('k2', k)
-      draw.drawRound(cu.ctx, mousePoint2)
+      let k = (cy - center.y) / (cx - center.x)
 
-      let ps = [p0, p1, p2, p3]
-
+      //一元三次方程：ax^3+bx^2+cx+d=0
+      // 三次函数公式：P = (1−t)3P0 + 3(1−t)2tP1 +3(1−t)t2P2 + t3P3
+      //P = (1−t)3P0 + 3(1−t)2tP1 +3(1−t)t2P2 + t3P3
+      //可以化简为ax^3+bx^2+cx+d=0
+      // 下面4个值是由上面的公式化简为ax^3+bx^2+cx+d=0的结果
+      // XA是ax^3的值，XB是bx^2的值
       let XA = p3.x - 3 * p2.x + 3 * p1.x - p0.x,
         XB = 3 * (p2.x - 2 * p1.x + p0.x),
         XC = 3 * (p1.x - p0.x),
@@ -765,16 +770,17 @@ export class Ellipse extends ParentShape {
       let C = k * XC - YC
       let D = k * XD - YD
 
-      console.log(A, B, C, D)
       let t: any[] = Math2.solveCubic(A, B, C, D)
       t = t.filter(v => 0 <= v && v <= 1.01)
       console.log('t', t)
       if (t.length) {
-        this._conf.totalLength = 3 + t[0] ?? 0.5
+        this._conf.totalLength = lineIndex + t[0] ?? 0.5
         this._conf.isComplete = true
         this.conf.lineShapes = this.getCustomPoint()
         cu.render()
       }
+      draw.drawRound(cu.ctx, event.point)
+
       // let mousePoint2 = helper.getBezierPointByLength(t[0], ps)
       // console.log('mousePoint2', mousePoint2)
       // draw.drawRound(cu.ctx, mousePoint2)

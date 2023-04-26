@@ -143,7 +143,7 @@ const Math2 = {
       roots[i] -= b / (3 * a)
     return roots
   },
-  //获取两点之间角度1
+  //获取两点之间角度
   getDegree(center: P, one: P, two: P): number {
     let {x: cx, y: cy} = center
     let {x: x1, y: y1} = one

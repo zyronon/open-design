@@ -114,7 +114,8 @@ const Bezier = {
     let y = Math.pow(1 - t, 3) * p0.y + 3 * Math.pow(1 - t, 2) * t * p1.y
       + 3 * (1 - t) * Math.pow(t, 2) * p2.y + Math.pow(t, 3) * p3.y
     return { x, y }
-  }, /**
+  },
+  /**
    * @description 根据长度（即T）获取对应的点
    *  //P = (1−t)2P0 + 2(1−t)tP1 + t2P2
    * */

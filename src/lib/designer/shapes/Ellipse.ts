@@ -732,21 +732,21 @@ export class Ellipse extends ParentShape {
     let {x: cx, y: cy,} = event.point
     let cu = CanvasUtil2.getInstance()
     if (this.enterEndMouseControlPoint) {
-      const {x, y, w, h} = this.conf.layout
+      const {layout: {x, y, w, h}, center} = this.conf
       let w2 = w / 2, h2 = h / 2
       let bs: any = this.getLineCps(3)
 
       let a, b, c, d = 0
       let p0, p1, p2, p3, p = null
-      p3 = bs[3]
-      p2 = bs[2]
-      p1 = bs[1]
       p0 = bs[0]
+      p1 = bs[1]
+      p2 = bs[2]
+      p3 = bs[3]
 
       let mousePoint2 = {x: cx, y: cy}
       let k = mousePoint2.y / mousePoint2.x
       console.log('k', k, mousePoint2)
-      k = (mousePoint2.y - y - h2) / (mousePoint2.x - x - w2)
+      k = (mousePoint2.y - center.y) / (mousePoint2.x - center.x)
       console.log('k2', k)
       draw.drawRound(cu.ctx, mousePoint2)
 
@@ -765,6 +765,7 @@ export class Ellipse extends ParentShape {
       let C = k * XC - YC
       let D = k * XD - YD
 
+      console.log(A, B, C, D)
       let t: any[] = Math2.solveCubic(A, B, C, D)
       t = t.filter(v => 0 <= v && v <= 1.01)
       console.log('t', t)

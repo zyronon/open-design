@@ -893,7 +893,6 @@ export class Ellipse extends ParentShape {
     } = this._conf
     let {w, h} = this._conf.layout
     let w2 = w / 2, h2 = h / 2
-    let x = -w / 2, y = -h / 2
 
     //http://www.alloyteam.com/2015/07/canvas-hua-tuo-yuan-di-fang-fa/
     //这里也可以用.5和.6来算ox和oy

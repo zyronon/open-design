@@ -139,7 +139,7 @@ export class Ellipse extends ParentShape {
     this.cpMap.set('left', left)
     this.cpMap.set('top', top)
     this.getStartAndEndPoint()
-    if (!this._conf.isComplete){
+    if (!this._conf.isComplete) {
       this.conf.lineShapes = this.getCustomPoint()
     }
   }
@@ -173,9 +173,10 @@ export class Ellipse extends ParentShape {
     if (totalLength === 4) {
       this._conf.endPoint = cloneDeep(this._conf.startPoint)
     } else {
-      let lineIndex = Math.trunc(totalLength)
+      let endLength = startLength + totalLength;
+      let lineIndex = Math.trunc(endLength)
       let lineCps = this.getLineCps(lineIndex)
-      this._conf.endPoint = Bezier.getPointByT_3(Math.decimal(totalLength), lineCps)
+      this._conf.endPoint = Bezier.getPointByT_3(Math.decimal(endLength), lineCps)
     }
 
     let center = {x: 0, y: 0}
@@ -842,6 +843,7 @@ export class Ellipse extends ParentShape {
       let t: any[] = Math2.solveCubic(A, B, C, D)
       t = t.filter(v => 0 <= v && v <= 1.01)
       console.log('t', t)
+      console.log('lineIndex', lineIndex)
       if (t.length) {
         this._conf.startLength = lineIndex + t[0] ?? 0.5
         this._conf.isComplete = false
@@ -849,7 +851,6 @@ export class Ellipse extends ParentShape {
         cu.render()
       }
       draw.drawRound(cu.ctx, event.point)
-
       return true;
     }
     return false
@@ -951,13 +952,8 @@ export class Ellipse extends ParentShape {
     const getBezierControlPoint = (length: number): [p1: P, p2: P, p3: P, p4: P] => {
       return this.getLineCps(length)
     }
-    this._conf.getCps = getBezierControlPoint
 
-    if (startLength) {
-      let intStartLength = Math.trunc(startLength)
-      let startLengthCps = getBezierControlPoint(intStartLength)
-      this._conf.startPoint = Bezier.getPointByT_3(Math.decimal(startLength), startLengthCps)
-    }
+    this.getStartAndEndPoint()
 
     //是否是整圆
     let fullEllipse = totalLength === 4
@@ -1030,44 +1026,25 @@ export class Ellipse extends ParentShape {
         lastPoint = this._conf.startPoint
         lastLength = startLength
         currentLength = lastLength + perPart
-        points.push({
-          type: PointType.Single,
-          point: {
-            id: uuid(),
-            cp1: getP2(),
-            center: {
-              use: true,
-              x: this._conf.startPoint.x,
-              y: this._conf.startPoint.y,
-              px: 0,
-              py: 0,
-              rx: 0,
-              ry: 0,
-            },
-            cp2: getP2(),
-            type: BezierPointType.NoMirror
-          }
-        })
-      } else {
-        points.push({
-          type: PointType.Single,
-          point: {
-            id: uuid(),
-            cp1: getP2(),
-            center: {
-              use: true,
-              x: start.x,
-              y: start.y,
-              px: 0,
-              py: 0,
-              rx: 0,
-              ry: 0,
-            },
-            cp2: getP2(),
-            type: BezierPointType.NoMirror
-          }
-        })
       }
+      points.push({
+        type: PointType.Single,
+        point: {
+          id: uuid(),
+          cp1: getP2(),
+          center: {
+            use: true,
+            x: this._conf.startPoint.x,
+            y: this._conf.startPoint.y,
+            px: 0,
+            py: 0,
+            rx: 0,
+            ry: 0,
+          },
+          cp2: getP2(),
+          type: BezierPointType.NoMirror
+        }
+      })
 
       for (let i = 1; i <= totalPart; i++) {
         intCurrentLength = Math.trunc(currentLength)

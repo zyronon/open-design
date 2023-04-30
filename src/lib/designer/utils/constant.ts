@@ -684,8 +684,8 @@ export const rects = [
     "borderColor": Colors.Border,
     "fillColor": "rgb(241,238,238)",
     strokeAlign: StrokeAlign.OUTSIDE,
-    totalLength: 2.5,
-    startLength: 1.4,
+    totalLength: 3,
+    startLength: 3.5,
     isComplete: false,
     flipHorizontal: false,
     flipVertical: false

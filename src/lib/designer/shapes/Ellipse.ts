@@ -813,8 +813,9 @@ export class Ellipse extends ParentShape {
       t = t.filter(v => 0 <= v && v <= 1.01)
       if (t.length) {
         console.log('t', t[0])
-        console.log('lineIndex',lineIndex)
+        console.log('lineIndex', lineIndex)
         this._conf.totalLength = lineIndex + t[0] ?? 0.5
+        this._conf.totalLength = this._conf.totalLength - this._conf.startLength
         this._conf.isComplete = false
         this.conf.lineShapes = this.getCustomPoint()
         cu.render()

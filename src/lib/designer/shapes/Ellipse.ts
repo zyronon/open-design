@@ -165,8 +165,7 @@ export class Ellipse extends ParentShape {
     if (startLength === 0) {
       this._conf.startPoint = this.cpMap.get('right')
     } else {
-      let lineIndex = Math.trunc(startLength)
-      let lineCps = this.getLineCps(lineIndex)
+      let lineCps = this.getLineCps(-1, startLength)
       this._conf.startPoint = Bezier.getPointByT_3(Math.decimal(startLength), lineCps)
     }
 
@@ -174,8 +173,7 @@ export class Ellipse extends ParentShape {
       this._conf.endPoint = cloneDeep(this._conf.startPoint)
     } else {
       let endLength = startLength + totalLength;
-      let lineIndex = Math.trunc(endLength)
-      let lineCps = this.getLineCps(lineIndex)
+      let lineCps = this.getLineCps(-1, endLength)
       this._conf.endPoint = Bezier.getPointByT_3(Math.decimal(endLength), lineCps)
     }
 
@@ -189,7 +187,15 @@ export class Ellipse extends ParentShape {
   }
 
   //获取圆上的4条线段中某一条的控制点
-  getLineCps(lineIndex: number): [p1: P, p2: P, p3: P, p4: P] {
+  getLineCps(lineIndex: number = -1, length?: number): [p1: P, p2: P, p3: P, p4: P] {
+    if (length) {
+      if (length > 0) {
+        lineIndex = Math.trunc(length)
+      } else {
+        //小于0的话，-0.5取整也是0，实际应该取3
+        lineIndex = 3 - Math.trunc(length)
+      }
+    }
     switch (lineIndex) {
       //特殊情况，当startLength不为0时，startLength + totalLength 可能会等于4
       //等于4，直接用第一段就行
@@ -213,6 +219,7 @@ export class Ellipse extends ParentShape {
           this.cpMap.get('line3')[1],
           this.cpMap.get('top')]
       case 3:
+      case -1:
         return [
           this.cpMap.get('top'),
           this.cpMap.get('line4')[0],
@@ -949,8 +956,8 @@ export class Ellipse extends ParentShape {
       x: start.x,
       y: start.y - oy
     }
-    const getBezierControlPoint = (length: number): [p1: P, p2: P, p3: P, p4: P] => {
-      return this.getLineCps(length)
+    const getBezierControlPoint = (lineIndex: number): [p1: P, p2: P, p3: P, p4: P] => {
+      return this.getLineCps(lineIndex)
     }
 
     this.getStartAndEndPoint()

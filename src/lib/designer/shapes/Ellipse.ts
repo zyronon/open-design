@@ -193,7 +193,7 @@ export class Ellipse extends ParentShape {
   //获取圆上的4条线段中某一条的控制点
   getLineCps(lineIndex: number = -1, length?: number): [p1: P, p2: P, p3: P, p4: P] {
     if (length !== undefined) {
-      if (length > 0) {
+      if (length >= 0) {
         lineIndex = Math.trunc(length)
       } else {
         //小于0的话，-0.5取整也是0，实际应该取3
@@ -1093,9 +1093,13 @@ export class Ellipse extends ParentShape {
           length34 = length14 - perPart * (2 / 4)
         }
         //默认情况下，用于计算1/4点，3/4点，可以共用一条对应的线段
-        bezierCurrent = bezierPrevious = this.getLineCps(intCurrentT)
+        bezierCurrent = bezierPrevious = this.getLineCps(-1, currentT)
         //计算当前点必须用当前长度线段的4个控制点来算
         currentPoint = Bezier.getPointByT_3(Math.abs(Math.decimal(currentT)), bezierCurrent)
+        console.log(
+          'currentT', currentT,
+          'intCurrentT', intCurrentT,
+          'currentPoint', currentPoint)
 
         //特殊情况
         //如果，1/4的长度，不在当前线段内，那么肯定在上一个线段内

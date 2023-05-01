@@ -671,8 +671,8 @@ export const rects = [
   {
     "name": "圆",
     layout: {
-      "x": 300,
-      "y": 50,
+      "x": 1000,
+      "y": 150,
       "w": 300,
       "h": 200,
     },
@@ -684,8 +684,8 @@ export const rects = [
     "borderColor": Colors.Border,
     "fillColor": "rgb(241,238,238)",
     strokeAlign: StrokeAlign.OUTSIDE,
-    totalLength: 3,
-    startLength: 3.5,
+    totalLength: 2.5,
+    startLength: 0.5,
     isComplete: false,
     flipHorizontal: false,
     flipVertical: false

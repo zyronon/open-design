@@ -5,7 +5,7 @@ export interface EllipseConfig extends BaseConfig {
   /** @desc 圆弧总长度*/
   totalLength: number
   /** @desc 圆弧起点长度*/
-  startLength: number
+  startT: number
   /** @desc 圆弧起点*/
   startPoint: P
   /** @desc 起点长度对应的 鼠标控制点*/

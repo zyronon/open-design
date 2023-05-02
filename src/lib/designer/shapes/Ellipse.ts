@@ -157,22 +157,22 @@ export class Ellipse extends ParentShape {
     let {
       layout,
       totalLength = 4,
-      startLength = 0,
+      startT = 0,
     } = this._conf
     let {x, y, w, h} = layout
     let w2 = w / 2, h2 = h / 2
 
-    if (startLength === 0) {
+    if (startT === 0) {
       this._conf.startPoint = this.cpMap.get('right')
     } else {
-      let lineCps = this.getLineCps(-1, startLength)
-      this._conf.startPoint = Bezier.getPointByT_3(Math.decimal(startLength), lineCps)
+      let lineCps = this.getLineCps(-1, startT)
+      this._conf.startPoint = Bezier.getPointByT_3(Math.decimal(startT), lineCps)
     }
 
     if (totalLength === 4) {
       this._conf.endPoint = cloneDeep(this._conf.startPoint)
     } else {
-      let endLength = startLength + totalLength;
+      let endLength = startT + totalLength;
       let lineCps = this.getLineCps(-1, endLength)
       this._conf.endPoint = Bezier.getPointByT_3(Math.decimal(endLength), lineCps)
     }
@@ -811,14 +811,24 @@ export class Ellipse extends ParentShape {
       let t: any[] = Math2.solveCubic(A, B, C, D)
       t = t.filter(v => 0 <= v && v <= 1.01)
       if (t.length) {
-        console.log('t', t[0])
-        console.log('lineIndex', lineIndex)
+        // console.log('t', t[0])
+        // console.log('lineIndex', lineIndex)
         let touchT = lineIndex + t[0] ?? 0.5
+        let {totalLength, startT} = this._conf
         if (this.ellipseEnterType === EllipseHoverType.End) {
-          this._conf.totalLength = touchT - this._conf.startLength
+          let oldEndT = (totalLength + startT) % 4
+          let dt = touchT - oldEndT;
+          this._conf.totalLength += dt
+          console.log(
+            'oldEndT', oldEndT,
+            'touchT', touchT,
+            'dt', dt,
+            'totalLength', this._conf.totalLength
+          )
+          // this._conf.totalLength = touchT - this._conf.startT
         }
         if (this.ellipseEnterType === EllipseHoverType.Start) {
-          this._conf.startLength = lineIndex + t[0] ?? 0.5
+          this._conf.startT = lineIndex + t[0] ?? 0.5
         }
         this._conf.isComplete = false
         this.conf.lineShapes = this.getCustomPoint()
@@ -864,7 +874,7 @@ export class Ellipse extends ParentShape {
   getCustomPoint(): LineShape[] {
     let {
       fillColor, borderColor, rotation, flipVertical, flipHorizontal,
-      totalLength = 4, startLength = 0
+      totalLength = 4, startT = 0
     } = this._conf
     let {w, h} = this._conf.layout
     let w2 = w / 2, h2 = h / 2
@@ -925,13 +935,6 @@ export class Ellipse extends ParentShape {
     }
 
     this.getStartAndEndPoint()
-
-    let startT = startLength
-    let endT = 2.5
-
-    if (endT > 0) {
-
-    }
 
     //是否是整圆
     let fullEllipse = totalLength === 4
@@ -1001,7 +1004,7 @@ export class Ellipse extends ParentShape {
       let currentT = 0,
         length14 = 0,
         length34 = 0,
-        lastT = startLength
+        lastT = startT
       // console.log(
       //   'lastT', lastT,
       //   'perPart', perPart,

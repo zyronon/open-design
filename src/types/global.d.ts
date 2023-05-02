@@ -93,7 +93,7 @@ Math.decimal = (num: number) => {
 }
 //是否是整数
 Math.isInt = (num: number) => {
-  return Math.round(num) === num
+  return Math.trunc(num) === num
 }
 Number.prototype.toFixed2 = function (digits? = 2) {
   return Number(this.toFixed(digits))

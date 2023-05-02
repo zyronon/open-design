@@ -1075,7 +1075,7 @@ export class Ellipse extends ParentShape {
         }
       })
 
-      let re = true
+      let re = false
       currentT = lastT + (re ? -perPart : perPart)
 
       let p14 = perPart * (1 / 4)

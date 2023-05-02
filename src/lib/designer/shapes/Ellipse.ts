@@ -1078,23 +1078,27 @@ export class Ellipse extends ParentShape {
       let re = true
       currentT = lastT + (re ? -perPart : perPart)
 
+      let p14 = perPart * (1 / 4)
+      let p34 = perPart * (3 / 4)
       for (let i = 1; i <= totalPart; i++) {
         intCurrentT = Math.trunc(currentT)
         intLastT = Math.trunc(lastT)
 
         //计算1/4，3/4长度
         if (re) {
-          length14 = lastT - perPart * (1 / 4)
-          length34 = length14 - perPart * (2 / 4)
+          length14 = lastT - p14
+          length34 = lastT - p34
         } else {
-          length14 = lastT + perPart * (1 / 4)
-          length34 = length14 + perPart * (2 / 4)
+          length14 = lastT + p14
+          length34 = lastT + p34
         }
         //默认情况下，用于计算1/4点，3/4点，可以共用一条对应的线段
         bezierCurrent = bezierPrevious = this.getLineCps(-1, currentT)
         //计算当前点必须用当前长度线段的4个控制点来算
         currentPoint = Bezier.getPointByT_3(Math.decimal(currentT), bezierCurrent)
         console.log(
+          'length14', length14,
+          'length34', length34,
           'currentT', currentT,
           'intCurrentT', intCurrentT,
           'currentPoint', currentPoint

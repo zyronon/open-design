@@ -821,14 +821,19 @@ export class Ellipse extends ParentShape {
           // if (oldEndT === 4 || touchT === 4) {
           //   return true
           // }
-          if (oldEndT > 4 && touchT !== 4) {
+          //如果oldEndT等4，会被于成0，所以只需大于4才于
+          if (oldEndT > 4) {
             oldEndT = oldEndT % 4
           }
           let dt = touchT - oldEndT;
+          //滑过右侧起点那条线时，touchT会突然从0.00xxx变成4。dt会变得特别大。所以dt大于3时，用上次的滑动值
           if (Math.abs(dt) > 3) {
             dt = this.lastDt
           }
           this._conf.totalLength += dt
+          //TODO　这里会有问题。但是影响不大，能用
+          //  totalLength: 2.9,
+          //     startT: 3.5,
           if (this._conf.totalLength >= 4) {
             this._conf.totalLength = -4
           }

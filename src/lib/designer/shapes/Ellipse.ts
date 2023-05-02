@@ -69,6 +69,7 @@ export class Ellipse extends ParentShape {
   ellipseHoverType?: EllipseHoverType
   ellipseEnterType?: EllipseHoverType
   cpMap = new Map()
+  lastDt: number = 0
 
   constructor(props: ShapeProps) {
     super(props)
@@ -816,15 +817,28 @@ export class Ellipse extends ParentShape {
         let touchT = lineIndex + t[0] ?? 0.5
         let {totalLength, startT} = this._conf
         if (this.ellipseEnterType === EllipseHoverType.End) {
-          let oldEndT = (totalLength + startT) % 4
+          let oldEndT = totalLength + startT
+          // if (oldEndT === 4 || touchT === 4) {
+          //   return true
+          // }
+          if (oldEndT > 4 && touchT !== 4) {
+            oldEndT = oldEndT % 4
+          }
           let dt = touchT - oldEndT;
+          if (Math.abs(dt) > 3) {
+            dt = this.lastDt
+          }
           this._conf.totalLength += dt
+          if (this._conf.totalLength >= 4) {
+            this._conf.totalLength = -4
+          }
           console.log(
             'oldEndT', oldEndT,
             'touchT', touchT,
             'dt', dt,
             'totalLength', this._conf.totalLength
           )
+          this.lastDt = dt
           // this._conf.totalLength = touchT - this._conf.startT
         }
         if (this.ellipseEnterType === EllipseHoverType.Start) {

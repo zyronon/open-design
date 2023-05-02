@@ -769,7 +769,7 @@ export class Ellipse extends ParentShape {
   onMouseMove(event: BaseEvent2, parents: BaseShape[]): boolean {
     let {x: cx, y: cy,} = event.point
     let cu = CanvasUtil2.getInstance()
-    if (this.ellipseEnterType === EllipseHoverType.End) {
+    if (this.ellipseEnterType) {
       const {layout: {x, y, w, h}, center} = this.conf
       let lineIndex = -1
       if (cx > center.x) {
@@ -813,64 +813,13 @@ export class Ellipse extends ParentShape {
       if (t.length) {
         console.log('t', t[0])
         console.log('lineIndex', lineIndex)
-        this._conf.totalLength = lineIndex + t[0] ?? 0.5
-        this._conf.totalLength = this._conf.totalLength - this._conf.startLength
-        this._conf.isComplete = false
-        this.conf.lineShapes = this.getCustomPoint()
-        cu.render()
-      }
-      draw.drawRound(cu.ctx, event.point)
-
-      // let mousePoint2 = helper.getBezierPointByLength(t[0], ps)
-      // console.log('mousePoint2', mousePoint2)
-      // draw.drawRound(cu.ctx, mousePoint2)
-
-      return true;
-    }
-    if (this.ellipseEnterType === EllipseHoverType.Start) {
-      const {layout: {x, y, w, h}, center} = this.conf
-      let lineIndex = -1
-      if (cx > center.x) {
-        if (cy > center.y) lineIndex = 0
-        else lineIndex = 3
-      } else {
-        if (cy > center.y) lineIndex = 1
-        else lineIndex = 2
-      }
-      let bs: any = this.getLineCps(lineIndex)
-
-      let p0, p1, p2, p3, p = null
-      p0 = bs[0]
-      p1 = bs[1]
-      p2 = bs[2]
-      p3 = bs[3]
-
-      let k = (cy - center.y) / (cx - center.x)
-
-      //一元三次方程：ax^3+bx^2+cx+d=0
-      // 三次函数公式：P = (1−t)3P0 + 3(1−t)2tP1 +3(1−t)t2P2 + t3P3
-      //P = (1−t)3P0 + 3(1−t)2tP1 +3(1−t)t2P2 + t3P3
-      //可以化简为ax^3+bx^2+cx+d=0
-      // 下面4个值是由上面的公式化简为ax^3+bx^2+cx+d=0的结果
-      // XA是ax^3的值，XB是bx^2的值
-      let XA = p3.x - 3 * p2.x + 3 * p1.x - p0.x,
-        XB = 3 * (p2.x - 2 * p1.x + p0.x),
-        XC = 3 * (p1.x - p0.x),
-        XD = p0.x
-      let YA = p3.y - 3 * p2.y + 3 * p1.y - p0.y,
-        YB = 3 * (p2.y - 2 * p1.y + p0.y),
-        YC = 3 * (p1.y - p0.y),
-        YD = p0.y
-      let A = k * XA - YA
-      let B = k * XB - YB
-      let C = k * XC - YC
-      let D = k * XD - YD
-
-      let t: any[] = Math2.solveCubic(A, B, C, D)
-      t = t.filter(v => 0 <= v && v <= 1.01)
-      // console.log('t', t)
-      if (t.length) {
-        this._conf.startLength = lineIndex + t[0] ?? 0.5
+        let touchT = lineIndex + t[0] ?? 0.5
+        if (this.ellipseEnterType === EllipseHoverType.End) {
+          this._conf.totalLength = touchT - this._conf.startLength
+        }
+        if (this.ellipseEnterType === EllipseHoverType.Start) {
+          this._conf.startLength = lineIndex + t[0] ?? 0.5
+        }
         this._conf.isComplete = false
         this.conf.lineShapes = this.getCustomPoint()
         cu.render()
@@ -980,8 +929,11 @@ export class Ellipse extends ParentShape {
     let startT = startLength
     let endT = 2.5
 
+    if (endT > 0) {
+
+    }
+
     //是否是整圆
-    totalLength = endT - startT
     let fullEllipse = totalLength === 4
 
     if (fullEllipse) {
@@ -1029,23 +981,24 @@ export class Ellipse extends ParentShape {
       return [{close: true, points: points}]
     } else {
       let points: PointInfo[] = []
-      // let totalLength = 3.5//总长度
       let totalPart = 8 //总份数
-      if (Math.trunc(totalLength) === 1) totalPart = 4
+      if (Math.abs(Math.trunc(totalLength)) === 1) totalPart = 4
       if (Math.trunc(totalLength) === 0) totalPart = 2
 
-      let perPart = totalLength / totalPart
-      // console.log('每一份', perPart)
+      let perPart = Math.abs(totalLength) / totalPart
+      // console.log(
+      //   '每一份', perPart,
+      //   '总份', totalPart,
+      //   '总长度', totalLength,
+      // )
       let currentPoint
       let lastPoint = this._conf.startPoint
-      let bezierPrevious, bezierCurrent
+      let bezierCurrent
       let length14Point, length34Point = null
       //曲线长度与角度间的比例
       // let k = 100 / 90
       // startLength = k * startLength / 100
-      let intLastT = 0,
-        intCurrentT = 0,
-        currentT = 0,
+      let currentT = 0,
         length14 = 0,
         length34 = 0,
         lastT = startLength
@@ -1075,58 +1028,37 @@ export class Ellipse extends ParentShape {
         }
       })
 
-      let re = false
-      currentT = lastT + (re ? -perPart : perPart)
+      let reverse = totalLength < 0
+      currentT = lastT + (reverse ? -perPart : perPart)
 
       let p14 = perPart * (1 / 4)
       let p34 = perPart * (3 / 4)
       for (let i = 1; i <= totalPart; i++) {
-        intCurrentT = Math.trunc(currentT)
-        intLastT = Math.trunc(lastT)
-
         //计算1/4，3/4长度
-        if (re) {
-          length14 = lastT - p14
-          length34 = lastT - p34
-        } else {
-          length14 = lastT + p14
-          length34 = lastT + p34
-        }
+        length14 = lastT + (reverse ? -p14 : p14)
+        length34 = lastT + (reverse ? -p34 : p34)
+
         //默认情况下，用于计算1/4点，3/4点，可以共用一条对应的线段
-        bezierCurrent = bezierPrevious = this.getLineCps(-1, currentT)
+        bezierCurrent = this.getLineCps(-1, currentT)
         //计算当前点必须用当前长度线段的4个控制点来算
         currentPoint = Bezier.getPointByT_3(Math.decimal(currentT), bezierCurrent)
-        console.log(
-          'length14', length14,
-          'length34', length34,
-          'currentT', currentT,
-          'intCurrentT', intCurrentT,
-          'currentPoint', currentPoint
-        )
-        if (!Math.isInt(currentT)) {
-          //特殊情况
-          //如果，1/4的长度，不在当前线段内，那么肯定在上一个线段内
-          if (Math.trunc(length14) !== intCurrentT) {
-            // console.log(i, 1, 'length14', length14,)
-            bezierPrevious = this.getLineCps(intCurrentT - 1)
-          }
-          //如果，3/4的长度，不在当前线段内，那么肯定在上一个线段内
-          if (Math.trunc(length34) !== intCurrentT) {
-            // console.log(i, 3, 'length34', length34,)
-            bezierCurrent = this.getLineCps(intCurrentT - 1)
-          }
-        }
+        // console.log(
+        //   'length14', length14,
+        //   'length34', length34,
+        //   'currentT', currentT,
+        //   'intCurrentT', intCurrentT,
+        //   'currentPoint', currentPoint
+        // )
 
         //计算1/4长度，3/4长度对应的点
-        length14Point = Bezier.getPointByT_3(Math.decimal(length14), bezierPrevious)
-        length34Point = Bezier.getPointByT_3(Math.decimal(length34), bezierCurrent)
+        length14Point = Bezier.getPointByT_3(Math.decimal(length14), this.getLineCps(-1, length14))
+        length34Point = Bezier.getPointByT_3(Math.decimal(length34), this.getLineCps(-1, length34))
 
         //利用1/4点、3/4点、起始点、终点，反推控制点
         let cps = Bezier.getControlPointsByLinePoint(length14Point, length34Point, lastPoint, currentPoint)
 
         // 因为最后一个控制点（非数组的最后一个点）默认只需center和cp1与前一个点的center和cp2的4个点，组成贝塞尔曲线
         //所以cp2是无用的，所以添加当前点时，需要把上一个点的cp2为正确的值并启用
-
         points[points.length - 1].point!['cp2'] = {
           use: true,
           x: cps[0].x,
@@ -1166,7 +1098,7 @@ export class Ellipse extends ParentShape {
         })
         lastPoint = currentPoint
         lastT = currentT
-        currentT = lastT + (re ? -perPart : perPart)
+        currentT = lastT + (reverse ? -perPart : perPart)
       }
 
       this._conf.endPoint = points[points.length - 1].point!.center

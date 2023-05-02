@@ -43,6 +43,8 @@ declare global {
 
   interface Math {
     decimal(val: number): number
+
+    isInt(val: number): boolean
   }
 
   interface Number {
@@ -88,6 +90,10 @@ for (const key in Context2D) {
 //获取小数
 Math.decimal = (num: number) => {
   return num - Math.trunc(num)
+}
+//是否是整数
+Math.isInt = (num: number) => {
+  return Math.round(num) === num
 }
 Number.prototype.toFixed2 = function (digits? = 2) {
   return Number(this.toFixed(digits))

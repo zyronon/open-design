@@ -1103,16 +1103,18 @@ export class Ellipse extends ParentShape {
           'intCurrentT', intCurrentT,
           'currentPoint', currentPoint
         )
-        //特殊情况
-        //如果，1/4的长度，不在当前线段内，那么肯定在上一个线段内
-        if (Math.trunc(length14) !== intCurrentT) {
-          // console.log(i, 1, 'length14', length14,)
-          bezierPrevious = this.getLineCps(intCurrentT - 1)
-        }
-        //如果，3/4的长度，不在当前线段内，那么肯定在上一个线段内
-        if (Math.trunc(length34) !== intCurrentT) {
-          // console.log(i, 3, 'length34', length34,)
-          bezierCurrent = this.getLineCps(intCurrentT - 1)
+        if (!Math.isInt(currentT)) {
+          //特殊情况
+          //如果，1/4的长度，不在当前线段内，那么肯定在上一个线段内
+          if (Math.trunc(length14) !== intCurrentT) {
+            // console.log(i, 1, 'length14', length14,)
+            bezierPrevious = this.getLineCps(intCurrentT - 1)
+          }
+          //如果，3/4的长度，不在当前线段内，那么肯定在上一个线段内
+          if (Math.trunc(length34) !== intCurrentT) {
+            // console.log(i, 3, 'length34', length34,)
+            bezierCurrent = this.getLineCps(intCurrentT - 1)
+          }
         }
 
         //计算1/4长度，3/4长度对应的点

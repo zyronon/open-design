@@ -685,7 +685,7 @@ export const rects = [
     "fillColor": "rgb(241,238,238)",
     strokeAlign: StrokeAlign.OUTSIDE,
     totalLength: 2.5,
-    startLength: 0.5,
+    startLength: 0.1,
     isComplete: false,
     flipHorizontal: false,
     flipVertical: false

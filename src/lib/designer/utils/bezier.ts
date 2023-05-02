@@ -1,5 +1,5 @@
-import { P } from "../types/type"
-import { Math2 } from "./math"
+import {P} from "../types/type"
+import {Math2} from "./math"
 
 const Bezier = {
   /**
@@ -52,23 +52,23 @@ const Bezier = {
   getTargetPointControlPoint(previousPoint: P, targetPoint: P, nextPoint: P) {
     // @ts-ignore
     // console.log(...arguments)
-    let { x: p1X, y: p1Y } = previousPoint
-    let { x: p2X, y: p2Y } = nextPoint
+    let {x: p1X, y: p1Y} = previousPoint
+    let {x: p2X, y: p2Y} = nextPoint
     let m = (p2Y - p1Y) / (p2X - p1X)
     // console.log('m', m)
     let A = Math2.getHypotenuse2(nextPoint, previousPoint)
     let X = A * 0.25
     let rx = targetPoint.x + (X / Math.sqrt(1 + Math.pow(m, 2)));
     let ry = targetPoint.y + (m * (X / Math.sqrt(1 + Math.pow(m, 2))));
-    let cpR = { x: rx, y: ry }
+    let cpR = {x: rx, y: ry}
     let cpL = Math2.getRotatedPoint(cpR, targetPoint, 180)
     //这里计算出的cpR，是固定的在当前点的右边。比较哪个控制点离previousPoint近，需要视情况调换两个值用于绘制曲线。
     let cpAndPreviousPointLength1 = Math2.getHypotenuse2(cpL, previousPoint)
     let cpAndPreviousPointLength2 = Math2.getHypotenuse2(cpR, previousPoint)
     if (cpAndPreviousPointLength1 < cpAndPreviousPointLength2) {
-      return { l: cpL, r: cpR }
+      return {l: cpL, r: cpR}
     }
-    return { l: cpR, r: cpL }
+    return {l: cpR, r: cpL}
     //下面是直接将X加上b的x，代入直线方程求y，会出现方向正确，但d点与b点的长度不等于X的问题
     // let dx = X + targetPoint.x
     // let dy = X / m + targetPoint.y
@@ -100,7 +100,7 @@ const Bezier = {
     let y1 = (3 * yb - yc) / 72
     let x2 = (3 * xc - xb) / 72
     let y2 = (3 * yc - yb) / 72
-    return [{ x: x1, y: y1 }, { x: x2, y: y2 }]
+    return [{x: x1, y: y1}, {x: x2, y: y2}]
   },
   /**
    * @description 根据长度（即T）获取对应的点
@@ -108,22 +108,26 @@ const Bezier = {
    * //x = (1−t)3x + 3(1−t)2tx +3(1−t)t2x + t3x
    * */
   getPointByT_3(t: number, points: [P, P, P, P]) {
+    //如何t是负值，那么应该从终点开始算
+    if (t < 0)  t = 1 - Math.abs(t)
     let [p0, p1, p2, p3] = points
     let x = Math.pow(1 - t, 3) * p0.x + 3 * Math.pow(1 - t, 2) * t * p1.x
       + 3 * (1 - t) * Math.pow(t, 2) * p2.x + Math.pow(t, 3) * p3.x
     let y = Math.pow(1 - t, 3) * p0.y + 3 * Math.pow(1 - t, 2) * t * p1.y
       + 3 * (1 - t) * Math.pow(t, 2) * p2.y + Math.pow(t, 3) * p3.y
-    return { x, y }
+    return {x, y}
   },
   /**
    * @description 根据长度（即T）获取对应的点
    *  //P = (1−t)2P0 + 2(1−t)tP1 + t2P2
    * */
   getPointByT_2(t: number, points: [P, P, P]) {
+    //如何t是负值，那么应该从终点开始算
+    if (t < 0)  t = 1 - Math.abs(t)
     let [p0, p1, p2] = points
     let x = Math.pow(1 - t, 2) * p0.x + 2 * (1 - t) * t * p1.x + Math.pow(t, 2) * p2.x
     let y = Math.pow(1 - t, 2) * p0.y + 2 * (1 - t) * t * p1.y + Math.pow(t, 2) * p2.y
-    return { x, y }
+    return {x, y}
   },
   /**
    * #####三次曲线#####
@@ -222,4 +226,4 @@ const Bezier = {
     return [t1, t2].filter(v => 0.02 <= v && v <= 0.98)
   }
 }
-export { Bezier }
+export {Bezier}

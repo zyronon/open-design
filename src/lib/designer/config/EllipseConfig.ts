@@ -4,8 +4,10 @@ import {BaseConfig} from "./BaseConfig"
 export interface EllipseConfig extends BaseConfig {
   /** @desc 圆弧总长度*/
   totalLength: number
+  /** @desc 圆弧总长度*/
+  innerT: number
   /** @desc 圆弧起点长度*/
-  startT: number
+  startT: number,
   /** @desc 圆弧起点*/
   startPoint: P
   /** @desc 内圈圆弧起点*/

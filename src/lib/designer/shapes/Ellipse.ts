@@ -22,7 +22,7 @@ import {Bezier} from "../utils/bezier"
 import helper from "../utils/helper"
 import {ParentShape} from "./core/ParentShape";
 import {Colors, defaultConfig} from "../utils/constant"
-import {cloneDeep} from "lodash"
+import {clone, cloneDeep} from "lodash"
 
 /**
  * @desc 获取长度对应的 鼠标控制点
@@ -77,8 +77,16 @@ export class Ellipse extends ParentShape {
   }
 
   init() {
+    this.getCps()
+    this.getStartAndEndPoint()
+    if (!this._conf.isComplete) {
+      this.conf.lineShapes = this.getCustomPoint()
+    }
+  }
+
+  getCps() {
     let {layout,} = this._conf
-    let {x, y, w, h} = layout
+    let {w, h} = layout
     let w2 = w / 2, h2 = h / 2
     let ox = 0.5522848 * w2, oy = 0.5522848 * h2
 
@@ -131,18 +139,77 @@ export class Ellipse extends ParentShape {
       x: right.x,
       y: right.y - oy
     }
-    this.cpMap.set('line1', [cp1, cp2])
-    this.cpMap.set('line2', [cp3, cp4])
-    this.cpMap.set('line3', [cp5, cp6])
-    this.cpMap.set('line4', [cp7, cp8])
-    this.cpMap.set('right', right)
-    this.cpMap.set('bottom', bottom)
-    this.cpMap.set('left', left)
-    this.cpMap.set('top', top)
-    this.getStartAndEndPoint()
-    if (!this._conf.isComplete) {
-      this.conf.lineShapes = this.getCustomPoint()
+    this.cpMap.set('line1', [clone(cp1), clone(cp2)])
+    this.cpMap.set('line2', [clone(cp3), clone(cp4)])
+    this.cpMap.set('line3', [clone(cp5), clone(cp6)])
+    this.cpMap.set('line4', [clone(cp7), clone(cp8)])
+    this.cpMap.set('right', clone(right))
+    this.cpMap.set('bottom', clone(bottom))
+    this.cpMap.set('left', clone(left))
+    this.cpMap.set('top', clone(top))
+
+    let innerW = w / 2
+    let innerH = h / 2
+    w2 = innerW / 2
+    h2 = innerH / 2
+    ox = 0.5522848 * w2
+    oy = 0.5522848 * h2
+    right = {
+      x: w2,
+      y: 0
     }
+    cp1 = {
+      x: right.x,
+      y: right.y + oy
+    }
+    bottom = {
+      x: 0,
+      y: h2
+    }
+    cp2 = {
+      x: bottom.x + ox,
+      y: bottom.y
+    }
+    cp3 = {
+      x: bottom.x - ox,
+      y: bottom.y
+    }
+    left = {
+      x: -w2,
+      y: 0
+    }
+    cp4 = {
+      x: left.x,
+      y: left.y + oy
+    }
+    cp5 = {
+      x: left.x,
+      y: left.y - oy
+    }
+    top = {
+      x: 0,
+      y: -h2
+    }
+    cp6 = {
+      x: top.x - ox,
+      y: top.y
+    }
+    cp7 = {
+      x: top.x + ox,
+      y: top.y
+    }
+    cp8 = {
+      x: right.x,
+      y: right.y - oy
+    }
+    this.cpMap.set('inner-line1', [clone(cp1), clone(cp2)])
+    this.cpMap.set('inner-line2', [clone(cp3), clone(cp4)])
+    this.cpMap.set('inner-line3', [clone(cp5), clone(cp6)])
+    this.cpMap.set('inner-line4', [clone(cp7), clone(cp8)])
+    this.cpMap.set('inner-right', clone(right))
+    this.cpMap.set('inner-bottom', clone(bottom))
+    this.cpMap.set('inner-left', clone(left))
+    this.cpMap.set('inner-top', clone(top))
   }
 
   get _conf(): EllipseConfig {
@@ -156,18 +223,18 @@ export class Ellipse extends ParentShape {
   //获取起点和终点
   getStartAndEndPoint() {
     let {
-      layout,
       totalLength = 4,
       startT = 0,
     } = this._conf
-    let {x, y, w, h} = layout
-    let w2 = w / 2, h2 = h / 2
 
     if (startT === 0) {
       this._conf.startPoint = this.cpMap.get('right')
+      this._conf.innerStartPoint = this.cpMap.get('inner-right')
     } else {
       let lineCps = this.getLineCps(-1, startT)
       this._conf.startPoint = Bezier.getPointByT_3(Math.decimal(startT), lineCps)
+      lineCps = this.getLineCps(-1, startT, true)
+      this._conf.innerStartPoint = Bezier.getPointByT_3(Math.decimal(startT), lineCps)
     }
 
     if (totalLength === 4) {
@@ -176,6 +243,8 @@ export class Ellipse extends ParentShape {
       let endLength = startT + totalLength;
       let lineCps = this.getLineCps(-1, endLength)
       this._conf.endPoint = Bezier.getPointByT_3(Math.decimal(endLength), lineCps)
+      lineCps = this.getLineCps(-1, endLength, true)
+      this._conf.innerEndPoint = Bezier.getPointByT_3(Math.decimal(endLength), lineCps)
     }
 
     let center = {x: 0, y: 0}
@@ -188,7 +257,7 @@ export class Ellipse extends ParentShape {
   }
 
   //获取圆上的4条线段中某一条的控制点
-  getLineCps(lineIndex: number = -1, length?: number): [p1: P, p2: P, p3: P, p4: P] {
+  getLineCps(lineIndex: number = -1, length?: number, inner: boolean = false): [p1: P, p2: P, p3: P, p4: P] {
     if (length !== undefined) {
       if (length >= 0) {
         lineIndex = Math.trunc(length)
@@ -197,6 +266,7 @@ export class Ellipse extends ParentShape {
         lineIndex = Math.trunc(4 + length)
       }
     }
+    let key = inner ? 'inner-' : ''
     //考虑总length超出4的情况，比如起点就在3，长度3
     switch (lineIndex % 4) {
       //特殊情况，当startLength不为0时，startLength + totalLength 可能会等于4
@@ -204,31 +274,31 @@ export class Ellipse extends ParentShape {
       case 4:
       case 0:
         return [
-          this.cpMap.get('right'),
-          this.cpMap.get('line1')[0],
-          this.cpMap.get('line1')[1],
-          this.cpMap.get('bottom')]
+          this.cpMap.get(key + 'right'),
+          this.cpMap.get(key + 'line1')[0],
+          this.cpMap.get(key + 'line1')[1],
+          this.cpMap.get(key + 'bottom')]
       case 1:
       case -3:
         return [
-          this.cpMap.get('bottom'),
-          this.cpMap.get('line2')[0],
-          this.cpMap.get('line2')[1],
-          this.cpMap.get('left')]
+          this.cpMap.get(key + 'bottom'),
+          this.cpMap.get(key + 'line2')[0],
+          this.cpMap.get(key + 'line2')[1],
+          this.cpMap.get(key + 'left')]
       case 2:
       case -2:
         return [
-          this.cpMap.get('left'),
-          this.cpMap.get('line3')[0],
-          this.cpMap.get('line3')[1],
-          this.cpMap.get('top')]
+          this.cpMap.get(key + 'left'),
+          this.cpMap.get(key + 'line3')[0],
+          this.cpMap.get(key + 'line3')[1],
+          this.cpMap.get(key + 'top')]
       case 3:
       case -1:
         return [
-          this.cpMap.get('top'),
-          this.cpMap.get('line4')[0],
-          this.cpMap.get('line4')[1],
-          this.cpMap.get('right')]
+          this.cpMap.get(key + 'top'),
+          this.cpMap.get(key + 'line4')[0],
+          this.cpMap.get(key + 'line4')[1],
+          this.cpMap.get(key + 'right')]
     }
     return [] as any
   }
@@ -902,57 +972,6 @@ export class Ellipse extends ParentShape {
     //这里也可以用.5和.6来算ox和oy
     let ox = 0.5522848 * w2, oy = 0.5522848 * h2
 
-    //TODO 可以优化
-    //图形为整圆时的，4个线段中间点，以及相邻两个控制点。
-    let start = {
-      x: w2,
-      y: 0
-    }
-    let cp1 = {
-      x: start.x,
-      y: start.y + oy
-    }
-    let bottom = {
-      x: 0,
-      y: h2
-    }
-    let cp2 = {
-      x: bottom.x + ox,
-      y: bottom.y
-    }
-    let cp3 = {
-      x: bottom.x - ox,
-      y: bottom.y
-    }
-    let left = {
-      x: -w2,
-      y: 0
-    }
-    let cp4 = {
-      x: left.x,
-      y: left.y + oy
-    }
-    let cp5 = {
-      x: left.x,
-      y: left.y - oy
-    }
-    let top = {
-      x: 0,
-      y: -h2
-    }
-    let cp6 = {
-      x: top.x - ox,
-      y: top.y
-    }
-    let cp7 = {
-      x: top.x + ox,
-      y: top.y
-    }
-    let cp8 = {
-      x: start.x,
-      y: start.y - oy
-    }
-
     this.getStartAndEndPoint()
 
     //是否是整圆
@@ -964,9 +983,9 @@ export class Ellipse extends ParentShape {
         type: PointType.Single,
         point: {
           id: uuid(),
-          cp1: {...getP2(true), ...cp8},
-          center: {...getP2(true), ...start},
-          cp2: {...getP2(true), ...cp1},
+          cp1: {...getP2(true), ...this.cpMap.get('line4')[1]},
+          center: {...getP2(true), ...this.cpMap.get('right')},
+          cp2: {...getP2(true), ...this.cpMap.get('line1')[0]},
           type: BezierPointType.MirrorAngleAndLength
         }
       })
@@ -974,9 +993,9 @@ export class Ellipse extends ParentShape {
         type: PointType.Single,
         point: {
           id: uuid(),
-          cp1: {...getP2(true), ...cp2},
-          center: {...getP2(true), ...bottom},
-          cp2: {...getP2(true), ...cp3},
+          cp1: {...getP2(true), ...this.cpMap.get('line1')[1]},
+          center: {...getP2(true), ...this.cpMap.get('bottom')},
+          cp2: {...getP2(true), ...this.cpMap.get('line2')[0]},
           type: BezierPointType.MirrorAngleAndLength
         }
       })
@@ -984,9 +1003,9 @@ export class Ellipse extends ParentShape {
         type: PointType.Single,
         point: {
           id: uuid(),
-          cp1: {...getP2(true), ...cp4},
-          center: {...getP2(true), ...left},
-          cp2: {...getP2(true), ...cp5},
+          cp1: {...getP2(true), ...this.cpMap.get('line2')[1]},
+          center: {...getP2(true), ...this.cpMap.get('left')},
+          cp2: {...getP2(true), ...this.cpMap.get('line3')[0]},
           type: BezierPointType.MirrorAngleAndLength
         }
       })
@@ -994,9 +1013,9 @@ export class Ellipse extends ParentShape {
         type: PointType.Single,
         point: {
           id: uuid(),
-          cp1: {...getP2(true), ...cp6},
-          center: {...getP2(true), ...top},
-          cp2: {...getP2(true), ...cp7},
+          cp1: {...getP2(true), ...this.cpMap.get('line3')[1]},
+          center: {...getP2(true), ...this.cpMap.get('top')},
+          cp2: {...getP2(true), ...this.cpMap.get('line4')[0]},
           type: BezierPointType.MirrorAngleAndLength
         }
       })
@@ -1055,86 +1074,113 @@ export class Ellipse extends ParentShape {
 
       let p14 = perPart * (1 / 4)
       let p34 = perPart * (3 / 4)
-      for (let i = 1; i <= totalPart; i++) {
-        //计算1/4，3/4长度
-        length14 = lastT + (reverse ? -p14 : p14)
-        length34 = lastT + (reverse ? -p34 : p34)
 
-        //默认情况下，用于计算1/4点，3/4点，可以共用一条对应的线段
-        bezierCurrent = this.getLineCps(-1, currentT)
-        //计算当前点必须用当前长度线段的4个控制点来算
-        currentPoint = Bezier.getPointByT_3(Math.decimal(currentT), bezierCurrent)
-        // console.log(
-        //   'length14', length14,
-        //   'length34', length34,
-        //   'currentT', currentT,
-        //   'intCurrentT', intCurrentT,
-        //   'currentPoint', currentPoint
-        // )
+      const getPoints = (inner: boolean, reverse: boolean) => {
+        for (let i = 1; i <= totalPart; i++) {
+          //计算1/4，3/4长度
+          length14 = lastT + (reverse ? -p14 : p14)
+          length34 = lastT + (reverse ? -p34 : p34)
 
-        //计算1/4长度，3/4长度对应的点
-        length14Point = Bezier.getPointByT_3(Math.decimal(length14), this.getLineCps(-1, length14))
-        length34Point = Bezier.getPointByT_3(Math.decimal(length34), this.getLineCps(-1, length34))
+          //默认情况下，用于计算1/4点，3/4点，可以共用一条对应的线段
+          bezierCurrent = this.getLineCps(-1, currentT, inner)
+          //计算当前点必须用当前长度线段的4个控制点来算
+          currentPoint = Bezier.getPointByT_3(Math.decimal(currentT), bezierCurrent)
+          // console.log(
+          //   'length14', length14,
+          //   'length34', length34,
+          //   'currentT', currentT,
+          //   'intCurrentT', intCurrentT,
+          //   'currentPoint', currentPoint
+          // )
 
-        //利用1/4点、3/4点、起始点、终点，反推控制点
-        let cps = Bezier.getControlPointsByLinePoint(length14Point, length34Point, lastPoint, currentPoint)
+          //计算1/4长度，3/4长度对应的点
+          length14Point = Bezier.getPointByT_3(Math.decimal(length14), this.getLineCps(-1, length14, inner))
+          length34Point = Bezier.getPointByT_3(Math.decimal(length34), this.getLineCps(-1, length34, inner))
 
-        // 因为最后一个控制点（非数组的最后一个点）默认只需center和cp1与前一个点的center和cp2的4个点，组成贝塞尔曲线
-        //所以cp2是无用的，所以添加当前点时，需要把上一个点的cp2为正确的值并启用
-        points[points.length - 1].point!['cp2'] = {
-          use: true,
-          x: cps[0].x,
-          y: cps[0].y,
-          px: 0,
-          py: 0,
-          rx: 0,
-          ry: 0,
-        }
+          //利用1/4点、3/4点、起始点、终点，反推控制点
+          let cps = Bezier.getControlPointsByLinePoint(length14Point, length34Point, lastPoint, currentPoint)
 
-        //默认不启用cp2，因为最后一个控制点，用不到
-        points.push({
-          type: PointType.Single,
-          point: {
-            id: uuid(),
-            cp1: {
-              use: true,
-              x: cps[1].x,
-              y: cps[1].y,
-              px: 0,
-              py: 0,
-              rx: 0,
-              ry: 0,
-            },
-            center: {
-              use: true,
-              x: currentPoint.x,
-              y: currentPoint.y,
-              px: 0,
-              py: 0,
-              rx: 0,
-              ry: 0,
-            },
-            cp2: getP2(),
-            type: BezierPointType.MirrorAngleAndLength
+          // 因为最后一个控制点（非数组的最后一个点）默认只需center和cp1与前一个点的center和cp2的4个点，组成贝塞尔曲线
+          //所以cp2是无用的，所以添加当前点时，需要把上一个点的cp2为正确的值并启用
+          points[points.length - 1].point!['cp2'] = {
+            use: true,
+            x: cps[0].x,
+            y: cps[0].y,
+            px: 0,
+            py: 0,
+            rx: 0,
+            ry: 0,
           }
-        })
-        lastPoint = currentPoint
-        lastT = currentT
-        currentT = lastT + (reverse ? -perPart : perPart)
+
+          //默认不启用cp2，因为最后一个控制点，用不到
+          points.push({
+            type: PointType.Single,
+            point: {
+              id: uuid(),
+              cp1: {
+                use: true,
+                x: cps[1].x,
+                y: cps[1].y,
+                px: 0,
+                py: 0,
+                rx: 0,
+                ry: 0,
+              },
+              center: {
+                use: true,
+                x: currentPoint.x,
+                y: currentPoint.y,
+                px: 0,
+                py: 0,
+                rx: 0,
+                ry: 0,
+              },
+              cp2: getP2(),
+              type: BezierPointType.MirrorAngleAndLength
+            }
+          })
+          lastPoint = currentPoint
+          lastT = currentT
+          currentT = lastT + (reverse ? -perPart : perPart)
+        }
       }
 
-      this._conf.endPoint = points[points.length - 1].point!.center
+      getPoints(false, reverse)
 
       points.push({
         type: PointType.Single,
         point: {
           id: uuid(),
           cp1: getP2(),
-          center: getP2(true),
+          center: {
+            use: true,
+            x: this._conf.innerEndPoint.x,
+            y: this._conf.innerEndPoint.y,
+            px: 0,
+            py: 0,
+            rx: 0,
+            ry: 0,
+          },
           cp2: getP2(),
-          type: BezierPointType.RightAngle
+          type: BezierPointType.NoMirror
         }
       })
+
+      lastPoint = this._conf.innerEndPoint
+      currentT = lastT + (!reverse ? -perPart : perPart)
+      getPoints(true, !reverse)
+
+      // points.push({
+      //   type: PointType.Single,
+      //   point: {
+      //     id: uuid(),
+      //     cp1: getP2(),
+      //     center: getP2(true),
+      //     cp2: getP2(),
+      //     type: BezierPointType.RightAngle
+      //   }
+      // })
+
       return [{close: true, points: points}]
     }
   }

@@ -840,6 +840,19 @@ export class Ellipse extends ParentShape {
   onMouseMove(event: BaseEvent2, parents: BaseShape[]): boolean {
     let {x: cx, y: cy,} = event.point
     let cu = CanvasUtil2.getInstance()
+
+    const {layout: {x, y, w, h}, center} = this.conf
+    let lineIndex = -1
+    if (cx > center.x) {
+      if (cy > center.y) lineIndex = 0
+      else lineIndex = 3
+    } else {
+      if (cy > center.y) lineIndex = 1
+      else lineIndex = 2
+    }
+
+    console.log('lineIndex',lineIndex)
+
     if (this.ellipseEnterType) {
       const {layout: {x, y, w, h}, center} = this.conf
       let lineIndex = -1

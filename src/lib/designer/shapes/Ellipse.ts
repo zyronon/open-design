@@ -50,7 +50,6 @@ export class Ellipse extends ParentShape {
     this.conf = val
   }
 
-
   drawShape(ctx: CanvasRenderingContext2D, newLayout: Rect, parent?: BaseConfig): void {
     if (this.status === ShapeStatus.Edit) return
     let {

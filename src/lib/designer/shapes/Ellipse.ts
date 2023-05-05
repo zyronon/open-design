@@ -24,40 +24,6 @@ import {ParentShape} from "./core/ParentShape";
 import {Colors, defaultConfig} from "../utils/constant"
 import {clone, cloneDeep} from "lodash"
 
-/**
- * @desc 获取长度对应的 鼠标控制点
- * */
-const getMouseControlPointByLength = (length: number, p: P) => {
-  //直线的方程式y= k*x
-  //如果超过半个象限，那么公式相反，这里要注意startLength 等于整数的特殊情况
-  let isYkx = Math.decimal(length) < 0.5
-  switch (Math.trunc(length)) {
-    case 0:
-    case 2:
-      isYkx = Math.decimal(length) < 0.5
-      break
-    case 1:
-    case 3:
-      isYkx = Math.decimal(length) > 0.5
-      break
-  }
-
-  let d = 30
-  let sx, sy, k2
-  if (isYkx) {
-    k2 = p.y / p.x
-    sx = p.x
-    sx = sx < 0 ? sx + d : sx - d
-    sy = sx * k2
-  } else {
-    k2 = p.x / p.y
-    sy = p.y
-    sy = sy < 0 ? sy + d : sy - d
-    sx = sy * k2
-  }
-  return {x: sx, y: sy}
-}
-
 //圆的鼠标hover类型
 enum EllipseHoverType {
   End = 'End',//终点
@@ -76,142 +42,6 @@ export class Ellipse extends ParentShape {
     this.init()
   }
 
-  init() {
-    this.getCps()
-    this.getStartAndEndPoint()
-    if (!this._conf.isComplete) {
-      this.conf.lineShapes = this.getCustomPoint()
-    }
-  }
-
-  getCps() {
-    let {layout,} = this._conf
-    let {w, h} = layout
-    let w2 = w / 2, h2 = h / 2
-    let ox = 0.5522848 * w2, oy = 0.5522848 * h2
-
-    //图形为整圆时的，4个线段中间点，以及相邻两个控制点。
-    let right = {
-      x: w2,
-      y: 0
-    }
-    let cp1 = {
-      x: right.x,
-      y: right.y + oy
-    }
-    let bottom = {
-      x: 0,
-      y: h2
-    }
-    let cp2 = {
-      x: bottom.x + ox,
-      y: bottom.y
-    }
-    let cp3 = {
-      x: bottom.x - ox,
-      y: bottom.y
-    }
-    let left = {
-      x: -w2,
-      y: 0
-    }
-    let cp4 = {
-      x: left.x,
-      y: left.y + oy
-    }
-    let cp5 = {
-      x: left.x,
-      y: left.y - oy
-    }
-    let top = {
-      x: 0,
-      y: -h2
-    }
-    let cp6 = {
-      x: top.x - ox,
-      y: top.y
-    }
-    let cp7 = {
-      x: top.x + ox,
-      y: top.y
-    }
-    let cp8 = {
-      x: right.x,
-      y: right.y - oy
-    }
-    this.cpMap.set('line1', [clone(cp1), clone(cp2)])
-    this.cpMap.set('line2', [clone(cp3), clone(cp4)])
-    this.cpMap.set('line3', [clone(cp5), clone(cp6)])
-    this.cpMap.set('line4', [clone(cp7), clone(cp8)])
-    this.cpMap.set('right', clone(right))
-    this.cpMap.set('bottom', clone(bottom))
-    this.cpMap.set('left', clone(left))
-    this.cpMap.set('top', clone(top))
-
-    let innerW = w / 2
-    let innerH = h / 2
-    w2 = innerW / 2
-    h2 = innerH / 2
-    ox = 0.5522848 * w2
-    oy = 0.5522848 * h2
-    right = {
-      x: w2,
-      y: 0
-    }
-    cp1 = {
-      x: right.x,
-      y: right.y + oy
-    }
-    bottom = {
-      x: 0,
-      y: h2
-    }
-    cp2 = {
-      x: bottom.x + ox,
-      y: bottom.y
-    }
-    cp3 = {
-      x: bottom.x - ox,
-      y: bottom.y
-    }
-    left = {
-      x: -w2,
-      y: 0
-    }
-    cp4 = {
-      x: left.x,
-      y: left.y + oy
-    }
-    cp5 = {
-      x: left.x,
-      y: left.y - oy
-    }
-    top = {
-      x: 0,
-      y: -h2
-    }
-    cp6 = {
-      x: top.x - ox,
-      y: top.y
-    }
-    cp7 = {
-      x: top.x + ox,
-      y: top.y
-    }
-    cp8 = {
-      x: right.x,
-      y: right.y - oy
-    }
-    this.cpMap.set('inner-line1', [clone(cp1), clone(cp2)])
-    this.cpMap.set('inner-line2', [clone(cp3), clone(cp4)])
-    this.cpMap.set('inner-line3', [clone(cp5), clone(cp6)])
-    this.cpMap.set('inner-line4', [clone(cp7), clone(cp8)])
-    this.cpMap.set('inner-right', clone(right))
-    this.cpMap.set('inner-bottom', clone(bottom))
-    this.cpMap.set('inner-left', clone(left))
-    this.cpMap.set('inner-top', clone(top))
-  }
-
   get _conf(): EllipseConfig {
     return this.conf as EllipseConfig
   }
@@ -220,88 +50,6 @@ export class Ellipse extends ParentShape {
     this.conf = val
   }
 
-  //获取起点和终点
-  getStartAndEndPoint() {
-    let {
-      totalLength = 4,
-      startT = 0,
-    } = this._conf
-
-    if (startT === 0) {
-      this._conf.startPoint = this.cpMap.get('right')
-      this._conf.innerStartPoint = this.cpMap.get('inner-right')
-    } else {
-      let lineCps = this.getLineCps(-1, startT)
-      this._conf.startPoint = Bezier.getPointByT_3(Math.decimal(startT), lineCps)
-      lineCps = this.getLineCps(-1, startT, true)
-      this._conf.innerStartPoint = Bezier.getPointByT_3(Math.decimal(startT), lineCps)
-    }
-
-    if (totalLength === 4) {
-      this._conf.endPoint = cloneDeep(this._conf.startPoint)
-    } else {
-      let endLength = startT + totalLength;
-      let lineCps = this.getLineCps(-1, endLength)
-      this._conf.endPoint = Bezier.getPointByT_3(Math.decimal(endLength), lineCps)
-      lineCps = this.getLineCps(-1, endLength, true)
-      this._conf.innerEndPoint = Bezier.getPointByT_3(Math.decimal(endLength), lineCps)
-    }
-
-    let center = {x: 0, y: 0}
-
-    this._conf.startMouseControlPoint = helper.getStraightLineCenterPoint(center, this._conf.startPoint)
-    this._conf.endMouseControlPoint = helper.getStraightLineCenterPoint(center, this._conf.endPoint)
-    if (totalLength === 4) {
-      this._conf.endMouseControlPoint = getMouseControlPointByLength(0, this._conf.endPoint)
-    }
-  }
-
-  //获取圆上的4条线段中某一条的控制点
-  getLineCps(lineIndex: number = -1, length?: number, inner: boolean = false): [p1: P, p2: P, p3: P, p4: P] {
-    if (length !== undefined) {
-      if (length >= 0) {
-        lineIndex = Math.trunc(length)
-      } else {
-        //小于0的话，从4开始减
-        lineIndex = Math.trunc(4 + length)
-      }
-    }
-    let key = inner ? 'inner-' : ''
-    //考虑总length超出4的情况，比如起点就在3，长度3
-    switch (lineIndex % 4) {
-      //特殊情况，当startLength不为0时，startLength + totalLength 可能会等于4
-      //等于4，直接用第一段就行
-      case 4:
-      case 0:
-        return [
-          this.cpMap.get(key + 'right'),
-          this.cpMap.get(key + 'line1')[0],
-          this.cpMap.get(key + 'line1')[1],
-          this.cpMap.get(key + 'bottom')]
-      case 1:
-      case -3:
-        return [
-          this.cpMap.get(key + 'bottom'),
-          this.cpMap.get(key + 'line2')[0],
-          this.cpMap.get(key + 'line2')[1],
-          this.cpMap.get(key + 'left')]
-      case 2:
-      case -2:
-        return [
-          this.cpMap.get(key + 'left'),
-          this.cpMap.get(key + 'line3')[0],
-          this.cpMap.get(key + 'line3')[1],
-          this.cpMap.get(key + 'top')]
-      case 3:
-      case -1:
-        return [
-          this.cpMap.get(key + 'top'),
-          this.cpMap.get(key + 'line4')[0],
-          this.cpMap.get(key + 'line4')[1],
-          this.cpMap.get(key + 'right')]
-    }
-    return [] as any
-  }
 
   drawShape(ctx: CanvasRenderingContext2D, newLayout: Rect, parent?: BaseConfig): void {
     if (this.status === ShapeStatus.Edit) return
@@ -841,19 +589,41 @@ export class Ellipse extends ParentShape {
     let {x: cx, y: cy,} = event.point
     let cu = CanvasUtil2.getInstance()
 
-    const {layout: {x, y, w, h}, center} = this.conf
-    let lineIndex = -1
-    if (cx > center.x) {
-      if (cy > center.y) lineIndex = 0
-      else lineIndex = 3
-    } else {
-      if (cy > center.y) lineIndex = 1
-      else lineIndex = 2
-    }
+    // const {layout: {x, y, w, h}, center} = this.conf
+    // let lineIndex = -1
+    // if (cx > center.x) {
+    //   if (cy > center.y) lineIndex = 0
+    //   else lineIndex = 3
+    // } else {
+    //   if (cy > center.y) lineIndex = 1
+    //   else lineIndex = 2
+    // }
+    //
+    // console.log('lineIndex', lineIndex)
+    // let k = h / w
+    // let newW2 = 0
+    // let newH2 = k * newW2
+    // let ox = 0.5522848 * newW2, oy = 0.5522848 * newH2
+    // let right = {
+    //   x: newW2,
+    //   y: 0
+    // }
+    // let cp1 = {
+    //   x: right.x,
+    //   y: right.y + oy
+    // }
+    // let bottom = {
+    //   x: 0,
+    //   y: newH2
+    // }
+    // let cp2 = {
+    //   x: bottom.x + ox,
+    //   y: bottom.y
+    // }
+    // Bezier.getTByPoint_3()
 
-    console.log('lineIndex',lineIndex)
-
-    if (this.ellipseEnterType) {
+    // if (this.ellipseEnterType) {
+    if (true) {
       const {layout: {x, y, w, h}, center} = this.conf
       let lineIndex = -1
       if (cx > center.x) {
@@ -871,7 +641,10 @@ export class Ellipse extends ParentShape {
       p2 = bs[2]
       p3 = bs[3]
 
-      let k = (cy - center.y) / (cx - center.x)
+      let ch = cy - center.y
+      let cw = cx - center.x
+
+      let k = ch / cw
 
       //一元三次方程：ax^3+bx^2+cx+d=0
       // 三次函数公式：P = (1−t)3P0 + 3(1−t)2tP1 +3(1−t)t2P2 + t3P3
@@ -932,6 +705,28 @@ export class Ellipse extends ParentShape {
         if (this.ellipseEnterType === EllipseHoverType.Start) {
           this._conf.startT = lineIndex + t[0] ?? 0.5
         }
+
+        let s = Bezier.getPointByT_3(t[0], bs)
+        console.log('s', s)
+
+
+        let line1 = Math2.getHypotenuse2(event.point, center)
+        let line2 = w / 2
+        if (w !== h) {
+          line2 = Math2.getHypotenuse2({
+            x: s.x + center.x,
+            y: s.y + center.y,
+          }, center)
+        }
+
+        let k2 = line2 / line1
+
+        console.log(
+          'line1', line1,
+          'line2', line2,
+          'k2', k2
+        )
+        return true
         this._conf.isComplete = false
         this.conf.lineShapes = this.getCustomPoint()
         cu.render()
@@ -1228,6 +1023,222 @@ export class Ellipse extends ParentShape {
     }
     this.ellipseHoverType = undefined
     return false
+  }
+
+  init() {
+    this.getCps()
+    this.getStartAndEndPoint()
+    if (!this._conf.isComplete) {
+      this.conf.lineShapes = this.getCustomPoint()
+    }
+  }
+
+  getCps() {
+    let {layout,} = this._conf
+    let {w, h} = layout
+    let w2 = w / 2, h2 = h / 2
+    let ox = 0.5522848 * w2, oy = 0.5522848 * h2
+
+    //图形为整圆时的，4个线段中间点，以及相邻两个控制点。
+    let right = {
+      x: w2,
+      y: 0
+    }
+    let cp1 = {
+      x: right.x,
+      y: right.y + oy
+    }
+    let bottom = {
+      x: 0,
+      y: h2
+    }
+    let cp2 = {
+      x: bottom.x + ox,
+      y: bottom.y
+    }
+    let cp3 = {
+      x: bottom.x - ox,
+      y: bottom.y
+    }
+    let left = {
+      x: -w2,
+      y: 0
+    }
+    let cp4 = {
+      x: left.x,
+      y: left.y + oy
+    }
+    let cp5 = {
+      x: left.x,
+      y: left.y - oy
+    }
+    let top = {
+      x: 0,
+      y: -h2
+    }
+    let cp6 = {
+      x: top.x - ox,
+      y: top.y
+    }
+    let cp7 = {
+      x: top.x + ox,
+      y: top.y
+    }
+    let cp8 = {
+      x: right.x,
+      y: right.y - oy
+    }
+    this.cpMap.set('line1', [clone(cp1), clone(cp2)])
+    this.cpMap.set('line2', [clone(cp3), clone(cp4)])
+    this.cpMap.set('line3', [clone(cp5), clone(cp6)])
+    this.cpMap.set('line4', [clone(cp7), clone(cp8)])
+    this.cpMap.set('right', clone(right))
+    this.cpMap.set('bottom', clone(bottom))
+    this.cpMap.set('left', clone(left))
+    this.cpMap.set('top', clone(top))
+
+    let innerW = w / 2
+    let innerH = h / 2
+    w2 = innerW / 2
+    h2 = innerH / 2
+    ox = 0.5522848 * w2
+    oy = 0.5522848 * h2
+    right = {
+      x: w2,
+      y: 0
+    }
+    cp1 = {
+      x: right.x,
+      y: right.y + oy
+    }
+    bottom = {
+      x: 0,
+      y: h2
+    }
+    cp2 = {
+      x: bottom.x + ox,
+      y: bottom.y
+    }
+    cp3 = {
+      x: bottom.x - ox,
+      y: bottom.y
+    }
+    left = {
+      x: -w2,
+      y: 0
+    }
+    cp4 = {
+      x: left.x,
+      y: left.y + oy
+    }
+    cp5 = {
+      x: left.x,
+      y: left.y - oy
+    }
+    top = {
+      x: 0,
+      y: -h2
+    }
+    cp6 = {
+      x: top.x - ox,
+      y: top.y
+    }
+    cp7 = {
+      x: top.x + ox,
+      y: top.y
+    }
+    cp8 = {
+      x: right.x,
+      y: right.y - oy
+    }
+    this.cpMap.set('inner-line1', [clone(cp1), clone(cp2)])
+    this.cpMap.set('inner-line2', [clone(cp3), clone(cp4)])
+    this.cpMap.set('inner-line3', [clone(cp5), clone(cp6)])
+    this.cpMap.set('inner-line4', [clone(cp7), clone(cp8)])
+    this.cpMap.set('inner-right', clone(right))
+    this.cpMap.set('inner-bottom', clone(bottom))
+    this.cpMap.set('inner-left', clone(left))
+    this.cpMap.set('inner-top', clone(top))
+  }
+
+  //获取起点和终点
+  getStartAndEndPoint() {
+    let {
+      totalLength = 4,
+      startT = 0,
+    } = this._conf
+
+    if (startT === 0) {
+      this._conf.startPoint = this.cpMap.get('right')
+      this._conf.innerStartPoint = this.cpMap.get('inner-right')
+    } else {
+      let lineCps = this.getLineCps(-1, startT)
+      this._conf.startPoint = Bezier.getPointByT_3(Math.decimal(startT), lineCps)
+      lineCps = this.getLineCps(-1, startT, true)
+      this._conf.innerStartPoint = Bezier.getPointByT_3(Math.decimal(startT), lineCps)
+    }
+
+    if (totalLength === 4) {
+      this._conf.endPoint = cloneDeep(this._conf.startPoint)
+    } else {
+      let endLength = startT + totalLength;
+      let lineCps = this.getLineCps(-1, endLength)
+      this._conf.endPoint = Bezier.getPointByT_3(Math.decimal(endLength), lineCps)
+      lineCps = this.getLineCps(-1, endLength, true)
+      this._conf.innerEndPoint = Bezier.getPointByT_3(Math.decimal(endLength), lineCps)
+    }
+
+    let center = {x: 0, y: 0}
+
+    this._conf.startMouseControlPoint = helper.getStraightLineCenterPoint(center, this._conf.startPoint)
+    this._conf.endMouseControlPoint = helper.getStraightLineCenterPoint(center, this._conf.endPoint)
+  }
+
+  //获取圆上的4条线段中某一条的控制点
+  getLineCps(lineIndex: number = -1, length?: number, inner: boolean = false): [p1: P, p2: P, p3: P, p4: P] {
+    if (length !== undefined) {
+      if (length >= 0) {
+        lineIndex = Math.trunc(length)
+      } else {
+        //小于0的话，从4开始减
+        lineIndex = Math.trunc(4 + length)
+      }
+    }
+    let key = inner ? 'inner-' : ''
+    //考虑总length超出4的情况，比如起点就在3，长度3
+    switch (lineIndex % 4) {
+      //特殊情况，当startLength不为0时，startLength + totalLength 可能会等于4
+      //等于4，直接用第一段就行
+      case 4:
+      case 0:
+        return [
+          this.cpMap.get(key + 'right'),
+          this.cpMap.get(key + 'line1')[0],
+          this.cpMap.get(key + 'line1')[1],
+          this.cpMap.get(key + 'bottom')]
+      case 1:
+      case -3:
+        return [
+          this.cpMap.get(key + 'bottom'),
+          this.cpMap.get(key + 'line2')[0],
+          this.cpMap.get(key + 'line2')[1],
+          this.cpMap.get(key + 'left')]
+      case 2:
+      case -2:
+        return [
+          this.cpMap.get(key + 'left'),
+          this.cpMap.get(key + 'line3')[0],
+          this.cpMap.get(key + 'line3')[1],
+          this.cpMap.get(key + 'top')]
+      case 3:
+      case -1:
+        return [
+          this.cpMap.get(key + 'top'),
+          this.cpMap.get(key + 'line4')[0],
+          this.cpMap.get(key + 'line4')[1],
+          this.cpMap.get(key + 'right')]
+    }
+    return [] as any
   }
 
 }

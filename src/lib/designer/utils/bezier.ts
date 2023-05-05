@@ -49,7 +49,7 @@ const Bezier = {
    *  然后将直线向y轴正方向移动相应的距离即可得到过点b且平行于A的直线上的任意一点。
    *
    * */
-  getTargetPointControlPoint(previousPoint: P, targetPoint: P, nextPoint: P) {
+  getTargetPointControlPoints(previousPoint: P, targetPoint: P, nextPoint: P) {
     // @ts-ignore
     // console.log(...arguments)
     let {x: p1X, y: p1Y} = previousPoint

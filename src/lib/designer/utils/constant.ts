@@ -674,7 +674,7 @@ export const rects = [
       "x": 1000,
       "y": 150,
       "w": 300,
-      "h": 300,
+      "h": 400,
     },
     "rotation": 0,
     "lineWidth": 2,

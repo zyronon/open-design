@@ -1,62 +1,50 @@
-import React, {ChangeEventHandler, Component, MutableRefObject, SyntheticEvent, useMemo, useRef} from 'react'
+import React, {Component} from 'react'
 import './index.scss'
 import {withRouter} from "../../components/WithRouter"
+import {Bezier} from "bezier-js";
+// @ts-ignore
 import {Button} from "antd";
-import {useNavigate} from "react-router-dom"
-import {TextAlign} from "../../lib/designer/config/TextConfig"
-import {CU} from "../../lib/designer/engine/CanvasUtil2"
-import {TextMode} from "../canvas-old/type"
-import helper from "../../lib/designer/utils/helper"
-import {ShapeType} from "../../lib/designer/types/type"
+import {CodeExample} from "./a";
+import {Math2} from '../../lib/designer/utils/math';
 
-let conf = {
-  "name": "文字",
-  layout: {
-    "x": 1050,
-    "y": 50,
-    "w": 100,
-    "h": 50,
-  },
-  "rotation": 0,
-  "lineWidth": 2,
-  "type": ShapeType.TEXT,
-  "fontFamily": "SourceHanSansCN",
-  "textAlign": TextAlign.LEFT,
-  "textBaseline": 1,
-  "fontSize": 20,
-  "fontWeight": 500,
-  "letterSpacing": 0,
-  "textLineHeight": 20,
-  "textMode": TextMode.AUTO_H,
-  "texts": [
-    "输入文本"
-  ],
-  "brokenTexts": [
-    "输入文本"
-  ],
-  "color": "gray",
-  "radius": 0,
-  "borderColor": "rgb(216,216,216)",
-  "fillColor": "rgb(241,238,238)",
-  flipHorizontal: false,
-  flipVertical: false
-}
 
-function T() {
-  const textRef = useRef<HTMLDivElement>(undefined as any)
-  const canvasRef = useRef<HTMLCanvasElement>(undefined as any)
-  const inputRef = useRef<HTMLTextAreaElement>(undefined as any)
-  let navigate = useNavigate();
+class T extends Component<any, any> {
 
-  return (
-    <>
-      <div className={'content'}>
-        <div className={'wrapper'}>
+  componentDidMount() {
+    let P0 = {x: 250, y: 0}
+    let P1 = {x: P0.x, y: P0.y + 100}
+    let P3 = {x: 500, y: 150}
+    let P2 = {x: P3.x - 50, y: P3.y}
+    let curve = new Bezier(P0.x, P0.y, P1.x, P1.y, P2.x, P2.y, P3.x, P3.y);
+    var code = new CodeExample(0);
+    code.drawSkeleton(curve);
+    code.drawCurve(curve);
+    var LUT = curve.getLUT(16);
+    LUT.forEach(p => code.drawCircle(p, 2));
+
+    let t = 0.5
+    let A = curve.get(t)
+    code.setColor("red");
+    code.drawPoint(curve.get(t));
+    code.drawPoint({x: 250, y: 250});
+    code.drawPoint({x: 500, y: 0});
+  }
+
+  nav(path: any) {
+    this.props.navigate(path)
+  }
+
+  render() {
+    return (
+      <>
+        <div className={'content'}>
+          <canvas width="500" height="500"></canvas>
+          <Button onClick={() => this.nav('/')}>回/</Button>
         </div>
-        <Button onClick={() => navigate('/')}>回/</Button>
-      </div>
-    </>
-  )
+      </>
+    )
+  }
 }
 
-export default T
+export default withRouter(T)
+

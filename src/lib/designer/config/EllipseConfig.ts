@@ -4,8 +4,10 @@ import {BaseConfig} from "./BaseConfig"
 export interface EllipseConfig extends BaseConfig {
   /** @desc 圆弧总长度*/
   totalLength: number
-  /** @desc 圆弧总长度*/
-  innerT: number
+  /** @desc 内圆的宽度
+   * 因为内圆的长宽与外圆的长度是等比的。只需要一个就行了。通过比例可以算出来
+   * */
+  innerWidth: number
   /** @desc 圆弧起点长度*/
   startT: number,
   /** @desc 圆弧起点*/

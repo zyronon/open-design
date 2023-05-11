@@ -709,23 +709,27 @@ export class Ellipse extends ParentShape {
         let s = Bezier.getPointByT_3(t[0], bs)
         console.log('s', s)
 
-
-        let line1 = Math2.getHypotenuse2(event.point, center)
-        let line2 = w / 2
+        //当前方向的当前点与中心点长度
+        let currentLineLength = Math2.getHypotenuse2(event.point, center)
+        //当前方向边界与中心点的总长度
+        let totalLineLength = w / 2
         if (w !== h) {
-          line2 = Math2.getHypotenuse2({
+          totalLineLength = Math2.getHypotenuse2({
             x: s.x + center.x,
             y: s.y + center.y,
           }, center)
         }
 
-        let k2 = line2 / line1
+        let k2 = totalLineLength / currentLineLength
 
         console.log(
-          'line1', line1,
-          'line2', line2,
+          'currentLineLength', currentLineLength,
+          'line2', totalLineLength,
           'k2', k2
         )
+
+        let newLineLength = w / k2
+
         return true
         this._conf.isComplete = false
         this.conf.lineShapes = this.getCustomPoint()

@@ -22,7 +22,5 @@ export interface EllipseConfig extends BaseConfig {
   innerEndPoint: P
   /** @desc 终点长度对应的 鼠标控制点*/
   endMouseControlPoint: P
-  /** @desc 所有控制点，总的12个*/
-  cps: P[]
   isComplete: boolean
 }

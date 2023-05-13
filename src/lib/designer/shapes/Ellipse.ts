@@ -332,41 +332,39 @@ export class Ellipse extends ParentShape {
           this._conf.startT = lineIndex + t[0] ?? 0.5
         }
 
-        let s = Bezier.getPointByT_3(t[0], bs)
-        console.log('s', s)
+        if (this.ellipseEnterType === EllipseHoverType.InsideDiameter) {
+          let s = Bezier.getPointByT_3(t[0], bs)
+          console.log('s', s)
 
-        //当前方向的当前点与中心点长度
-        let currentLineLength = Math2.getHypotenuse2(event.point, center)
-        //当前方向边界与中心点的总长度
-        let totalLineLength = w / 2
-        if (w !== h) {
-          totalLineLength = Math2.getHypotenuse2({
-            x: s.x + center.x,
-            y: s.y + center.y,
-          }, center)
+          //当前方向的当前点与中心点长度
+          let currentLineLength = Math2.getHypotenuse2(event.point, center)
+          //当前方向边界与中心点的总长度
+          let totalLineLength = w / 2
+          if (w !== h) {
+            totalLineLength = Math2.getHypotenuse2({
+              x: s.x + center.x,
+              y: s.y + center.y,
+            }, center)
+          }
+
+          //长宽比
+          let k2 = totalLineLength / currentLineLength
+          // console.log(
+          //   'currentLineLength', currentLineLength,
+          //   'line2', totalLineLength,
+          //   'k2', k2
+          // )
+
+          let innerLayout = {
+            w: w / k2,
+            h: h / k2,
+            x: 0,
+            y: 0
+          }
+          console.log('innerLayout', innerLayout)
+          this._conf.innerLayout = innerLayout
+          this.getInnerCps()
         }
-
-        let k2 = totalLineLength / currentLineLength
-
-        // console.log(
-        //   'currentLineLength', currentLineLength,
-        //   'line2', totalLineLength,
-        //   'k2', k2
-        // )
-
-        let innerLayout = {
-          w: w / k2,
-          h: h / k2,
-          x: 0,
-          y: 0
-        }
-        console.log('innerLayout', innerLayout)
-        this._conf.innerLayout = innerLayout
-        this.getInnerCps()
-        this.conf.lineShapes = this.getCustomPoint()
-        cu.render()
-
-        return true
         this._conf.isComplete = false
         this.conf.lineShapes = this.getCustomPoint()
         cu.render()

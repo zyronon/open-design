@@ -676,6 +676,12 @@ export const rects = [
       "w": 300,
       "h": 400,
     },
+    innerLayout: {
+      "x": 1000,
+      "y": 150,
+      "w": 150,
+      "h": 200,
+    },
     "rotation": 0,
     "lineWidth": 2,
     "type": ShapeType.ELLIPSE,

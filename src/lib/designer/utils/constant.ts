@@ -668,6 +668,41 @@ let temp = {
   flipVertical: false
 }
 export const rects = [
+
+  {
+    "name": "文字",
+    layout: {
+      "x": 1050,
+      "y": 50,
+      "w": 100,
+      "h": 50,
+    },
+    "rotation": 0,
+    "lineWidth": 2,
+    "type": ShapeType.TEXT,
+    "fontFamily": "SourceHanSansCN",
+    "textAlign": TextAlign.LEFT,
+    "textBaseline": 1,
+    "fontSize": 20,
+    "fontWeight": 500,
+    "letterSpacing": 0,
+    "textLineHeight": 20,
+    "textMode": TextMode.AUTO_W,
+    "texts": [
+      "输入文本"
+    ],
+    "brokenTexts": [
+      "输入文本",
+      "输入文本",
+      "输入文本"
+    ],
+    "color": "gray",
+    "radius": 0,
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "rgb(241,238,238)",
+    flipHorizontal: false,
+    flipVertical: false
+  },
   {
     "name": "圆",
     layout: {
@@ -693,38 +728,6 @@ export const rects = [
     totalLength: 2.9,
     startT: 3.5,
     isComplete: false,
-    flipHorizontal: false,
-    flipVertical: false
-  },
-  {
-    "name": "文字",
-    layout: {
-      "x": 1050,
-      "y": 50,
-      "w": 100,
-      "h": 50,
-    },
-    "rotation": 0,
-    "lineWidth": 2,
-    "type": ShapeType.TEXT,
-    "fontFamily": "SourceHanSansCN",
-    "textAlign": TextAlign.LEFT,
-    "textBaseline": 1,
-    "fontSize": 20,
-    "fontWeight": 500,
-    "letterSpacing": 0,
-    "textLineHeight": 20,
-    "textMode": TextMode.AUTO_H,
-    "texts": [
-      "输入文本"
-    ],
-    "brokenTexts": [
-      "输入文本"
-    ],
-    "color": "gray",
-    "radius": 0,
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "rgb(241,238,238)",
     flipHorizontal: false,
     flipVertical: false
   },

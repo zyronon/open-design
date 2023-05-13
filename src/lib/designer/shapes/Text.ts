@@ -117,9 +117,7 @@ export class Text extends ParentShape {
       textLineHeight
     } = this._config
     let {x, y, w, h} = newLayout
-
     this.drawText(ctx, newLayout)
-
   }
 
   drawText(ctx: CanvasRenderingContext2D, newLayout: Rect) {
@@ -134,24 +132,24 @@ export class Text extends ParentShape {
     } = this._config
     let {x, y, w, h} = newLayout
     // ctx.fillStyle = 'white'
-    ctx.font = `${fontWeight} ${fontSize}rem "${fontFamily}", sans-serif`
-    ctx.textBaseline = 'top'
+    ctx.font = `${fontWeight} ${fontSize}px/20px "${fontFamily}", sans-serif`
+    // ctx.textBaseline = 'top'
+    // ctx.textBaseline = 'middle'
     // ctx.textAlign = rect.textAlign
 
     // console.log('render', rect.texts)
+    let w2 = w / 2
     brokenTexts?.map((text, index) => {
+      let m = ctx.measureText(text)
       let lX = x
       if (textAlign === TextAlign.CENTER) {
-        let m = ctx.measureText(text)
-        lX = x + w / 2 - m.width / 2
+        lX = x + w2 - m.width / 2
       }
       if (textAlign === TextAlign.RIGHT) {
-        let m = ctx.measureText(text)
         lX = x + w - m.width
       }
       if (textAlign === TextAlign.LEFT) {
-        let m = ctx.measureText(text)
-        lX = x + w - m.width
+        lX = -w2
       }
       text && ctx.fillText(text, lX, y + 10 + (index * textLineHeight))
     })

@@ -134,7 +134,7 @@ export class Text extends ParentShape {
     // ctx.fillStyle = 'white'
     ctx.font = `${fontWeight} ${fontSize}px/20px "${fontFamily}", sans-serif`
     // ctx.textBaseline = 'top'
-    // ctx.textBaseline = 'middle'
+    ctx.textBaseline = 'middle'
     // ctx.textAlign = rect.textAlign
 
     // console.log('render', rect.texts)

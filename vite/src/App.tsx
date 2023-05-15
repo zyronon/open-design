@@ -62,14 +62,17 @@ function getTextModeAutoHTexts(texts: string[], ctx: any, w: number) {
 
 function App() {
   const ref = useRef(null)
-  const [ctx, setCtx] = useState<any>(null)
+  const [ctx, setCtx] = useState<CanvasRenderingContext2D>(null as any)
 
   function render(texts: string[]) {
-    let {x, y, w, h,} = conf.layout
+    let {layout: {x, y, w, h,}, center} = conf
+    ctx.clearRect(0, 0, 500, 500)
 
-    console.log('texts', texts)
-    let fontWeight = '400'
-    let fontSize = '20'
+
+    ctx.save()
+    ctx.translate(center.x, center.y)
+    let fontWeight = 500
+    let fontSize = 20
     let textLineHeight = 20
     let textMode = TextMode.AUTO_W
     let textAlign = TextAlign.LEFT
@@ -95,7 +98,7 @@ function App() {
       conf.center.y = original.center.y + (newH - oh) / 2
       conf.layout.w = maxW
       conf.layout.h = newH
-      conf.brokenTexts = texts
+      console.log(conf)
     }
     if (textMode === TextMode.AUTO_H) {
       conf.brokenTexts = getTextModeAutoHTexts(texts, ctx, w)
@@ -106,7 +109,7 @@ function App() {
       conf.layout.h = conf.brokenTexts.length * textLineHeight
     }
 
-    let w2 = w / 2
+    let w2 = conf.layout.w / 2
     conf.brokenTexts.map((text: string, index: number) => {
       let m = ctx.measureText(text)
       let lX = x
@@ -119,8 +122,14 @@ function App() {
       if (textAlign === TextAlign.LEFT) {
         lX = -w2
       }
-      text && ctx.fillText(text, lX, y + 10 + (index * textLineHeight))
+      let lY = y + (index * textLineHeight)
+      console.log('lY', lY)
+      text && ctx.fillText(text, lX, lY)
     })
+    ctx.restore()
+    original = JSON.parse(JSON.stringify(conf))
+    // console.log('texts', texts)
+
   }
 
   useEffect(() => {

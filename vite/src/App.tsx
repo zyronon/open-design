@@ -13,7 +13,10 @@ class Text {
 
 let conf: any = {
   brokenTexts: [],
-  texts: [],
+  texts: [
+    'asd',
+    'SSsS'
+  ],
   layout: {
     x: 0,
     y: 0,
@@ -66,7 +69,7 @@ function App() {
 
   function render(texts: string[]) {
     let {layout: {x, y, w, h,}, center} = conf
-    ctx.clearRect(0, 0, 500, 500)
+    ctx.clearRect(0, 0, 400, 400)
     console.log('render', texts)
 
     let fontWeight = 500
@@ -111,6 +114,7 @@ function App() {
     ctx.translate(conf.center.x, conf.center.y)
 
     let w2 = conf.layout.w / 2
+    let h2 = conf.layout.h / 2
     conf.brokenTexts.map((text: string, index: number) => {
       let m = ctx.measureText(text)
       let lX = x
@@ -123,8 +127,7 @@ function App() {
       if (textAlign === TextAlign.LEFT) {
         lX = -w2
       }
-      let lY = y + (index * textLineHeight)
-      console.log('lY', lY)
+      let lY = -h2 + (index * textLineHeight)
       text && ctx.fillText(text, lX, lY)
     })
     ctx.restore()
@@ -156,6 +159,9 @@ function App() {
         y: y + h / 2
       }
       original = JSON.parse(JSON.stringify(conf))
+      setTimeout(()=>{
+        render(conf.texts)
+      })
     }
   }, [ref.current])
 
@@ -165,7 +171,7 @@ function App() {
 
   return (
     <>
-      <canvas width={500} height={500} ref={ref}/>
+      <canvas width={400} height={400} ref={ref}/>
       <textarea onChange={onChange}></textarea>
     </>
   )

@@ -67,21 +67,21 @@ function App() {
   function render(texts: string[]) {
     let {layout: {x, y, w, h,}, center} = conf
     ctx.clearRect(0, 0, 500, 500)
+    console.log('render', texts)
 
-
-    ctx.save()
-    ctx.translate(center.x, center.y)
     let fontWeight = 500
-    let fontSize = 20
-    let textLineHeight = 20
+    let fontSize = 40
+    let textLineHeight = 40
     let textMode = TextMode.AUTO_W
     let textAlign = TextAlign.LEFT
-    ctx.font = `${fontWeight} ${fontSize}px/20px`
-    // ctx.textBaseline = 'top'
-    ctx.textBaseline = 'middle'
+    ctx.font = `${fontWeight} ${fontSize}px/${textLineHeight}px sans-serif`
+    ctx.textBaseline = 'top'
+    // ctx.textBaseline = 'middle'
+    // ctx.textBaseline = 'bottom'
     // ctx.textAlign = rect.textAlign
-
-    // console.log('render', rect.texts)
+    // ctx.fillText(texts[0], 0, 0)
+    // return
+    ctx.save()
 
     conf.brokenTexts = texts
     conf.texts = texts
@@ -108,6 +108,7 @@ function App() {
       conf.center.y = original.center.y + (newH - oh) / 2
       conf.layout.h = conf.brokenTexts.length * textLineHeight
     }
+    ctx.translate(conf.center.x, conf.center.y)
 
     let w2 = conf.layout.w / 2
     conf.brokenTexts.map((text: string, index: number) => {
@@ -140,6 +141,7 @@ function App() {
       let {width, height} = canvasRect
       let dpr = window.devicePixelRatio
       if (dpr) {
+        // if (false) {
         canvas.style.width = width + "px"
         canvas.style.height = height + "px"
         canvas.height = height * dpr

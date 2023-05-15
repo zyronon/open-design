@@ -4,18 +4,22 @@ import {TextAlign} from "../../src/lib/designer/config/TextConfig"
 import {TextMode} from "../../src/pages/canvas-old/type"
 import helper from "../../src/lib/designer/utils/helper"
 
-class Text {
 
-  drawText() {
-
-  }
+type Text = {
+  text: string
 }
 
 let conf: any = {
-  brokenTexts: [],
-  texts: [
-    'asd',
-    'SSsS'
+  texts: [],
+  brokenTexts: [
+    [
+      {
+        text: 'ASD',
+      },
+      {
+        text: 'ABC',
+      }
+    ]
   ],
   layout: {
     x: 0,
@@ -67,7 +71,7 @@ function App() {
   const ref = useRef(null)
   const [ctx, setCtx] = useState<CanvasRenderingContext2D>(null as any)
 
-  function render(texts: string[]) {
+  function render(texts: Text[][], ctx: CanvasRenderingContext2D) {
     let {layout: {x, y, w, h,}, center} = conf
     ctx.clearRect(0, 0, 400, 400)
     console.log('render', texts)
@@ -87,48 +91,49 @@ function App() {
     ctx.save()
 
     conf.brokenTexts = texts
-    conf.texts = texts
-    if (textMode === TextMode.AUTO_W) {
-      let widths = texts.map((text: string) => {
-        let measureText = ctx.measureText(text)
-        return measureText.width
-      })
-      let {w: ow, h: oh} = original.layout
-      let maxW = Math.max(...widths)
-      let newH = conf.brokenTexts.length * textLineHeight
-      //老中心点加上w\h的增量除2，就是新中心
-      conf.center.x = original.center.x + (maxW - ow) / 2
-      conf.center.y = original.center.y + (newH - oh) / 2
-      conf.layout.w = maxW
-      conf.layout.h = newH
-      console.log(conf)
-    }
-    if (textMode === TextMode.AUTO_H) {
-      conf.brokenTexts = getTextModeAutoHTexts(texts, ctx, w)
-      console.log('brokenTexts', conf.brokenTexts)
-      let {h: oh} = original.layout
-      let newH = conf.brokenTexts.length * textLineHeight
-      conf.center.y = original.center.y + (newH - oh) / 2
-      conf.layout.h = conf.brokenTexts.length * textLineHeight
-    }
+    // if (textMode === TextMode.AUTO_W) {
+    //   let widths = texts.map((text: string) => {
+    //     let measureText = ctx.measureText(text)
+    //     return measureText.width
+    //   })
+    //   let {w: ow, h: oh} = original.layout
+    //   let maxW = Math.max(...widths)
+    //   let newH = conf.brokenTexts.length * textLineHeight
+    //   //老中心点加上w\h的增量除2，就是新中心
+    //   conf.center.x = original.center.x + (maxW - ow) / 2
+    //   conf.center.y = original.center.y + (newH - oh) / 2
+    //   conf.layout.w = maxW
+    //   conf.layout.h = newH
+    //   console.log(conf)
+    // }
+    // if (textMode === TextMode.AUTO_H) {
+    //   conf.brokenTexts = getTextModeAutoHTexts(texts, ctx, w)
+    //   console.log('brokenTexts', conf.brokenTexts)
+    //   let {h: oh} = original.layout
+    //   let newH = conf.brokenTexts.length * textLineHeight
+    //   conf.center.y = original.center.y + (newH - oh) / 2
+    //   conf.layout.h = conf.brokenTexts.length * textLineHeight
+    // }
     ctx.translate(conf.center.x, conf.center.y)
 
     let w2 = conf.layout.w / 2
     let h2 = conf.layout.h / 2
-    conf.brokenTexts.map((text: string, index: number) => {
-      let m = ctx.measureText(text)
-      let lX = x
-      if (textAlign === TextAlign.CENTER) {
-        lX = x + w2 - m.width / 2
-      }
-      if (textAlign === TextAlign.RIGHT) {
-        lX = x + w - m.width
-      }
-      if (textAlign === TextAlign.LEFT) {
-        lX = -w2
-      }
-      let lY = -h2 + (index * textLineHeight)
-      text && ctx.fillText(text, lX, lY)
+    conf.brokenTexts.map((row: Text[]) => {
+      row.map((obj: Text, index: number) => {
+        let m = ctx.measureText(obj.text)
+        let lX = x
+        if (textAlign === TextAlign.CENTER) {
+          lX = x + w2 - m.width / 2
+        }
+        if (textAlign === TextAlign.RIGHT) {
+          lX = x + w - m.width
+        }
+        if (textAlign === TextAlign.LEFT) {
+          lX = -w2
+        }
+        let lY = -h2 + (index * textLineHeight)
+        obj.text && ctx.fillText(obj.text, lX, lY)
+      })
     })
     ctx.restore()
     original = JSON.parse(JSON.stringify(conf))
@@ -159,14 +164,14 @@ function App() {
         y: y + h / 2
       }
       original = JSON.parse(JSON.stringify(conf))
-      setTimeout(()=>{
-        render(conf.texts)
+      setTimeout(() => {
+        render(conf.brokenTexts, ctx)
       })
     }
   }, [ref.current])
 
   function onChange(e: any) {
-    render(e.target.value.split('\n'))
+    render(e.target.value.split('\n'), ctx)
   }
 
   return (

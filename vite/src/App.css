@@ -1,0 +1,15 @@
+#root {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+canvas {
+    border: 1px solid gainsboro;
+}
+
+textarea{
+    width: 500px;
+    height: 100px;
+}

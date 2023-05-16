@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Canvas Input Element</title>
+</head>
+<body>
+<canvas id="draw" width="500" height="500"></canvas>
+<script type="text/javascript">
+  var canvas = document.getElementById("draw");
+  var ctx = canvas.getContext("2d");
+  // canvas.width = window.innerWidth;
+  // canvas.height = window.innerHeight;
+  ctx.beginPath();
+
+  function Input(textArr = [], options = {}) {
+    this.textArr = textArr;
+    this.localArr = [];
+    this.inputStatus = 'CHAR_TYPING'
+    this.options = Object.assign({
+      width: canvas.width - 20,
+      height: canvas.height - 20,
+      font: "40px Arial",
+      borderWidth: 1,
+      borderColor: "#ccc",
+      padding: 5
+    }, options);
+    this.lineHeight = parseInt(this.options.font, 17);
+    this.position = {x: 10, y: 10};
+    this.isFocus = false;
+    this.focusIndex = [1, textArr[1].length - 1]
+    this.isCommandKey = false;
+    this.selected = false;
+    var that = this;
+    this.TextArea = document.createElement("textarea")
+    document.getElementsByTagName('body')[0].appendChild(this.TextArea)
+    this.TextArea.addEventListener('compositionstart', function (e) {
+      that.inputStatus = 'CHINESE_TYPING';
+    }, false);
+    this.TextArea.addEventListener('input', function (e) {
+      if (that.inputStatus === 'CHINESE_TYPING') {
+        return;
+      }
+      let i = that.focusIndex[1]
+      let arr = that.textArr[[that.focusIndex[0]]].split('')
+      //e.data
+      arr.splice(i, 0, e.data);
+      that.textArr[[that.focusIndex[0]]] = arr.join('')
+      let strLength = e.data ? e.data.length : 0;
+      that.focusIndex[1] = i + strLength;
+      that.inputStatus = 'CHAR_TYPING';
+      that.render();
+    }, false);
+    this.TextArea.addEventListener('compositionend', function (e) {
+      if (that.inputStatus === 'CHINESE_TYPING') {
+        let i = that.focusIndex[1]
+        let arr = that.textArr[[that.focusIndex[0]]].split('')
+        //e.data
+        arr.splice(i, 0, e.data);
+        that.textArr[[that.focusIndex[0]]] = arr.join('')
+        let strLength = e.data ? e.data.length : 0;
+        that.focusIndex[1] = i + strLength;
+        that.render();
+        that.inputStatus = 'CHAR_TYPING'
+
+      }
+
+    }, false);
+    window.addEventListener("click", function (event) {
+      input.handleOnClick(event);
+    });
+    this.TextArea.addEventListener("keydown", function (event) {
+      input.handleOnKeyDown(event);
+    });
+    this.TextArea.addEventListener("keyup", function (event) {
+      input.handleOnKeyUp(event);
+    });
+    this.elementLocation = () => {
+      this.localArr = []
+      ctx.font = this.options.font;
+      ctx.lineWidth = this.options.borderWidth;
+      ctx.textBaseline = 'bottom'
+      for (var i = 0; i < this.textArr.length; i++) {
+        let str = this.textArr[i];
+        let arr = this.textArr[i].split('');
+        let curLocalItem = []
+        for (var j = 0; j < arr.length; j++) {
+          let x = this.options.padding + this.position.x + canvas.offsetLeft + ctx.measureText(str.slice(0, j)).width
+          let ystart = this.options.padding + this.position.y + canvas.offsetTop + this.lineHeight * i
+          let yend = ystart + this.lineHeight;
+          curLocalItem.push({x, y: {start: ystart, end: yend}})
+        }
+        this.localArr.push(curLocalItem)
+      }
+    }
+    this.elementLocation();
+    console.log('this.localArr',this.localArr)
+    //重新定位this.TextArea的位置
+    this.textAreaLocation = () => {
+      //找出光标的位置，并令其绝对定位之
+      canvas.style.zIndex = 100;
+      canvas.style.position = 'absolute'
+      that.TextArea.style.position = 'absolute';
+      that.TextArea.style.zIndex = -1000;
+      that.TextArea.style.opacity = 0;
+
+      let y = this.focusIndex[0]
+      let x = this.focusIndex[1]
+      let cur = this.localArr[y][x]
+      that.TextArea.style.left = cur.x + 'px'
+      that.TextArea.style.top = cur.y.start + 'px';
+    }
+    this.textAreaLocation();
+    //计算每一个文字在canvas中的相对坐标
+
+    this.render = function () {
+      this.elementLocation();
+      ctx.clearRect(this.position.x, this.position.y, this.options.width, this.options.height);
+      ctx.font = this.options.font;
+      ctx.lineWidth = this.options.borderWidth;
+      ctx.strokeStyle = this.options.borderColor;
+      ctx.textBaseline = 'bottom'  //import
+      if (this.isFocus) {
+        ctx.strokeStyle = "#000";
+      }
+      ctx.rect(this.position.x, this.position.y, this.options.width, this.options.height);
+      ctx.stroke();
+      // write text
+      // 二维而言,就是一个二维的数组
+      for (var i = 0; i < this.textArr.length; i++) {
+        var str = "";
+        for (var j = 0; j < this.textArr[i].length; j++) {
+          if (!this.selected && this.isFocus && this.focusIndex[0] === i && this.focusIndex[1] === j) {
+            str += "|";
+          }
+          str += this.textArr[i][j];
+        }
+        if (!this.selected && this.isFocus && this.focusIndex[0] === i && this.focusIndex[1] === j) {
+          str += "|";
+        }
+        //选中区域的设置，设置选中区域的背景
+        if (this.selected) {
+          var _width = ctx.measureText(this.textArr[i]).width;
+          ctx.fillStyle = 'rgba(0,0,0,0.5)';
+          ctx.fillRect(this.position.x + this.options.padding, this.position.y + this.options.padding + this.lineHeight * i, _width, this.lineHeight);
+        }
+        //开始绘制文字
+        ctx.fillStyle = "#f1f1f1";
+        ctx.fillText(str, this.position.x + this.options.padding, this.position.y + (this.lineHeight * (i + 1)) + this.options.padding);
+      }
+    }
+    this.targetLocation = function (x, y) {
+      let isMoved = false
+      let xLabel = 0;
+      let yLabel = 0;
+      let minX = 0
+      let minY = 0
+      //计算垂直位于哪一行
+      for (var i = 0; i < this.localArr.length; i++) {
+        let start = this.localArr[i][0].y.start;
+        let end = this.localArr[i][0].y.end;
+        if (start < y && y < end) {
+          yLabel = i
+        }
+      }
+      //计算水平位于哪一列
+      for (var j = 0; j < this.localArr[yLabel].length; j++) {
+        //计算水平位于哪一个位置，即与所有点相比较，最近的也就是绝对距离较为小的那个点
+        let abs = Math.abs(this.localArr[yLabel][j].x - x)
+        if (abs <= 15) {
+          isMoved = true
+          xLabel = j
+          break;
+        }
+      }
+      return {isMoved, xLabel, yLabel}
+    }
+    this.handleOnClick = function (e) {
+      let clientX = e.clientX;
+      let clientY = e.clientY;
+      let result = this.targetLocation(clientX, clientY)
+      let isMoved = result.isMoved
+      if (!isMoved) {
+        return
+      }
+      this.TextArea.focus();
+      if (clientX <= this.position.x + this.options.width && clientX >= this.position.x && clientY <= this.position.y + this.options.height && clientY >= this.position.y) {
+        this.isFocus = true;
+        this.focusIndex = [result.yLabel, result.xLabel];
+        this.textAreaLocation();
+        this.render();
+      } else {
+        if (this.isFocus) {
+          this.selected = false;
+          this.isFocus = false;
+          this.render();
+        }
+
+      }
+    }
+
+    this.handleOnKeyUp = function (e) {
+      this.isCommandKey = false;
+      this.render();
+    }
+
+    this.handleOnKeyDown = function (e) {
+      if (e.key === "Meta" || e.key === "Control") {
+        this.isCommandKey = true;
+      }
+      if (this.isCommandKey && e.key === "a") {
+        this.selected = true;
+        this.render();
+        return
+      }
+      if (this.isFocus && e.key === "Backspace") {
+        if (this.selected) {
+          this.focusIndex = [0, 0];
+          this.textArr = [];
+          this.selected = false;
+          this.render();
+        }
+        for (var i = 0; i < this.textArr.length; i++) {
+          var str = "";
+          for (var j = 0; j < this.textArr[i].length; j++) {
+            if (i === this.focusIndex[0]) {
+              if (j !== this.focusIndex[1] - 1) {
+                str += this.textArr[i][j];
+              }
+            } else {
+              str += this.textArr[i][j];
+            }
+          }
+          this.textArr[i] = str;
+
+          if (i === this.focusIndex[0]) {
+
+            this.focusIndex[1]--;
+            //换行
+            if (this.focusIndex[1] < 0) {
+              if (i !== 0) {
+                //删除一行
+                this.textArr.splice(this.focusIndex[0], 1)
+                this.focusIndex = [i - 1, this.textArr[i - 1].length]
+
+              } else {
+                this.focusIndex[1] = 0
+              }
+            }
+          }
+          this.render();
+        }
+      }
+
+      if (this.isFocus && e.key === "ArrowLeft") {
+        this.focusIndex[1]--;
+        if (this.focusIndex[1] < 0) {
+
+          if (this.focusIndex[0] > 0) {
+            this.focusIndex[0]--;
+            this.focusIndex[1] = this.textArr[this.focusIndex[0]].length
+          } else {
+            this.focusIndex[1] = 0
+          }
+
+        }
+        this.render();
+      }
+      if (this.isFocus && e.key === "ArrowRight") {
+        this.focusIndex[1]++;
+        if (this.focusIndex[1] > this.textArr[this.focusIndex[0]].length) {
+          if (this.focusIndex[0] < this.textArr.length - 1) {
+            this.focusIndex[0]++;
+            this.focusIndex[1] = 0;
+
+          } else {
+            this.focusIndex[1] = this.textArr[this.focusIndex[0]].length;
+          }
+        }
+        this.render();
+      }
+      if (this.isFocus && e.key === 'ArrowUp') {
+        //边界判断
+        if (this.focusIndex[0] > 0) {
+          this.focusIndex[0]--
+          if (this.focusIndex[1] > this.textArr[this.focusIndex[0]].length)
+            this.focusIndex[1] = this.textArr[this.focusIndex[0]].length;
+        }
+      }
+      if (this.isFocus && e.key === 'ArrowDown') {
+        //边界判断
+        if (this.focusIndex[0] < this.textArr.length - 1) {
+          this.focusIndex[0]++
+          if (this.focusIndex[1] > this.textArr[this.focusIndex[0]].length)
+            this.focusIndex[1] = this.textArr[this.focusIndex[0]].length;
+        }
+      }
+      //处理回车
+      if (this.isFocus && e.key === 'Enter') {
+        let arr = this.textArr.concat([])
+        let index = this.focusIndex[0]
+        arr.splice(index + 1, 0, "")
+        this.textArr = arr;
+        this.focusIndex[0]++;
+        this.focusIndex[1] = 0;
+        this.render();
+      }
+    }
+  }
+
+  var input = new Input(["一二三四五 ", "I 'm an inputgggg "]);
+  input.render();
+</script>
+
+</body>
+</html>

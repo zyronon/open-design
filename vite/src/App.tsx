@@ -2,25 +2,33 @@ import {useEffect, useRef, useState} from 'react'
 import './App.css'
 import {TextAlign} from "../../src/lib/designer/config/TextConfig"
 import {TextMode} from "../../src/pages/canvas-old/type"
-import helper from "../../src/lib/designer/utils/helper"
 
 
 type Text = {
-  text: string
+  text: string,
+  width: number,
+  fontSize: number,
+  lineHeight: string,
+  fontWeight: string
+  fontFamily: string
 }
+type Texts = Text[][]
 
+let brokenTexts: Texts = [
+  [
+    {
+      text: 'j',
+      width: 10,
+      fontSize: 20,
+      lineHeight: '',
+      fontWeight: '',
+      fontFamily: '',
+    },
+  ]
+]
 let conf: any = {
   texts: [],
-  brokenTexts: [
-    [
-      {
-        text: 'ASD',
-      },
-      {
-        text: 'ABC',
-      }
-    ]
-  ],
+  brokenTexts,
   layout: {
     x: 0,
     y: 0,
@@ -32,6 +40,7 @@ let conf: any = {
     y: 0,
   }
 }
+
 let original: any = {
   layout: {
     x: 0,

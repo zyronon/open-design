@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react'
+import {MouseEvent, useEffect, useRef, useState} from 'react'
 import './App.css'
 import {TextAlign} from "../../src/lib/designer/config/TextConfig"
 import {TextMode} from "../../src/pages/canvas-old/type"
@@ -7,8 +7,9 @@ import {TextMode} from "../../src/pages/canvas-old/type"
 type Text = {
   text: string,
   width: number,
+  x: number,
   fontSize: number,
-  lineHeight: string,
+  lineHeight: number,
   fontWeight: string
   fontFamily: string
 }
@@ -18,17 +19,121 @@ let brokenTexts: Texts = [
   [
     {
       text: 'j',
+      x: 0,
       width: 10,
       fontSize: 20,
-      lineHeight: '',
-      fontWeight: '',
-      fontFamily: '',
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'j',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'a',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'b',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'c',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+  ],
+  [
+    {
+      text: 'j',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'j',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'a',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'b',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'c',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
     },
   ]
 ]
 let conf: any = {
   texts: [],
   brokenTexts,
+  textAlign: TextAlign.LEFT,
+  textLineHeight: 40,
   layout: {
     x: 0,
     y: 0,
@@ -85,18 +190,11 @@ function App() {
     ctx.clearRect(0, 0, 400, 400)
     console.log('render', texts)
 
-    let fontWeight = 500
-    let fontSize = 40
-    let textLineHeight = 40
-    let textMode = TextMode.AUTO_W
-    let textAlign = TextAlign.LEFT
-    ctx.font = `${fontWeight} ${fontSize}px/${textLineHeight}px sans-serif`
+    let textLineHeight = 20
     ctx.textBaseline = 'top'
     // ctx.textBaseline = 'middle'
     // ctx.textBaseline = 'bottom'
     // ctx.textAlign = rect.textAlign
-    // ctx.fillText(texts[0], 0, 0)
-    // return
     ctx.save()
 
     conf.brokenTexts = texts
@@ -127,34 +225,53 @@ function App() {
 
     let w2 = conf.layout.w / 2
     let h2 = conf.layout.h / 2
-    conf.brokenTexts.map((row: Text[]) => {
-      row.map((obj: Text, index: number) => {
-        let m = ctx.measureText(obj.text)
-        let lX = x
-        if (textAlign === TextAlign.CENTER) {
-          lX = x + w2 - m.width / 2
-        }
-        if (textAlign === TextAlign.RIGHT) {
-          lX = x + w - m.width
-        }
-        if (textAlign === TextAlign.LEFT) {
-          lX = -w2
-        }
-        let lY = -h2 + (index * textLineHeight)
-        obj.text && ctx.fillText(obj.text, lX, lY)
+    ctx.strokeStyle = '#e1e1e1'
+    ctx.strokeRect(-w2, -h2, w, h)
+    conf.brokenTexts.map((row: Text[], i: number) => {
+      row.map((obj: Text, j: number) => {
+        let {fontWeight, fontSize, lineHeight, fontFamily} = obj
+        ctx.font = `${fontWeight} ${fontSize}px/${lineHeight}px ${fontFamily}`
+        let lY = -h2 + (i * textLineHeight)
+        ctx.fillText(obj.text, obj.x, lY)
       })
     })
     ctx.restore()
     original = JSON.parse(JSON.stringify(conf))
     // console.log('texts', texts)
-
   }
+
+  function calc(ctx: CanvasRenderingContext2D) {
+    let {layout: {x, y, w, h}, textAlign, textLineHeight} = conf
+    let w2 = w / 2
+    let h2 = h / 2
+    ctx.save()
+    conf.brokenTexts.map((row: Text[], i: number) => {
+      let rowX = -w2
+      row.map((obj: Text, j: number) => {
+        let {fontWeight, fontSize, lineHeight, fontFamily} = obj
+        ctx.font = `${fontWeight} ${fontSize}px/${lineHeight}px ${fontFamily}`
+        let b = ctx.measureText(obj.text)
+        conf.brokenTexts[i][j].x = rowX
+        conf.brokenTexts[i][j].width = b.width
+        rowX += b.width
+      })
+    })
+    ctx.restore()
+    // console.log('conf.brokenTexts', conf.brokenTexts)
+  }
+
+  function clone(val: any) {
+    return JSON.parse(JSON.stringify(val))
+  }
+
+  const [canvasRect, setCanvasRect] = useState<DOMRect>(null as any)
 
   useEffect(() => {
     if (ref.current) {
-      let canvas: any = ref.current
+      let canvas: HTMLCanvasElement = ref.current
       let ctx: CanvasRenderingContext2D = canvas.getContext('2d')!
       let canvasRect = canvas.getBoundingClientRect()
+      setCanvasRect(canvasRect)
       let {width, height} = canvasRect
       let dpr = window.devicePixelRatio
       if (dpr) {
@@ -174,18 +291,55 @@ function App() {
       }
       original = JSON.parse(JSON.stringify(conf))
       setTimeout(() => {
+        calc(ctx)
         render(conf.brokenTexts, ctx)
       })
     }
   }, [ref.current])
 
   function onChange(e: any) {
-    render(e.target.value.split('\n'), ctx)
+    let value = e.target.value
+    let val = e.nativeEvent.data
+    let lastRow = conf.brokenTexts[conf.brokenTexts.length - 1]
+    let last = lastRow[lastRow.length - 1]
+    ctx.save()
+    let {fontWeight, fontSize, lineHeight, fontFamily} = last
+    ctx.font = `${fontWeight} ${fontSize}px/${lineHeight}px ${fontFamily}`
+    let b = ctx.measureText(val)
+    let newText: Text = clone(last)
+    newText.text = val
+    newText.x = last.x + last.width
+    newText.width = b.width
+    lastRow.push(newText)
+    ctx.restore()
+    // calc(ctx)
+    render(conf.brokenTexts, ctx)
+  }
+
+  function onClick(e: MouseEvent) {
+    let cx = e.clientX - canvasRect.left;
+    let cy = e.clientY - canvasRect.top;
+    let {layout: {x, y, w, h}, textAlign, textLineHeight, center, brokenTexts} = conf
+    console.log('e', cx, cy)
+
+    let ax = cx - center.x
+    let ay = cy - center.y
+
+    console.log('e', ax, ay)
+
+    let w2 = conf.layout.w / 2
+    let h2 = conf.layout.h / 2
+
+    for (let i = 0; i < brokenTexts.length; i++) {
+
+    }
   }
 
   return (
     <>
-      <canvas width={400} height={400} ref={ref}/>
+      <canvas width={400} height={400}
+              onClick={onClick}
+              ref={ref}/>
       <textarea onChange={onChange}></textarea>
     </>
   )

@@ -316,30 +316,65 @@ function App() {
     render(conf.brokenTexts, ctx)
   }
 
+  const cursor = useRef<HTMLDivElement>(null as any)
+
   function onClick(e: MouseEvent) {
-    let cx = e.clientX - canvasRect.left;
-    let cy = e.clientY - canvasRect.top;
+    let ex = e.clientX - canvasRect.left;
+    let ey = e.clientY - canvasRect.top;
     let {layout: {x, y, w, h}, textAlign, textLineHeight, center, brokenTexts} = conf
-    console.log('e', cx, cy)
+    // console.log('e', ex, ey)
 
-    let ax = cx - center.x
-    let ay = cy - center.y
+    let cx = ex - center.x
+    let cy = ey - center.y
 
-    console.log('e', ax, ay)
+    // console.log('e', cx, cy)
 
     let w2 = conf.layout.w / 2
     let h2 = conf.layout.h / 2
-
+    let lineHeight = 20
+    let lineIndex = undefined
+    let xIndex = undefined
     for (let i = 0; i < brokenTexts.length; i++) {
-
+      // console.log('i', i)
+      lineIndex = (ey / lineHeight).toFixed(0)
+      let row = brokenTexts[lineIndex]
+      if (row) {
+        let isBreak = false
+        for (let j = 0; j < row.length; j++) {
+          let item = row[j]
+          let abs = Math.abs(item.x - cx)
+          console.log('item.x', item.x)
+          console.log('cx', cx)
+          console.log('abs', abs)
+          if (abs <= item.width) {
+            xIndex = j
+            isBreak = true
+            break
+          }
+          // console.log('j', j)
+        }
+        if (isBreak) break
+      }
     }
+
+    if (lineIndex && xIndex) {
+      cursor.current.style.top = lineHeight * Number(lineIndex) + 'px'
+      let left = brokenTexts[lineIndex][xIndex].x
+      left += center.x
+      cursor.current.style.left = left + 'px'
+    }
+    console.log('lineIndex', lineIndex)
+    console.log('xIndex', xIndex)
   }
 
   return (
     <>
-      <canvas width={400} height={400}
-              onClick={onClick}
-              ref={ref}/>
+      <div className={'canvasWrapper'}>
+        <canvas width={400} height={400}
+                onClick={onClick}
+                ref={ref}/>
+        <div className={'cursor'} ref={cursor}></div>
+      </div>
       <textarea onChange={onChange}></textarea>
     </>
   )

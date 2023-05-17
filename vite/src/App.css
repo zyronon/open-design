@@ -6,6 +6,31 @@
     justify-content: flex-start;
 }
 
+.canvasWrapper {
+    position: relative;
+}
+
+.cursor {
+    position: absolute;
+    width: 1px;
+    height: 20px;
+    top: 0;
+    left: 0;
+    background: black;
+    animation: blink 1s infinite steps(1, start);
+}
+
+@keyframes blink {
+    0%, 100% {
+        background-color: #000;
+        color: #aaa;
+    }
+    50% {
+        background-color: #bbb; /* not #aaa because it's seem there is Google Chrome bug */
+        color: #000;
+    }
+}
+
 canvas {
     border: 1px solid gainsboro;
 }

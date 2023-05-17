@@ -325,7 +325,7 @@ function App() {
 
   const isEnter = useRef<boolean>(false)
 
-  function onMouseDown(e: MouseEvent) {
+  function getPosition(e: MouseEvent) {
     let ex = e.clientX - canvasRect.left;
     let ey = e.clientY - canvasRect.top;
     let {layout: {x, y, w, h}, textAlign, textLineHeight, center, brokenTexts} = conf
@@ -336,23 +336,21 @@ function App() {
 
     // console.log('e', cx, cy)
 
-    let w2 = conf.layout.w / 2
-    let h2 = conf.layout.h / 2
     let lineHeight = 20
     let lineIndex = undefined
     let xIndex = undefined
     for (let i = 0; i < brokenTexts.length; i++) {
       // console.log('i', i)
-      lineIndex = (ey / lineHeight).toFixed(0)
+      lineIndex = Number((ey / lineHeight).toFixed(0))
       let row = brokenTexts[lineIndex]
       if (row) {
         let isBreak = false
         for (let j = 0; j < row.length; j++) {
           let item = row[j]
           let abs = Math.abs(item.x - cx)
-          console.log('item.x', item.x)
-          console.log('cx', cx)
-          console.log('abs', abs)
+          //console.log('item.x', item.x)
+          //console.log('cx', cx)
+          //console.log('abs', abs)
           if (abs <= item.width) {
             xIndex = j
             isBreak = true
@@ -364,23 +362,50 @@ function App() {
       }
     }
 
-    if (lineIndex && xIndex) {
+    if (lineIndex !== undefined && xIndex !== undefined) {
+      return {lineIndex, xIndex}
+    }
+    return null
+  }
+
+  function onMouseDown(e: MouseEvent) {
+    let position = getPosition(e)
+    if (position) {
+      let {lineIndex, xIndex} = position
+      let {layout: {x, y, w, h}, textAlign, textLineHeight, center, brokenTexts} = conf
+      let lineHeight = 20
       isEnter.current = true
       cursor.current.style.top = lineHeight * Number(lineIndex) + 'px'
       let left = brokenTexts[lineIndex][xIndex].x
       left += center.x
       cursor.current.style.left = left + 'px'
       setPostion({lineIndex, xIndex})
+
+      console.log('lineIndex', lineIndex)
+      console.log('xIndex', xIndex)
     }
-    console.log('lineIndex', lineIndex)
-    console.log('xIndex', xIndex)
   }
 
   function onMouseMove(e: MouseEvent) {
     if (isEnter.current) {
       let ex = e.clientX - canvasRect.left;
       let ey = e.clientY - canvasRect.top;
-      console.log('e', ex, ey)
+      let {lineIndex, xIndex} = postion
+      let {layout: {x, y, w, h}, textAlign, textLineHeight, center, brokenTexts} = conf
+      let cx = ex - center.x
+      let cy = ey - center.y
+      let newPosition = getPosition(e)
+      if (newPosition) {
+        let newLineIndex = newPosition.lineIndex
+        let newXIndex = newPosition.xIndex
+        let minXIndex = Math.min(newXIndex, xIndex)
+        let maxXIndex = Math.max(newXIndex, xIndex)
+        let minLineIndex = Math.min(newLineIndex, lineIndex)
+        let maxLineIndex = Math.max(newLineIndex, lineIndex)
+        console.log(minXIndex, maxXIndex)
+        console.log(minLineIndex, maxLineIndex)
+      }
+      // console.log('e', ex, ey)
     }
   }
 

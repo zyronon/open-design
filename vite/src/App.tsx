@@ -1,4 +1,4 @@
-import {MouseEvent, useEffect, useRef, useState} from 'react'
+import {KeyboardEvent, MouseEvent, useEffect, useRef, useState} from 'react'
 import './App.css'
 import {TextAlign} from "../../src/lib/designer/config/TextConfig"
 import {TextMode} from "../../src/pages/canvas-old/type"
@@ -318,7 +318,14 @@ function App() {
 
   const cursor = useRef<HTMLDivElement>(null as any)
 
-  function onClick(e: MouseEvent) {
+  const [postion, setPostion] = useState<any>({
+    lineIndex: undefined,
+    xIndex: undefined,
+  })
+
+  const isEnter = useRef<boolean>(false)
+
+  function onMouseDown(e: MouseEvent) {
     let ex = e.clientX - canvasRect.left;
     let ey = e.clientY - canvasRect.top;
     let {layout: {x, y, w, h}, textAlign, textLineHeight, center, brokenTexts} = conf
@@ -358,20 +365,37 @@ function App() {
     }
 
     if (lineIndex && xIndex) {
+      isEnter.current = true
       cursor.current.style.top = lineHeight * Number(lineIndex) + 'px'
       let left = brokenTexts[lineIndex][xIndex].x
       left += center.x
       cursor.current.style.left = left + 'px'
+      setPostion({lineIndex, xIndex})
     }
     console.log('lineIndex', lineIndex)
     console.log('xIndex', xIndex)
+  }
+
+  function onMouseMove(e: MouseEvent) {
+    if (isEnter.current) {
+      let ex = e.clientX - canvasRect.left;
+      let ey = e.clientY - canvasRect.top;
+      console.log('e', ex, ey)
+    }
+  }
+
+  function onMouseUp() {
+    isEnter.current = false
   }
 
   return (
     <>
       <div className={'canvasWrapper'}>
         <canvas width={400} height={400}
-                onClick={onClick}
+                tabIndex={1}
+                onMouseDown={onMouseDown}
+                onMouseMove={onMouseMove}
+                onMouseUp={onMouseUp}
                 ref={ref}/>
         <div className={'cursor'} ref={cursor}></div>
       </div>

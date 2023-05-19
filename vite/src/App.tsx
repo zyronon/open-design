@@ -2,6 +2,8 @@ import {KeyboardEvent, MouseEvent, useEffect, useRef, useState} from 'react'
 import './App.css'
 import {TextAlign} from "../../src/lib/designer/config/TextConfig"
 import {TextMode} from "../../src/pages/canvas-old/type"
+import {Rect} from "../../src/lib/designer/config/BaseConfig";
+import {P} from "../../src/lib/designer/types/type";
 
 
 type Text = {
@@ -71,10 +73,8 @@ let brokenTexts: Texts = [
       fontWeight: '400',
       fontFamily: 'sans-serif',
     },
-  ],
-  [
     {
-      text: 'j',
+      text: 'd',
       x: 0,
       width: 10,
       fontSize: 20,
@@ -83,7 +83,7 @@ let brokenTexts: Texts = [
       fontFamily: 'sans-serif',
     },
     {
-      text: 'j',
+      text: 'd',
       x: 0,
       width: 10,
       fontSize: 20,
@@ -92,7 +92,7 @@ let brokenTexts: Texts = [
       fontFamily: 'sans-serif',
     },
     {
-      text: 'a',
+      text: 'd',
       x: 0,
       width: 10,
       fontSize: 20,
@@ -101,7 +101,7 @@ let brokenTexts: Texts = [
       fontFamily: 'sans-serif',
     },
     {
-      text: 'b',
+      text: 'd',
       x: 0,
       width: 10,
       fontSize: 20,
@@ -110,7 +110,16 @@ let brokenTexts: Texts = [
       fontFamily: 'sans-serif',
     },
     {
-      text: 'c',
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
       x: 0,
       width: 10,
       fontSize: 20,
@@ -183,10 +192,438 @@ let brokenTexts: Texts = [
       fontWeight: '400',
       fontFamily: 'sans-serif',
     },
-  ]
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+  ],
+  [
+    {
+      text: 'j',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'j',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'a',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'b',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'c',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+  ],
+  [
+    {
+      text: 'j',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'j',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'a',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'b',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'c',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+  ],
+  [
+    {
+      text: 'j',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'j',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'a',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'b',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'c',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+    {
+      text: 'd',
+      x: 0,
+      width: 10,
+      fontSize: 20,
+      lineHeight: 20,
+      fontWeight: '400',
+      fontFamily: 'sans-serif',
+    },
+  ],
 ]
-
-let conf: any = {
+type Conf = {
+  texts: any[],
+  brokenTexts: Texts,
+  lan: Rect[],
+  textAlign: TextAlign,
+  textLineHeight: number,
+  layout: Rect,
+  center: P,
+}
+let conf: Conf = {
   texts: [],
   brokenTexts,
   lan: [],
@@ -195,8 +632,8 @@ let conf: any = {
   layout: {
     x: 0,
     y: 0,
-    w: 100,
-    h: 100,
+    w: 200,
+    h: 200,
   },
   center: {
     x: 0,
@@ -244,7 +681,7 @@ function App() {
   const [ctx, setCtx] = useState<CanvasRenderingContext2D>(null as any)
 
   function render(texts: Text[][], ctx: CanvasRenderingContext2D) {
-    let {layout: {x, y, w, h,}, center} = conf
+    let {layout: {x, y, w, h,}, center, lan} = conf
     ctx.clearRect(0, 0, 400, 400)
     console.log('render', texts)
 
@@ -285,6 +722,13 @@ function App() {
     let h2 = conf.layout.h / 2
     ctx.strokeStyle = '#e1e1e1'
     ctx.strokeRect(-w2, -h2, w, h)
+
+    ctx.fillStyle = 'red'
+    lan.map((value) => {
+      ctx.fillRect(value.x, value.y, value.w, value.h)
+    })
+    ctx.fillStyle = 'black'
+
     conf.brokenTexts.map((row: Text[], i: number) => {
       row.map((obj: Text, j: number) => {
         let {fontWeight, fontSize, lineHeight, fontFamily} = obj
@@ -462,6 +906,39 @@ function App() {
         let maxLineIndex = Math.max(newLineIndex, lineIndex)
         console.log(minXIndex, maxXIndex)
         console.log(minLineIndex, maxLineIndex)
+        let lineHeight = 20
+
+        let startLine = conf.brokenTexts[minLineIndex]
+        let startLineLast = startLine[startLine.length - 1];
+        let endLine = conf.brokenTexts[maxLineIndex]
+        let endLineFirst = endLine[0]
+        let lan = [
+          {
+            x: startLine[minXIndex].x,
+            y: minLineIndex * lineHeight - center.y,
+            w: Math.abs(startLineLast.x + startLineLast.width - startLine[minXIndex].x),
+            h: lineHeight
+          },
+          {
+            x: endLineFirst.x,
+            y: maxLineIndex * lineHeight - center.y,
+            w: Math.abs(endLine[xIndex].x - endLineFirst.x),
+            h: lineHeight
+          },
+        ]
+        for (let i = minLineIndex + 1; i < maxLineIndex; i++) {
+          let row = conf.brokenTexts[i]
+          lan.push({
+            x: row[0].x,
+            y: i * lineHeight - center.y,
+            w: Math.abs(row[row.length - 1].x + row[row.length - 1].width - row[0].x),
+            h: lineHeight
+          })
+        }
+
+        console.log('lan', JSON.stringify(lan, null, 2))
+        conf.lan = lan
+        render(conf.brokenTexts, ctx)
       }
       // console.log('e', ex, ey)
     }

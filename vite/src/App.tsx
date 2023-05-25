@@ -229,6 +229,20 @@ function App() {
         break
       //回车
       case 13:
+        let lastRow = conf.brokenTexts[conf.brokenTexts.length - 1]
+        let last = lastRow[lastRow.length - 1]
+        ctx.save()
+        let {fontWeight, fontSize, lineHeight, fontFamily} = last
+        ctx.font = `${fontWeight} ${fontSize}px/${lineHeight}px ${fontFamily}`
+        let b = ctx.measureText(' ')
+        let newText: Text = clone(last)
+        newText.text = ' '
+        newText.x = -conf.layout.w / 2
+        newText.width = b.width
+        lastRow.push(newText)
+        ctx.restore()
+        conf.brokenTexts.push([])
+        render(conf.brokenTexts, ctx)
         break
     }
   }
@@ -238,7 +252,13 @@ function App() {
     //删除和回车都是等于null
     if (val === null) return
     let lastRow = conf.brokenTexts[conf.brokenTexts.length - 1]
-    let last = lastRow[lastRow.length - 1]
+    let last
+    if (lastRow.length) {
+      last = lastRow[lastRow.length - 1]
+    } else {
+      lastRow = conf.brokenTexts[conf.brokenTexts.length - 2]
+      last = lastRow[lastRow.length - 1]
+    }
     ctx.save()
     let {fontWeight, fontSize, lineHeight, fontFamily} = last
     ctx.font = `${fontWeight} ${fontSize}px/${lineHeight}px ${fontFamily}`
@@ -246,6 +266,7 @@ function App() {
     let newText: Text = clone(last)
     newText.text = val
     newText.x = last.x + last.width
+    // newText.y = (lastRow.length - 1) * lineHeight - conf.center.y
     newText.width = b.width
     lastRow.push(newText)
     ctx.restore()

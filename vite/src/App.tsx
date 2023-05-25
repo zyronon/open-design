@@ -797,15 +797,15 @@ let brokenTexts: Texts = [
     }
   ]
 ]
-brokenTexts = [[{
-  "text": "j",
-  "x": -100,
-  "width": 5.341796875,
-  "fontSize": 20,
-  "lineHeight": 20,
-  "fontWeight": "400",
-  "fontFamily": "sans-serif"
-},]]
+// brokenTexts = [[{
+//   "text": "j",
+//   "x": -100,
+//   "width": 5.341796875,
+//   "fontSize": 20,
+//   "lineHeight": 20,
+//   "fontWeight": "400",
+//   "fontFamily": "sans-serif"
+// },]]
 
 type Conf = {
   texts: any[],
@@ -1067,6 +1067,8 @@ function App() {
 
   const [position, setPosition] = useState<LanInfo>(null as any)
 
+  const [newPosition, setNewPosition] = useState<LanInfo>(null as any)
+
   const isEnter = useRef<boolean>(false)
 
   function getPosition(e: MouseEvent): LanInfo {
@@ -1141,14 +1143,21 @@ function App() {
       let cx = ex - center.x
       let cy = ey - center.y
       let newPosition = getPosition(e)
+      let lineHeight = 20
+
       if (newPosition) {
+        setNewPosition(newPosition)
         let newLineIndex = newPosition.lineIndex
         let newXIndex = newPosition.xIndex
         let minXIndex = Math.min(newXIndex, xIndex)
         let maxXIndex = Math.max(newXIndex, xIndex)
         let minLineIndex = Math.min(newLineIndex, lineIndex)
         let maxLineIndex = Math.max(newLineIndex, lineIndex)
-        let lineHeight = 20
+
+        cursor.current.style.top = lineHeight * Number(newLineIndex) + 'px'
+        let left = brokenTexts[newLineIndex][newXIndex].x
+        left += center.x
+        cursor.current.style.left = left + 'px'
 
         let start = position
         let end = newPosition
@@ -1173,8 +1182,8 @@ function App() {
           }
           let startLine = conf.brokenTexts[start.lineIndex]
           let startLineLast = startLine[startLine.length - 1];
-          console.log('start',start)
-          console.log('startLineLast',startLineLast)
+          console.log('start', start)
+          console.log('startLineLast', startLineLast)
           let startRect = {
             x: startLine[start.xIndex].x,
             y: start.lineIndex * lineHeight - center.y,
@@ -1223,6 +1232,52 @@ function App() {
       })
   }
 
+  function changeSize() {
+    let {lineIndex, xIndex} = position
+    // let {lineIndex, xIndex} = newPosition
+
+    let newLineIndex = newPosition.lineIndex
+    let newXIndex = newPosition.xIndex
+    let minXIndex = Math.min(newXIndex, xIndex)
+    let maxXIndex = Math.max(newXIndex, xIndex)
+    let minLineIndex = Math.min(newLineIndex, lineIndex)
+    let maxLineIndex = Math.max(newLineIndex, lineIndex)
+
+    for (let i = minLineIndex; i <= maxLineIndex; i++) {
+      let line = conf.brokenTexts[i]
+      let startIndex = 0
+      let endIndex = line.length
+      if (i === minLineIndex) {
+        if (i === lineIndex) {
+          startIndex = xIndex
+        }
+        if (i === newLineIndex) {
+          startIndex = newXIndex
+        }
+      }
+      if (i === maxLineIndex) {
+        if (i === lineIndex) {
+          endIndex = xIndex
+        }
+        if (i === newLineIndex) {
+          endIndex = newXIndex
+        }
+      }
+
+      line.slice(startIndex, endIndex).map(value => {
+        value.fontSize++
+        value.lineHeight = value.fontSize + 2
+      })
+    }
+
+    f()
+
+  }
+
+  function f() {
+    render(conf.brokenTexts, ctx)
+  }
+
   return (
     <>
       <div className={'canvasWrapper'}>
@@ -1236,10 +1291,11 @@ function App() {
       </div>
       <div className="bottom">
         <button onClick={getConfig}>字</button>
-        <textarea
-          onKeyDown={onTextKeyDown}
-          onChange={onChange}></textarea>
+        <button onClick={changeSize}>变大</button>
       </div>
+      <textarea
+        onKeyDown={onTextKeyDown}
+        onChange={onChange}></textarea>
     </>
   )
 }

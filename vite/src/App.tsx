@@ -4,6 +4,7 @@ import {TextAlign} from "../../src/lib/designer/config/TextConfig"
 import {TextMode} from "../../src/pages/canvas-old/type"
 import {Rect} from "../../src/lib/designer/config/BaseConfig";
 import {P} from "../../src/lib/designer/types/type";
+import {message} from "antd";
 
 
 type Text = {
@@ -20,16 +21,792 @@ type Texts = Text[][]
 let brokenTexts: Texts = [
   [
     {
-      text: 'j',
-      x: 0,
-      width: 10,
-      fontSize: 20,
-      lineHeight: 20,
-      fontWeight: '400',
-      fontFamily: 'sans-serif',
+      "text": "j",
+      "x": -100,
+      "width": 5.341796875,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
     },
+    {
+      "text": "1",
+      "x": -94.658203125,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "2",
+      "x": -82.9296875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "3",
+      "x": -71.201171875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "3",
+      "x": -59.47265625,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "3",
+      "x": -47.744140625,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "3",
+      "x": -36.015625,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "3",
+      "x": -24.287109375,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "3",
+      "x": -12.55859375,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "3",
+      "x": -0.830078125,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "3",
+      "x": 10.8984375,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "3",
+      "x": 22.626953125,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "3",
+      "x": 34.35546875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "3",
+      "x": 46.083984375,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": " ",
+      "x": -100,
+      "width": 5.91796875,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    }
   ],
+  [
+    {
+      "text": "4",
+      "x": -100,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "4",
+      "x": -88.271484375,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "4",
+      "x": -76.54296875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "4",
+      "x": -64.814453125,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "4",
+      "x": -53.0859375,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "4",
+      "x": -41.357421875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "4",
+      "x": -29.62890625,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "4",
+      "x": -17.900390625,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "4",
+      "x": -6.171875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "4",
+      "x": 5.556640625,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "4",
+      "x": 17.28515625,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "4",
+      "x": 29.013671875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "4",
+      "x": 40.7421875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": " ",
+      "x": -100,
+      "width": 5.91796875,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    }
+  ],
+  [
+    {
+      "text": "5",
+      "x": -100,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "5",
+      "x": -88.271484375,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "5",
+      "x": -76.54296875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "5",
+      "x": -64.814453125,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "5",
+      "x": -53.0859375,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "5",
+      "x": -41.357421875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "5",
+      "x": -29.62890625,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "5",
+      "x": -17.900390625,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "5",
+      "x": -6.171875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "5",
+      "x": 5.556640625,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "5",
+      "x": 17.28515625,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "5",
+      "x": 29.013671875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "5",
+      "x": 40.7421875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": " ",
+      "x": -100,
+      "width": 5.91796875,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    }
+  ],
+  [
+    {
+      "text": "6",
+      "x": -100,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "6",
+      "x": -88.271484375,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "6",
+      "x": -76.54296875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "6",
+      "x": -64.814453125,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "6",
+      "x": -53.0859375,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "6",
+      "x": -41.357421875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "6",
+      "x": -29.62890625,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "6",
+      "x": -17.900390625,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "6",
+      "x": -6.171875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "6",
+      "x": 5.556640625,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "6",
+      "x": 17.28515625,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "6",
+      "x": 29.013671875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "6",
+      "x": 40.7421875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": " ",
+      "x": -100,
+      "width": 5.91796875,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    }
+  ],
+  [
+    {
+      "text": "7",
+      "x": -100,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "7",
+      "x": -88.271484375,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "7",
+      "x": -76.54296875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "7",
+      "x": -64.814453125,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "7",
+      "x": -53.0859375,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "7",
+      "x": -41.357421875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "7",
+      "x": -29.62890625,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "7",
+      "x": -17.900390625,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "7",
+      "x": -6.171875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "7",
+      "x": 5.556640625,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "7",
+      "x": 17.28515625,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "7",
+      "x": 29.013671875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "7",
+      "x": 40.7421875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "7",
+      "x": 52.470703125,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": " ",
+      "x": -100,
+      "width": 5.91796875,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    }
+  ],
+  [
+    {
+      "text": "8",
+      "x": -100,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "8",
+      "x": -88.271484375,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "8",
+      "x": -76.54296875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "8",
+      "x": -64.814453125,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "8",
+      "x": -53.0859375,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "8",
+      "x": -41.357421875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "8",
+      "x": -29.62890625,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "8",
+      "x": -17.900390625,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "8",
+      "x": -6.171875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "8",
+      "x": 5.556640625,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "8",
+      "x": 17.28515625,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "8",
+      "x": 29.013671875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    },
+    {
+      "text": "8",
+      "x": 40.7421875,
+      "width": 11.728515625,
+      "fontSize": 20,
+      "lineHeight": 20,
+      "fontWeight": "400",
+      "fontFamily": "sans-serif"
+    }
+  ]
 ]
+brokenTexts = [[{
+  "text": "j",
+  "x": -100,
+  "width": 5.341796875,
+  "fontSize": 20,
+  "lineHeight": 20,
+  "fontWeight": "400",
+  "fontFamily": "sans-serif"
+},]]
+
 type Conf = {
   texts: any[],
   brokenTexts: Texts,
@@ -227,9 +1004,9 @@ function App() {
     switch (e.keyCode) {
       //删除
       case 8:
-        if (lastRow.length){
+        if (lastRow.length) {
           lastRow.pop()
-        }else {
+        } else {
           let preLine = conf.brokenTexts[conf.brokenTexts.length - 2]
           preLine.pop()
           conf.brokenTexts.pop()
@@ -245,7 +1022,8 @@ function App() {
         let b = ctx.measureText(' ')
         let newText: Text = clone(last)
         newText.text = ' '
-        newText.x = -conf.layout.w / 2
+        newText.x = last.x + last.width
+        // newText.x = -conf.layout.w / 2
         newText.width = b.width
         lastRow.push(newText)
         conf.brokenTexts.push([])
@@ -273,9 +1051,9 @@ function App() {
     let b = ctx.measureText(val)
     let newText: Text = clone(last)
     newText.text = val
-    if (lastRow.length){
+    if (lastRow.length) {
       newText.x = last.x + last.width
-    }else {
+    } else {
       newText.x = -conf.center.x
     }
     newText.width = b.width
@@ -395,6 +1173,8 @@ function App() {
           }
           let startLine = conf.brokenTexts[start.lineIndex]
           let startLineLast = startLine[startLine.length - 1];
+          console.log('start',start)
+          console.log('startLineLast',startLineLast)
           let startRect = {
             x: startLine[start.xIndex].x,
             y: start.lineIndex * lineHeight - center.y,
@@ -435,6 +1215,14 @@ function App() {
     isEnter.current = false
   }
 
+  function getConfig() {
+    console.log(conf.brokenTexts)
+    navigator.clipboard.writeText(JSON.stringify(conf.brokenTexts, null, 2))
+      .then(() => {
+        message.success('复制成功')
+      })
+  }
+
   return (
     <>
       <div className={'canvasWrapper'}>
@@ -446,9 +1234,12 @@ function App() {
                 ref={ref}/>
         <div className={'cursor'} ref={cursor}></div>
       </div>
-      <textarea
-        onKeyDown={onTextKeyDown}
-        onChange={onChange}></textarea>
+      <div className="bottom">
+        <button onClick={getConfig}>字</button>
+        <textarea
+          onKeyDown={onTextKeyDown}
+          onChange={onChange}></textarea>
+      </div>
     </>
   )
 }

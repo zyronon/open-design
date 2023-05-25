@@ -223,16 +223,24 @@ function App() {
   }, [ref.current])
 
   function onTextKeyDown(e: any) {
+    let lastRow = conf.brokenTexts[conf.brokenTexts.length - 1]
     switch (e.keyCode) {
       //删除
       case 8:
+        if (lastRow.length){
+          lastRow.pop()
+        }else {
+          let preLine = conf.brokenTexts[conf.brokenTexts.length - 2]
+          preLine.pop()
+          conf.brokenTexts.pop()
+        }
+        render(conf.brokenTexts, ctx)
         break
       //回车
       case 13:
-        let lastRow = conf.brokenTexts[conf.brokenTexts.length - 1]
         let last = lastRow[lastRow.length - 1]
-        ctx.save()
         let {fontWeight, fontSize, lineHeight, fontFamily} = last
+        ctx.save()
         ctx.font = `${fontWeight} ${fontSize}px/${lineHeight}px ${fontFamily}`
         let b = ctx.measureText(' ')
         let newText: Text = clone(last)
@@ -240,8 +248,8 @@ function App() {
         newText.x = -conf.layout.w / 2
         newText.width = b.width
         lastRow.push(newText)
-        ctx.restore()
         conf.brokenTexts.push([])
+        ctx.restore()
         render(conf.brokenTexts, ctx)
         break
     }
@@ -256,8 +264,8 @@ function App() {
     if (lastRow.length) {
       last = lastRow[lastRow.length - 1]
     } else {
-      lastRow = conf.brokenTexts[conf.brokenTexts.length - 2]
-      last = lastRow[lastRow.length - 1]
+      let preLine = conf.brokenTexts[conf.brokenTexts.length - 2]
+      last = preLine[preLine.length - 1]
     }
     ctx.save()
     let {fontWeight, fontSize, lineHeight, fontFamily} = last
@@ -265,8 +273,11 @@ function App() {
     let b = ctx.measureText(val)
     let newText: Text = clone(last)
     newText.text = val
-    newText.x = last.x + last.width
-    // newText.y = (lastRow.length - 1) * lineHeight - conf.center.y
+    if (lastRow.length){
+      newText.x = last.x + last.width
+    }else {
+      newText.x = -conf.center.x
+    }
     newText.width = b.width
     lastRow.push(newText)
     ctx.restore()

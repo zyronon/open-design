@@ -459,9 +459,8 @@ function App() {
     ctx.clearRect(0, 0, 400, 400)
     ctx.fillStyle = 'rgb(239,239,239)'
     ctx.fillRect(0, 0, 400, 400)
-    console.log('render', texts)
+    // console.log('render', texts)
 
-    let textLineHeight = 20
     ctx.textBaseline = 'top'
     // ctx.textBaseline = 'middle'
     // ctx.textBaseline = 'bottom'
@@ -505,14 +504,15 @@ function App() {
     })
     ctx.fillStyle = 'rgb(158,158,158)'
 
-    conf.brokenTexts.map((row: TextLine, i: number) => {
+    let lY = -h2
+    conf.brokenTexts.map((row: TextLine) => {
       row.children.map((obj: Text,) => {
         let {fontWeight, fontSize, lineHeight, fontFamily} = obj
         ctx.font = `${fontWeight} ${fontSize}px/${lineHeight}px ${fontFamily}`
-        let lY = -h2 + (i * row.maxLineHeight)
-        console.log('lY',lY)
         ctx.fillText(obj.text, obj.x, lY)
       })
+      lY = lY + row.maxLineHeight
+      // console.log('lY', lY)
     })
     ctx.restore()
     original = JSON.parse(JSON.stringify(conf))
@@ -652,34 +652,41 @@ function App() {
 
   const isEnter = useRef<boolean>(false)
 
+  function getLineY(i: number, isCursor: boolean = true) {
+    let {layout: {h}, brokenTexts} = conf
+    let lY = isCursor ? 0 : -h / 2
+    // console.log('brokenTexts.slice(i)',brokenTexts.slice(0,i))
+    brokenTexts.slice(0, i).map(line => lY = lY + line.maxLineHeight)
+    return lY
+  }
+
   function getPosition(e: MouseEvent): LanInfo {
     let ex = e.clientX - canvasRect.left;
     let ey = e.clientY - canvasRect.top;
     let {layout: {x, y, w, h}, textAlign, textLineHeight, center, brokenTexts} = conf
-    // console.log('e', ex, ey)
-
     let cx = ex - center.x
     let cy = ey - center.y
-
     // console.log('e', cx, cy)
-
-    let lineHeight = 20
     let lineIndex = undefined
     let xIndex = undefined
+    let lY = -h / 2
     for (let i = 0; i < brokenTexts.length; i++) {
-      // console.log('i', i)
-      lineIndex = Number((ey / lineHeight).toFixed(0))
-      let row = brokenTexts[lineIndex]
-      if (row) {
+      let line = brokenTexts[i]
+      lY = lY + line.maxLineHeight
+      // console.log('ey', ey, cy,lY)
+      if (cy < lY) {
+        // console.log('i',i)
+        // break
         let isBreak = false
-        for (let j = 0; j < row.children.length; j++) {
-          let item = row.children[j]
+        for (let j = 0; j < line.children.length; j++) {
+          let item = line.children[j]
           let abs = Math.abs(item.x - cx)
           //console.log('item.x', item.x)
           //console.log('cx', cx)
           //console.log('abs', abs)
           if (abs <= item.width) {
             xIndex = j
+            lineIndex = i
             isBreak = true
             break
           }
@@ -700,18 +707,15 @@ function App() {
     if (position) {
       let {lineIndex, xIndex} = position
       let {layout: {x, y, w, h}, textAlign, textLineHeight, center, brokenTexts} = conf
-      let lineHeight = 20
       isEnter.current = true
-      cursor.current.style.top = lineHeight * Number(lineIndex) + 'px'
+      cursor.current.style.top = getLineY(lineIndex) + 'px'
       let left = brokenTexts[lineIndex].children[xIndex].x
       left += center.x
       cursor.current.style.left = left + 'px'
       setPosition({lineIndex, xIndex})
       conf.lan = []
       render(conf.brokenTexts, ctx)
-
-      console.log('lineIndex', lineIndex)
-      console.log('xIndex', xIndex)
+      console.log('lineIndex', lineIndex, 'xIndex', xIndex)
     }
   }
 
@@ -735,7 +739,7 @@ function App() {
         let minLineIndex = Math.min(newLineIndex, lineIndex)
         let maxLineIndex = Math.max(newLineIndex, lineIndex)
 
-        cursor.current.style.top = lineHeight * Number(newLineIndex) + 'px'
+        cursor.current.style.top = getLineY(newLineIndex) + 'px'
         let left = brokenTexts[newLineIndex].children[newXIndex].x
         left += center.x
         cursor.current.style.left = left + 'px'
@@ -751,9 +755,9 @@ function App() {
 
           let rect = {
             x: line.children[minXIndex].x,
-            y: lineIndex * lineHeight - center.y,
+            y: getLineY(lineIndex, false),
             w: Math.abs(lineLast.x + lineLast.width - lineFirst.x),
-            h: lineHeight
+            h: line.maxLineHeight
           }
           lan = [rect]
         } else {
@@ -763,22 +767,22 @@ function App() {
           }
           let startLine = conf.brokenTexts[start.lineIndex]
           let startLineLast = startLine.children[startLine.children.length - 1];
-          console.log('start', start)
-          console.log('startLineLast', startLineLast)
+          // console.log('start', start)
+          // console.log('startLineLast', startLineLast)
           let startRect = {
             x: startLine.children[start.xIndex].x,
-            y: start.lineIndex * lineHeight - center.y,
+            y: getLineY(start.lineIndex, false),
             w: Math.abs(startLineLast.x + startLineLast.width - startLine.children[start.xIndex].x),
-            h: lineHeight
+            h: startLine.maxLineHeight
           }
 
           let endLine = conf.brokenTexts[end.lineIndex]
           let endLineFirst = endLine.children[0]
           let endRect = {
             x: endLineFirst.x,
-            y: end.lineIndex * lineHeight - center.y,
+            y: getLineY(end.lineIndex, false),
             w: Math.abs(endLine.children[end.xIndex].x - endLineFirst.x),
-            h: lineHeight
+            h: endLine.maxLineHeight
           }
 
           lan = [startRect, endRect]
@@ -786,9 +790,9 @@ function App() {
             let row = conf.brokenTexts[i]
             lan.push({
               x: row.children[0].x,
-              y: i * lineHeight - center.y,
+              y: getLineY(i, false),
               w: Math.abs(row.children[row.children.length - 1].x + row.children[row.children.length - 1].width - row.children[0].x),
-              h: lineHeight
+              h: row.maxLineHeight
             })
           }
         }

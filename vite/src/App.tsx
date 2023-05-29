@@ -2,9 +2,7 @@ import {MouseEvent, useEffect, useRef, useState} from 'react'
 import './App.css'
 import {TextAlign} from "../../src/lib/designer/config/TextConfig"
 import {Rect} from "../../src/lib/designer/config/BaseConfig";
-import {P} from "../../src/lib/designer/types/type";
-import {message} from "antd";
-
+import {P, TextMode} from "../../src/lib/designer/types/type";
 
 type TextInfo = {
   fontSize: number,
@@ -381,6 +379,7 @@ type Conf = {
   brokenTexts: TextLine[],
   lan: Rect[],
   textAlign: TextAlign,
+  textMode: TextMode,
   textLineHeight: number,
   layout: Rect,
   center: P,
@@ -390,6 +389,7 @@ let conf: Conf = {
   brokenTexts,
   lan: [],
   textAlign: TextAlign.LEFT,
+  textMode: TextMode.AUTO_W,
   textLineHeight: 40,
   layout: {
     x: 0,
@@ -452,6 +452,7 @@ let currentTextInfo: TextInfo = {
 
 function App() {
   const ref = useRef(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [ctx, setCtx] = useState<CanvasRenderingContext2D>(null as any)
 
   function render(texts: TextLine[], ctx: CanvasRenderingContext2D) {
@@ -576,6 +577,17 @@ function App() {
     }
   }, [ref.current])
 
+  useEffect(() => {
+    if (textareaRef.current) {
+      let texts = conf.brokenTexts.map(line => {
+        return line.children.map(t => t.text).join('')
+      }).join('\n')
+      // console.log('texts',texts)
+      textareaRef.current.value = texts
+    }
+
+  }, [textareaRef.current])
+
   function onTextKeyDown(e: any) {
     let lastRow = conf.brokenTexts[conf.brokenTexts.length - 1]
     switch (e.keyCode) {
@@ -614,15 +626,17 @@ function App() {
   }
 
   function onChange(e: any) {
+    const {textMode, brokenTexts, center} = conf
+
     let val = e.nativeEvent.data
     //删除和回车都是等于null
     if (val === null) return
-    let lastRow = conf.brokenTexts[conf.brokenTexts.length - 1]
+    let lastRow = brokenTexts[brokenTexts.length - 1]
     let last
     if (lastRow.children.length) {
       last = lastRow.children[lastRow.children.length - 1]
     } else {
-      let preLine = conf.brokenTexts[conf.brokenTexts.length - 2]
+      let preLine = brokenTexts[brokenTexts.length - 2]
       last = preLine.children[preLine.children.length - 1]
     }
     ctx.save()
@@ -639,6 +653,21 @@ function App() {
     newText.width = b.width
     lastRow.children.push(newText)
     lastRow.maxLineHeight = Math.max(...lastRow.children.map(v => v.lineHeight))
+    if (textMode === TextMode.AUTO_W) {
+      let {w: ow, h: oh} = original.layout
+      let maxW = Math.max(...brokenTexts.map(line => {
+        let last = line.children[line.children.length - 1]
+        return center.x + last.x + last.width
+      }))
+      let newH = getLineY(brokenTexts.length)
+      //老中心点加上w\h的增量除2，就是新中心
+      conf.center.x = original.center.x + (maxW - ow) / 2
+      conf.center.y = original.center.y + (newH - oh) / 2
+      conf.layout.w = maxW
+      conf.layout.h = newH
+      console.log(conf)
+    }
+
     ctx.restore()
     // calc(ctx)
     render(conf.brokenTexts, ctx)
@@ -879,6 +908,7 @@ function App() {
         <button onClick={changeSize}>变大</button>
       </div>
       <textarea
+        ref={textareaRef}
         onKeyDown={onTextKeyDown}
         onChange={onChange}></textarea>
     </>

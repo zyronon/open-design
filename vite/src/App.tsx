@@ -6,15 +6,17 @@ import {P} from "../../src/lib/designer/types/type";
 import {message} from "antd";
 
 
-type Text = {
-  text: string,
-  width: number,
-  x: number,
+type TextInfo = {
   fontSize: number,
   lineHeight: number,
   fontWeight: string
   fontFamily: string
 }
+type Text = {
+  text: string,
+  width: number,
+  x: number,
+} & TextInfo
 type TextLine = {
   maxLineHeight: number,
   children: Text[]
@@ -31,7 +33,7 @@ let brokenTexts: TextLine[] = [
         fontSize: 20,
         lineHeight: 28.5,
         fontWeight: '500',
-        fontFamily: 'sansfi'
+        fontFamily: 'sans-serif'
       }
     ]
   }
@@ -102,6 +104,13 @@ function getTextModeAutoHTexts(texts: string[], ctx: any, w: number) {
 type LanInfo = {
   lineIndex: number,
   xIndex: number
+}
+
+let currentTextInfo: TextInfo = {
+  fontSize: 20,
+  lineHeight: 28.5,
+  fontWeight: '500',
+  fontFamily: 'sans-serif'
 }
 
 function App() {

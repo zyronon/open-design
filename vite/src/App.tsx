@@ -38,6 +38,343 @@ let brokenTexts: TextLine[] = [
     ]
   }
 ]
+brokenTexts = [
+  {
+    "maxLineHeight": 40,
+    "children": [
+      {
+        "text": "j",
+        "width": 5.341796875,
+        "x": -100,
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif"
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "1",
+        "x": -94.658203125,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 28,
+        "lineHeight": 40,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -82.9296875,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 28,
+        "lineHeight": 40,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -71.201171875,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 28,
+        "lineHeight": 40,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -59.47265625,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 28,
+        "lineHeight": 40,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -47.744140625,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 28,
+        "lineHeight": 40,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -36.015625,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 28,
+        "lineHeight": 40,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -24.287109375,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 28,
+        "lineHeight": 40,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -12.55859375,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 28,
+        "lineHeight": 40,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -0.830078125,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 28,
+        "lineHeight": 40,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": 10.8984375,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 28,
+        "lineHeight": 40,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": 22.626953125,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 28,
+        "lineHeight": 40,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": " ",
+        "x": 34.35546875,
+        "width": 5.91796875
+      }
+    ]
+  },
+  {
+    "maxLineHeight": 40,
+    "children": [
+      {
+        "fontSize": 28,
+        "lineHeight": 40,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -100,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 28,
+        "lineHeight": 40,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -88.271484375,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 28,
+        "lineHeight": 40,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -76.54296875,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 28,
+        "lineHeight": 40,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -64.814453125,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 28,
+        "lineHeight": 40,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -53.0859375,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 28,
+        "lineHeight": 40,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -41.357421875,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 28,
+        "lineHeight": 40,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": " ",
+        "x": -29.62890625,
+        "width": 5.91796875
+      }
+    ]
+  },
+  {
+    "maxLineHeight": 40,
+    "children": [
+      {
+        "fontSize": 28,
+        "lineHeight": 40,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -100,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 28,
+        "lineHeight": 40,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -88.271484375,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 28,
+        "lineHeight": 40,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -76.54296875,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 28,
+        "lineHeight": 40,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -64.814453125,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -53.0859375,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -41.357421875,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -29.62890625,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -17.900390625,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -6.171875,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": " ",
+        "x": 5.556640625,
+        "width": 5.91796875
+      }
+    ]
+  },
+  {
+    "maxLineHeight": 28.5,
+    "children": [
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -100,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -88.271484375,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -76.54296875,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -64.814453125,
+        "width": 11.728515625
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "x": -53.0859375,
+        "width": 11.728515625
+      }
+    ]
+  }
+]
 
 type Conf = {
   texts: any[],
@@ -173,6 +510,7 @@ function App() {
         let {fontWeight, fontSize, lineHeight, fontFamily} = obj
         ctx.font = `${fontWeight} ${fontSize}px/${lineHeight}px ${fontFamily}`
         let lY = -h2 + (i * row.maxLineHeight)
+        console.log('lY',lY)
         ctx.fillText(obj.text, obj.x, lY)
       })
     })
@@ -291,7 +629,7 @@ function App() {
     let {fontWeight, fontSize, lineHeight, fontFamily} = currentTextInfo
     ctx.font = `${fontWeight} ${fontSize}px/${lineHeight}px ${fontFamily}`
     let b = ctx.measureText(val)
-    let newText: Text = clone(last)
+    let newText: Text = clone(currentTextInfo)
     newText.text = val
     if (lastRow.children.length) {
       newText.x = last.x + last.width

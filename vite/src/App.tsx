@@ -172,7 +172,7 @@ function App() {
       row.children.map((obj: Text,) => {
         let {fontWeight, fontSize, lineHeight, fontFamily} = obj
         ctx.font = `${fontWeight} ${fontSize}px/${lineHeight}px ${fontFamily}`
-        let lY = -h2 + (i * textLineHeight)
+        let lY = -h2 + (i * row.maxLineHeight)
         ctx.fillText(obj.text, obj.x, lY)
       })
     })
@@ -288,7 +288,7 @@ function App() {
       last = preLine.children[preLine.children.length - 1]
     }
     ctx.save()
-    let {fontWeight, fontSize, lineHeight, fontFamily} = last
+    let {fontWeight, fontSize, lineHeight, fontFamily} = currentTextInfo
     ctx.font = `${fontWeight} ${fontSize}px/${lineHeight}px ${fontFamily}`
     let b = ctx.measureText(val)
     let newText: Text = clone(last)
@@ -300,6 +300,7 @@ function App() {
     }
     newText.width = b.width
     lastRow.children.push(newText)
+    lastRow.maxLineHeight = Math.max(...lastRow.children.map(v => v.lineHeight))
     ctx.restore()
     // calc(ctx)
     render(conf.brokenTexts, ctx)
@@ -508,12 +509,12 @@ function App() {
 
       line.children.slice(startIndex, endIndex).map(value => {
         value.fontSize++
-        value.lineHeight = value.fontSize + 2
+        value.lineHeight = Math.trunc(value.fontSize / 0.7)
       })
+      line.maxLineHeight = Math.max(...line.children.map(v => v.lineHeight))
     }
 
     f()
-
   }
 
   function f() {
@@ -532,7 +533,7 @@ function App() {
         <div className={'cursor'} ref={cursor}></div>
       </div>
       <div className="bottom">
-        <button onClick={getConfig}>字</button>
+        <button onClick={getConfig}>配置</button>
         <button onClick={changeSize}>变大</button>
       </div>
       <textarea

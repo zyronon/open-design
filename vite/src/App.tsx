@@ -42,69 +42,6 @@ brokenTexts = [
     "maxLineHeight": 28.5,
     "children": [
       {
-        "text": "jj",
-        "width": 11.0546875,
-        "x": 0,
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif"
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 11.0546875,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 20.3125,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 29.5703125,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 38.828125,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 48.0859375,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 57.34375,
-        "width": 9.2578125
-      },
-      {
         "fontSize": 20,
         "lineHeight": 28.5,
         "fontWeight": "500",
@@ -196,286 +133,6 @@ brokenTexts = [
       }
     ]
   },
-  {
-    "maxLineHeight": 28.5,
-    "children": [
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 0,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 9.2578125,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 18.515625,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 27.7734375,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 37.03125,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 46.2890625,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 55.546875,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 64.8046875,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 74.0625,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 83.3203125,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 92.578125,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 101.8359375,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 111.09375,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 120.3515625,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 129.609375,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 138.8671875,
-        "width": 9.2578125
-      }
-    ]
-  },
-  {
-    "maxLineHeight": 28.5,
-    "children": [
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 0,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 9.2578125,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 18.515625,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 27.7734375,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 37.03125,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 46.2890625,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 55.546875,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 64.8046875,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 74.0625,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 83.3203125,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 92.578125,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 101.8359375,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 111.09375,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 120.3515625,
-        "width": 9.2578125
-      }
-    ]
-  }
 ]
 
 type Conf = {
@@ -493,13 +150,13 @@ let conf: Conf = {
   brokenTexts,
   lan: [],
   textAlign: TextAlign.LEFT,
-  textMode: TextMode.AUTO_W,
+  textMode: TextMode.AUTO_H,
   textLineHeight: 40,
   layout: {
     x: 0,
     y: 0,
-    w: 200,
-    h: 200,
+    w: 100,
+    h: 100,
   },
   center: {
     x: 0,
@@ -554,7 +211,7 @@ let currentTextInfo: TextInfo = {
   fontFamily: 'sans-serif'
 }
 
-function clone(val: any) {
+function clone<T>(val: T): T {
   return JSON.parse(JSON.stringify(val))
 }
 
@@ -622,13 +279,9 @@ function App() {
   }
 
   function calcConf() {
-    const {textMode, brokenTexts, center} = conf
-    brokenTexts.map(line => {
-      //如果有子组件才计算，因为换行之后只有一个最高行高，没有子组件的
-      if (line.children.length) {
-        line.maxLineHeight = Math.max(...line.children.map(v => v.lineHeight))
-      }
-    })
+    let {textMode, brokenTexts, center} = conf
+    let {x, y, w, h,} = conf.layout
+
     if (textMode === TextMode.AUTO_W) {
       let maxW = Math.max(...brokenTexts.map(line => {
         let last = line.children[line.children.length - 1]
@@ -641,21 +294,44 @@ function App() {
       // conf.center.y = original.center.y + (newH - oh) / 2
       conf.layout.w = maxW
       conf.layout.h = newH
-      let {x, y, w, h,} = conf.layout
       conf.center = {
         x: x + w / 2,
         y: y + h / 2
       }
       // console.log(conf)
     }
-    // if (textMode === TextMode.AUTO_H) {
-    //   conf.brokenTexts = getTextModeAutoHTexts(texts, ctx, w)
-    //   console.log('brokenTexts', conf.brokenTexts)
-    //   let {h: oh} = original.layout
-    //   let newH = conf.brokenTexts.length * textLineHeight
-    //   conf.center.y = original.center.y + (newH - oh) / 2
-    //   conf.layout.h = conf.brokenTexts.length * textLineHeight
-    // }
+    if (textMode === TextMode.AUTO_H) {
+      let temp: TextLine[] = []
+      brokenTexts.reduce((previousValue, line, currentIndex) => {
+        let r = clone(line)
+        if (currentIndex !== previousValue.length) {
+          r.children.concat(previousValue.pop()!.children)
+        }
+        let more = adjustLineTextOnAutoH(r, w, [])
+        previousValue.push(r)
+        if (more.length) {
+          previousValue.push({
+            maxLineHeight: -1,
+            children: more
+          })
+        }
+        return previousValue
+      }, temp)
+      conf.brokenTexts = temp
+      console.log('temp', temp)
+      // conf.brokenTexts = getTextModeAutoHTexts(texts, ctx, w)
+      // console.log('brokenTexts', conf.brokenTexts)
+      // let {h: oh} = original.layout
+      // let newH = conf.brokenTexts.length * textLineHeight
+      // conf.center.y = original.center.y + (newH - oh) / 2
+      // conf.layout.h = conf.brokenTexts.length * textLineHeight
+    }
+    brokenTexts.map(line => {
+      //如果有子组件才计算，因为换行之后只有一个最高行高，没有子组件的
+      if (line.children.length) {
+        line.maxLineHeight = Math.max(...line.children.map(v => v.lineHeight))
+      }
+    })
   }
 
   useMount(() => {
@@ -715,22 +391,6 @@ function App() {
       //删除
       case 8:
         checkLine(conf.brokenTexts[conf.brokenTexts.length - 1].children)
-
-
-        // let lastRow = conf.brokenTexts[conf.brokenTexts.length - 1]
-        //
-        // if (lastRow.children.length === 1) {
-        //   lastRow.children.pop()
-        //   conf.brokenTexts.pop()
-        // } else {
-        //   if (conf.brokenTexts.length > 1) {
-        //     // let preLine = conf.brokenTexts[conf.brokenTexts.length - 2]
-        //     // preLine.children.pop()
-        //     conf.brokenTexts.pop()
-        //     lastRow = conf.brokenTexts[conf.brokenTexts.length - 1]
-        //     lastRow.children.pop()
-        //   }
-        // }
         calcConf()
         render(ctx)
         break
@@ -750,6 +410,17 @@ function App() {
         render(ctx)
         break
     }
+  }
+
+  //调整行内的文字，当自动高度时
+  function adjustLineTextOnAutoH(line: TextLine, rectW: number, surplus: Text[]): Text[] {
+    let last = line.children[line.children.length - 1]
+    let maxW = last.x + last.width
+    if (maxW > rectW) {
+      surplus.push(line.children.pop()!)
+      return adjustLineTextOnAutoH(line, rectW, surplus)
+    }
+    return surplus
   }
 
   function onChange(e: any) {

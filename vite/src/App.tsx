@@ -558,7 +558,6 @@ function clone(val: any) {
   return JSON.parse(JSON.stringify(val))
 }
 
-
 function App() {
   const ref = useRef(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -657,8 +656,6 @@ function App() {
     //   conf.center.y = original.center.y + (newH - oh) / 2
     //   conf.layout.h = conf.brokenTexts.length * textLineHeight
     // }
-
-
   }
 
   useMount(() => {
@@ -702,18 +699,38 @@ function App() {
     }
   }, [textareaRef.current])
 
+  function checkLine(line: any[]) {
+    if (line.length) {
+      line.pop()
+    } else {
+      if (conf.brokenTexts.length > 1) {
+        conf.brokenTexts.pop()
+        checkLine(conf.brokenTexts[conf.brokenTexts.length - 1].children)
+      }
+    }
+  }
+
   function onTextKeyDown(e: any) {
-    let lastRow = conf.brokenTexts[conf.brokenTexts.length - 1]
     switch (e.keyCode) {
       //删除
       case 8:
-        if (lastRow.children.length) {
-          lastRow.children.pop()
-        } else {
-          let preLine = conf.brokenTexts[conf.brokenTexts.length - 2]
-          preLine.children.pop()
-          conf.brokenTexts.pop()
-        }
+        checkLine(conf.brokenTexts[conf.brokenTexts.length - 1].children)
+
+
+        // let lastRow = conf.brokenTexts[conf.brokenTexts.length - 1]
+        //
+        // if (lastRow.children.length === 1) {
+        //   lastRow.children.pop()
+        //   conf.brokenTexts.pop()
+        // } else {
+        //   if (conf.brokenTexts.length > 1) {
+        //     // let preLine = conf.brokenTexts[conf.brokenTexts.length - 2]
+        //     // preLine.children.pop()
+        //     conf.brokenTexts.pop()
+        //     lastRow = conf.brokenTexts[conf.brokenTexts.length - 1]
+        //     lastRow.children.pop()
+        //   }
+        // }
         calcConf()
         render(ctx)
         break
@@ -721,7 +738,13 @@ function App() {
       case 13:
         conf.brokenTexts.push({
           maxLineHeight: currentTextInfo.lineHeight,
-          children: []
+          children: [
+            Object.assign({
+              text: '',
+              x: 0,
+              width: 0
+            }, currentTextInfo)
+          ]
         })
         calcConf()
         render(ctx)
@@ -978,12 +1001,12 @@ function App() {
       </div>
       <div className={'canvasWrapper'}>
         <div className="canvas-body">
-          <canvas 
-                  tabIndex={1}
-                  onMouseDown={onMouseDown}
-                  onMouseMove={onMouseMove}
-                  onMouseUp={onMouseUp}
-                  ref={ref}/>
+          <canvas
+            tabIndex={1}
+            onMouseDown={onMouseDown}
+            onMouseMove={onMouseMove}
+            onMouseUp={onMouseUp}
+            ref={ref}/>
           <div className={'cursor'} ref={cursor}></div>
           <textarea
             ref={textareaRef}

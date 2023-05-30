@@ -37,6 +37,446 @@ let brokenTexts: TextLine[] = [
     ]
   }
 ]
+brokenTexts = [
+  {
+    "maxLineHeight": 28.5,
+    "children": [
+      {
+        "text": "jj",
+        "width": 11.0546875,
+        "x": 0,
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif"
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 11.0546875,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 20.3125,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 29.5703125,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 38.828125,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 48.0859375,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 57.34375,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 66.6015625,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 75.859375,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 85.1171875,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 94.375,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 103.6328125,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 112.890625,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 122.1484375,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 131.40625,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 140.6640625,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 149.921875,
+        "width": 9.2578125
+      }
+    ]
+  },
+  {
+    "maxLineHeight": 28.5,
+    "children": [
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 0,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 9.2578125,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 18.515625,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 27.7734375,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 37.03125,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 46.2890625,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 55.546875,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 64.8046875,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 74.0625,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 83.3203125,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 92.578125,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 101.8359375,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 111.09375,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 120.3515625,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 129.609375,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 138.8671875,
+        "width": 9.2578125
+      }
+    ]
+  },
+  {
+    "maxLineHeight": 28.5,
+    "children": [
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 0,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 9.2578125,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 18.515625,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 27.7734375,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 37.03125,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 46.2890625,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 55.546875,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 64.8046875,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 74.0625,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 83.3203125,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 92.578125,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 101.8359375,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 111.09375,
+        "width": 9.2578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "x": 120.3515625,
+        "width": 9.2578125
+      }
+    ]
+  }
+]
 
 type Conf = {
   texts: any[],
@@ -144,7 +584,7 @@ function App() {
   }
 
   function render(ctx: CanvasRenderingContext2D) {
-    console.log('render', conf.brokenTexts)
+    // console.log('render', conf.brokenTexts)
     let {layout: {x, y, w, h,}, center, lan} = conf
     ctx.clearRect(0, 0, 400, 400)
     ctx.fillStyle = 'rgb(239,239,239)'
@@ -164,7 +604,7 @@ function App() {
 
     ctx.fillStyle = 'rgb(184,197,238)'
     lan.map((value) => {
-      ctx.fillRect(value.x, value.y, value.w, value.h)
+      ctx.fillRect(-w2 + value.x, value.y, value.w, value.h)
     })
     ctx.fillStyle = 'rgb(158,158,158)'
 
@@ -176,7 +616,7 @@ function App() {
         ctx.fillText(obj.text, -w2 + obj.x, lY)
       })
       lY = lY + row.maxLineHeight
-      console.log('lY', lY)
+      // console.log('lY', lY)
     })
     ctx.restore()
     original = JSON.parse(JSON.stringify(conf))
@@ -184,11 +624,17 @@ function App() {
 
   function calcConf() {
     const {textMode, brokenTexts, center} = conf
+    brokenTexts.map(line => {
+      //如果有子组件才计算，因为换行之后只有一个最高行高，没有子组件的
+      if (line.children.length) {
+        line.maxLineHeight = Math.max(...line.children.map(v => v.lineHeight))
+      }
+    })
     if (textMode === TextMode.AUTO_W) {
-      let {w: ow, h: oh} = original.layout
       let maxW = Math.max(...brokenTexts.map(line => {
         let last = line.children[line.children.length - 1]
-        return last.x + last.width
+        if (last) return last.x + last.width
+        return 0
       }))
       let newH = getLineY(brokenTexts.length)
       //老中心点加上w\h的增量除2，就是新中心
@@ -201,7 +647,7 @@ function App() {
         x: x + w / 2,
         y: y + h / 2
       }
-      console.log(conf)
+      // console.log(conf)
     }
     // if (textMode === TextMode.AUTO_H) {
     //   conf.brokenTexts = getTextModeAutoHTexts(texts, ctx, w)
@@ -211,9 +657,7 @@ function App() {
     //   conf.center.y = original.center.y + (newH - oh) / 2
     //   conf.layout.h = conf.brokenTexts.length * textLineHeight
     // }
-    brokenTexts.map(line => {
-      line.maxLineHeight = Math.max(...line.children.map(v => v.lineHeight))
-    })
+
 
   }
 
@@ -275,18 +719,10 @@ function App() {
         break
       //回车
       case 13:
-        let {fontWeight, fontSize, lineHeight, fontFamily} = currentTextInfo
-        ctx.save()
-        ctx.font = `${fontWeight} ${fontSize}px/${lineHeight}px ${fontFamily}`
-        let newText: Text = clone(currentTextInfo)
-        newText.text = ' '
-        newText.x = 0
-        newText.width = ctx.measureText(newText.text).width
         conf.brokenTexts.push({
-          maxLineHeight: 0,
-          children: [newText]
+          maxLineHeight: currentTextInfo.lineHeight,
+          children: []
         })
-        ctx.restore()
         calcConf()
         render(ctx)
         break
@@ -300,13 +736,6 @@ function App() {
     //删除和回车都是等于null
     if (val === null) return
     let lastRow = brokenTexts[brokenTexts.length - 1]
-    let last
-    if (lastRow.children.length) {
-      last = lastRow.children[lastRow.children.length - 1]
-    } else {
-      let preLine = brokenTexts[brokenTexts.length - 2]
-      last = preLine.children[preLine.children.length - 1]
-    }
     ctx.save()
     let {fontWeight, fontSize, lineHeight, fontFamily} = currentTextInfo
     ctx.font = `${fontWeight} ${fontSize}px/${lineHeight}px ${fontFamily}`
@@ -314,6 +743,7 @@ function App() {
     let newText: Text = clone(currentTextInfo)
     newText.text = val
     if (lastRow.children.length) {
+      let last = lastRow.children[lastRow.children.length - 1]
       newText.x = last.x + last.width
     } else {
       newText.x = 0
@@ -345,7 +775,7 @@ function App() {
     let {layout: {x, y, w, h}, textAlign, textLineHeight, center, brokenTexts} = conf
     let cx = ex - center.x
     let cy = ey - center.y
-    // console.log('e', cx, cy)
+    console.log('e', cx, ex)
     let lineIndex = undefined
     let xIndex = undefined
     let lY = -h / 2
@@ -359,7 +789,7 @@ function App() {
         let isBreak = false
         for (let j = 0; j < line.children.length; j++) {
           let item = line.children[j]
-          let abs = Math.abs(item.x - cx)
+          let abs = Math.abs(item.x - ex)
           //console.log('item.x', item.x)
           //console.log('cx', cx)
           //console.log('abs', abs)
@@ -389,7 +819,7 @@ function App() {
       isEnter.current = true
       cursor.current.style.top = getLineY(lineIndex) + 'px'
       let left = brokenTexts[lineIndex].children[xIndex].x
-      left += center.x
+      // left += center.x
       cursor.current.style.left = left + 'px'
       setPosition({lineIndex, xIndex})
       conf.lan = []
@@ -407,7 +837,6 @@ function App() {
       let cx = ex - center.x
       let cy = ey - center.y
       let newPosition = getPosition(e)
-      let lineHeight = 20
 
       if (newPosition) {
         setNewPosition(newPosition)
@@ -420,7 +849,7 @@ function App() {
 
         cursor.current.style.top = getLineY(newLineIndex) + 'px'
         let left = brokenTexts[newLineIndex].children[newXIndex].x
-        left += center.x
+        // left += center.x
         cursor.current.style.left = left + 'px'
 
         let start = position
@@ -548,17 +977,19 @@ function App() {
         <button onClick={changeSize}>变大</button>
       </div>
       <div className={'canvasWrapper'}>
-        <canvas width={400} height={400}
-                tabIndex={1}
-                onMouseDown={onMouseDown}
-                onMouseMove={onMouseMove}
-                onMouseUp={onMouseUp}
-                ref={ref}/>
-        <div className={'cursor'} ref={cursor}></div>
-        <textarea
-          ref={textareaRef}
-          onKeyDown={onTextKeyDown}
-          onChange={onChange}></textarea>
+        <div className="canvas-body">
+          <canvas width={400} height={400}
+                  tabIndex={1}
+                  onMouseDown={onMouseDown}
+                  onMouseMove={onMouseMove}
+                  onMouseUp={onMouseUp}
+                  ref={ref}/>
+          <div className={'cursor'} ref={cursor}></div>
+          <textarea
+            ref={textareaRef}
+            onKeyDown={onTextKeyDown}
+            onChange={onChange}></textarea>
+        </div>
       </div>
     </div>
   )

@@ -123,6 +123,7 @@ function App() {
   const ref = useRef(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [ctx, setCtx] = useState<CanvasRenderingContext2D>(null as any)
+  const [canvasRect, setCanvasRect] = useState<DOMRect>(null as any)
 
   //计算
   function calc(ctx: CanvasRenderingContext2D) {
@@ -154,7 +155,6 @@ function App() {
     // ctx.textBaseline = 'bottom'
     // ctx.textAlign = rect.textAlign
     ctx.save()
-
     ctx.translate(conf.center.x, conf.center.y)
 
     let w2 = conf.layout.w / 2
@@ -176,7 +176,7 @@ function App() {
         ctx.fillText(obj.text, -w2 + obj.x, lY)
       })
       lY = lY + row.maxLineHeight
-      // console.log('lY', lY)
+      console.log('lY', lY)
     })
     ctx.restore()
     original = JSON.parse(JSON.stringify(conf))
@@ -192,16 +192,30 @@ function App() {
       }))
       let newH = getLineY(brokenTexts.length)
       //老中心点加上w\h的增量除2，就是新中心
-      conf.center.x = original.center.x + (maxW - ow) / 2
-      conf.center.y = original.center.y + (newH - oh) / 2
+      // conf.center.x = original.center.x + (maxW - ow) / 2
+      // conf.center.y = original.center.y + (newH - oh) / 2
       conf.layout.w = maxW
       conf.layout.h = newH
+      let {x, y, w, h,} = conf.layout
+      conf.center = {
+        x: x + w / 2,
+        y: y + h / 2
+      }
       console.log(conf)
     }
+    // if (textMode === TextMode.AUTO_H) {
+    //   conf.brokenTexts = getTextModeAutoHTexts(texts, ctx, w)
+    //   console.log('brokenTexts', conf.brokenTexts)
+    //   let {h: oh} = original.layout
+    //   let newH = conf.brokenTexts.length * textLineHeight
+    //   conf.center.y = original.center.y + (newH - oh) / 2
+    //   conf.layout.h = conf.brokenTexts.length * textLineHeight
+    // }
+    brokenTexts.map(line => {
+      line.maxLineHeight = Math.max(...line.children.map(v => v.lineHeight))
+    })
+
   }
-
-
-  const [canvasRect, setCanvasRect] = useState<DOMRect>(null as any)
 
   useMount(() => {
     if (ref.current) {
@@ -234,7 +248,6 @@ function App() {
     }
   })
 
-
   useEffect(() => {
     if (textareaRef.current) {
       let texts = conf.brokenTexts.map(line => {
@@ -262,20 +275,16 @@ function App() {
         break
       //回车
       case 13:
-        let last = lastRow.children[lastRow.children.length - 1]
-        let {fontWeight, fontSize, lineHeight, fontFamily} = last
+        let {fontWeight, fontSize, lineHeight, fontFamily} = currentTextInfo
         ctx.save()
         ctx.font = `${fontWeight} ${fontSize}px/${lineHeight}px ${fontFamily}`
-        let b = ctx.measureText(' ')
-        let newText: Text = clone(last)
+        let newText: Text = clone(currentTextInfo)
         newText.text = ' '
-        newText.x = last.x + last.width
-        // newText.x = -conf.layout.w / 2
-        newText.width = b.width
-        lastRow.children.push(newText)
+        newText.x = 0
+        newText.width = ctx.measureText(newText.text).width
         conf.brokenTexts.push({
           maxLineHeight: 0,
-          children: []
+          children: [newText]
         })
         ctx.restore()
         calcConf()
@@ -311,29 +320,15 @@ function App() {
     }
     newText.width = b.width
     lastRow.children.push(newText)
-    lastRow.maxLineHeight = Math.max(...lastRow.children.map(v => v.lineHeight))
-
-    calcConf()
-    // if (textMode === TextMode.AUTO_H) {
-    //   conf.brokenTexts = getTextModeAutoHTexts(texts, ctx, w)
-    //   console.log('brokenTexts', conf.brokenTexts)
-    //   let {h: oh} = original.layout
-    //   let newH = conf.brokenTexts.length * textLineHeight
-    //   conf.center.y = original.center.y + (newH - oh) / 2
-    //   conf.layout.h = conf.brokenTexts.length * textLineHeight
-    // }
 
     ctx.restore()
-    // calc(ctx)
+    calcConf()
     render(ctx)
   }
 
   const cursor = useRef<HTMLDivElement>(null as any)
-
   const [position, setPosition] = useState<LanInfo>(null as any)
-
   const [newPosition, setNewPosition] = useState<LanInfo>(null as any)
-
   const isEnter = useRef<boolean>(false)
 
   function getLineY(i: number, isCursor: boolean = true) {
@@ -537,9 +532,8 @@ function App() {
         value.fontSize++
         value.lineHeight = Math.trunc(value.fontSize / 0.7)
       })
-      line.maxLineHeight = Math.max(...line.children.map(v => v.lineHeight))
     }
-
+    calcConf()
     f()
   }
 

@@ -978,7 +978,7 @@ function App() {
       </div>
       <div className={'canvasWrapper'}>
         <div className="canvas-body">
-          <canvas width={400} height={400}
+          <canvas 
                   tabIndex={1}
                   onMouseDown={onMouseDown}
                   onMouseMove={onMouseMove}

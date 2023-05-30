@@ -1,0 +1,63 @@
+html, body {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  background: #f1f1f1;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+
+.docs {
+  .toolbar {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .canvasWrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
+
+    .cursor {
+      position: absolute;
+      width: 1px;
+      height: 20px;
+      top: 0;
+      left: 0;
+      background: black;
+      animation: blink 1s infinite steps(1, start);
+    }
+
+    @keyframes blink {
+      0%, 100% {
+        background-color: #000;
+        color: #aaa;
+      }
+      50% {
+        background-color: #bbb; /* not #aaa because it's seem there is Google Chrome bug */
+        color: #000;
+      }
+    }
+
+    canvas {
+      border: 1px solid gainsboro;
+      //width: 800px;
+    }
+
+    textarea {
+      width: 500px;
+      height: 100px;
+    }
+  }
+}

@@ -1,5 +1,5 @@
 import {MouseEvent, useEffect, useRef, useState} from 'react'
-import './App.css'
+import './App.less'
 import {TextAlign} from "../../src/lib/designer/config/TextConfig"
 import {Rect} from "../../src/lib/designer/config/BaseConfig";
 import {P, TextMode} from "../../src/lib/designer/types/type";
@@ -893,7 +893,11 @@ function App() {
   }
 
   return (
-    <>
+    <div className={'docs'}>
+      <div className="toolbar">
+        <button onClick={getConfig}>配置</button>
+        <button onClick={changeSize}>变大</button>
+      </div>
       <div className={'canvasWrapper'}>
         <canvas width={400} height={400}
                 tabIndex={1}
@@ -902,16 +906,12 @@ function App() {
                 onMouseUp={onMouseUp}
                 ref={ref}/>
         <div className={'cursor'} ref={cursor}></div>
+        <textarea
+          ref={textareaRef}
+          onKeyDown={onTextKeyDown}
+          onChange={onChange}></textarea>
       </div>
-      <div className="bottom">
-        <button onClick={getConfig}>配置</button>
-        <button onClick={changeSize}>变大</button>
-      </div>
-      <textarea
-        ref={textareaRef}
-        onKeyDown={onTextKeyDown}
-        onChange={onChange}></textarea>
-    </>
+    </div>
   )
 }
 

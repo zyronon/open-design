@@ -151,7 +151,7 @@ let conf: Conf = {
   brokenTexts,
   lan: [],
   textAlign: TextAlign.LEFT,
-  textMode: TextMode.AUTO_H,
+  textMode: TextMode.FIXED,
   textLineHeight: 40,
   layout: {
     x: 0,
@@ -172,32 +172,6 @@ let original: any = {
     w: 100,
     h: 100,
   }
-}
-
-function getTextModeAutoHTexts(texts: string[], ctx: any, w: number) {
-  let newTexts: string[] = []
-  for (let i = 0; i < texts.length; i++) {
-    let text = texts[i]
-    if (!text) {
-      newTexts.push(text)
-      continue
-    }
-    let measureText = ctx.measureText(text)
-    if (measureText.width <= w) {
-      newTexts.push(text)
-    } else {
-      for (let i = text.length - 1; i >= 0; i--) {
-        measureText = ctx.measureText(text.substring(0, i))
-        if (measureText.width <= w) {
-          newTexts.push(text.substring(0, i))
-          let res = getTextModeAutoHTexts([text.substring(i, text.length)], ctx, w)
-          newTexts = newTexts.concat(res)
-          break
-        }
-      }
-    }
-  }
-  return newTexts
 }
 
 type LanInfo = {
@@ -284,22 +258,13 @@ function App() {
     let {x, y, w, h,} = conf.layout
 
     if (textMode === TextMode.AUTO_W) {
-      let maxW = Math.max(...brokenTexts.map(line => {
+      let maxW = Math.max(...conf.brokenTexts.map(line => {
         let last = line.children[line.children.length - 1]
         if (last) return last.x + last.width
         return 0
       }))
-      let newH = getLineY(brokenTexts.length)
-      //老中心点加上w\h的增量除2，就是新中心
-      // conf.center.x = original.center.x + (maxW - ow) / 2
-      // conf.center.y = original.center.y + (newH - oh) / 2
       conf.layout.w = maxW
-      conf.layout.h = newH
-      conf.center = {
-        x: x + w / 2,
-        y: y + h / 2
-      }
-      // console.log(conf)
+      conf.layout.h = getLineY(conf.brokenTexts.length)
     }
     if (textMode === TextMode.AUTO_H) {
       let temp: TextLine[] = []
@@ -326,14 +291,15 @@ function App() {
         line.maxLineHeight = Math.max(...line.children.map(v => v.lineHeight))
       }
     })
-    let newH = getLineY(conf.brokenTexts.length)
-    conf.layout.h = newH
-    conf.center = {
-      x: x + conf.layout.w / 2,
-      y: y + conf.layout.h / 2
+    if (textMode !== TextMode.FIXED) {
+      conf.layout.h = getLineY(conf.brokenTexts.length)
+      conf.center = {
+        x: x + conf.layout.w / 2,
+        y: y + conf.layout.h / 2
+      }
     }
-    console.log('conf.brokenTexts',conf.brokenTexts)
-    console.log('conf',conf)
+    console.log('conf.brokenTexts', conf.brokenTexts)
+    console.log('conf', conf)
   }
 
   useMount(() => {

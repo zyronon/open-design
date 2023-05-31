@@ -95,11 +95,6 @@ export class Ellipse extends ParentShape {
         // draw.drawRound(ctx, point.center)
       })
     })
-
-    let r2 = 4
-    draw.drawRound(ctx, this._conf.startOperatePoint, r2,)
-    draw.drawRound(ctx, this._conf.endOperatePoint, r2,)
-    draw.drawRound(ctx, this._conf.innerCenterOperatePoint, r2,)
   }
 
   drawHover(ctx: CanvasRenderingContext2D, newLayout: Rect): any {
@@ -121,10 +116,20 @@ export class Ellipse extends ParentShape {
     let r2 = 4
     if (totalLength !== 4) {
       draw.drawRound(ctx, {x: 0, y: 0}, r2,)
-      draw.drawRound(ctx, this._conf.startOperatePoint, r2,)
-      draw.drawRound(ctx, this._conf.endOperatePoint, r2,)
+      console.log('this.ellipseEnterType',this.ellipseEnterType)
+      if (this.ellipseEnterType !== EllipseHoverType.Start) {
+        draw.drawRound(ctx, this._conf.startOperatePoint, r2,)
+      }
+      if (this.ellipseEnterType !== EllipseHoverType.End) {
+        draw.drawRound(ctx, this._conf.endOperatePoint, r2,)
+      }
+      if (this.ellipseEnterType !== EllipseHoverType.InsideDiameter) {
+        draw.drawRound(ctx, this._conf.innerCenterOperatePoint, r2,)
+      }
     } else {
-      draw.drawRound(ctx, this._conf.endOperatePoint, r2,)
+      if (this.ellipseEnterType !== EllipseHoverType.End) {
+        draw.drawRound(ctx, this._conf.endOperatePoint, r2,)
+      }
     }
   }
 

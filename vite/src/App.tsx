@@ -308,7 +308,7 @@ function App() {
         if (currentIndex !== previousValue.length) {
           r.children.concat(previousValue.pop()!.children)
         }
-        let more = adjustLineTextOnAutoH(r, w, [])
+        let more = adjustLineTextOnAutoH(r, w)
         previousValue.push(r)
         if (more.length) {
           previousValue.push({
@@ -319,20 +319,21 @@ function App() {
         return previousValue
       }, temp)
       conf.brokenTexts = temp
-      console.log('temp', temp)
-      // conf.brokenTexts = getTextModeAutoHTexts(texts, ctx, w)
-      // console.log('brokenTexts', conf.brokenTexts)
-      // let {h: oh} = original.layout
-      // let newH = conf.brokenTexts.length * textLineHeight
-      // conf.center.y = original.center.y + (newH - oh) / 2
-      // conf.layout.h = conf.brokenTexts.length * textLineHeight
     }
-    brokenTexts.map(line => {
+    conf.brokenTexts.map(line => {
       //如果有子组件才计算，因为换行之后只有一个最高行高，没有子组件的
       if (line.children.length) {
         line.maxLineHeight = Math.max(...line.children.map(v => v.lineHeight))
       }
     })
+    let newH = getLineY(conf.brokenTexts.length)
+    conf.layout.h = newH
+    conf.center = {
+      x: x + conf.layout.w / 2,
+      y: y + conf.layout.h / 2
+    }
+    console.log('conf.brokenTexts',conf.brokenTexts)
+    console.log('conf',conf)
   }
 
   useMount(() => {
@@ -414,14 +415,25 @@ function App() {
   }
 
   //调整行内的文字，当自动高度时
-  function adjustLineTextOnAutoH(line: TextLine, rectW: number, surplus: Text[]): Text[] {
-    let last = line.children[line.children.length - 1]
-    let maxW = last.x + last.width
-    if (maxW > rectW) {
-      surplus.push(line.children.pop()!)
-      return adjustLineTextOnAutoH(line, rectW, surplus)
+  function adjustLineTextOnAutoH(line: TextLine, rectW: number): Text[] {
+    let index = -1
+    for (let i = 0; i < line.children.length; i++) {
+      let text = line.children[i]
+      let textW = text.x + text.width
+      if (textW > rectW) {
+        index = i
+        break
+      }
     }
-    return surplus
+    if (index !== -1) {
+      let more = line.children.splice(index)
+      let first = clone(more[0])
+      more.map(text => {
+        text.x = text.x - first.x
+      })
+      return more
+    }
+    return []
   }
 
   function onChange(e: any) {

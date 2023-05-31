@@ -668,7 +668,34 @@ let temp = {
   flipVertical: false
 }
 export const rects = [
-
+  {
+    "name": "圆",
+    layout: {
+      "x": 100,
+      "y": 100,
+      "w": 300,
+      "h": 400,
+    },
+    innerLayout: {
+      "x": 0,
+      "y": 0,
+      "w": 150,
+      "h": 200,
+    },
+    "rotation": 0,
+    "lineWidth": 2,
+    "type": ShapeType.ELLIPSE,
+    "color": "gray",
+    "radius": 0,
+    "borderColor": Colors.Border,
+    "fillColor": "rgb(241,238,238)",
+    strokeAlign: StrokeAlign.OUTSIDE,
+    totalLength: 2.9,
+    startT: 3.5,
+    isComplete: false,
+    flipHorizontal: false,
+    flipVertical: false
+  },
   {
     "name": "文字",
     layout: {
@@ -700,34 +727,6 @@ export const rects = [
     "radius": 0,
     "borderColor": "rgb(216,216,216)",
     "fillColor": "rgb(241,238,238)",
-    flipHorizontal: false,
-    flipVertical: false
-  },
-  {
-    "name": "圆",
-    layout: {
-      "x": 1000,
-      "y": 150,
-      "w": 300,
-      "h": 400,
-    },
-    innerLayout: {
-      "x": 1000,
-      "y": 150,
-      "w": 150,
-      "h": 200,
-    },
-    "rotation": 0,
-    "lineWidth": 2,
-    "type": ShapeType.ELLIPSE,
-    "color": "gray",
-    "radius": 0,
-    "borderColor": Colors.Border,
-    "fillColor": "rgb(241,238,238)",
-    strokeAlign: StrokeAlign.OUTSIDE,
-    totalLength: 2.9,
-    startT: 3.5,
-    isComplete: false,
     flipHorizontal: false,
     flipVertical: false
   },

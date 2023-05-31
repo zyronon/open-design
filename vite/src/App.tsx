@@ -4,6 +4,7 @@ import {TextAlign} from "../../src/lib/designer/config/TextConfig"
 import {Rect} from "../../src/lib/designer/config/BaseConfig";
 import {P, TextMode} from "../../src/lib/designer/types/type";
 import {useMount} from "ahooks"
+import {message} from "antd"
 
 type TextInfo = {
   fontSize: number,

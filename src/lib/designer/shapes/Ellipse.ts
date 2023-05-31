@@ -97,9 +97,9 @@ export class Ellipse extends ParentShape {
     })
 
     let r2 = 4
-    draw.drawRound(ctx, this._conf.startMouseControlPoint, r2,)
-    draw.drawRound(ctx, this._conf.endMouseControlPoint, r2,)
-    draw.drawRound(ctx, this._conf.innerCenterMouseControlPoint, r2,)
+    draw.drawRound(ctx, this._conf.startOperatePoint, r2,)
+    draw.drawRound(ctx, this._conf.endOperatePoint, r2,)
+    draw.drawRound(ctx, this._conf.innerCenterOperatePoint, r2,)
   }
 
   drawHover(ctx: CanvasRenderingContext2D, newLayout: Rect): any {
@@ -121,10 +121,10 @@ export class Ellipse extends ParentShape {
     let r2 = 4
     if (totalLength !== 4) {
       draw.drawRound(ctx, {x: 0, y: 0}, r2,)
-      draw.drawRound(ctx, this._conf.startMouseControlPoint, r2,)
-      draw.drawRound(ctx, this._conf.endMouseControlPoint, r2,)
+      draw.drawRound(ctx, this._conf.startOperatePoint, r2,)
+      draw.drawRound(ctx, this._conf.endOperatePoint, r2,)
     } else {
-      draw.drawRound(ctx, this._conf.endMouseControlPoint, r2,)
+      draw.drawRound(ctx, this._conf.endOperatePoint, r2,)
     }
   }
 
@@ -249,7 +249,7 @@ export class Ellipse extends ParentShape {
     // Bezier.getTByPoint_3()
 
     if (this.ellipseEnterType) {
-    // if (true) {
+      // if (true) {
       const {layout: {x, y, w, h}, center} = this.conf
       let lineIndex = -1
       if (cx > center.x) {
@@ -417,7 +417,7 @@ export class Ellipse extends ParentShape {
     //这里也可以用.5和.6来算ox和oy
     let ox = 0.5522848 * w2, oy = 0.5522848 * h2
 
-    this.getStartAndEndPoint()
+    this.getOperatePoint()
 
     //是否是整圆
     let fullEllipse = totalLength === 4
@@ -640,8 +640,8 @@ export class Ellipse extends ParentShape {
     } = this._conf
     //绝对点
     let absoluteEndMouseControlPoint = {
-      x: this._conf.endMouseControlPoint.x + center.x,
-      y: this._conf.endMouseControlPoint.y + center.y,
+      x: this._conf.endOperatePoint.x + center.x,
+      y: this._conf.endOperatePoint.y + center.y,
     }
     if (helper.isInPoint(mousePoint, absoluteEndMouseControlPoint, 4)) {
       document.body.style.cursor = "pointer"
@@ -650,8 +650,8 @@ export class Ellipse extends ParentShape {
     }
     //绝对点
     let startMouseControlPoint = {
-      x: this._conf.startMouseControlPoint.x + center.x,
-      y: this._conf.startMouseControlPoint.y + center.y,
+      x: this._conf.startOperatePoint.x + center.x,
+      y: this._conf.startOperatePoint.y + center.y,
     }
     if (helper.isInPoint(mousePoint, startMouseControlPoint, 4)) {
       document.body.style.cursor = "pointer"
@@ -660,8 +660,8 @@ export class Ellipse extends ParentShape {
     }
     //绝对点
     let point = {
-      x: this._conf.innerCenterMouseControlPoint.x + center.x,
-      y: this._conf.innerCenterMouseControlPoint.y + center.y,
+      x: this._conf.innerCenterOperatePoint.x + center.x,
+      y: this._conf.innerCenterOperatePoint.y + center.y,
     }
     if (helper.isInPoint(mousePoint, point, 4)) {
       document.body.style.cursor = "pointer"
@@ -674,7 +674,7 @@ export class Ellipse extends ParentShape {
 
   init() {
     this.getCps()
-    this.getStartAndEndPoint()
+    this.getOperatePoint()
     if (!this._conf.isComplete) {
       this.conf.lineShapes = this.getCustomPoint()
     }
@@ -809,8 +809,8 @@ export class Ellipse extends ParentShape {
     this.cpMap.set('inner-top', clone(top))
   }
 
-  //获取起点和终点
-  getStartAndEndPoint() {
+  //获取操作点，起点和终点和内圆的拉动点
+  getOperatePoint() {
     let {
       totalLength = 4,
       startT = 0,
@@ -836,15 +836,20 @@ export class Ellipse extends ParentShape {
       this._conf.innerEndPoint = Bezier.getPointByT_3(Math.decimal(endLength), lineCps)
     }
 
-    let center = {x: 0, y: 0}
-
-    this._conf.startMouseControlPoint = helper.getStraightLineCenterPoint(center, this._conf.startPoint)
-    this._conf.endMouseControlPoint = helper.getStraightLineCenterPoint(center, this._conf.endPoint)
+    //w或h有值，说明有内圆
+    if (this._conf.innerLayout.w) {
+      this._conf.startOperatePoint = helper.getStraightLineCenterPoint(this._conf.innerStartPoint, this._conf.startPoint)
+      this._conf.endOperatePoint = helper.getStraightLineCenterPoint(this._conf.innerEndPoint, this._conf.endPoint)
+    } else {
+      let lineStartPoint = {x: 0, y: 0}
+      this._conf.startOperatePoint = helper.getStraightLineCenterPoint(lineStartPoint, this._conf.startPoint)
+      this._conf.endOperatePoint = helper.getStraightLineCenterPoint(lineStartPoint, this._conf.endPoint)
+    }
 
     let centerPointT = startT + totalLength / 2
 
-    let lineCps = this.getLineCps(-1, centerPointT,true)
-    this._conf.innerCenterMouseControlPoint = Bezier.getPointByT_3(Math.decimal(centerPointT), lineCps)
+    let lineCps = this.getLineCps(-1, centerPointT, true)
+    this._conf.innerCenterOperatePoint = Bezier.getPointByT_3(Math.decimal(centerPointT), lineCps)
   }
 
   //获取圆上的4条线段中某一条的控制点

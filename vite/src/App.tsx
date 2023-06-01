@@ -19,6 +19,7 @@ type Text = {
 } & TextInfo
 type TextLine = {
   maxLineHeight: number,
+  newLine: boolean,
   children: Text[]
 }
 
@@ -39,7 +40,7 @@ let conf: Conf = {
   brokenTexts,
   lan: [],
   textAlign: TextAlign.LEFT,
-  textMode: TextMode.FIXED,
+  textMode: TextMode.AUTO_H,
   textLineHeight: 40,
   layout: {
     x: 0,
@@ -173,6 +174,7 @@ function App() {
         if (more.length) {
           previousValue.push({
             maxLineHeight: -1,
+            newLine: false,
             children: more
           })
         }
@@ -193,8 +195,8 @@ function App() {
         y: y + conf.layout.h / 2
       }
     }
-    console.log('conf.brokenTexts', conf.brokenTexts)
-    console.log('conf', conf)
+    // console.log('conf.brokenTexts', conf.brokenTexts)
+    // console.log('conf', conf)
     // setTextarea()
   }
 
@@ -229,6 +231,16 @@ function App() {
     }
   })
 
+  useEffect(() => {
+    if (textareaRef.current) {
+      setTextarea()
+    }
+  }, [textareaRef.current])
+
+  useEffect(() => {
+    setPosition({lineIndex: 0, xIndex: 0})
+  }, [])
+
   function setTextarea() {
     let texts = conf.brokenTexts.map(line => {
       return line.children.map(t => t.text).join('')
@@ -237,11 +249,6 @@ function App() {
     textareaRef.current!.value = texts
   }
 
-  useEffect(() => {
-    if (textareaRef.current) {
-      setTextarea()
-    }
-  }, [textareaRef.current])
 
   function checkLine(line: any[]) {
     if (line.length) {
@@ -284,7 +291,7 @@ function App() {
           break
         //右
         case 39:
-          if (newXIndex === brokenTexts[newLineIndex].children.length - 1) {
+          if (newXIndex === brokenTexts[newLineIndex].children.length) {
             newLineIndex++
             newXIndex = 0
           } else {
@@ -301,14 +308,11 @@ function App() {
         case 13:
           conf.brokenTexts.push({
             maxLineHeight: currentTextInfo.lineHeight,
-            children: [
-              Object.assign({
-                text: '',
-                x: 0,
-                width: 0
-              }, currentTextInfo)
-            ]
+            newLine: true,
+            children: []
           })
+          newLineIndex++
+          newXIndex = 1
           calcConf()
           render(ctx)
           break
@@ -316,11 +320,20 @@ function App() {
       if (newLineIndex > conf.brokenTexts.length - 1) {
         newLineIndex = conf.brokenTexts.length - 1
       }
-      if (newXIndex > brokenTexts[newLineIndex].children.length - 1) {
-        newXIndex = brokenTexts[newLineIndex].children.length - 1
+      if (newXIndex > brokenTexts[newLineIndex].children.length) {
+        newXIndex = brokenTexts[newLineIndex].children.length
       }
       cursor.current.style.top = getLineY(newLineIndex) + 'px'
-      let left = brokenTexts[newLineIndex].children[newXIndex].x
+      let left = 0
+      //因为textline可以为空数组，newXIndex取不到值
+      if (newXIndex) {
+        if (newXIndex === brokenTexts[newLineIndex].children.length) {
+          let last = brokenTexts[newLineIndex].children[newXIndex - 1]
+          left = last.x + last.width
+        } else {
+          left = brokenTexts[newLineIndex].children[newXIndex].x
+        }
+      }
       cursor.current.style.left = left + 'px'
       console.log('newXIndex', newXIndex, left)
       setPosition({lineIndex: newLineIndex, xIndex: newXIndex})
@@ -375,6 +388,7 @@ function App() {
       newText.x = 0
       brokenTexts.push({
         maxLineHeight: newText.lineHeight,
+        newLine: true,
         children: [newText]
       })
     }
@@ -400,7 +414,7 @@ function App() {
     let {layout: {x, y, w, h}, textAlign, textLineHeight, center, brokenTexts} = conf
     let cx = ex - center.x
     let cy = ey - center.y
-    console.log('e', cx, ex)
+    // console.log('e', cx, ex)
     let lineIndex = undefined
     let xIndex = undefined
     let lY = -h / 2

@@ -22,512 +22,7 @@ type TextLine = {
   children: Text[]
 }
 
-let brokenTexts: TextLine[] = [
-  {
-    maxLineHeight: 28.5,
-    children: [
-      {
-        text: 'jj',
-        width: 10,
-        x: 0,
-        fontSize: 20,
-        lineHeight: 28.5,
-        fontWeight: '500',
-        fontFamily: 'sans-serif'
-      }
-    ]
-  }
-]
-brokenTexts = [
-  {
-    "maxLineHeight": 28.5,
-    "children": [
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 0,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 9.2578125,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 18.515625,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 27.7734375,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 37.03125,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 46.2890625,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 55.546875,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 64.8046875,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 74.0625,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 83.3203125,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 92.578125,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 101.8359375,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 111.09375,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 120.3515625,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 129.609375,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 138.8671875,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 148.125,
-        "width": 9.2578125
-      }
-    ]
-  },
-  {
-    "maxLineHeight": 28.5,
-    "children": [
-      {
-        "text": "",
-        "x": 0,
-        "width": 0,
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif"
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 0,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 9.2578125,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 18.515625,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 27.7734375,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 37.03125,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 46.2890625,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 55.546875,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 64.8046875,
-        "width": 9.2578125
-      }
-    ]
-  },
-  {
-    "maxLineHeight": 28.5,
-    "children": [
-      {
-        "text": "",
-        "x": 0,
-        "width": 0,
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif"
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 0,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 9.2578125,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 18.515625,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 27.7734375,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 37.03125,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 46.2890625,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 55.546875,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 64.8046875,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 74.0625,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 83.3203125,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 92.578125,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 101.8359375,
-        "width": 9.2578125
-      }
-    ]
-  },
-  {
-    "maxLineHeight": 28.5,
-    "children": [
-      {
-        "text": "",
-        "x": 0,
-        "width": 0,
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif"
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 0,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 9.2578125,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 18.515625,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 27.7734375,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 37.03125,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 46.2890625,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 55.546875,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 64.8046875,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 74.0625,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 83.3203125,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 92.578125,
-        "width": 9.2578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "s",
-        "x": 101.8359375,
-        "width": 9.2578125
-      }
-    ]
-  }
-]
+let brokenTexts: TextLine[] = []
 
 type Conf = {
   texts: any[],
@@ -693,6 +188,7 @@ function App() {
     }
     console.log('conf.brokenTexts', conf.brokenTexts)
     console.log('conf', conf)
+    // setTextarea()
   }
 
   useMount(() => {
@@ -726,13 +222,17 @@ function App() {
     }
   })
 
+  function setTextarea() {
+    let texts = conf.brokenTexts.map(line => {
+      return line.children.map(t => t.text).join('')
+    }).join('\n')
+    // console.log('texts',texts)
+    textareaRef.current!.value = texts
+  }
+
   useEffect(() => {
     if (textareaRef.current) {
-      let texts = conf.brokenTexts.map(line => {
-        return line.children.map(t => t.text).join('')
-      }).join('\n')
-      // console.log('texts',texts)
-      textareaRef.current.value = texts
+      setTextarea()
     }
   }, [textareaRef.current])
 
@@ -748,28 +248,74 @@ function App() {
   }
 
   function onTextKeyDown(e: KeyboardEvent) {
-    switch (e.keyCode) {
-      //删除
-      case 8:
-        checkLine(conf.brokenTexts[conf.brokenTexts.length - 1].children)
-        calcConf()
-        render(ctx)
-        break
-      //回车
-      case 13:
-        conf.brokenTexts.push({
-          maxLineHeight: currentTextInfo.lineHeight,
-          children: [
-            Object.assign({
-              text: '',
-              x: 0,
-              width: 0
-            }, currentTextInfo)
-          ]
-        })
-        calcConf()
-        render(ctx)
-        break
+    let keys = [38, 40, 37, 39, 8, 13]
+    if (keys.includes(e.keyCode)) {
+      const {brokenTexts} = conf
+      let newLineIndex = position.lineIndex
+      let newXIndex = position.xIndex
+      switch (e.keyCode) {
+        //上
+        case 38:
+          if (newLineIndex === 0) return
+          newLineIndex--
+          break
+        //下
+        case 40:
+          if (newLineIndex === conf.brokenTexts.length - 1) return
+          newLineIndex++
+          break
+        //左
+        case 37:
+          if (newXIndex === 0) {
+            if (newLineIndex === 0) return
+            newLineIndex--
+            newXIndex = brokenTexts[newLineIndex].children.length - 1
+          } else {
+            newXIndex--
+          }
+          break
+        //右
+        case 39:
+          if (newXIndex === brokenTexts[newLineIndex].children.length - 1) {
+            newLineIndex++
+            newXIndex = 0
+          } else {
+            newXIndex++
+          }
+          break
+        //删除
+        case 8:
+          checkLine(conf.brokenTexts[conf.brokenTexts.length - 1].children)
+          calcConf()
+          render(ctx)
+          break
+        //回车
+        case 13:
+          conf.brokenTexts.push({
+            maxLineHeight: currentTextInfo.lineHeight,
+            children: [
+              Object.assign({
+                text: '',
+                x: 0,
+                width: 0
+              }, currentTextInfo)
+            ]
+          })
+          calcConf()
+          render(ctx)
+          break
+      }
+      if (newLineIndex > conf.brokenTexts.length - 1) {
+        newLineIndex = conf.brokenTexts.length - 1
+      }
+      if (newXIndex > brokenTexts[newLineIndex].children.length - 1) {
+        newXIndex = brokenTexts[newLineIndex].children.length - 1
+      }
+      cursor.current.style.top = getLineY(newLineIndex) + 'px'
+      let left = brokenTexts[newLineIndex].children[newXIndex].x
+      cursor.current.style.left = left + 'px'
+      console.log('newXIndex', newXIndex, left)
+      setPosition({lineIndex: newLineIndex, xIndex: newXIndex})
     }
   }
 
@@ -801,21 +347,29 @@ function App() {
     let val = e.nativeEvent.data
     //删除和回车都是等于null
     if (val === null) return
-    let lastRow = brokenTexts[brokenTexts.length - 1]
     ctx.save()
     let {fontWeight, fontSize, lineHeight, fontFamily} = currentTextInfo
     ctx.font = `${fontWeight} ${fontSize}px/${lineHeight}px ${fontFamily}`
     let b = ctx.measureText(val)
-    let newText: Text = clone(currentTextInfo)
+    let newText = clone(currentTextInfo) as Text
     newText.text = val
-    if (lastRow.children.length) {
-      let last = lastRow.children[lastRow.children.length - 1]
-      newText.x = last.x + last.width
+    newText.width = b.width
+    if (brokenTexts.length) {
+      let lastRow = brokenTexts[brokenTexts.length - 1]
+      if (lastRow.children.length) {
+        let last = lastRow.children[lastRow.children.length - 1]
+        newText.x = last.x + last.width
+      } else {
+        newText.x = 0
+      }
+      lastRow.children.push(newText)
     } else {
       newText.x = 0
+      brokenTexts.push({
+        maxLineHeight: newText.lineHeight,
+        children: [newText]
+      })
     }
-    newText.width = b.width
-    lastRow.children.push(newText)
 
     ctx.restore()
     calcConf()
@@ -823,7 +377,10 @@ function App() {
   }
 
   const cursor = useRef<HTMLDivElement>(null as any)
-  const [position, setPosition] = useState<LanInfo>(null as any)
+  const [position, setPosition] = useState<LanInfo>({
+    lineIndex: 0,
+    xIndex: 0
+  })
   const [newPosition, setNewPosition] = useState<LanInfo>(null as any)
   const isEnter = useRef<boolean>(false)
 
@@ -878,6 +435,9 @@ function App() {
   }
 
   function onMouseDown(e: MouseEvent) {
+    setTimeout(() => {
+      textareaRef.current?.focus()
+    })
     let position = getPosition(e)
     if (position) {
       let {lineIndex, xIndex} = position
@@ -1037,39 +597,11 @@ function App() {
   }
 
   function onCanvasKeyDown(e: KeyboardEvent) {
-    let newLineIndex = position.lineIndex
-    let newXIndex = position.xIndex
-    switch (e.keyCode) {
-      case 38:
-        //上
-        if (newLineIndex === 0) return
-        newLineIndex--
-        break
-      case 40:
-        //下
-        if (newLineIndex === conf.brokenTexts.length - 1) return
-        newLineIndex++
-        break
-      case 37:
-        if (newXIndex === 0) return
-        newXIndex--
-        //左
-        break
-      case 39:
-        if (newXIndex === brokenTexts[newLineIndex].children.length - 1) return
-        newXIndex++
-        //右
-        break
-    }
-    cursor.current.style.top = getLineY(newLineIndex) + 'px'
-    let left = brokenTexts[newLineIndex].children[newXIndex].x
-    cursor.current.style.left = left + 'px'
-    console.log('newXIndex',newXIndex,left)
-    setPosition({lineIndex: newLineIndex, xIndex: newXIndex})
+
 
   }
 
-  function getConfig2(){
+  function getConfig2() {
     console.log(conf.brokenTexts)
   }
 

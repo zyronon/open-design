@@ -83,6 +83,13 @@ function App() {
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [ctx, setCtx] = useState<CanvasRenderingContext2D>(null as any)
   const [canvasRect, setCanvasRect] = useState<DOMRect>(null as any)
+  const cursor = useRef<HTMLDivElement>(null as any)
+  const [position, setPosition] = useState<LanInfo>({
+    lineIndex: 0,
+    xIndex: 0
+  })
+  const [newPosition, setNewPosition] = useState<LanInfo>(null as any)
+  const isEnter = useRef<boolean>(false)
 
   //计算
   function calc(ctx: CanvasRenderingContext2D) {
@@ -247,13 +254,14 @@ function App() {
     }
   }
 
-  function onTextKeyDown(e: KeyboardEvent) {
+  function onTextKeyDown(e?: KeyboardEvent, keyCode?: number) {
     let keys = [38, 40, 37, 39, 8, 13]
-    if (keys.includes(e.keyCode)) {
+    let code = keyCode ?? e?.keyCode ?? 0
+    if (keys.includes(code)) {
       const {brokenTexts} = conf
       let newLineIndex = position.lineIndex
       let newXIndex = position.xIndex
-      switch (e.keyCode) {
+      switch (code) {
         //上
         case 38:
           if (newLineIndex === 0) return
@@ -372,17 +380,11 @@ function App() {
     }
 
     ctx.restore()
+    onTextKeyDown(undefined, 39)
     calcConf()
     render(ctx)
   }
 
-  const cursor = useRef<HTMLDivElement>(null as any)
-  const [position, setPosition] = useState<LanInfo>({
-    lineIndex: 0,
-    xIndex: 0
-  })
-  const [newPosition, setNewPosition] = useState<LanInfo>(null as any)
-  const isEnter = useRef<boolean>(false)
 
   function getLineY(i: number, isCursor: boolean = true) {
     let {layout: {h}, brokenTexts} = conf
@@ -597,8 +599,6 @@ function App() {
   }
 
   function onCanvasKeyDown(e: KeyboardEvent) {
-
-
   }
 
   function getConfig2() {

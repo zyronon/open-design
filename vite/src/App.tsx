@@ -295,11 +295,16 @@ function App() {
           break
         //右
         case 39:
-          if (newXIndex === brokenTexts[newLineIndex].children.length) {
-            newLineIndex++
-            newXIndex = 0
-          } else {
+          if (newLineIndex === brokenTexts.length) {
             newXIndex++
+          } else {
+            //规则同上
+            if (newXIndex === brokenTexts[newLineIndex].children.length) {
+              newLineIndex++
+              newXIndex = (brokenTexts[newLineIndex].newLine ? 0 : 1)
+            } else {
+              newXIndex++
+            }
           }
           break
         //删除

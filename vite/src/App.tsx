@@ -162,6 +162,7 @@ function App() {
       conf.layout.w = maxW
       conf.layout.h = getLineY(conf.brokenTexts.length)
     }
+    //TODO 如果下一行是新行，那不应把多余的加到新行里面
     if (textMode === TextMode.AUTO_H) {
       let temp: TextLine[] = []
       brokenTexts.reduce((previousValue, line, currentIndex) => {
@@ -403,8 +404,8 @@ function App() {
     }
 
     ctx.restore()
-    onTextKeyDown(undefined, 39)
     calcConf()
+    onTextKeyDown(undefined, 39)
     render(ctx)
   }
 

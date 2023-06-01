@@ -281,12 +281,16 @@ function App() {
           break
         //左
         case 37:
-          if (newXIndex === 0) {
-            if (newLineIndex === 0) return
-            newLineIndex--
-            newXIndex = brokenTexts[newLineIndex].children.length - 1
-          } else {
+          if (newLineIndex === 0) {
             newXIndex--
+          } else {
+            //如果是新行，则可以移动到0。否则到1就要移向上一行
+            if (newXIndex === (brokenTexts[newLineIndex].newLine ? 0 : 1)) {
+              newLineIndex--
+              newXIndex = brokenTexts[newLineIndex].children.length
+            } else {
+              newXIndex--
+            }
           }
           break
         //右

@@ -682,6 +682,25 @@ function App() {
     textareaRef.current!.value = texts
   }
 
+  //合并不是没换行的行
+  function mergeLine(index: number) {
+    let currentLine = conf.brokenTexts[index]
+    //如果是最后一行就没必要往下执行了
+    if (index !== conf.brokenTexts.length - 1) {
+      let delCount = Infinity
+      conf.brokenTexts.slice(index + 1).map((line, j) => {
+        if (delCount !== Infinity) return
+        if (line.newLine) {
+          delCount = j
+        } else {
+          currentLine.children = currentLine.children.concat(line.children)
+        }
+      })
+      conf.brokenTexts.splice(index + 1, delCount)
+    }
+    calcLineX(currentLine)
+  }
+
   function onTextKeyDown(e?: KeyboardEvent, keyCode?: number) {
     // console.log(e?.keyCode)
     let keys = [38, 40, 37, 39, 8, 13, 35, 36, 46]
@@ -733,10 +752,25 @@ function App() {
         //delete删除
         case 46:
           let currentLine = brokenTexts[newLineIndex]
+          let mergeLineIndex = newLineIndex
 
           if (code === 8) {
             if (newLineIndex === 0 && newXIndex === 0) return
-            currentLine.children.splice(newXIndex - 1, 1)
+            if (currentLine.children.length) {
+              if (newXIndex === (currentLine.newLine ? 0 : 1)) {
+                currentLine.newLine = false
+                newLineIndex--
+                newXIndex = Infinity
+                mergeLineIndex = newLineIndex
+              } else {
+                currentLine.children.splice(newXIndex - 1, 1)
+                newXIndex--
+              }
+            } else {
+              brokenTexts.splice(newLineIndex, 1)
+              newLineIndex--
+              newXIndex = Infinity
+            }
           } else {
             if (newXIndex === currentLine.children.length) {
               //如果在最后一行不管
@@ -759,41 +793,28 @@ function App() {
               currentLine.children.splice(newXIndex, 1)
             }
           }
-          let delCount = Infinity
-          brokenTexts.slice(newLineIndex + 1).map((line, index) => {
-            if (delCount !== Infinity) return
-            if (line.newLine) {
-              delCount = index
-            } else {
-              currentLine.children = currentLine.children.concat(line.children)
-            }
-          })
-          calcLineX(currentLine)
-          conf.brokenTexts.splice(newLineIndex + 1, delCount)
+
+          mergeLine(mergeLineIndex)
           calcConf()
           render(ctx)
-
-          if (code === 8) {
-            if (newXIndex === (currentLine.newLine ? 0 : 1)) {
-              brokenTexts.splice(newLineIndex, 1)
-              newLineIndex--
-              newXIndex = Infinity
-            } else {
-              newXIndex--
-            }
-          } else {
-
-          }
           break
         //回车
         case 13:
-          conf.brokenTexts.push({
+          let data = {
             maxLineHeight: currentTextInfo.lineHeight,
             newLine: true,
-            children: []
-          })
+            children: brokenTexts[newLineIndex]?.children?.slice(newXIndex) ?? []
+          }
+          calcLineX(data)
+          if (brokenTexts.length) {
+            conf.brokenTexts[newLineIndex]?.children.splice(newXIndex, Infinity)
+            conf.brokenTexts.splice(newLineIndex + 1, 0, data)
+          } else {
+            conf.brokenTexts.push(data)
+          }
           newLineIndex++
-          newXIndex = 1
+          newXIndex = 0
+          mergeLine(newLineIndex)
           calcConf()
           render(ctx)
           break

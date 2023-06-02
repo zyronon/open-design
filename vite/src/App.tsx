@@ -24,6 +24,411 @@ type TextLine = {
 }
 
 let brokenTexts: TextLine[] = []
+brokenTexts = [
+  {
+    "maxLineHeight": 28.5,
+    "newLine": true,
+    "children": [
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "a",
+        "width": 11.0546875,
+        "x": 0
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "b",
+        "width": 12.7734375,
+        "x": 11.0546875
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "c",
+        "width": 10.029296875,
+        "x": 23.828125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "d",
+        "width": 12.79296875,
+        "x": 33.857421875
+      }
+    ]
+  }
+]
+brokenTexts = [
+  {
+    "maxLineHeight": 28.5,
+    "newLine": true,
+    "children": [
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "a",
+        "width": 11.0546875,
+        "x": 0
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "b",
+        "width": 12.7734375,
+        "x": 11.0546875
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "c",
+        "width": 10.029296875,
+        "x": 23.828125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "d",
+        "width": 12.79296875,
+        "x": 33.857421875
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "1",
+        "width": 11.728515625,
+        "x": 46.650390625
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "width": 11.728515625,
+        "x": 58.37890625
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "3",
+        "width": 11.728515625,
+        "x": 70.107421875
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "4",
+        "width": 11.728515625,
+        "x": 81.8359375
+      }
+    ]
+  },
+  {
+    "maxLineHeight": 28.5,
+    "newLine": false,
+    "children": [
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "5",
+        "width": 11.728515625,
+        "x": 0
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "6",
+        "width": 11.728515625,
+        "x": 11.728515625
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "7",
+        "width": 11.728515625,
+        "x": 23.45703125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "8",
+        "width": 11.728515625,
+        "x": 35.185546875
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "9",
+        "width": 11.728515625,
+        "x": 46.9140625
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "1",
+        "width": 11.728515625,
+        "x": 58.642578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "0",
+        "width": 11.728515625,
+        "x": 70.37109375
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "1",
+        "width": 11.728515625,
+        "x": 82.099609375
+      }
+    ]
+  },
+  {
+    "maxLineHeight": 28.5,
+    "newLine": false,
+    "children": [
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "width": 11.728515625,
+        "x": 0
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "3",
+        "width": 11.728515625,
+        "x": 11.728515625
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "4",
+        "width": 11.728515625,
+        "x": 23.45703125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "5",
+        "width": 11.728515625,
+        "x": 35.185546875
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "6",
+        "width": 11.728515625,
+        "x": 46.9140625
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "7",
+        "width": 11.728515625,
+        "x": 58.642578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "8",
+        "width": 11.728515625,
+        "x": 70.37109375
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "9",
+        "width": 11.728515625,
+        "x": 82.099609375
+      }
+    ]
+  },
+  {
+    "maxLineHeight": 28.5,
+    "newLine": false,
+    "children": [
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "0",
+        "width": 11.728515625,
+        "x": 0
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "1",
+        "width": 11.728515625,
+        "x": 11.728515625
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "2",
+        "width": 11.728515625,
+        "x": 23.45703125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "3",
+        "width": 11.728515625,
+        "x": 35.185546875
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "4",
+        "width": 11.728515625,
+        "x": 46.9140625
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "5",
+        "width": 11.728515625,
+        "x": 58.642578125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "6",
+        "width": 11.728515625,
+        "x": 70.37109375
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "7",
+        "width": 11.728515625,
+        "x": 82.099609375
+      }
+    ]
+  },
+  {
+    "maxLineHeight": 28.5,
+    "newLine": true,
+    "children": []
+  },
+  {
+    "maxLineHeight": 28.5,
+    "newLine": true,
+    "children": [
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "a",
+        "width": 11.0546875,
+        "x": 0
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "b",
+        "width": 12.7734375,
+        "x": 11.0546875
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "c",
+        "width": 10.029296875,
+        "x": 23.828125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "d",
+        "width": 12.79296875,
+        "x": 33.857421875
+      }
+    ]
+  }
+]
 
 type Conf = {
   texts: any[],
@@ -92,6 +497,47 @@ function App() {
   const [newPosition, setNewPosition] = useState<LanInfo>(null as any)
   const isEnter = useRef<boolean>(false)
 
+  useMount(() => {
+    if (ref.current) {
+      let canvas: HTMLCanvasElement = ref.current
+      let ctx: CanvasRenderingContext2D = canvas.getContext('2d')!
+      let canvasRect = canvas.getBoundingClientRect()
+      setCanvasRect(canvasRect)
+      let {width, height} = canvasRect
+      let dpr = window.devicePixelRatio
+      if (dpr) {
+        // if (false) {
+        canvas.style.width = width + "px"
+        canvas.style.height = height + "px"
+        canvas.height = height * dpr
+        canvas.width = width * dpr
+        ctx.scale(dpr, dpr)
+      }
+      setCtx(ctx)
+
+      let {x, y, w, h,} = conf.layout
+      conf.center = {
+        x: x + w / 2,
+        y: y + h / 2
+      }
+      original = JSON.parse(JSON.stringify(conf))
+      setTimeout(() => {
+        calc(ctx)
+        render(ctx)
+      })
+    }
+  })
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      setTextarea()
+    }
+  }, [textareaRef.current])
+
+  useEffect(() => {
+    setPosition({lineIndex: 0, xIndex: 0})
+  }, [])
+
   //计算
   function calc(ctx: CanvasRenderingContext2D) {
     ctx.save()
@@ -108,6 +554,26 @@ function App() {
     })
     ctx.restore()
     // console.log('conf.brokenTexts', conf.brokenTexts)
+  }
+
+  //计算一行的X坐标
+  function calcLineX(line: TextLine) {
+    ctx.save()
+    let rowX = 0
+    line.children.map((obj: Text) => {
+      let width = 0
+      if (obj.width) {
+        let {fontWeight, fontSize, lineHeight, fontFamily} = obj
+        ctx.font = `${fontWeight} ${fontSize}px/${lineHeight}px ${fontFamily}`
+        width = ctx.measureText(obj.text).width
+      } else {
+        width = obj.width
+      }
+      obj.x = rowX
+      obj.width = width
+      rowX += width
+    })
+    ctx.restore()
   }
 
   function render(ctx: CanvasRenderingContext2D) {
@@ -162,21 +628,28 @@ function App() {
       conf.layout.w = maxW
       conf.layout.h = getLineY(conf.brokenTexts.length)
     }
-    //TODO 如果下一行是新行，那不应把多余的加到新行里面
     if (textMode === TextMode.AUTO_H) {
       let temp: TextLine[] = []
       brokenTexts.reduce((previousValue, line, currentIndex) => {
         let r = clone(line)
-        if (currentIndex !== previousValue.length) {
-          r.children.concat(previousValue.pop()!.children)
+        // 如果下一行是新行，那不应把多余的加到新行里面。如果没有多余的行，那么不需要合并
+        if (!r.newLine && currentIndex !== previousValue.length) {
+          let preLineMoreTexts = previousValue.pop()!.children
+          let last = preLineMoreTexts[preLineMoreTexts.length - 1]
+          r.children.map(text => {
+            text.x = text.x + last.x + last.width
+          })
+          r.children = preLineMoreTexts.concat(r.children)
         }
-        let more = adjustLineTextOnAutoH(r, w)
+        let more = adjustLineTextOnAutoH(r.children, w)
         previousValue.push(r)
         if (more.length) {
-          previousValue.push({
-            maxLineHeight: -1,
-            newLine: false,
-            children: more
+          more.map(line2 => {
+            previousValue.push({
+              maxLineHeight: -1,
+              newLine: false,
+              children: line2
+            })
           })
         }
         return previousValue
@@ -201,47 +674,6 @@ function App() {
     // setTextarea()
   }
 
-  useMount(() => {
-    if (ref.current) {
-      let canvas: HTMLCanvasElement = ref.current
-      let ctx: CanvasRenderingContext2D = canvas.getContext('2d')!
-      let canvasRect = canvas.getBoundingClientRect()
-      setCanvasRect(canvasRect)
-      let {width, height} = canvasRect
-      let dpr = window.devicePixelRatio
-      if (dpr) {
-        // if (false) {
-        canvas.style.width = width + "px"
-        canvas.style.height = height + "px"
-        canvas.height = height * dpr
-        canvas.width = width * dpr
-        ctx.scale(dpr, dpr)
-      }
-      setCtx(ctx)
-
-      let {x, y, w, h,} = conf.layout
-      conf.center = {
-        x: x + w / 2,
-        y: y + h / 2
-      }
-      original = JSON.parse(JSON.stringify(conf))
-      setTimeout(() => {
-        calc(ctx)
-        render(ctx)
-      })
-    }
-  })
-
-  useEffect(() => {
-    if (textareaRef.current) {
-      setTextarea()
-    }
-  }, [textareaRef.current])
-
-  useEffect(() => {
-    setPosition({lineIndex: 0, xIndex: 0})
-  }, [])
-
   function setTextarea() {
     let texts = conf.brokenTexts.map(line => {
       return line.children.map(t => t.text).join('')
@@ -250,20 +682,9 @@ function App() {
     textareaRef.current!.value = texts
   }
 
-
-  function checkLine(line: any[]) {
-    if (line.length) {
-      line.pop()
-    } else {
-      if (conf.brokenTexts.length > 1) {
-        conf.brokenTexts.pop()
-        checkLine(conf.brokenTexts[conf.brokenTexts.length - 1].children)
-      }
-    }
-  }
-
   function onTextKeyDown(e?: KeyboardEvent, keyCode?: number) {
-    let keys = [38, 40, 37, 39, 8, 13]
+    // console.log(e?.keyCode)
+    let keys = [38, 40, 37, 39, 8, 13, 35, 36, 46]
     let code = keyCode ?? e?.keyCode ?? 0
     if (keys.includes(code)) {
       const {brokenTexts} = conf
@@ -296,23 +717,73 @@ function App() {
           break
         //右
         case 39:
-          if (newLineIndex === brokenTexts.length) {
+          if (newLineIndex === brokenTexts.length - 1) {
             newXIndex++
           } else {
-            //规则同上
             if (newXIndex === brokenTexts[newLineIndex].children.length) {
               newLineIndex++
-              newXIndex = (brokenTexts[newLineIndex].newLine ? 0 : 1)
+              newXIndex = 0
             } else {
               newXIndex++
             }
           }
           break
-        //删除
+        //backspace删除
         case 8:
-          checkLine(conf.brokenTexts[conf.brokenTexts.length - 1].children)
+        //delete删除
+        case 46:
+          let currentLine = brokenTexts[newLineIndex]
+
+          if (code === 8) {
+            if (newLineIndex === 0 && newXIndex === 0) return
+            currentLine.children.splice(newXIndex - 1, 1)
+          } else {
+            if (newXIndex === currentLine.children.length) {
+              //如果在最后一行不管
+              if (newLineIndex === brokenTexts.length - 1) {
+                return
+              } else {
+                let nextLine = brokenTexts[newLineIndex + 1]
+                if (nextLine.newLine) {
+                  //新行，只需要改为非新行，不用删除数据
+                  if (nextLine.children.length) {
+                    nextLine.newLine = false
+                  } else {
+                    brokenTexts.splice(newLineIndex + 1, 1)
+                  }
+                } else {
+                  brokenTexts.splice(newLineIndex + 1, 1)
+                }
+              }
+            } else {
+              currentLine.children.splice(newXIndex, 1)
+            }
+          }
+          let delCount = Infinity
+          brokenTexts.slice(newLineIndex + 1).map((line, index) => {
+            if (delCount !== Infinity) return
+            if (line.newLine) {
+              delCount = index
+            } else {
+              currentLine.children = currentLine.children.concat(line.children)
+            }
+          })
+          calcLineX(currentLine)
+          conf.brokenTexts.splice(newLineIndex + 1, delCount)
           calcConf()
           render(ctx)
+
+          if (code === 8) {
+            if (newXIndex === (currentLine.newLine ? 0 : 1)) {
+              brokenTexts.splice(newLineIndex, 1)
+              newLineIndex--
+              newXIndex = Infinity
+            } else {
+              newXIndex--
+            }
+          } else {
+
+          }
           break
         //回车
         case 13:
@@ -326,35 +797,58 @@ function App() {
           calcConf()
           render(ctx)
           break
+        //end
+        case 35:
+          newXIndex = brokenTexts[newLineIndex].children.length
+          break
+        //home
+        case 36:
+          newXIndex = 0
+          break
       }
-      if (newLineIndex > conf.brokenTexts.length - 1) {
-        newLineIndex = conf.brokenTexts.length - 1
-      }
-      if (newXIndex > brokenTexts[newLineIndex].children.length) {
-        newXIndex = brokenTexts[newLineIndex].children.length
-      }
-      cursor.current.style.top = getLineY(newLineIndex) + 'px'
-      let left = 0
-      //因为textline可以为空数组，newXIndex取不到值
-      if (newXIndex) {
-        if (newXIndex === brokenTexts[newLineIndex].children.length) {
-          let last = brokenTexts[newLineIndex].children[newXIndex - 1]
-          left = last.x + last.width
-        } else {
-          left = brokenTexts[newLineIndex].children[newXIndex].x
-        }
-      }
-      cursor.current.style.left = left + 'px'
-      console.log('newXIndex', newXIndex, left)
-      setPosition({lineIndex: newLineIndex, xIndex: newXIndex})
+      drawCursor({lineIndex: newLineIndex, xIndex: newXIndex})
     }
   }
 
+  function drawCursor({lineIndex, xIndex}: LanInfo) {
+    const {brokenTexts} = conf
+    let newLineIndex = lineIndex
+    let newXIndex = xIndex
+
+    if (newLineIndex < 0) newLineIndex = 0
+    if (newLineIndex > brokenTexts.length - 1) {
+      newLineIndex = brokenTexts.length - 1
+    }
+    if (newXIndex < 0) newXIndex = 0
+    if (newXIndex > brokenTexts[newLineIndex]?.children.length) {
+      newXIndex = brokenTexts[newLineIndex].children.length
+    }
+
+    //如果不是新行，不能选中第一格
+    if (!brokenTexts[newLineIndex].newLine) {
+      if (newXIndex === 0) newXIndex = 1
+    }
+    let left = 0
+    //因为textLine可以为空数组，newXIndex取不到值
+    if (newXIndex) {
+      if (newXIndex === brokenTexts[newLineIndex].children.length) {
+        let last = brokenTexts[newLineIndex].children[newXIndex - 1]
+        left = last.x + last.width
+      } else {
+        left = brokenTexts[newLineIndex].children[newXIndex].x
+      }
+    }
+    cursor.current.style.top = getLineY(newLineIndex) + 'px'
+    cursor.current.style.left = left + 'px'
+    console.log('newXIndex', newLineIndex, newXIndex)
+    setPosition({lineIndex: newLineIndex, xIndex: newXIndex})
+  }
+
   //调整行内的文字，当自动高度时
-  function adjustLineTextOnAutoH(line: TextLine, rectW: number): Text[] {
+  function adjustLineTextOnAutoH(line: Text[], rectW: number): Text[][] {
     let index = -1
-    for (let i = 0; i < line.children.length; i++) {
-      let text = line.children[i]
+    for (let i = 0; i < line.length; i++) {
+      let text = line[i]
       let textW = text.x + text.width
       if (textW > rectW) {
         index = i
@@ -362,12 +856,12 @@ function App() {
       }
     }
     if (index !== -1) {
-      let more = line.children.splice(index)
+      let more = line.splice(index)
       let first = clone(more[0])
       more.map(text => {
         text.x = text.x - first.x
       })
-      return more
+      return [more].concat(adjustLineTextOnAutoH(more, rectW))
     }
     return []
   }
@@ -386,14 +880,27 @@ function App() {
     newText.text = val
     newText.width = b.width
     if (brokenTexts.length) {
-      let lastRow = brokenTexts[brokenTexts.length - 1]
-      if (lastRow.children.length) {
-        let last = lastRow.children[lastRow.children.length - 1]
-        newText.x = last.x + last.width
+      let {lineIndex, xIndex} = position
+      let currentLine = brokenTexts[lineIndex]
+      if (currentLine.children.length) {
+        if (xIndex === currentLine.children.length) {
+          let last = currentLine.children[xIndex - 1]
+          newText.x = last.x + last.width
+          currentLine.children.push(newText)
+        } else {
+          let old = currentLine.children[xIndex]
+          newText.x = old.x
+          currentLine.children.splice(xIndex, 0, newText)
+          currentLine.children.map((text, index) => {
+            if (index <= xIndex) return
+            //后面的字的x坐标，全部往后移
+            text.x += newText.width
+          })
+        }
       } else {
         newText.x = 0
+        currentLine.children.push(newText)
       }
-      lastRow.children.push(newText)
     } else {
       newText.x = 0
       brokenTexts.push({

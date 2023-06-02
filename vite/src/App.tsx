@@ -383,22 +383,8 @@ brokenTexts = [
   },
   {
     "maxLineHeight": 28.5,
-    "newLine": true,
-    "children": []
-  },
-  {
-    "maxLineHeight": 28.5,
-    "newLine": true,
+    "newLine": false,
     "children": [
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "a",
-        "width": 11.0546875,
-        "x": 0
-      },
       {
         "fontSize": 20,
         "lineHeight": 28.5,
@@ -406,7 +392,7 @@ brokenTexts = [
         "fontFamily": "sans-serif",
         "text": "b",
         "width": 12.7734375,
-        "x": 11.0546875
+        "x": 0
       },
       {
         "fontSize": 20,
@@ -415,7 +401,7 @@ brokenTexts = [
         "fontFamily": "sans-serif",
         "text": "c",
         "width": 10.029296875,
-        "x": 23.828125
+        "x": 12.7734375
       },
       {
         "fontSize": 20,
@@ -424,7 +410,7 @@ brokenTexts = [
         "fontFamily": "sans-serif",
         "text": "d",
         "width": 12.79296875,
-        "x": 33.857421875
+        "x": 22.802734375
       }
     ]
   }
@@ -560,7 +546,7 @@ function App() {
   function calcLineX(line: TextLine) {
     ctx.save()
     let rowX = 0
-    line.children.map((obj: Text) => {
+    line?.children?.map((obj: Text) => {
       let width = 0
       if (obj.width) {
         let {fontWeight, fontSize, lineHeight, fontFamily} = obj
@@ -758,9 +744,12 @@ function App() {
             if (newLineIndex === 0 && newXIndex === 0) return
             if (currentLine.children.length) {
               if (newXIndex === (currentLine.newLine ? 0 : 1)) {
+                if (!currentLine.newLine) {
+                  currentLine.children.splice(newXIndex - 1, 1)
+                }
                 currentLine.newLine = false
                 newLineIndex--
-                newXIndex = Infinity
+                newXIndex = brokenTexts[newLineIndex].children.length
                 mergeLineIndex = newLineIndex
               } else {
                 currentLine.children.splice(newXIndex - 1, 1)
@@ -769,7 +758,7 @@ function App() {
             } else {
               brokenTexts.splice(newLineIndex, 1)
               newLineIndex--
-              newXIndex = Infinity
+              newXIndex = brokenTexts[newLineIndex].children.length
             }
           } else {
             if (newXIndex === currentLine.children.length) {

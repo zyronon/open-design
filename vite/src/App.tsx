@@ -24,397 +24,6 @@ type TextLine = {
 }
 
 let brokenTexts: TextLine[] = []
-brokenTexts = [
-  {
-    "maxLineHeight": 28.5,
-    "newLine": true,
-    "children": [
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "a",
-        "width": 11.0546875,
-        "x": 0
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "b",
-        "width": 12.7734375,
-        "x": 11.0546875
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "c",
-        "width": 10.029296875,
-        "x": 23.828125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "d",
-        "width": 12.79296875,
-        "x": 33.857421875
-      }
-    ]
-  }
-]
-brokenTexts = [
-  {
-    "maxLineHeight": 28.5,
-    "newLine": true,
-    "children": [
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "a",
-        "width": 11.0546875,
-        "x": 0
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "b",
-        "width": 12.7734375,
-        "x": 11.0546875
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "c",
-        "width": 10.029296875,
-        "x": 23.828125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "d",
-        "width": 12.79296875,
-        "x": 33.857421875
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "1",
-        "width": 11.728515625,
-        "x": 46.650390625
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "2",
-        "width": 11.728515625,
-        "x": 58.37890625
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "3",
-        "width": 11.728515625,
-        "x": 70.107421875
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "4",
-        "width": 11.728515625,
-        "x": 81.8359375
-      }
-    ]
-  },
-  {
-    "maxLineHeight": 28.5,
-    "newLine": false,
-    "children": [
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "5",
-        "width": 11.728515625,
-        "x": 0
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "6",
-        "width": 11.728515625,
-        "x": 11.728515625
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "7",
-        "width": 11.728515625,
-        "x": 23.45703125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "8",
-        "width": 11.728515625,
-        "x": 35.185546875
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "9",
-        "width": 11.728515625,
-        "x": 46.9140625
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "1",
-        "width": 11.728515625,
-        "x": 58.642578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "0",
-        "width": 11.728515625,
-        "x": 70.37109375
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "1",
-        "width": 11.728515625,
-        "x": 82.099609375
-      }
-    ]
-  },
-  {
-    "maxLineHeight": 28.5,
-    "newLine": false,
-    "children": [
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "2",
-        "width": 11.728515625,
-        "x": 0
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "3",
-        "width": 11.728515625,
-        "x": 11.728515625
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "4",
-        "width": 11.728515625,
-        "x": 23.45703125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "5",
-        "width": 11.728515625,
-        "x": 35.185546875
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "6",
-        "width": 11.728515625,
-        "x": 46.9140625
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "7",
-        "width": 11.728515625,
-        "x": 58.642578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "8",
-        "width": 11.728515625,
-        "x": 70.37109375
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "9",
-        "width": 11.728515625,
-        "x": 82.099609375
-      }
-    ]
-  },
-  {
-    "maxLineHeight": 28.5,
-    "newLine": false,
-    "children": [
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "0",
-        "width": 11.728515625,
-        "x": 0
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "1",
-        "width": 11.728515625,
-        "x": 11.728515625
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "2",
-        "width": 11.728515625,
-        "x": 23.45703125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "3",
-        "width": 11.728515625,
-        "x": 35.185546875
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "4",
-        "width": 11.728515625,
-        "x": 46.9140625
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "5",
-        "width": 11.728515625,
-        "x": 58.642578125
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "6",
-        "width": 11.728515625,
-        "x": 70.37109375
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "7",
-        "width": 11.728515625,
-        "x": 82.099609375
-      }
-    ]
-  },
-  {
-    "maxLineHeight": 28.5,
-    "newLine": false,
-    "children": [
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "b",
-        "width": 12.7734375,
-        "x": 0
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "c",
-        "width": 10.029296875,
-        "x": 12.7734375
-      },
-      {
-        "fontSize": 20,
-        "lineHeight": 28.5,
-        "fontWeight": "500",
-        "fontFamily": "sans-serif",
-        "text": "d",
-        "width": 12.79296875,
-        "x": 22.802734375
-      }
-    ]
-  }
-]
 
 type Conf = {
   texts: any[],
@@ -470,16 +79,23 @@ function clone<T>(val: T): T {
   return JSON.parse(JSON.stringify(val))
 }
 
+let chinese = {
+  is: false,
+  texts: ''
+}
+let isChinese: boolean = false
+
+let position: LanInfo = {
+  lineIndex: 0,
+  xIndex: 0
+}
+
 function App() {
   const ref = useRef(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [ctx, setCtx] = useState<CanvasRenderingContext2D>(null as any)
   const [canvasRect, setCanvasRect] = useState<DOMRect>(null as any)
   const cursor = useRef<HTMLDivElement>(null as any)
-  const [position, setPosition] = useState<LanInfo>({
-    lineIndex: 0,
-    xIndex: 0
-  })
   const [newPosition, setNewPosition] = useState<LanInfo>(null as any)
   const isEnter = useRef<boolean>(false)
 
@@ -521,7 +137,7 @@ function App() {
   }, [textareaRef.current])
 
   useEffect(() => {
-    setPosition({lineIndex: 0, xIndex: 0})
+    position = {lineIndex: 0, xIndex: 0}
   }, [])
 
   //计算
@@ -598,7 +214,7 @@ function App() {
       // console.log('lY', lY)
     })
     ctx.restore()
-    original = JSON.parse(JSON.stringify(conf))
+    // original = JSON.parse(JSON.stringify(conf))
   }
 
   function calcConf() {
@@ -685,6 +301,62 @@ function App() {
       conf.brokenTexts.splice(index + 1, delCount)
     }
     calcLineX(currentLine)
+  }
+
+  function drawCursor({lineIndex, xIndex}: LanInfo) {
+    const {brokenTexts} = conf
+    let newLineIndex = lineIndex
+    let newXIndex = xIndex
+
+    if (newLineIndex < 0) newLineIndex = 0
+    if (newLineIndex > brokenTexts.length - 1) {
+      newLineIndex = brokenTexts.length - 1
+    }
+    if (newXIndex < 0) newXIndex = 0
+    if (newXIndex > brokenTexts[newLineIndex]?.children.length) {
+      newXIndex = brokenTexts[newLineIndex].children.length
+    }
+
+    //如果不是新行，不能选中第一格
+    if (!brokenTexts[newLineIndex].newLine) {
+      if (newXIndex === 0) newXIndex = 1
+    }
+    let left = 0
+    //因为textLine可以为空数组，newXIndex取不到值
+    if (newXIndex) {
+      if (newXIndex === brokenTexts[newLineIndex].children.length) {
+        let last = brokenTexts[newLineIndex].children[newXIndex - 1]
+        left = last.x + last.width
+      } else {
+        left = brokenTexts[newLineIndex].children[newXIndex].x
+      }
+    }
+    cursor.current.style.top = getLineY(newLineIndex) + 'px'
+    cursor.current.style.left = left + 'px'
+    console.log('newXIndex', newLineIndex, newXIndex)
+    position = {lineIndex: newLineIndex, xIndex: newXIndex}
+  }
+
+  //调整行内的文字，当自动高度时
+  function adjustLineTextOnAutoH(line: Text[], rectW: number): Text[][] {
+    let index = -1
+    for (let i = 0; i < line.length; i++) {
+      let text = line[i]
+      let textW = text.x + text.width
+      if (textW > rectW) {
+        index = i
+        break
+      }
+    }
+    if (index !== -1) {
+      let more = line.splice(index)
+      let first = clone(more[0])
+      more.map(text => {
+        text.x = text.x - first.x
+      })
+      return [more].concat(adjustLineTextOnAutoH(more, rectW))
+    }
+    return []
   }
 
   function onTextKeyDown(e?: KeyboardEvent, keyCode?: number) {
@@ -820,110 +492,71 @@ function App() {
     }
   }
 
-  function drawCursor({lineIndex, xIndex}: LanInfo) {
-    const {brokenTexts} = conf
-    let newLineIndex = lineIndex
-    let newXIndex = xIndex
-
-    if (newLineIndex < 0) newLineIndex = 0
-    if (newLineIndex > brokenTexts.length - 1) {
-      newLineIndex = brokenTexts.length - 1
-    }
-    if (newXIndex < 0) newXIndex = 0
-    if (newXIndex > brokenTexts[newLineIndex]?.children.length) {
-      newXIndex = brokenTexts[newLineIndex].children.length
-    }
-
-    //如果不是新行，不能选中第一格
-    if (!brokenTexts[newLineIndex].newLine) {
-      if (newXIndex === 0) newXIndex = 1
-    }
-    let left = 0
-    //因为textLine可以为空数组，newXIndex取不到值
-    if (newXIndex) {
-      if (newXIndex === brokenTexts[newLineIndex].children.length) {
-        let last = brokenTexts[newLineIndex].children[newXIndex - 1]
-        left = last.x + last.width
-      } else {
-        left = brokenTexts[newLineIndex].children[newXIndex].x
-      }
-    }
-    cursor.current.style.top = getLineY(newLineIndex) + 'px'
-    cursor.current.style.left = left + 'px'
-    console.log('newXIndex', newLineIndex, newXIndex)
-    setPosition({lineIndex: newLineIndex, xIndex: newXIndex})
-  }
-
-  //调整行内的文字，当自动高度时
-  function adjustLineTextOnAutoH(line: Text[], rectW: number): Text[][] {
-    let index = -1
-    for (let i = 0; i < line.length; i++) {
-      let text = line[i]
-      let textW = text.x + text.width
-      if (textW > rectW) {
-        index = i
-        break
-      }
-    }
-    if (index !== -1) {
-      let more = line.splice(index)
-      let first = clone(more[0])
-      more.map(text => {
-        text.x = text.x - first.x
-      })
-      return [more].concat(adjustLineTextOnAutoH(more, rectW))
-    }
-    return []
-  }
-
   function onChange(e: any) {
+    let val = e.nativeEvent.data
+    if (chinese.is) {
+      conf = clone(original)
+    }
+    console.log(isChinese, val, conf)
     const {textMode, brokenTexts, center} = conf
 
-    let val = e.nativeEvent.data
     //删除和回车都是等于null
     if (val === null) return
     ctx.save()
     let {fontWeight, fontSize, lineHeight, fontFamily} = currentTextInfo
     ctx.font = `${fontWeight} ${fontSize}px/${lineHeight}px ${fontFamily}`
-    let b = ctx.measureText(val)
-    let newText = clone(currentTextInfo) as Text
-    newText.text = val
-    newText.width = b.width
+    let vars: string[] = val.split('')
+    let texts: Text[] = vars.map(s => {
+      let b = ctx.measureText(s)
+      let newText = clone(currentTextInfo) as Text
+      newText.text = s
+      newText.width = b.width
+      return newText
+    })
     if (brokenTexts.length) {
       let {lineIndex, xIndex} = position
       let currentLine = brokenTexts[lineIndex]
       if (currentLine.children.length) {
         if (xIndex === currentLine.children.length) {
-          let last = currentLine.children[xIndex - 1]
-          newText.x = last.x + last.width
-          currentLine.children.push(newText)
+          currentLine.children = currentLine.children.concat(texts)
         } else {
-          let old = currentLine.children[xIndex]
-          newText.x = old.x
-          currentLine.children.splice(xIndex, 0, newText)
-          currentLine.children.map((text, index) => {
-            if (index <= xIndex) return
-            //后面的字的x坐标，全部往后移
-            text.x += newText.width
-          })
+          currentLine.children.splice(xIndex, 0, ...texts)
         }
       } else {
-        newText.x = 0
-        currentLine.children.push(newText)
+        currentLine.children = texts
       }
+      calcLineX(currentLine)
     } else {
-      newText.x = 0
       brokenTexts.push({
-        maxLineHeight: newText.lineHeight,
+        maxLineHeight: texts[0].lineHeight,
         newLine: true,
-        children: [newText]
+        children: texts
       })
+      calcLineX(brokenTexts[0])
     }
 
     ctx.restore()
     calcConf()
-    onTextKeyDown(undefined, 39)
+    if (!chinese.is) {
+      onTextKeyDown(undefined, 39)
+    } else {
+      chinese.texts = val
+    }
     render(ctx)
+  }
+
+  function onCompositionStart() {
+    console.log('onCompositionStart')
+    chinese.is = true
+    original = clone(conf)
+  }
+
+  function onCompositionEnd() {
+    console.log('onCompositionEnd', chinese.texts)
+    chinese.is = false
+    chinese.texts.split('').map(() => {
+      onTextKeyDown(undefined, 39)
+    })
   }
 
 
@@ -981,16 +614,16 @@ function App() {
     setTimeout(() => {
       textareaRef.current?.focus()
     })
-    let position = getPosition(e)
-    if (position) {
-      let {lineIndex, xIndex} = position
+    let p = getPosition(e)
+    if (p) {
+      let {lineIndex, xIndex} = p
       let {layout: {x, y, w, h}, textAlign, textLineHeight, center, brokenTexts} = conf
       isEnter.current = true
       cursor.current.style.top = getLineY(lineIndex) + 'px'
       let left = brokenTexts[lineIndex].children[xIndex].x
       // left += center.x
       cursor.current.style.left = left + 'px'
-      setPosition({lineIndex, xIndex})
+      position = p
       conf.lan = []
       render(ctx)
       console.log('lineIndex', lineIndex, 'xIndex', xIndex)
@@ -1165,6 +798,8 @@ function App() {
           <div className={'cursor'} ref={cursor}></div>
           <textarea
             ref={textareaRef}
+            onCompositionStart={onCompositionStart}
+            onCompositionEnd={onCompositionEnd}
             onKeyDown={onTextKeyDown}
             onChange={onChange}></textarea>
         </div>

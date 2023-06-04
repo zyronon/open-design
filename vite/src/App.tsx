@@ -14,6 +14,8 @@ type TextInfo = {
 }
 type Text = {
   text: string,
+  end?: boolean,//标记选中的起终点。因为字体变大之后会换到第二行。需要重新设置SelectInfo
+  start?: boolean,
   width: number,
   x: number,
 } & TextInfo
@@ -178,6 +180,298 @@ brokenTexts = [
         "text": "f",
         "width": 6.93359375,
         "x": 85.87890625
+      }
+    ]
+  },
+  {
+    "maxLineHeight": 28.5,
+    "newLine": false,
+    "children": [
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "g",
+        "width": 12.79296875,
+        "x": 0
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "h",
+        "width": 12.314453125,
+        "x": 12.79296875
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "j",
+        "width": 5.341796875,
+        "x": 25.107421875
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "k",
+        "width": 10.888671875,
+        "x": 30.44921875
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "l",
+        "width": 5.322265625,
+        "x": 41.337890625
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "z",
+        "width": 9.833984375,
+        "x": 46.66015625
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "x",
+        "width": 10.13671875,
+        "x": 56.494140625
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "c",
+        "width": 10.029296875,
+        "x": 66.630859375
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "v",
+        "width": 10.498046875,
+        "x": 76.66015625
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "b",
+        "width": 12.7734375,
+        "x": 87.158203125
+      }
+    ]
+  },
+  {
+    "maxLineHeight": 28.5,
+    "newLine": false,
+    "children": [
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "n",
+        "width": 12.32421875,
+        "x": 0
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "m",
+        "width": 18.740234375,
+        "x": 12.32421875
+      }
+    ]
+  }
+]
+brokenTexts = [
+  {
+    "maxLineHeight": 28.5,
+    "newLine": true,
+    "children": [
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "q",
+        "width": 12.79296875,
+        "x": 0
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "w",
+        "width": 15.791015625,
+        "x": 12.79296875
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "e",
+        "width": 11.34765625,
+        "x": 28.583984375
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "r",
+        "width": 7.63671875,
+        "x": 39.931640625
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "t",
+        "width": 7.451171875,
+        "x": 47.568359375
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "y",
+        "width": 10.5859375,
+        "x": 55.01953125
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "u",
+        "width": 12.32421875,
+        "x": 65.60546875
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "i",
+        "width": 5.322265625,
+        "x": 77.9296875
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "o",
+        "width": 12.71484375,
+        "x": 83.251953125
+      }
+    ]
+  },
+  {
+    "maxLineHeight": 78,
+    "newLine": false,
+    "children": [
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "p",
+        "width": 12.7734375,
+        "x": 0
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "a",
+        "width": 11.0546875,
+        "x": 12.7734375
+      },
+      {
+        "fontSize": 55,
+        "lineHeight": 78,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "s",
+        "width": 25.458984375,
+        "x": 23.828125,
+        "start": false
+      }
+    ]
+  },
+  {
+    "maxLineHeight": 78,
+    "newLine": false,
+    "children": [
+      {
+        "fontSize": 55,
+        "lineHeight": 78,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "我",
+        "width": 55,
+        "x": 0
+      }
+    ]
+  },
+  {
+    "maxLineHeight": 78,
+    "newLine": false,
+    "children": [
+      {
+        "fontSize": 55,
+        "lineHeight": 78,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "要",
+        "width": 55,
+        "x": 0
+      },
+      {
+        "fontSize": 55,
+        "lineHeight": 78,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "d",
+        "width": 35.1806640625,
+        "x": 55
+      },
+      {
+        "fontSize": 20,
+        "lineHeight": 28.5,
+        "fontWeight": "500",
+        "fontFamily": "sans-serif",
+        "text": "f",
+        "width": 6.93359375,
+        "x": 90.1806640625,
+        "end": false
       }
     ]
   },
@@ -548,7 +842,7 @@ function App() {
       }, temp)
       conf.brokenTexts = temp
     }
-    conf.brokenTexts.map(line => {
+    conf.brokenTexts.map((line) => {
       //如果有子组件才计算，因为换行之后只有一个最高行高，没有子组件的
       if (line.children.length) {
         line.maxLineHeight = Math.max(...line.children.map(v => v.lineHeight))
@@ -857,8 +1151,6 @@ function App() {
     let currentLine = brokenTexts[lineIndex]
     let minXIndex = Math.min(end.xIndex, xIndex)
     let maxXIndex = Math.max(end.xIndex, xIndex)
-    let minLineIndex = Math.min(end.lineIndex, lineIndex)
-    let maxLineIndex = Math.max(end.lineIndex, lineIndex)
 
     if (lineIndex === end.lineIndex) {
       currentLine.children.splice(minXIndex, maxXIndex - minXIndex)
@@ -878,7 +1170,7 @@ function App() {
       //把最后一行设为非新行，因为要与第一行合并
       endLine.newLine = false
 
-      for (let i = minLineIndex + 1; i < maxLineIndex; i++) {
+      for (let i = start.lineIndex + 1; i < end.lineIndex; i++) {
         conf.brokenTexts.splice(i, 1)
       }
 
@@ -889,6 +1181,79 @@ function App() {
 
     conf.select = []
     location.end = {lineIndex: -1, xIndex: -1}
+  }
+
+  //设置选中区域
+  function setSelectLines() {
+    let {lineIndex, xIndex} = location.start
+
+    let newLineIndex = location.end.lineIndex
+    let newXIndex = location.end.xIndex
+    let minXIndex = Math.min(newXIndex, xIndex)
+    let maxXIndex = Math.max(newXIndex, xIndex)
+    let minLineIndex = Math.min(newLineIndex, lineIndex)
+    let maxLineIndex = Math.max(newLineIndex, lineIndex)
+
+    cursor.current.style.top = getLineY(newLineIndex) + 'px'
+    let left = brokenTexts[newLineIndex].children[newXIndex].x
+    // left += center.x
+    cursor.current.style.left = left + 'px'
+
+    let select = []
+    if (newLineIndex === lineIndex) {
+      let line = conf.brokenTexts[lineIndex]
+      let lineFirst = line.children[minXIndex]
+      let lineLast = line.children[maxXIndex]
+
+      let rect = {
+        x: line.children[minXIndex].x,
+        y: getLineY(lineIndex, false),
+        w: Math.abs(lineLast.x - lineFirst.x),
+        h: line.maxLineHeight
+      }
+      select = [rect]
+    } else {
+      let start = location.start
+      let end = location.end
+
+      if (newLineIndex < lineIndex) {
+        start = location.end
+        end = location.start
+      }
+      let startLine = conf.brokenTexts[start.lineIndex]
+      let startLineLast = startLine.children[startLine.children.length - 1];
+      // console.log('start', start)
+      // console.log('startLineLast', startLineLast)
+      let startRect = {
+        x: startLine.children[start.xIndex].x,
+        y: getLineY(start.lineIndex, false),
+        w: Math.abs(startLineLast.x + startLineLast.width - startLine.children[start.xIndex].x),
+        h: startLine.maxLineHeight
+      }
+
+      let endLine = conf.brokenTexts[end.lineIndex]
+      let endLineFirst = endLine.children[0]
+      let endRect = {
+        x: endLineFirst.x,
+        y: getLineY(end.lineIndex, false),
+        w: Math.abs(endLine.children[end.xIndex].x - endLineFirst.x),
+        h: endLine.maxLineHeight
+      }
+
+      select = [startRect, endRect]
+      for (let i = minLineIndex + 1; i < maxLineIndex; i++) {
+        let row = conf.brokenTexts[i]
+        select.push({
+          x: row.children[0].x,
+          y: getLineY(i, false),
+          w: Math.abs(row.children[row.children.length - 1].x + row.children[row.children.length - 1].width - row.children[0].x),
+          h: row.maxLineHeight
+        })
+      }
+    }
+
+    // console.log('select', JSON.stringify(select, null, 2))
+    conf.select = select
   }
 
   function onCompositionStart() {
@@ -990,75 +1355,8 @@ function App() {
 
       if (newLocation) {
         location.end = newLocation
-        let newLineIndex = newLocation.lineIndex
-        let newXIndex = newLocation.xIndex
-        let minXIndex = Math.min(newXIndex, xIndex)
-        let maxXIndex = Math.max(newXIndex, xIndex)
-        let minLineIndex = Math.min(newLineIndex, lineIndex)
-        let maxLineIndex = Math.max(newLineIndex, lineIndex)
-
-        cursor.current.style.top = getLineY(newLineIndex) + 'px'
-        let left = brokenTexts[newLineIndex].children[newXIndex].x
-        // left += center.x
-        cursor.current.style.left = left + 'px'
-
-
-        let select = []
-        if (newLineIndex === lineIndex) {
-          let line = conf.brokenTexts[lineIndex]
-          let lineFirst = line.children[minXIndex]
-          let lineLast = line.children[maxXIndex]
-
-          let rect = {
-            x: line.children[minXIndex].x,
-            y: getLineY(lineIndex, false),
-            w: Math.abs(lineLast.x - lineFirst.x),
-            h: line.maxLineHeight
-          }
-          select = [rect]
-        } else {
-          let start = location.start
-          let end = location.end
-
-          if (newLineIndex < lineIndex) {
-            start = location.end
-            end = location.start
-          }
-          let startLine = conf.brokenTexts[start.lineIndex]
-          let startLineLast = startLine.children[startLine.children.length - 1];
-          // console.log('start', start)
-          // console.log('startLineLast', startLineLast)
-          let startRect = {
-            x: startLine.children[start.xIndex].x,
-            y: getLineY(start.lineIndex, false),
-            w: Math.abs(startLineLast.x + startLineLast.width - startLine.children[start.xIndex].x),
-            h: startLine.maxLineHeight
-          }
-
-          let endLine = conf.brokenTexts[end.lineIndex]
-          let endLineFirst = endLine.children[0]
-          let endRect = {
-            x: endLineFirst.x,
-            y: getLineY(end.lineIndex, false),
-            w: Math.abs(endLine.children[end.xIndex].x - endLineFirst.x),
-            h: endLine.maxLineHeight
-          }
-
-          select = [startRect, endRect]
-          for (let i = minLineIndex + 1; i < maxLineIndex; i++) {
-            let row = conf.brokenTexts[i]
-            select.push({
-              x: row.children[0].x,
-              y: getLineY(i, false),
-              w: Math.abs(row.children[row.children.length - 1].x + row.children[row.children.length - 1].width - row.children[0].x),
-              h: row.maxLineHeight
-            })
-          }
-        }
-
-        // console.log('select', JSON.stringify(select, null, 2))
-        conf.select = select
-        render(ctx)
+        setSelectLines()
+        f()
       }
       // console.log('e', ex, ey)
     }
@@ -1079,41 +1377,65 @@ function App() {
 
   function changeSize() {
     let {lineIndex, xIndex} = location.start
-
     let newLineIndex = location.end.lineIndex
-    let newXIndex = location.end.xIndex
-    let minXIndex = Math.min(newXIndex, xIndex)
-    let maxXIndex = Math.max(newXIndex, xIndex)
-    let minLineIndex = Math.min(newLineIndex, lineIndex)
-    let maxLineIndex = Math.max(newLineIndex, lineIndex)
+    let start = location.start
+    let end = location.end
 
-    for (let i = minLineIndex; i <= maxLineIndex; i++) {
-      let line = conf.brokenTexts[i]
-      let startIndex = 0
-      let endIndex = line.children.length
-      if (i === minLineIndex) {
-        if (i === lineIndex) {
-          startIndex = xIndex
-        }
-        if (i === newLineIndex) {
-          startIndex = newXIndex
-        }
-      }
-      if (i === maxLineIndex) {
-        if (i === lineIndex) {
-          endIndex = xIndex
-        }
-        if (i === newLineIndex) {
-          endIndex = newXIndex
-        }
-      }
-
-      line.children.slice(startIndex, endIndex).map(value => {
+    if (newLineIndex === lineIndex) {
+      let minXIndex = Math.min(end.xIndex, xIndex)
+      let maxXIndex = Math.max(end.xIndex, xIndex)
+      conf.brokenTexts[lineIndex].children.slice(minXIndex, maxXIndex).map(value => {
         value.fontSize++
         value.lineHeight = Math.trunc(value.fontSize / 0.7)
       })
+      conf.brokenTexts[lineIndex].children[minXIndex].start = true
+      conf.brokenTexts[lineIndex].children[maxXIndex].end = true
+      calcLineX(conf.brokenTexts[lineIndex])
+    } else {
+      if (newLineIndex < lineIndex) {
+        start = location.end
+        end = location.start
+      }
+
+      for (let i = start.lineIndex; i <= end.lineIndex; i++) {
+        let line = conf.brokenTexts[i]
+        let startIndex = 0
+        let endIndex = line.children.length
+
+        if (i === start.lineIndex) {
+          startIndex = start.xIndex
+          line.children[startIndex].start = true
+        }
+        if (i === end.lineIndex) {
+          endIndex = end.xIndex
+          line.children[endIndex].end = true
+        }
+
+        console.log(startIndex, endIndex)
+        line.children.slice(startIndex, endIndex).map(value => {
+          value.fontSize++
+          value.lineHeight = Math.trunc(value.fontSize / 0.7)
+        })
+        calcLineX(line)
+      }
     }
     calcConf()
+
+    conf.brokenTexts.map((line, index) => {
+      if (line.children.length) {
+        let rIndex = line.children.findIndex(t => t.start)
+        if (rIndex > -1) {
+          line.children[rIndex].start = false
+          location.start = {lineIndex: index, xIndex: rIndex}
+        }
+        rIndex = line.children.findIndex(t => t.end)
+        if (rIndex > -1) {
+          line.children[rIndex].end = false
+          location.end = {lineIndex: index, xIndex: rIndex}
+        }
+      }
+    })
+    setSelectLines()
     f()
   }
 

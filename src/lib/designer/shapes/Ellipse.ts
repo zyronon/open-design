@@ -116,7 +116,7 @@ export class Ellipse extends ParentShape {
     let r2 = 4
     if (totalLength !== 4) {
       draw.drawRound(ctx, {x: 0, y: 0}, r2,)
-      console.log('this.ellipseEnterType',this.ellipseEnterType)
+      // console.log('this.ellipseEnterType',this.ellipseEnterType)
       if (this.ellipseEnterType !== EllipseHoverType.Start) {
         draw.drawRound(ctx, this._conf.startOperatePoint, r2,)
       }
@@ -360,6 +360,9 @@ export class Ellipse extends ParentShape {
           //   'k2', k2
           // )
 
+          console.log('k2', k2)
+
+
           let innerLayout = {
             w: w / k2,
             h: h / k2,
@@ -367,8 +370,10 @@ export class Ellipse extends ParentShape {
             y: 0
           }
           console.log('innerLayout', innerLayout)
-          this._conf.innerLayout = innerLayout
-          this.getInnerCps()
+          if (k2 >= 1) {
+            this._conf.innerLayout = innerLayout
+            this.getInnerCps()
+          }
         }
         this._conf.isComplete = false
         this.conf.lineShapes = this.getCustomPoint()

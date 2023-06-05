@@ -1357,6 +1357,11 @@ function App() {
           }
         }
         if (isBreak) break
+        else {
+          lineIndex = i
+          xIndex = line.children.length
+          break
+        }
       }
     }
 

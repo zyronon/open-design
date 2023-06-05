@@ -887,7 +887,7 @@ function App() {
     calcLineX(currentLine)
   }
 
-  function drawCursor({lineIndex, xIndex}: SelectInfo) {
+  function checkLocation({lineIndex, xIndex}: SelectInfo) {
     const {brokenTexts} = conf
     let newLineIndex = lineIndex
     let newXIndex = xIndex
@@ -905,20 +905,57 @@ function App() {
     if (!brokenTexts[newLineIndex].newLine) {
       if (newXIndex === 0) newXIndex = 1
     }
-    let left = 0
-    //因为textLine可以为空数组，newXIndex取不到值
-    if (newXIndex) {
-      if (newXIndex === brokenTexts[newLineIndex].children.length) {
-        let last = brokenTexts[newLineIndex].children[newXIndex - 1]
-        left = last.x + last.width
-      } else {
-        left = brokenTexts[newLineIndex].children[newXIndex].x
-      }
-    }
-    cursor.current.style.top = getLineY(newLineIndex) + 'px'
-    cursor.current.style.left = left + 'px'
     console.log('newXIndex', newLineIndex, newXIndex)
     location.start = {lineIndex: newLineIndex, xIndex: newXIndex}
+    drawCursor(location.start)
+  }
+
+  function drawCursor(location: MousePointLocation) {
+    let {lineIndex, xIndex} = location
+    let left = 0
+    //因为textLine可以为空数组，newXIndex取不到值
+    if (xIndex) {
+      if (xIndex === conf.brokenTexts[lineIndex].children.length) {
+        let last = conf.brokenTexts[lineIndex].children[xIndex - 1]
+        left = last.x + last.width
+      } else {
+        left = conf.brokenTexts[lineIndex].children[xIndex].x
+      }
+    }
+    cursor.current.style.top = getLineY(lineIndex) + 'px'
+    cursor.current.style.left = left + 'px'
+  }
+
+  function getLineX(xIndex: number, line: TextLine) {
+    let left = 0
+    if (xIndex === line.children.length) {
+      let last = line.children[xIndex - 1]
+      left = last.x + last.width
+    } else {
+      left = line.children[xIndex].x
+    }
+    return left
+  }
+
+  //因为选中的XIndex一般是在文字的后面。所以设置end为true的那个文字是下一个文字
+  //所以如果选中最后一个的话，那个设置end的文字就应该是下一行的第0个
+  //最后一行的最后一个是返回true
+  function getNextText(lineIndex: number, xIndex: number): boolean | Text {
+    let line = conf.brokenTexts[lineIndex]
+    if (line.children) {
+      if (xIndex === line.children.length) {
+        //最后一行的最后一个
+        if (lineIndex === conf.brokenTexts.length - 1) {
+          return true
+        }
+        if (conf.brokenTexts?.[lineIndex + 1]?.children) {
+          return conf.brokenTexts[lineIndex + 1].children[0]
+        }
+      } else {
+        return line.children[xIndex]
+      }
+    }
+    return false
   }
 
   //调整行内的文字，当自动高度时
@@ -1081,7 +1118,7 @@ function App() {
           newXIndex = 0
           break
       }
-      drawCursor({lineIndex: newLineIndex, xIndex: newXIndex})
+      checkLocation({lineIndex: newLineIndex, xIndex: newXIndex})
     }
   }
 
@@ -1194,21 +1231,18 @@ function App() {
     let minLineIndex = Math.min(newLineIndex, lineIndex)
     let maxLineIndex = Math.max(newLineIndex, lineIndex)
 
-    cursor.current.style.top = getLineY(newLineIndex) + 'px'
-    let left = brokenTexts[newLineIndex].children[newXIndex].x
-    // left += center.x
-    cursor.current.style.left = left + 'px'
+    drawCursor(location.end)
 
     let select = []
     if (newLineIndex === lineIndex) {
       let line = conf.brokenTexts[lineIndex]
-      let lineFirst = line.children[minXIndex]
-      let lineLast = line.children[maxXIndex]
+      let leftX = getLineX(minXIndex, line)
+      let rightX = getLineX(maxXIndex, line)
 
       let rect = {
-        x: line.children[minXIndex].x,
+        x: leftX,
         y: getLineY(lineIndex, false),
-        w: Math.abs(lineLast.x - lineFirst.x),
+        w: Math.abs(rightX - leftX),
         h: line.maxLineHeight
       }
       select = [rect]
@@ -1222,21 +1256,23 @@ function App() {
       }
       let startLine = conf.brokenTexts[start.lineIndex]
       let startLineLast = startLine.children[startLine.children.length - 1];
+      let leftX = getLineX(start.xIndex, startLine)
       // console.log('start', start)
       // console.log('startLineLast', startLineLast)
       let startRect = {
-        x: startLine.children[start.xIndex].x,
+        x: leftX,
         y: getLineY(start.lineIndex, false),
-        w: Math.abs(startLineLast.x + startLineLast.width - startLine.children[start.xIndex].x),
+        w: Math.abs(startLineLast.x + startLineLast.width - leftX),
         h: startLine.maxLineHeight
       }
 
       let endLine = conf.brokenTexts[end.lineIndex]
       let endLineFirst = endLine.children[0]
+      let rightX = getLineX(end.xIndex, endLine)
       let endRect = {
         x: endLineFirst.x,
         y: getLineY(end.lineIndex, false),
-        w: Math.abs(endLine.children[end.xIndex].x - endLineFirst.x),
+        w: Math.abs(rightX - endLineFirst.x),
         h: endLine.maxLineHeight
       }
 
@@ -1281,7 +1317,7 @@ function App() {
   function getMousePointLocation(e: MouseEvent): MousePointLocation {
     let ex = e.clientX - canvasRect.left;
     let ey = e.clientY - canvasRect.top;
-    let {layout: {x, y, w, h}, textAlign, textLineHeight, center, brokenTexts} = conf
+    let {layout: {x, y, w, h}, center, brokenTexts} = conf
     let cx = ex - center.x
     let cy = ey - center.y
     // console.log('e', cx, ex)
@@ -1298,23 +1334,34 @@ function App() {
         let isBreak = false
         for (let j = 0; j < line.children.length; j++) {
           let item = line.children[j]
-          let abs = Math.abs(item.x - ex)
-          //console.log('item.x', item.x)
-          //console.log('cx', cx)
-          //console.log('abs', abs)
-          if (abs <= item.width) {
-            xIndex = j
-            lineIndex = i
-            isBreak = true
-            break
+          let w2 = item.width / 2
+          let abs = item.x + w2 - ex
+          // console.log('item.x', item.x)
+          // console.log('cx', cx)
+          // console.log('ex', ex)
+          // console.log('abs', abs)
+          // console.log('w2', w2)
+          if (Math.abs(abs) < w2) {
+            if (abs < 0) {
+              xIndex = j + 1
+              lineIndex = i
+              isBreak = true
+              break
+            }
+            if (abs > 0) {
+              xIndex = j
+              lineIndex = i
+              isBreak = true
+              break
+            }
           }
-          // console.log('j', j)
         }
         if (isBreak) break
       }
     }
 
     if (lineIndex !== undefined && xIndex !== undefined) {
+      // console.log('{lineIndex, xIndex}', {lineIndex, xIndex})
       return {lineIndex, xIndex}
     }
     return null as any
@@ -1327,13 +1374,8 @@ function App() {
     })
     let l = getMousePointLocation(e)
     if (l) {
-      let {lineIndex, xIndex} = l
-      let {layout: {x, y, w, h}, textAlign, textLineHeight, center, brokenTexts} = conf
       isEnter = true
-      cursor.current.style.top = getLineY(lineIndex) + 'px'
-      let left = brokenTexts[lineIndex].children[xIndex].x
-      // left += center.x
-      cursor.current.style.left = left + 'px'
+      checkLocation(l)
       location.start = l
       location.end = {lineIndex: -1, xIndex: -1}
       conf.select = []
@@ -1345,14 +1387,7 @@ function App() {
   function onMouseMove(e: MouseEvent) {
     // console.log('onMouseMove',isEnter)
     if (isEnter) {
-      let ex = e.clientX - canvasRect.left;
-      let ey = e.clientY - canvasRect.top;
-      let {lineIndex, xIndex} = location.start
-      let {layout: {x, y, w, h}, textAlign, textLineHeight, center, brokenTexts} = conf
-      let cx = ex - center.x
-      let cy = ey - center.y
       let newLocation = getMousePointLocation(e)
-
       if (newLocation) {
         location.end = newLocation
         setSelectLines()
@@ -1380,17 +1415,24 @@ function App() {
     let newLineIndex = location.end.lineIndex
     let start = location.start
     let end = location.end
+    //特殊标记，如果选中的是最后一行的最后一个，没有下一个文字了，end的标记就会失效
+    let isLineEnd = false
 
     if (newLineIndex === lineIndex) {
       let minXIndex = Math.min(end.xIndex, xIndex)
       let maxXIndex = Math.max(end.xIndex, xIndex)
-      conf.brokenTexts[lineIndex].children.slice(minXIndex, maxXIndex).map(value => {
-        value.fontSize++
+      let currentLine = conf.brokenTexts[lineIndex]
+      currentLine.children.slice(minXIndex, maxXIndex).map(value => {
+        value.fontSize += 10
         value.lineHeight = Math.trunc(value.fontSize / 0.7)
       })
-      conf.brokenTexts[lineIndex].children[minXIndex].start = true
-      conf.brokenTexts[lineIndex].children[maxXIndex].end = true
-      calcLineX(conf.brokenTexts[lineIndex])
+      //起点不存在这个问题，因为这个if判断的是在同一行内。起点在最后一个时，走不这个if里面
+      currentLine.children[minXIndex].start = true
+      let next = getNextText(lineIndex, maxXIndex)
+      if (typeof next === 'object') next.end = true
+      else isLineEnd = next
+
+      calcLineX(currentLine)
     } else {
       if (newLineIndex < lineIndex) {
         start = location.end
@@ -1404,16 +1446,19 @@ function App() {
 
         if (i === start.lineIndex) {
           startIndex = start.xIndex
-          line.children[startIndex].start = true
+          let next = getNextText(i, startIndex)
+          if (typeof next === 'object') next.start = true
         }
         if (i === end.lineIndex) {
           endIndex = end.xIndex
-          line.children[endIndex].end = true
+          let next = getNextText(i, endIndex)
+          if (typeof next === 'object') next.end = true
+          else isLineEnd = next
         }
 
         console.log(startIndex, endIndex)
         line.children.slice(startIndex, endIndex).map(value => {
-          value.fontSize++
+          value.fontSize += 10
           value.lineHeight = Math.trunc(value.fontSize / 0.7)
         })
         calcLineX(line)
@@ -1435,6 +1480,13 @@ function App() {
         }
       }
     })
+    if (isLineEnd) {
+      let lastLine = conf.brokenTexts[conf.brokenTexts.length - 1]
+      location.end = {
+        lineIndex: conf.brokenTexts.length - 1,
+        xIndex: lastLine.children.length
+      }
+    }
     setSelectLines()
     f()
   }

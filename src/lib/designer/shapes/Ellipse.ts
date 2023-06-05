@@ -89,7 +89,7 @@ export class Ellipse extends ParentShape {
 
     lineShapes.map(line => {
       line.points.map((pointInfo) => {
-        let point = this.getPoint(pointInfo)
+        // let point = this.getPoint(pointInfo)
         // if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
         // if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
         // draw.drawRound(ctx, point.center)

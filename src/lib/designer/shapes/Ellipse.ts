@@ -362,7 +362,6 @@ export class Ellipse extends ParentShape {
 
           console.log('k2', k2)
 
-
           let innerLayout = {
             w: w / k2,
             h: h / k2,

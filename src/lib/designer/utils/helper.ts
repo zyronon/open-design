@@ -151,6 +151,9 @@ export default {
       conf.lineShapes = []
       conf.commonPoints = []
     }
+    if (conf.isCustom === undefined)conf.isCustom = false
+    // @ts-ignore
+    if (conf.isComplete === undefined)conf.isComplete = true
 
     // console.log('initConf', conf)
     return conf

@@ -669,6 +669,24 @@ let temp = {
 }
 export const rects = [
   {
+    "name": "多边形",
+    layout: {
+      "x": 550,
+      "y": 50,
+      "w": 200,
+      "h": 200,
+    },
+    "rotation": 0,
+    "lineWidth": 2,
+    "type": ShapeType.POLYGON,
+    "color": "gray",
+    "radius": 0,
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "rgb(241,238,238)",
+    flipHorizontal: false,
+    flipVertical: false,
+  },
+  {
     "name": "圆",
     layout: {
       "x": 100,
@@ -879,24 +897,6 @@ export const rects = [
     totalLength: 2.5,
     startLength: 0,
     "type": ShapeType.ELLIPSE,
-    "color": "gray",
-    "radius": 0,
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "rgb(241,238,238)",
-    flipHorizontal: false,
-    flipVertical: false
-  },
-  {
-    "name": "多边形",
-    layout: {
-      "x": 550,
-      "y": 50,
-      "w": 200,
-      "h": 200,
-    },
-    "rotation": 0,
-    "lineWidth": 2,
-    "type": ShapeType.POLYGON,
     "color": "gray",
     "radius": 0,
     "borderColor": "rgb(216,216,216)",

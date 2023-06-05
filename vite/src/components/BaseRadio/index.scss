@@ -1,0 +1,32 @@
+@import '/src/assets/css/variable.scss';
+
+.base-radio-group {
+  //width: 100%;
+  height: $input-height;
+  border-radius: 6px;
+  background: $input-bg;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+}
+
+.base-radio {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-width: 26rem;
+  margin: 0 2rem;
+  border-radius: 4rem;
+
+  &:hover {
+    background: rgb(80, 80, 80);
+  }
+
+  &.base-radio-active {
+    background: $primary;
+    color: white;
+  }
+}

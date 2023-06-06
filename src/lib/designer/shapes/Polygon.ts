@@ -433,7 +433,7 @@ export class Polygon extends ParentShape {
     console.log('ps2',ps2)
     path.moveTo2(ps2[ps2.length - 1].cp2)
     ps2.map((p, i) => {
-      path.arcTo(p.cp1.x, p.cp1.y, p.cp2.x, p.cp2.y, 60)
+      path.arcTo(p.cp1.x, p.cp1.y, p.cp2.x, p.cp2.y, 10)
     })
 
     path.closePath()

@@ -416,10 +416,12 @@ export class Polygon extends ParentShape {
       }
       if (currentIndex === 0) {
         center = helper.getStraightLineCenterPoint(currentValue, array[array.length - 1])
-        start = center
+        // start = center
+        start =  array[array.length - 1]
       } else {
         center = helper.getStraightLineCenterPoint(currentValue, array[currentIndex - 1])
-        previousValue[previousValue.length - 1].cp2 = center
+        // previousValue[previousValue.length - 1].cp2 = center
+        previousValue[previousValue.length - 1].cp2 = currentValue
       }
       previousValue.push(data)
       return previousValue

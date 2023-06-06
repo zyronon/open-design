@@ -416,8 +416,8 @@ export class Polygon extends ParentShape {
       }
       if (currentIndex === 0) {
         center = helper.getStraightLineCenterPoint(currentValue, array[array.length - 1])
-        // start = center
-        start =  array[array.length - 1]
+        start = center
+        // start =  array[array.length - 1]
       } else {
         center = helper.getStraightLineCenterPoint(currentValue, array[currentIndex - 1])
         // previousValue[previousValue.length - 1].cp2 = center
@@ -428,9 +428,12 @@ export class Polygon extends ParentShape {
     }, [])
 
     ps2[ps2.length - 1].cp2 = start!
+    // ps2[ps2.length - 1].cp2 = ps[0]
+
+    console.log('ps2',ps2)
     path.moveTo2(ps2[ps2.length - 1].cp2)
     ps2.map((p, i) => {
-      path.arcTo(p.cp1.x, p.cp1.y, p.cp2.x, p.cp2.y, 20)
+      path.arcTo(p.cp1.x, p.cp1.y, p.cp2.x, p.cp2.y, 60)
     })
 
     path.closePath()

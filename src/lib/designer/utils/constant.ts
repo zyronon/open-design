@@ -680,7 +680,7 @@ export const rects = [
     "lineWidth": 2,
     "type": ShapeType.POLYGON,
     "color": "gray",
-    "radius": 0,
+    "radius": 10,
     "borderColor": "rgb(216,216,216)",
     "fillColor": "rgb(241,238,238)",
     flipHorizontal: false,

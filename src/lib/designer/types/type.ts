@@ -61,7 +61,6 @@ export type IState = {
   selectShape?: BaseShape
 }
 
-
 //图形类型
 export enum ShapeType {
   SELECT = 'SELECT',
@@ -298,6 +297,7 @@ export enum FontWeight {
   BOLD = 700,
   HEAVY = 900,
 }
+
 export enum FontFamily {
   SourceHanSerifCN = 'SourceHanSerifCN',
   SourceHanSansCN = 'SourceHanSansCN',

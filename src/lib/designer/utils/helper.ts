@@ -151,9 +151,9 @@ export default {
       conf.lineShapes = []
       conf.commonPoints = []
     }
-    if (conf.isCustom === undefined)conf.isCustom = false
+    if (conf.isCustom === undefined) conf.isCustom = false
     // @ts-ignore
-    if (conf.isComplete === undefined)conf.isComplete = true
+    if (conf.isComplete === undefined) conf.isComplete = true
 
     // console.log('initConf', conf)
     return conf
@@ -233,7 +233,7 @@ export default {
     // console.log('calcConf', cloneDeep(conf))
     return conf
   },
-  getCenter(conf: BaseConfig, pConf?: BaseConfig){
+  getCenter(conf: BaseConfig, pConf?: BaseConfig) {
     let {
       absolute,
       layout: {x, y, w, h}, flipHorizontal, flipVertical
@@ -490,7 +490,7 @@ export default {
     }
   },
   //获取直线的中间点
-  getStraightLineCenterPoint(p0: P, p1: P) {
+  getStraightLineCenterPoint(p0: P, p1: P): P {
     return {
       x: p0.x + ((p1.x - p0.x) / 2),
       y: p0.y + ((p1.y - p0.y) / 2)

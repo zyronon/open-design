@@ -9,9 +9,11 @@ import {
   getP2,
   LinePath,
   LineShape,
-  P, P2,
+  LineType,
+  P,
   PointInfo,
-  PointType, ShapeProps,
+  PointType,
+  ShapeProps,
   ShapeStatus,
   StrokeAlign
 } from "../types/type"
@@ -398,11 +400,37 @@ export class Polygon extends ParentShape {
     let outB = h / 2
     let x1, x2, y1, y2
     let path = new Path2D()
+    console.log('-----------------')
+    let ps: P[] = []
     for (let i = 0; i < 3; i++) {
       x1 = outA * Math.cos((30 + i * 120) / 180 * Math.PI)
       y1 = outB * Math.sin((30 + i * 120) / 180 * Math.PI)
-      path.lineTo(x1, y1)
+      ps.push({x: x1, y: y1})
+      // path.lineTo(x1, y1)
     }
+    let start: P
+    let ps2 = ps.reduce((previousValue: any[], currentValue, currentIndex, array) => {
+      let center
+      let data: any = {
+        cp1: currentValue,
+      }
+      if (currentIndex === 0) {
+        center = helper.getStraightLineCenterPoint(currentValue, array[array.length - 1])
+        start = center
+      } else {
+        center = helper.getStraightLineCenterPoint(currentValue, array[currentIndex - 1])
+        previousValue[previousValue.length - 1].cp2 = center
+      }
+      previousValue.push(data)
+      return previousValue
+    }, [])
+
+    ps2[ps2.length - 1].cp2 = start!
+    path.moveTo2(ps2[ps2.length - 1].cp2)
+    ps2.map((p, i) => {
+      path.arcTo(p.cp1.x, p.cp1.y, p.cp2.x, p.cp2.y, 20)
+    })
+
     path.closePath()
     return [{close: true, path}]
   }
@@ -670,16 +698,7 @@ export class Polygon extends ParentShape {
       this.ellipseHoverType = EllipseHoverType.Start
       return true
     }
-    //绝对点
-    let point = {
-      x: this._conf.innerCenterOperatePoint.x + center.x,
-      y: this._conf.innerCenterOperatePoint.y + center.y,
-    }
-    if (helper.isInPoint(mousePoint, point, 4)) {
-      document.body.style.cursor = "pointer"
-      this.ellipseHoverType = EllipseHoverType.InsideDiameter
-      return true
-    }
+
     this.ellipseHoverType = undefined
     return false
   }

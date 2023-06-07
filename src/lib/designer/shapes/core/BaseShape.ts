@@ -246,7 +246,7 @@ export class BaseShape {
   editEnter: CurrentOperationInfo = cloneDeep(this.defaultCurrentOperationInfo)
 
   checkMousePointOnEditStatus(point: P): CurrentOperationInfo {
-    console.log('------------------')
+    // console.log('------------------')
     let {center, lineShapes, realRotation, flipVertical, flipHorizontal} = this.conf
     //反转到0度，好判断
     if (realRotation) {
@@ -707,6 +707,7 @@ export class BaseShape {
         let result = this.checkMousePointOnEditStatus(event.point)
         let {lineIndex, pointIndex, cpIndex, type, lineType} = result
         console.log('pointIndex', pointIndex)
+        console.log('result', result)
         //如果hover在点上，先处理hover
         if (pointIndex !== -1) {
           this.conf.isCustom = true
@@ -782,6 +783,8 @@ export class BaseShape {
             //新增一个点，下标也要加1，以选中它
             result.pointIndex += 1
           }
+
+          EventBus.emit(EventKeys.POINT_INFO, this.getPoint(this.conf.lineShapes[lineIndex].points[pointIndex]))
 
           this.editEnter = result
           if (this.editStartPointInfo.lineIndex !== lineIndex

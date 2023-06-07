@@ -33,7 +33,7 @@ export type IState = {
   },
   handScale: number,
   oldHandScale: number,
-  sPoint: {x: number, y: number},
+  sPoint: { x: number, y: number },
   activeHand: boolean,
   fps: number,
   currentMat: any
@@ -91,12 +91,10 @@ export enum ShapeType {
   BOX_SELECTION = 'BOX_SELECTION',
 }
 
-
 export interface ShapeProps {
   conf: BaseConfig,
   parent?: BaseShape,
 }
-
 
 export enum RectColorType {
   FillColor = 'fillColor',
@@ -164,6 +162,7 @@ export enum BezierPointType {
 // 直线：直接取两个点的center点相连
 export interface BezierPoint {
   id: string,
+  radius?: number,
   cp1: P2,//右边的控制点
   center: P2//中边的点
   cp2: P2//左边的控制点

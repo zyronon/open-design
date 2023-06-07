@@ -669,6 +669,25 @@ let temp = {
 }
 export const rects = [
   {
+    "name": "孙矩形111111",
+    layout: {
+      "x": 820,
+      "y": 130,
+      "w": 200,
+      "h": 400,
+    },
+    "rotation": 0,
+    "lineWidth": 2,
+    "type": ShapeType.RECTANGLE,
+    "color": "gray",
+    "radius": 0,
+    children: [],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "rgb(241,238,238)",
+    flipHorizontal: false,
+    flipVertical: false
+  },
+  {
     "name": "多边形",
     layout: {
       "x": 550,

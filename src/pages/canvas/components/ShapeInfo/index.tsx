@@ -50,7 +50,8 @@ const ShapeInfo = (props: any) => {
     // console.log('useEffect-start')
     let keys = [
       EventKeys.ON_CONF_CHANGE,
-      EventKeys.SELECT_SHAPE
+      EventKeys.SELECT_SHAPE,
+      EventKeys.POINT_INFO,
     ]
     EventBus.on(EventKeys.ON_CONF_CHANGE, () => {
       shape.current && setConf(cloneDeep(shape.current.conf))
@@ -58,6 +59,9 @@ const ShapeInfo = (props: any) => {
     EventBus.on(EventKeys.SELECT_SHAPE, (s: BaseShape) => {
       shape.current = s
       setConf(s.conf)
+    })
+    EventBus.on(EventKeys.POINT_INFO, (val: any) => {
+      console.log('pointInfo', val)
     })
     return () => {
       EventBus.off(keys)

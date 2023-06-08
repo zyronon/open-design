@@ -7,7 +7,7 @@ import BaseButton from "../../../../components/BaseButton"
 import {BaseConfig} from "../../../../lib/designer/config/BaseConfig"
 import {BaseShape} from "../../../../lib/designer/shapes/core/BaseShape"
 import './index.scss'
-import {ShapeType, TextMode} from "../../../../lib/designer/types/type"
+import {BezierPoint, ShapeStatus, ShapeType, TextMode} from "../../../../lib/designer/types/type"
 import BaseIcon from "../../../../components/BaseIcon"
 import {
   AlignTextLeft,
@@ -31,6 +31,7 @@ import EventBus from "../../../../lib/designer/event/eventBus";
 import {EventKeys} from "../../../../lib/designer/event/eventKeys";
 import {clone, cloneDeep} from "lodash";
 import {fontFamilies, fontSize, fontWeight} from "../../../../lib/designer/utils/constant";
+import CanvasUtil2 from "../../../../lib/designer/engine/CanvasUtil2"
 
 enum ChangeColorType {
   Border = 'Border',
@@ -38,13 +39,19 @@ enum ChangeColorType {
 }
 
 const ShapeInfo = (props: any) => {
-  const [mode, setMode] = useState<ShapeType>(ShapeType.SELECT)
+  const [mode, setMode] = useState<ShapeStatus>(ShapeStatus.Select)
   const [showPicker, setShowPicker] = useState<boolean>(false)
   const [pickerColor, setPickerColor] = useState<any>()
   const [changeColorType, setChangeColorType] = useState<ChangeColorType>()
   //可以直接从shape里面取conf。这里提出来是因为shape.conf永远是一个引用。不会引用react重渲染
   const [conf, setConf] = useState<BaseConfig>({} as any)
   const shape = useRef<BaseShape>()
+  const [pointInfo, setPointInfo] = useState<{
+    lineIndex: number,
+    pointIndex: number,
+    point: BezierPoint
+  }>({} as any)
+
 
   useEffect(() => {
     // console.log('useEffect-start')
@@ -52,6 +59,7 @@ const ShapeInfo = (props: any) => {
       EventKeys.ON_CONF_CHANGE,
       EventKeys.SELECT_SHAPE,
       EventKeys.POINT_INFO,
+      EventKeys.MODE,
     ]
     EventBus.on(EventKeys.ON_CONF_CHANGE, () => {
       shape.current && setConf(cloneDeep(shape.current.conf))
@@ -62,6 +70,11 @@ const ShapeInfo = (props: any) => {
     })
     EventBus.on(EventKeys.POINT_INFO, (val: any) => {
       console.log('pointInfo', val)
+      setPointInfo(val)
+    })
+    EventBus.on(EventKeys.MODE, (val: any) => {
+      console.log('MODE', val)
+      setMode(val)
     })
     return () => {
       EventBus.off(keys)
@@ -116,11 +129,15 @@ const ShapeInfo = (props: any) => {
   function onTextModeChange() {
   }
 
+  function pointRadiusChange(e: any) {
+    shape.current?.pointRadiusChange(e, pointInfo)
+  }
+
   return (
     conf.id ?
       <>
         {
-          mode === ShapeType.EDIT ?
+          mode === ShapeStatus.Edit ?
             <div className="base-info">
               <div className="row grid2">
                 <div className="col">
@@ -132,7 +149,9 @@ const ShapeInfo = (props: any) => {
               </div>
               <div className="row grid2">
                 <div className="col">
-                  <BaseInput value={conf?.radius} prefix={<AngleIcon style={{fontSize: "16rem"}}/>}/>
+                  <BaseInput value={pointInfo.point?.radius}
+                             onChange={pointRadiusChange}
+                             prefix={<AngleIcon style={{fontSize: "16rem"}}/>}/>
                 </div>
               </div>
               <div className="row">

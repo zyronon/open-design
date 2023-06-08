@@ -23,9 +23,11 @@ declare global {
     fillRect2(p: Rect): void
 
     strokeRect2(p: Rect): void
+
+    arcTo2(p: P, p1: P, r: number): void
   }
 
-  interface Path2D {
+  interface Path2D extends CanvasRenderingContext2D {
     //三次贝塞尔曲线
     bezierCurveTo2(cp1: P, cp2: P, end: P): void
 
@@ -39,6 +41,8 @@ declare global {
     translate2(p: P): void
 
     rect2(p: Rect): void
+
+    // arcTo2(p: P, p1: P, r: number): void
   }
 
   interface Math {
@@ -80,6 +84,9 @@ let Context2D: CanvasRenderingContext2D = {
   },
   strokeRect2: function (p) {
     this.strokeRect(p.x, p.y, p.w, p.h)
+  },
+  arcTo2: function (p, p1, r) {
+    this.arcTo(p.x, p.y, p1.x, p1.y, r)
   }
 }
 

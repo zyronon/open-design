@@ -90,6 +90,7 @@ export class BaseShape {
         cu.mode = ShapeType.EDIT
       }
       this._status = val
+      EventBus.emit(EventKeys.MODE, this._status)
       CanvasUtil2.getInstance().render()
     }
   }
@@ -784,7 +785,11 @@ export class BaseShape {
             result.pointIndex += 1
           }
 
-          EventBus.emit(EventKeys.POINT_INFO, this.getPoint(this.conf.lineShapes[lineIndex].points[pointIndex]))
+          EventBus.emit(EventKeys.POINT_INFO, {
+            lineIndex,
+            pointIndex,
+            point: this.getPoint(this.conf.lineShapes[lineIndex].points[pointIndex])
+          })
 
           this.editEnter = result
           if (this.editStartPointInfo.lineIndex !== lineIndex
@@ -1283,6 +1288,14 @@ export class BaseShape {
     this.notifyConfUpdate()
   }
 
+  pointRadiusChange(e: any, val: any) {
+    console.log('pointRadiusChange', Number(e.target.value))
+    let point = this.getPoint(this.conf.lineShapes[val.lineIndex].points[val.pointIndex])
+    point.radius = Number(e.target.value)
+    CanvasUtil2.getInstance().render()
+    EventBus.emit(EventKeys.POINT_INFO, Object.assign({}, val, {point}))
+  }
+
   getCustomShapePath(): LinePath[] {
     let pathList: LinePath[] = []
     this.conf.lineShapes.map((line) => {
@@ -1302,7 +1315,12 @@ export class BaseShape {
           let lineType = helper.judgeLineType({startPoint, endPoint})
           switch (lineType) {
             case LineType.Line:
-              path.lineTo2(startPoint.center)
+              // console.log('startPoint-radius', startPoint.radius)
+              if (startPoint.radius) {
+                path.arcTo2(startPoint.center, endPoint.center, startPoint.radius)
+              } else {
+                path.lineTo2(startPoint.center)
+              }
               break
             case LineType.Bezier3:
               path.lineTo2(startPoint.center)

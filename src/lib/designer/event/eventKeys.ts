@@ -3,6 +3,7 @@ const EventKeys = {
   SELECT_SHAPE: 'selectShape',
   ON_CONF_CHANGE: 'onChangeConf',
   SET_CONF: 'setConf',
-  POINT_INFO:'pointInfo'
+  POINT_INFO:'pointInfo',
+  MODE:'mode',
 }
 export {EventKeys}

@@ -13,27 +13,33 @@ interface IProps {
 
 export default memo((props: IProps) => {
   const {
-    prefix, suffix, value = '', onChange = () => {
+    prefix, suffix, value = '', onChange = (e: any) => {
     }
   } = props
-  const [isMouseDown, setIsMouseDown] = useState<boolean>(false)
   const start = useRef<number>(0)
 
   const onMouseMove: any = useMemoizedFn((e: MouseEvent) => {
-    console.log('onMouseMove-e', start.current - e.clientX)
+    let d = start.current - e.clientX
+    let s = Number(value)
+    if (d > 0) {
+      onChange(s > 1 ? s - 1 : 0)
+    } else {
+      onChange(s + 1)
+    }
+    console.log('onMouseMove-e', d)
   })
 
   const onMouseUp: any = useMemoizedFn((e: MouseEvent) => {
-    console.log('onMouseUp', e.clientX)
+    // console.log('onMouseUp', e.clientX)
     window.removeEventListener('mousemove', onMouseMove)
-    setIsMouseDown(false)
+    document.body.style.cursor = 'default';
   })
 
 
   const onMouseDown = useMemoizedFn((e: MouseEvent) => {
-    console.log('onMouseDown')
-    setIsMouseDown(true)
+    // console.log('onMouseDown')
     start.current = e.clientX
+    document.body.style.cursor = 'ew-resize';
     window.addEventListener('mousemove', onMouseMove)
     window.removeEventListener('mouseup', onMouseUp)
     window.addEventListener('mouseup', onMouseUp)
@@ -49,7 +55,7 @@ export default memo((props: IProps) => {
           {prefix}
         </div>
       }
-      <input type="text" value={value} onChange={e => onChange(e)}/>
+      <input type="text" value={value} onChange={e => onChange(Number(e.target.value))}/>
       {suffix && <div className={styles.suffix}>{suffix}</div>}
     </div>
   )

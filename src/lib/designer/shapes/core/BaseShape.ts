@@ -1289,9 +1289,8 @@ export class BaseShape {
   }
 
   pointRadiusChange(e: any, val: any) {
-    console.log('pointRadiusChange', Number(e.target.value))
     let point = this.getPoint(this.conf.lineShapes[val.lineIndex].points[val.pointIndex])
-    point.radius = Number(e.target.value)
+    point.radius = e
     CanvasUtil2.getInstance().render()
     EventBus.emit(EventKeys.POINT_INFO, Object.assign({}, val, {point}))
   }

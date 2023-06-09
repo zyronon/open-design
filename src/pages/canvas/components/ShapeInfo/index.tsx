@@ -69,11 +69,11 @@ const ShapeInfo = (props: any) => {
       setConf(s.conf)
     })
     EventBus.on(EventKeys.POINT_INFO, (val: any) => {
-      console.log('pointInfo', val)
+      // console.log('pointInfo', val)
       setPointInfo(val)
     })
     EventBus.on(EventKeys.MODE, (val: any) => {
-      console.log('MODE', val)
+      // console.log('MODE', val)
       setMode(val)
     })
     return () => {
@@ -151,6 +151,7 @@ const ShapeInfo = (props: any) => {
                 <div className="col">
                   <BaseInput value={pointInfo.point?.radius}
                              onChange={pointRadiusChange}
+                             min={0}
                              prefix={<AngleIcon style={{fontSize: "16rem"}}/>}/>
                 </div>
               </div>

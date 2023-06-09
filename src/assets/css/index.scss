@@ -34,3 +34,9 @@ html, body {
   display: block;
   width: 10px;
 }
+
+.cursor {
+  position: fixed;
+  z-index: 999999;
+  width: 20rem;
+}

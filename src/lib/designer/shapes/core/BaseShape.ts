@@ -60,6 +60,33 @@ export class BaseShape {
     this.children = this.conf.children?.map((conf: BaseConfig) => {
       return getShapeFromConfig({conf, parent: this})
     }) ?? []
+
+    let lines = this.conf.lineShapes[0]
+    let lines1 = lines.points[1]
+    //中间点，既要作圆的那个点
+    let lines2 = lines.points[2]
+    let lines3 = lines.points[3]
+    console.log(
+      lines1,
+      lines2,
+      lines3,
+    )
+    let degree = Math2.getDegree(lines2.point?.center!, lines3.point?.center!, lines1.point?.center!)
+
+    let d2 = degree / 2
+    console.log('d2', d2)
+    //得到已知角度tan值
+    let tan = Math.tan(Math2.jiaodu2hudu(d2))
+    console.log('tan', tan)
+    //tanA = a/b。可知b = a/ tanA。所以领边的长就是lines2.point?.radius! / tan
+    console.log('当前radius（对边）对应的邻边长', lines2.point?.radius! / tan)
+
+    let a = Math2.getHypotenuse2(lines2.point?.center!, lines1.point?.center!)
+    let a2 = Math2.getHypotenuse2(lines2.point?.center!, lines3.point?.center!)
+    console.log('2-1', a)
+    console.log('2-3', a2)
+    //公共同上
+    console.log('2-3这条边最大的radius（对边）值', a2 * tan)
   }
 
   get status() {

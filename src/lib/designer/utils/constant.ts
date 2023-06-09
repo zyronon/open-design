@@ -670,9 +670,224 @@ let temp = {
 export const rects = [
   {
     "name": "孙矩形111111",
+    "layout": {
+      "x": 920,
+      "y": 100,
+      "w": 200,
+      "h": 400
+    },
+    "rotation": 0,
+    "lineWidth": 2,
+    "type": "RECTANGLE",
+    "color": "gray",
+    "radius": 0,
+    "children": [],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "rgb(241,238,238)",
+    "flipHorizontal": false,
+    "flipVertical": false,
+    // "id": "e306fe77-8afd-4f43-a4ca-82bdc6891a72",
+    "percent": {
+      "x": 0,
+      "y": 0
+    },
+    "relativeCenter": {
+      "x": 0,
+      "y": 0
+    },
+    "realRotation": 0,
+    "start": {
+      "x": 420,
+      "y": 100
+    },
+    "absolute": {
+      "x": 420,
+      "y": 100
+    },
+    "original": {
+      "x": 420,
+      "y": 100
+    },
+    "center": {
+      "x": 520,
+      "y": 300
+    },
+    "box": {
+      "leftX": 420,
+      "rightX": 620,
+      "topY": 100,
+      "bottomY": 500,
+      "topLeft": {
+        "x": 420,
+        "y": 100
+      },
+      "topRight": {
+        "x": 620,
+        "y": 100
+      },
+      "bottomLeft": {
+        "x": 420,
+        "y": 500
+      },
+      "bottomRight": {
+        "x": 620,
+        "y": 500
+      }
+    },
+    "strokeAlign": "INSIDE",
+    "lineShapes": [
+      {
+        "close": true,
+        "points": [
+          {
+            "type": "Single",
+            "point": {
+              "id": "830c8344-d9d3-4aaa-83bf-c22423c3eb26",
+              "cp1": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "center": {
+                "use": true,
+                "x": -100,
+                "y": -200,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "cp2": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "type": "RightAngle"
+            }
+          },
+          {
+            "type": "Single",
+            "point": {
+              "id": "e42ca97a-8f6e-4173-a98c-dcc4f7202362",
+              "cp1": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "center": {
+                "use": true,
+                "x": 100,
+                "y": -200,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "cp2": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "type": "RightAngle"
+            }
+          },
+          {
+            "type": "Single",
+            "point": {
+              "id": "5eb172f4-383a-4dc6-aba7-6bb7680196a4",
+              "cp1": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "center": {
+                "use": true,
+                "x": 100,
+                "y": 200,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "cp2": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "type": "RightAngle",
+              "radius": 68
+            }
+          },
+          {
+            "type": "Single",
+            "point": {
+              "id": "1653231c-ffb2-422f-8f8f-9ed3e307c8d5",
+              "cp1": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "center": {
+                "use": true,
+                "x": -32,
+                "y": 50,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "cp2": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "type": "RightAngle"
+            }
+          }
+        ]
+      }
+    ],
+    "commonPoints": [],
+    "isCustom": true,
+    "isComplete": true
+  },
+  {
+    "name": "孙矩形111111",
     layout: {
-      "x": 820,
-      "y": 130,
+      "x": 420,
+      "y": 100,
       "w": 200,
       "h": 400,
     },
@@ -942,6 +1157,223 @@ export const rects = [
     flipHorizontal: false,
     flipVertical: false
   },
+]
+export const rects33 = [
+  {
+    "name": "孙矩形111111",
+    "layout": {
+      "x": 920,
+      "y": 100,
+      "w": 200,
+      "h": 400
+    },
+    "rotation": 0,
+    "lineWidth": 2,
+    "type": "RECTANGLE",
+    "color": "gray",
+    "radius": 0,
+    "children": [],
+    "borderColor": "rgb(216,216,216)",
+    "fillColor": "rgb(241,238,238)",
+    "flipHorizontal": false,
+    "flipVertical": false,
+    "percent": {
+      "x": 0,
+      "y": 0
+    },
+    "relativeCenter": {
+      "x": 0,
+      "y": 0
+    },
+    "realRotation": 0,
+    "start": {
+      "x": 920,
+      "y": 100
+    },
+    "absolute": {
+      "x": 920,
+      "y": 100
+    },
+    "original": {
+      "x": 920,
+      "y": 100
+    },
+    "center": {
+      "x": 1020,
+      "y": 300
+    },
+    "box": {
+      "leftX": 920,
+      "rightX": 1120,
+      "topY": 100,
+      "bottomY": 500,
+      "topLeft": {
+        "x": 920,
+        "y": 100
+      },
+      "topRight": {
+        "x": 1120,
+        "y": 100
+      },
+      "bottomLeft": {
+        "x": 920,
+        "y": 500
+      },
+      "bottomRight": {
+        "x": 1120,
+        "y": 500
+      }
+    },
+    "strokeAlign": "INSIDE",
+    "lineShapes": [
+      {
+        "close": true,
+        "points": [
+          {
+            "type": "Single",
+            "point": {
+              "id": "830c8344-d9d3-4aaa-83bf-c22423c3eb26",
+              "cp1": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "center": {
+                "use": true,
+                "x": -100,
+                "y": -200,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "cp2": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "type": "RightAngle"
+            }
+          },
+          {
+            "type": "Single",
+            "point": {
+              "id": "e42ca97a-8f6e-4173-a98c-dcc4f7202362",
+              "cp1": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "center": {
+                "use": true,
+                "x": 100,
+                "y": -200,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "cp2": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "type": "RightAngle"
+            }
+          },
+          {
+            "type": "Single",
+            "point": {
+              "id": "5eb172f4-383a-4dc6-aba7-6bb7680196a4",
+              "cp1": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "center": {
+                "use": true,
+                "x": 44.490198913580116,
+                "y": 121.2920730864198,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "cp2": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "type": "RightAngle",
+              "radius": 73
+            }
+          },
+          {
+            "type": "Single",
+            "point": {
+              "id": "1653231c-ffb2-422f-8f8f-9ed3e307c8d5",
+              "cp1": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "center": {
+                "use": true,
+                "x": -90.82381906172839,
+                "y": 47.51448651851854,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "cp2": {
+                "use": false,
+                "x": 0,
+                "y": 0,
+                "px": 0,
+                "py": 0,
+                "rx": 0,
+                "ry": 0
+              },
+              "type": "RightAngle"
+            }
+          }
+        ]
+      }
+    ],
+    "commonPoints": [],
+    "isCustom": true,
+    "isComplete": true,
+    "id": "22ef6280-013d-4694-a771-fa1a5048d417"
+  }
 ]
 
 const defaultCurrentMat = [

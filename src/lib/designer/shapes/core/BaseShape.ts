@@ -89,6 +89,8 @@ export class BaseShape {
     console.log('2-3这条边最大的radius（对边）值', a2 * tan)
   }
 
+
+
   get status() {
     return this._status
   }

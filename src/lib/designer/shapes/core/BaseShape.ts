@@ -89,8 +89,6 @@ export class BaseShape {
     console.log('2-3这条边最大的radius（对边）值', a2 * tan)
   }
 
-
-
   get status() {
     return this._status
   }
@@ -1351,6 +1349,8 @@ export class BaseShape {
               }
               break
             case LineType.Bezier3:
+              //这里写lineTo2是因为遇到第一个曲线时，要先连到起点，再开始画曲线
+              //后续如果都是曲线，这个LineTo2其实也就失去了作用了，不过不影响，因为上一点画曲线时，已经画到这个点了。lineTo2相当于在原点了一次
               path.lineTo2(startPoint.center)
               path.bezierCurveTo2(startPoint.cp2, endPoint.cp1, endPoint.center)
               break
@@ -1371,6 +1371,66 @@ export class BaseShape {
       })
     })
     return pathList
+  }
+
+  getCustomShapePath2(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
+    let strokePathList: LinePath[] = []
+    let fillPathList: LinePath[] = []
+    this.conf.lineShapes.map((line) => {
+      let strokePath = new Path2D()
+      let fillPath = new Path2D()
+      line.points.map((pointInfo: PointInfo, index: number, array: PointInfo[]) => {
+        let startPoint = this.getPoint(pointInfo)
+        //未闭合的情况下，只需绘制一个终点即可
+        if (index === array.length - 1 && !line.close) {
+          strokePath.lineTo2(startPoint.center)
+          fillPath.lineTo2(startPoint.center)
+        } else {
+          let endPoint: BezierPoint
+          if (index === array.length - 1) {
+            endPoint = this.getPoint(array[0])
+          } else {
+            endPoint = this.getPoint(array[index + 1])
+          }
+          let lineType = helper.judgeLineType({startPoint, endPoint})
+          switch (lineType) {
+            case LineType.Line:
+              // console.log('startPoint-radius', startPoint.radius)
+              if (startPoint.radius) {
+                fillPath.arcTo2(startPoint.center, endPoint.center, startPoint.radius)
+              } else {
+                fillPath.lineTo2(startPoint.center)
+              }
+              strokePath.lineTo2(startPoint.center)
+              break
+            case LineType.Bezier3:
+              //这里写lineTo2是因为遇到第一个曲线时，要先连到起点，再开始画曲线
+              //后续如果都是曲线，这个LineTo2其实也就失去了作用了，不过不影响，因为上一点画曲线时，已经画到这个点了。lineTo2相当于在原点了一次
+              strokePath.lineTo2(startPoint.center)
+              strokePath.bezierCurveTo2(startPoint.cp2, endPoint.cp1, endPoint.center)
+              fillPath.lineTo2(startPoint.center)
+              fillPath.bezierCurveTo2(startPoint.cp2, endPoint.cp1, endPoint.center)
+              break
+            case LineType.Bezier2:
+              let cp: P2
+              if (startPoint.cp2.use) cp = startPoint.cp2
+              if (endPoint.cp1.use) cp = endPoint.cp1
+              strokePath.lineTo2(startPoint.center)
+              strokePath.quadraticCurveTo2(cp!, endPoint.center)
+              fillPath.lineTo2(startPoint.center)
+              fillPath.quadraticCurveTo2(cp!, endPoint.center)
+              break
+          }
+        }
+      })
+      if (line.close) {
+        strokePath.closePath()
+        fillPath.closePath()
+      }
+      strokePathList.push({close: line.close, path: strokePath})
+      fillPathList.push({close: line.close, path: fillPath})
+    })
+    return {strokePathList, fillPathList}
   }
 
   getPoint(pointInfo: PointInfo, conf: BaseConfig = this.conf): BezierPoint {

@@ -104,6 +104,45 @@ export class Rectangle extends ParentShape {
     } = this.conf
     let {x, y, w, h} = newLayout
 
+
+    ctx.lineWidth = lineWidth ?? defaultConfig.lineWidth
+    ctx.fillStyle = fillColor
+
+    let {strokePathList, fillPathList} = this.getCustomShapePath2()
+    let pathList = this.getShapePath(newLayout, this.conf.radius)
+    // strokePathList.map(({close, path}) => {
+    //   ctx.stroke(path)
+    // })
+    fillPathList.map(({close, path}) => {
+      if (close) {
+        ctx.fill(path)
+      } else {
+        ctx.stroke(path)
+      }
+    })
+
+    //描边
+    let lw2 = ctx.lineWidth / 2
+    if (strokeAlign === StrokeAlign.INSIDE) {
+      x += lw2, y += lw2, w -= lw2 * 2, h -= lw2 * 2, radius -= lw2
+    } else if (strokeAlign === StrokeAlign.OUTSIDE) {
+      x -= lw2, y -= lw2, w += lw2 * 2, h += lw2 * 2, radius += lw2
+    }
+    ctx.strokeStyle = borderColor
+    pathList = this.getShapePath({x, y, w, h}, radius)
+    pathList.map(line => {
+      ctx.stroke(line.path)
+    })
+  }
+
+  drawShape2(ctx: CanvasRenderingContext2D, newLayout: Rect, parent?: BaseConfig) {
+    if (this.status === ShapeStatus.Edit) return
+    let {
+      radius,
+      fillColor, borderColor, lineWidth, strokeAlign
+    } = this.conf
+    let {x, y, w, h} = newLayout
+
     ctx.lineWidth = lineWidth ?? defaultConfig.lineWidth
 
     //填充图形
@@ -134,15 +173,19 @@ export class Rectangle extends ParentShape {
   drawHover(ctx: CanvasRenderingContext2D, layout: Rect): void {
     ctx.strokeStyle = defaultConfig.strokeStyle
     //容器hover时只需要描边矩形就行了
-    let pathList = this.getShapePath(layout, 0)
-    pathList.map(linePath => {
-      ctx.stroke(linePath.path)
+    let {strokePathList, fillPathList} = this.getCustomShapePath2()
+    strokePathList.map(({close, path}) => {
+      ctx.stroke(path)
     })
   }
 
   drawSelected(ctx: CanvasRenderingContext2D, layout: Rect): void {
-    // if (!this.mouseDown){
-    // }
+    ctx.strokeStyle = defaultConfig.strokeStyle
+    //容器hover时只需要描边矩形就行了
+    let {strokePathList, fillPathList} = this.getCustomShapePath2()
+    strokePathList.map(({close, path}) => {
+      ctx.stroke(path)
+    })
     draw.selected(ctx, layout)
   }
 
@@ -193,10 +236,16 @@ export class Rectangle extends ParentShape {
     ctx.strokeStyle = Colors.Line2
     ctx.fillStyle = fillColor
 
-    let pathList = super.getCustomShapePath()
-    pathList.map(linePath => {
-      linePath.close && ctx.fill(linePath.path)
-      ctx.stroke(linePath.path)
+    let {strokePathList, fillPathList} = this.getCustomShapePath2()
+    strokePathList.map(({close, path}) => {
+      ctx.stroke(path)
+    })
+    fillPathList.map(({close, path}) => {
+      if (close) {
+        ctx.fill(path)
+      } else {
+        ctx.stroke(path)
+      }
     })
 
     if ((this.editHover.type === EditType.Line

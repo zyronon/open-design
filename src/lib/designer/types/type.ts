@@ -162,7 +162,8 @@ export enum BezierPointType {
 // 直线：直接取两个点的center点相连
 export interface BezierPoint {
   id: string,
-  radius?: number,
+  radius?: number,//显示的圆角
+  realRadius?: number,//真实的圆角
   cp1: P2,//右边的控制点
   center: P2//中边的点
   cp2: P2//左边的控制点

@@ -686,7 +686,6 @@ export const rects = [
     "fillColor": "rgb(241,238,238)",
     "flipHorizontal": false,
     "flipVertical": false,
-    // "id": "e306fe77-8afd-4f43-a4ca-82bdc6891a72",
     "percent": {
       "x": 0,
       "y": 0
@@ -697,40 +696,40 @@ export const rects = [
     },
     "realRotation": 0,
     "start": {
-      "x": 420,
+      "x": 920,
       "y": 100
     },
     "absolute": {
-      "x": 420,
+      "x": 920,
       "y": 100
     },
     "original": {
-      "x": 420,
+      "x": 920,
       "y": 100
     },
     "center": {
-      "x": 520,
+      "x": 1020,
       "y": 300
     },
     "box": {
-      "leftX": 420,
-      "rightX": 620,
+      "leftX": 920,
+      "rightX": 1120,
       "topY": 100,
       "bottomY": 500,
       "topLeft": {
-        "x": 420,
+        "x": 920,
         "y": 100
       },
       "topRight": {
-        "x": 620,
+        "x": 1120,
         "y": 100
       },
       "bottomLeft": {
-        "x": 420,
+        "x": 920,
         "y": 500
       },
       "bottomRight": {
-        "x": 620,
+        "x": 1120,
         "y": 500
       }
     },
@@ -778,9 +777,9 @@ export const rects = [
             "point": {
               "id": "e42ca97a-8f6e-4173-a98c-dcc4f7202362",
               "cp1": {
-                "use": false,
-                "x": 0,
-                "y": 0,
+                "use": true,
+                "x": 49.999999999999986,
+                "y": -300,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
@@ -796,15 +795,15 @@ export const rects = [
                 "ry": 0
               },
               "cp2": {
-                "use": false,
-                "x": 0,
-                "y": 0,
+                "use": true,
+                "x": 150,
+                "y": -100,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
                 "ry": 0
               },
-              "type": "RightAngle"
+              "type": "MirrorAngleAndLength"
             }
           },
           {
@@ -881,7 +880,8 @@ export const rects = [
     ],
     "commonPoints": [],
     "isCustom": true,
-    "isComplete": true
+    "isComplete": true,
+    "id": "5b97df6a-c5c9-4295-9167-3f0e0b395282"
   },
   {
     "name": "孙矩形111111",

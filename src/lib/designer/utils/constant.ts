@@ -672,9 +672,9 @@ export const rects = [
     "name": "孙矩形111111",
     "layout": {
       "x": 920,
-      "y": 100,
-      "w": 200,
-      "h": 400
+      "y": 50,
+      "w": 225,
+      "h": 450
     },
     "rotation": 0,
     "lineWidth": 2,
@@ -701,35 +701,35 @@ export const rects = [
     },
     "absolute": {
       "x": 920,
-      "y": 100
+      "y": 50
     },
     "original": {
       "x": 920,
-      "y": 100
+      "y": 50
     },
     "center": {
-      "x": 1020,
-      "y": 300
+      "x": 1032.5,
+      "y": 275
     },
     "box": {
       "leftX": 920,
-      "rightX": 1120,
-      "topY": 100,
+      "rightX": 1145,
+      "topY": 50,
       "bottomY": 500,
       "topLeft": {
         "x": 920,
-        "y": 100
+        "y": 50
       },
       "topRight": {
-        "x": 1120,
-        "y": 100
+        "x": 1145,
+        "y": 50
       },
       "bottomLeft": {
         "x": 920,
         "y": 500
       },
       "bottomRight": {
-        "x": 1120,
+        "x": 1145,
         "y": 500
       }
     },
@@ -753,8 +753,8 @@ export const rects = [
               },
               "center": {
                 "use": true,
-                "x": -100,
-                "y": -200,
+                "x": -112.5,
+                "y": -175,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
@@ -778,8 +778,8 @@ export const rects = [
               "id": "e42ca97a-8f6e-4173-a98c-dcc4f7202362",
               "cp1": {
                 "use": true,
-                "x": 49.999999999999986,
-                "y": -300,
+                "x": 37.499999999999986,
+                "y": -275,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
@@ -787,8 +787,8 @@ export const rects = [
               },
               "center": {
                 "use": true,
-                "x": 100,
-                "y": -200,
+                "x": 87.5,
+                "y": -175,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
@@ -796,14 +796,18 @@ export const rects = [
               },
               "cp2": {
                 "use": true,
-                "x": 150,
-                "y": -100,
+                "x": 137.5,
+                "y": -75,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
                 "ry": 0
               },
-              "type": "MirrorAngleAndLength"
+              "type": "MirrorAngleAndLength",
+              "acrStart": {
+                "x": 100.94,
+                "y": 134.11999999999995
+              }
             }
           },
           {
@@ -821,8 +825,8 @@ export const rects = [
               },
               "center": {
                 "use": true,
-                "x": 100,
-                "y": 200,
+                "x": 87.5,
+                "y": 225,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
@@ -846,9 +850,9 @@ export const rects = [
             "point": {
               "id": "1653231c-ffb2-422f-8f8f-9ed3e307c8d5",
               "cp1": {
-                "use": false,
-                "x": 0,
-                "y": 0,
+                "use": true,
+                "x": -49.5,
+                "y": 245,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
@@ -856,23 +860,23 @@ export const rects = [
               },
               "center": {
                 "use": true,
-                "x": -32,
-                "y": 50,
+                "x": -99.5,
+                "y": 145,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
                 "ry": 0
               },
               "cp2": {
-                "use": false,
-                "x": 0,
-                "y": 0,
+                "use": true,
+                "x": -149.5,
+                "y": 45,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
                 "ry": 0
               },
-              "type": "RightAngle"
+              "type": "MirrorAngleAndLength"
             }
           }
         ]

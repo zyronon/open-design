@@ -113,6 +113,7 @@ export class Rectangle extends ParentShape {
     // strokePathList.map(({close, path}) => {
     //   ctx.stroke(path)
     // })
+
     fillPathList.map(({close, path}) => {
       if (close) {
         ctx.fill(path)
@@ -120,6 +121,7 @@ export class Rectangle extends ParentShape {
         ctx.stroke(path)
       }
     })
+
 
     //描边
     let lw2 = ctx.lineWidth / 2
@@ -129,8 +131,8 @@ export class Rectangle extends ParentShape {
       x -= lw2, y -= lw2, w += lw2 * 2, h += lw2 * 2, radius += lw2
     }
     ctx.strokeStyle = borderColor
-    pathList = this.getShapePath({x, y, w, h}, radius)
-    pathList.map(line => {
+    // strokePathList = this.getShapePath({x, y, w, h}, radius)
+    strokePathList.map(line => {
       ctx.stroke(line.path)
     })
   }

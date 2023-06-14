@@ -72,31 +72,100 @@ export class BaseShape {
       lines3,
     )
 
+    let frontT = -1
+    let backT = -1
+    let center = lines2.point!.center
+    console.time()
     for (let i = 0.1; i <= 1; i = i + 0.1) {
       let start = Bezier.getPointByT_2(-i, [lines1.point?.center!, lines1.point?.cp2!, lines2.point?.center!])
       // console.log('i', i)
-      console.log('start', start)
-      let end = lines3.point?.center!
-      let degree = this.test(lines2.point?.center!, start, end, lines2.point?.radius!)
-    }
+      let end = Bezier.getPointByT_2(i, [lines2.point?.center!, lines3.point?.cp1!, lines3.point?.center!])
+      console.log('start', start, 'end', end)
 
-    // let degree = Math2.getDegree(lines2.point?.center!, lines3.point?.center!, lines1.point?.center!)
-    //
-    // let d2 = degree / 2
-    // console.log('d2', d2)
-    // //得到已知角度tan值
-    // let tan = Math.tan(Math2.jiaodu2hudu(d2))
-    // console.log('tan', tan)
-    // //tanA = a/b。可知b = a/ tanA。所以领边的长就是lines2.point?.radius! / tan
-    // console.log('当前radius（对边）对应的邻边长', lines2.point?.radius! / tan)
-    //
-    // let a = Math2.getHypotenuse2(lines2.point?.center!, lines1.point?.center!)
-    // let a2 = Math2.getHypotenuse2(lines2.point?.center!, lines3.point?.center!)
-    // console.log('2-1', a)
-    // console.log('2-3', a2)
-    // //公共同上
-    // console.log('2-3这条边最大的radius（对边）值', a2 * tan)
-    // let tanX =
+      let adjacent = this.getAdjacentSide(center, start, end, lines2.point?.radius!)
+      let front = Math2.getHypotenuse2(center!, start)
+      let back = Math2.getHypotenuse2(center!, end)
+      if (back > adjacent && front > adjacent) {
+        frontT = -i
+        backT = i
+        console.log('frontT', frontT, 'backT', backT)
+
+        for (let j = i; j >= 0; j = j - 0.05) {
+          start = Bezier.getPointByT_2(-j, [lines1.point?.center!, lines1.point?.cp2!, lines2.point?.center!])
+          adjacent = this.getAdjacentSide(center, start, end, lines2.point?.radius!)
+          front = Math2.getHypotenuse2(center!, start)
+          // console.log('j', j, 'front', front, 'start', start, 'adjacent', adjacent)
+          if (front < adjacent) {
+            frontT = -(j + 0.05)
+            start = Bezier.getPointByT_2(frontT, [lines1.point?.center!, lines1.point?.cp2!, lines2.point?.center!])
+            break
+          }
+        }
+
+        for (let j = i; j >= 0; j = j - 0.05) {
+          end = Bezier.getPointByT_2(j, [lines2.point?.center!, lines3.point?.cp1!, lines3.point?.center!])
+          adjacent = this.getAdjacentSide(center, start, end, lines2.point?.radius!)
+          back = Math2.getHypotenuse2(center!, end)
+          if (back < adjacent) {
+            backT = (j + 0.05)
+            end = Bezier.getPointByT_2(j, [lines2.point?.center!, lines3.point?.cp1!, lines3.point?.center!])
+            break
+          }
+        }
+
+        lines1.point!.acrPoint = start
+        lines3.point!.acrPoint = end
+        console.log('frontT', frontT,
+          'start', start,
+          'backT', backT,
+          'end', end
+        )
+        break
+      }
+
+      // if (isMax) {
+      //   console.log('d', isMax, i)
+      //   for (let j = i - 0.1; j <= i; j = j + 0.01) {
+      //     start = Bezier.getPointByT_2(-j, [lines1.point?.center!, lines1.point?.cp2!, lines2.point?.center!])
+      //     end = Bezier.getPointByT_2(j, [lines1.point?.center!, lines1.point?.cp2!, lines2.point?.center!])
+      //     // console.log('i', i)
+      //     console.log('start', start)
+      //     let isMax = this.test(lines2.point?.center!, start, end, lines2.point?.radius!)
+      //     if (isMax) {
+      //       console.log('d2', j)
+      //       lines1.point!.acrPoint = start
+      //       break
+      //     }
+      //   }
+      //   break
+      // }
+    }
+    console.timeEnd()
+
+    // for (let i = 0.1; i <= 1; i = i + 0.1) {
+    //   let start = Bezier.getPointByT_2(-i, [lines1.point?.center!, lines1.point?.cp2!, lines2.point?.center!])
+    //   // console.log('i', i)
+    //   console.log('start', start)
+    //   let end = lines3.point?.center!
+    //   let isMax = this.test(lines2.point?.center!, start, end, lines2.point?.radius!)
+    //   if (isMax) {
+    //     console.log('d', isMax, i)
+    //     for (let j = i - 0.1; j <= i; j = j + 0.01) {
+    //       start = Bezier.getPointByT_2(-j, [lines1.point?.center!, lines1.point?.cp2!, lines2.point?.center!])
+    //       // console.log('i', i)
+    //       console.log('start', start)
+    //       let isMax = this.test(lines2.point?.center!, start, end, lines2.point?.radius!)
+    //       if (isMax) {
+    //         console.log('d2', j)
+    //         lines1.point!.acrPoint = start
+    //         break
+    //       }
+    //     }
+    //     break
+    //   }
+    // }
+
+
   }
 
   test(center: P, start: P, end: P, r: number) {
@@ -108,15 +177,31 @@ export class BaseShape {
     // console.log('tan值', tan)
     //tanA = a/b。可知b = a/ tanA。所以领边的长就是lines2.point?.radius! / tan
     console.log('当前radius（对边）对应的邻边长', r / tan)
+    let s = r / tan
 
-    let a = Math2.getHypotenuse2(center!, start)
-    let a2 = Math2.getHypotenuse2(center!, end)
-    // console.log('2-1', a)
-    // console.log('2-3', a2)
+    let front = Math2.getHypotenuse2(center!, start)
+    let back = Math2.getHypotenuse2(center!, end)
+    console.log('front', front)
+    console.log('back', back)
+    return front > s
+    // return front > s && back > s
     // //公共同上
-    // console.log('2-3这条边最大的radius（对边）值', a2 * tan)
+    // console.log('2-3这条边最大的radius（对边）值', back * tan)
     //
     // let tanX =
+  }
+
+  //获取acr圆弧的邻边长
+  getAdjacentSide(center: P, start: P, end: P, r: number) {
+    let degree = Math2.getDegree(center, end, start)
+    let d2 = degree / 2
+    // console.log('角度', degree, d2)
+    //得到已知角度tan值
+    let tan = Math.tan(Math2.jiaodu2hudu(d2))
+    // console.log('tan值', tan)
+    //tanA = a/b。可知b = a/ tanA。所以领边的长就是lines2.point?.radius! / tan
+    // console.log('当前radius（对边）对应的邻边长', r / tan)
+    return r / tan
   }
 
   get status() {
@@ -1403,7 +1488,7 @@ export class BaseShape {
     return pathList
   }
 
-  getCustomShapePath2(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
+  getCustomShapePath2(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     this.conf.lineShapes.map((line) => {
@@ -1416,40 +1501,60 @@ export class BaseShape {
           strokePath.lineTo2(startPoint.center)
           fillPath.lineTo2(startPoint.center)
         } else {
-          let endPoint: BezierPoint
-          if (index === array.length - 1) {
-            endPoint = this.getPoint(array[0])
+          if (false) {
+            strokePath.moveTo2(startPoint.center)
+            fillPath.moveTo2(startPoint.center)
           } else {
-            endPoint = this.getPoint(array[index + 1])
-          }
-          let lineType = helper.judgeLineType({startPoint, endPoint})
-          switch (lineType) {
-            case LineType.Line:
-              // console.log('startPoint-radius', startPoint.radius)
-              if (startPoint.radius) {
-                fillPath.arcTo2(startPoint.center, endPoint.center, startPoint.radius)
-              } else {
+            if (index === 0) {
+              strokePath.moveTo2(startPoint.center)
+              fillPath.moveTo2(startPoint.center)
+            }
+            let endPoint: BezierPoint
+            if (index === array.length - 1) {
+              endPoint = this.getPoint(array[0])
+            } else {
+              endPoint = this.getPoint(array[index + 1])
+            }
+            let lineType = helper.judgeLineType({startPoint, endPoint})
+            switch (lineType) {
+              case LineType.Line:
+                // console.log('startPoint-radius', startPoint.radius)
+                if (startPoint.radius) {
+                  fillPath.arcTo2(startPoint.center, endPoint.center, startPoint.radius)
+                } else {
+                  fillPath.lineTo2(startPoint.center)
+                }
+                strokePath.lineTo2(startPoint.center)
+                break
+              case LineType.Bezier3:
+                //这里写lineTo2是因为遇到第一个曲线时，要先连到起点，再开始画曲线
+                //后续如果都是曲线，这个LineTo2其实也就失去了作用了，不过不影响，因为上一点画曲线时，已经画到这个点了。lineTo2相当于在原点了一次
+                strokePath.lineTo2(startPoint.center)
+                strokePath.bezierCurveTo2(startPoint.cp2, endPoint.cp1, endPoint.center)
                 fillPath.lineTo2(startPoint.center)
-              }
-              strokePath.lineTo2(startPoint.center)
-              break
-            case LineType.Bezier3:
-              //这里写lineTo2是因为遇到第一个曲线时，要先连到起点，再开始画曲线
-              //后续如果都是曲线，这个LineTo2其实也就失去了作用了，不过不影响，因为上一点画曲线时，已经画到这个点了。lineTo2相当于在原点了一次
-              strokePath.lineTo2(startPoint.center)
-              strokePath.bezierCurveTo2(startPoint.cp2, endPoint.cp1, endPoint.center)
-              fillPath.lineTo2(startPoint.center)
-              fillPath.bezierCurveTo2(startPoint.cp2, endPoint.cp1, endPoint.center)
-              break
-            case LineType.Bezier2:
-              let cp: P2
-              if (startPoint.cp2.use) cp = startPoint.cp2
-              if (endPoint.cp1.use) cp = endPoint.cp1
-              strokePath.lineTo2(startPoint.center)
-              strokePath.quadraticCurveTo2(cp!, endPoint.center)
-              fillPath.lineTo2(startPoint.center)
-              fillPath.quadraticCurveTo2(cp!, endPoint.center)
-              break
+                fillPath.bezierCurveTo2(startPoint.cp2, endPoint.cp1, endPoint.center)
+                break
+              case LineType.Bezier2:
+                let cp: P2
+                if (startPoint.cp2.use) cp = startPoint.cp2
+                if (endPoint.cp1.use) cp = endPoint.cp1
+                strokePath.quadraticCurveTo2(cp!, endPoint.center)
+
+                if (startPoint.radius) {
+                  fillPath.arcTo2(startPoint.center, endPoint.acrPoint!, startPoint.radius)
+                  // fillPath.lineTo2(endPoint.acrPoint!)
+                  fillPath.quadraticCurveTo2(cp!, endPoint.center)
+                } else {
+                  if (endPoint.radius) {
+                    fillPath.quadraticCurveTo2(cp!, startPoint.acrPoint!)
+                  } else {
+                    fillPath.quadraticCurveTo2(cp!, endPoint.center)
+                  }
+                }
+                // fillPath.quadraticCurveTo2(cp!, endPoint.center)
+
+                break
+            }
           }
         }
       })
@@ -1469,7 +1574,6 @@ export class BaseShape {
     } else {
       return this.conf.commonPoints[this.conf.commonPoints.findIndex(v => v.id === pointInfo.targetId)!]
     }
-
   }
 
   protected notifyConfUpdate() {

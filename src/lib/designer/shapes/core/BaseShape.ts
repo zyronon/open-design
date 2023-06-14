@@ -71,22 +71,52 @@ export class BaseShape {
       lines2,
       lines3,
     )
-    let degree = Math2.getDegree(lines2.point?.center!, lines3.point?.center!, lines1.point?.center!)
 
+    for (let i = 0.1; i <= 1; i = i + 0.1) {
+      let start = Bezier.getPointByT_2(-i, [lines1.point?.center!, lines1.point?.cp2!, lines2.point?.center!])
+      // console.log('i', i)
+      console.log('start', start)
+      let end = lines3.point?.center!
+      let degree = this.test(lines2.point?.center!, start, end, lines2.point?.radius!)
+    }
+
+    // let degree = Math2.getDegree(lines2.point?.center!, lines3.point?.center!, lines1.point?.center!)
+    //
+    // let d2 = degree / 2
+    // console.log('d2', d2)
+    // //得到已知角度tan值
+    // let tan = Math.tan(Math2.jiaodu2hudu(d2))
+    // console.log('tan', tan)
+    // //tanA = a/b。可知b = a/ tanA。所以领边的长就是lines2.point?.radius! / tan
+    // console.log('当前radius（对边）对应的邻边长', lines2.point?.radius! / tan)
+    //
+    // let a = Math2.getHypotenuse2(lines2.point?.center!, lines1.point?.center!)
+    // let a2 = Math2.getHypotenuse2(lines2.point?.center!, lines3.point?.center!)
+    // console.log('2-1', a)
+    // console.log('2-3', a2)
+    // //公共同上
+    // console.log('2-3这条边最大的radius（对边）值', a2 * tan)
+    // let tanX =
+  }
+
+  test(center: P, start: P, end: P, r: number) {
+    let degree = Math2.getDegree(center, end, start)
     let d2 = degree / 2
-    console.log('d2', d2)
+    // console.log('角度', degree, d2)
     //得到已知角度tan值
     let tan = Math.tan(Math2.jiaodu2hudu(d2))
-    console.log('tan', tan)
+    // console.log('tan值', tan)
     //tanA = a/b。可知b = a/ tanA。所以领边的长就是lines2.point?.radius! / tan
-    console.log('当前radius（对边）对应的邻边长', lines2.point?.radius! / tan)
+    console.log('当前radius（对边）对应的邻边长', r / tan)
 
-    let a = Math2.getHypotenuse2(lines2.point?.center!, lines1.point?.center!)
-    let a2 = Math2.getHypotenuse2(lines2.point?.center!, lines3.point?.center!)
-    console.log('2-1', a)
-    console.log('2-3', a2)
-    //公共同上
-    console.log('2-3这条边最大的radius（对边）值', a2 * tan)
+    let a = Math2.getHypotenuse2(center!, start)
+    let a2 = Math2.getHypotenuse2(center!, end)
+    // console.log('2-1', a)
+    // console.log('2-3', a2)
+    // //公共同上
+    // console.log('2-3这条边最大的radius（对边）值', a2 * tan)
+    //
+    // let tanX =
   }
 
   get status() {
@@ -1373,7 +1403,7 @@ export class BaseShape {
     return pathList
   }
 
-  getCustomShapePath2(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
+  getCustomShapePath2(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     this.conf.lineShapes.map((line) => {
@@ -1439,6 +1469,7 @@ export class BaseShape {
     } else {
       return this.conf.commonPoints[this.conf.commonPoints.findIndex(v => v.id === pointInfo.targetId)!]
     }
+
   }
 
   protected notifyConfUpdate() {

@@ -599,4 +599,11 @@ export default {
     // 射线穿过多边形边界的次数为奇数时点在多边形内
     return flag
   },
+  equalsPoint(p1: BezierPoint, p2: BezierPoint) {
+    // if (
+    //   p1.cp1 ===
+    //
+    // )
+
+  }
 }

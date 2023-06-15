@@ -61,6 +61,13 @@ export class BaseShape {
       return getShapeFromConfig({conf, parent: this})
     }) ?? []
 
+    this.ttt()
+
+    // @ts-ignore
+    window.ttt = () => this.ttt()
+  }
+
+  ttt() {
     let lines = this.conf.lineShapes[0]
     let lines1 = lines.points[1]
     //中间点，既要作圆的那个点
@@ -113,13 +120,26 @@ export class BaseShape {
           }
         }
 
+
+        let bjs = new BezierJs([lines1.point?.center!, lines1.point?.cp2!, lines2.point?.center!])
+        let c = bjs.split(1 + frontT)
+
+        lines1.point!.acrCp = c.left.points[1]
         lines1.point!.acrPoint = start
+
+        let bjs2 = new BezierJs([lines2.point?.center!, lines3.point?.cp1!, lines3.point?.center!])
+        c = bjs2.split(backT)
+
+        lines3.point!.acrCp =  c.right.points[1]
         lines3.point!.acrPoint = end
-        console.log('frontT', frontT,
+        console.log(
+          'frontT', frontT,
           'start', start,
           'backT', backT,
           'end', end
         )
+        console.timeEnd()
+
         break
       }
 
@@ -140,7 +160,6 @@ export class BaseShape {
       //   break
       // }
     }
-    console.timeEnd()
 
     // for (let i = 0.1; i <= 1; i = i + 0.1) {
     //   let start = Bezier.getPointByT_2(-i, [lines1.point?.center!, lines1.point?.cp2!, lines2.point?.center!])
@@ -164,7 +183,6 @@ export class BaseShape {
     //     break
     //   }
     // }
-
 
   }
 
@@ -1488,7 +1506,7 @@ export class BaseShape {
     return pathList
   }
 
-  getCustomShapePath2(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
+  getCustomShapePath2(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     this.conf.lineShapes.map((line) => {
@@ -1543,10 +1561,11 @@ export class BaseShape {
                 if (startPoint.radius) {
                   fillPath.arcTo2(startPoint.center, endPoint.acrPoint!, startPoint.radius)
                   // fillPath.lineTo2(endPoint.acrPoint!)
-                  fillPath.quadraticCurveTo2(cp!, endPoint.center)
+                  fillPath.quadraticCurveTo2(endPoint.acrCp!, endPoint.center)
                 } else {
                   if (endPoint.radius) {
-                    fillPath.quadraticCurveTo2(cp!, startPoint.acrPoint!)
+                    // fillPath.quadraticCurveTo2(cp!, startPoint.acrPoint!)
+                    fillPath.quadraticCurveTo2(startPoint.acrCp!, startPoint.acrPoint!)
                   } else {
                     fillPath.quadraticCurveTo2(cp!, endPoint.center)
                   }

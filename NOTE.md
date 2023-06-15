@@ -49,6 +49,7 @@
         - https://zh.javascript.info/bezier-curve
         - https://www.zhihu.com/question/29565629
         - https://pomax.github.io/bezierinfo/zh-CN/index.html#matrix
+        - https://pomax.github.io/bezierjs/
           -在线
         - https://jarenchow.github.io/JanvasExamples/html/beziermaker.html
     - 从贝塞尔曲线反推控制点

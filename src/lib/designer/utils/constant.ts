@@ -682,8 +682,9 @@ export const rects = [
     "color": "gray",
     "radius": 0,
     "children": [],
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "rgb(241,238,238)",
+    // "borderColor": "rgb(216,216,216)",
+    "borderColor": "rgb(0,0,0)",
+    "fillColor": "#4C4C4C",
     "flipHorizontal": false,
     "flipVertical": false,
     "percent": {

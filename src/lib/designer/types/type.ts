@@ -165,6 +165,7 @@ export interface BezierPoint {
   radius?: number,//显示的圆角
   realRadius?: number,//真实的圆角
   acrPoint?: P,
+  acrCp?: P,
   cp1: P2,//右边的控制点
   center: P2//中边的点
   cp2: P2//左边的控制点

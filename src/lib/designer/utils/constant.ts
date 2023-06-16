@@ -850,8 +850,8 @@ export const rects = [
                 "ry": 0
               },
               "type": "RightAngle",
-              "radius": 80,
-              "realRadius": 80
+              "radius": 130,
+              "realRadius": 130
             }
           },
           {

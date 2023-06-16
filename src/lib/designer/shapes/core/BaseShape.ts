@@ -1525,85 +1525,98 @@ export class BaseShape {
       }
       currentPoint.realRadius = maxRadius
     } else if (lineType === LineType.Bezier2 && lineType2 === LineType.Bezier2) {
-      let frontT = -1
-      let backT = -1
-      let center = currentPoint.center
-      for (let index = 1, i = 0.1; index <= 10; index++, i = i + 0.1) {
-        let start = Bezier.getPointByT_2(-i, [prePoint.center!, prePoint.cp2!, currentPoint.center!])
-        let end = Bezier.getPointByT_2(i, [currentPoint.center!, nextPoint.cp1!, nextPoint.center!])
-        console.log('start', start, 'end', end)
+      this.judgeBothBezier2Line(prePoint, currentPoint, nextPoint)
+    } else {
+    }
+  }
 
-        let temp = this.getAdjacentSide(center, start, end, currentPoint.radius!)
-        let adjacent = temp.adjacentSide
-        let front = Math2.getHypotenuse2(center!, start)
-        let back = Math2.getHypotenuse2(center!, end)
-        console.log('front', front, 'back', back, 'adjacent', adjacent)
 
-        if (back > adjacent && front > adjacent) {
-          frontT = -i
-          backT = i
-          console.log('frontT', frontT, 'backT', backT, 'adjacent', adjacent)
+  //判断两个都是贝塞尔曲线时的圆弧
+  //TODO 判断的，不够精细，快速改变raduis时，因为t是0.1的增减幅度，会导致图形抖动
+  //第4个参数r是第一遍for循环时，在两条线上都未找到合适的点。那么把两个曲线当成直线判断出最大邻边和最大radius。用这个最大的radius再调用这个方法
+  //因为渲染时需要保持曲线的曲率，但曲线又被圆弧分割，所以要保持曲率就得计算出曲线被分割时的终点和起点以及控制点
+  judgeBothBezier2Line(prePoint: BezierPoint, currentPoint: BezierPoint, nextPoint: BezierPoint, r?: number) {
+    let frontT = -1
+    let backT = -1
+    let center = currentPoint.center
+    let radius = r ?? currentPoint.radius!
+    for (let index = 1, i = 0.1; index <= 10; index++, i = i + 0.1) {
+      let start = Bezier.getPointByT_2(-i, [prePoint.center!, prePoint.cp2!, currentPoint.center!])
+      let end = Bezier.getPointByT_2(i, [currentPoint.center!, nextPoint.cp1!, nextPoint.center!])
+      // console.log('start', start, 'end', end)
 
-          for (let j = i; j >= 0; j = j - 0.05) {
-            start = Bezier.getPointByT_2(-j, [prePoint.center!, prePoint.cp2!, currentPoint.center!])
-            adjacent = this.getAdjacentSide(center, start, end, currentPoint.radius!).adjacentSide
-            front = Math2.getHypotenuse2(center!, start)
-            // console.log('j', j, 'front', front, 'start', start, 'adjacent', adjacent)
-            if (front < adjacent) {
-              frontT = -(j + 0.05)
-              start = Bezier.getPointByT_2(frontT, [prePoint.center!, prePoint.cp2!, currentPoint.center!])
-              break
-            }
-          }
+      let temp = this.getAdjacentSide(center, start, end, radius)
+      let adjacent = temp.adjacentSide
+      let front = Math2.getHypotenuse2(center!, start)
+      let back = Math2.getHypotenuse2(center!, end)
+      // console.log('front', front, 'back', back, 'adjacent', adjacent, 'radius', radius)
 
-          for (let j = i; j >= 0; j = j - 0.05) {
-            end = Bezier.getPointByT_2(j, [currentPoint.center!, nextPoint.cp1!, nextPoint.center!])
-            adjacent = this.getAdjacentSide(center, start, end, currentPoint.radius!).adjacentSide
-            back = Math2.getHypotenuse2(center!, end)
-            if (back < adjacent) {
-              backT = (j + 0.05)
-              end = Bezier.getPointByT_2(j, [currentPoint.center!, nextPoint.cp1!, nextPoint.center!])
-              break
-            }
-          }
+      if (back > adjacent && front > adjacent) {
+        frontT = -i
+        backT = i
+        // console.log('frontT', frontT, 'backT', backT, 'adjacent', adjacent)
 
-          let bjs = new BezierJs([prePoint.center!, prePoint.cp2!, currentPoint.center!])
-          let c = bjs.split(1 + frontT)
-
-          prePoint.acrCp = c.left.points[1]
-          prePoint.acrPoint = start
-
-          let bjs2 = new BezierJs([currentPoint.center!, nextPoint.cp1!, nextPoint.center!])
-          c = bjs2.split(backT)
-
-          nextPoint.acrCp = c.right.points[1]
-          nextPoint.acrPoint = end
-          console.log(
-            'frontT', frontT,
-            'start', start,
-            'backT', backT,
-            'end', end
-          )
-          currentPoint.realRadius = currentPoint.radius
-          break
-        } else {
-          //走到这，说明没有符合条件的两个点
-          if (index === 10) {
-            let maxRadius = currentPoint.radius
-            let {tan, adjacentSide} = temp
-            if (back < adjacentSide) {
-              maxRadius = back * tan
-              adjacentSide = back
-            }
-            if (front < adjacentSide) {
-              maxRadius = front * tan
-              adjacentSide = front
-            }
-            currentPoint.realRadius = maxRadius
+        for (let j = i; j >= 0; j = j - 0.05) {
+          start = Bezier.getPointByT_2(-j, [prePoint.center!, prePoint.cp2!, currentPoint.center!])
+          adjacent = this.getAdjacentSide(center, start, end, radius).adjacentSide
+          front = Math2.getHypotenuse2(center!, start)
+          // console.log('j', j, 'front', front, 'start', start, 'adjacent', adjacent)
+          if (front < adjacent) {
+            frontT = -(j + 0.05)
+            start = Bezier.getPointByT_2(frontT, [prePoint.center!, prePoint.cp2!, currentPoint.center!])
+            break
           }
         }
+
+        for (let j = i; j >= 0; j = j - 0.05) {
+          end = Bezier.getPointByT_2(j, [currentPoint.center!, nextPoint.cp1!, nextPoint.center!])
+          adjacent = this.getAdjacentSide(center, start, end, radius).adjacentSide
+          back = Math2.getHypotenuse2(center!, end)
+          if (back < adjacent) {
+            backT = (j + 0.05)
+            end = Bezier.getPointByT_2(j, [currentPoint.center!, nextPoint.cp1!, nextPoint.center!])
+            break
+          }
+        }
+
+        let bjs = new BezierJs([prePoint.center!, prePoint.cp2!, currentPoint.center!])
+        let c = bjs.split(1 + frontT)
+
+        prePoint.acrCp = c.left.points[1]
+        prePoint.acrPoint = start
+
+        let bjs2 = new BezierJs([currentPoint.center!, nextPoint.cp1!, nextPoint.center!])
+        c = bjs2.split(backT)
+
+        nextPoint.acrCp = c.right.points[1]
+        nextPoint.acrPoint = end
+        // console.log(
+        //   'frontT', frontT,
+        //   'start', start,
+        //   'backT', backT,
+        //   'end', end
+        // )
+        if (!r) {
+          currentPoint.realRadius = currentPoint.radius
+        }
+        break
+      } else {
+        //走到这，说明没有符合条件的两个点
+        if (index === 10 && r === undefined) {
+          let maxRadius = currentPoint.radius
+          let {tan, adjacentSide} = temp
+          if (back < adjacentSide) {
+            maxRadius = back * tan
+            adjacentSide = back
+          }
+          if (front < adjacentSide) {
+            maxRadius = front * tan
+            adjacentSide = front
+          }
+          currentPoint.realRadius = maxRadius
+          this.judgeBothBezier2Line(prePoint, currentPoint, nextPoint, Math.floor(maxRadius!))
+        }
       }
-    } else {
     }
   }
 

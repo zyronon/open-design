@@ -61,10 +61,9 @@ export class BaseShape {
       return getShapeFromConfig({conf, parent: this})
     }) ?? []
 
-    this.ttt()
-
+    this.checkAcr(true)
     // @ts-ignore
-    window.ttt = () => this.ttt()
+    window.t = () => this.checkAcr(true)
   }
 
   get status() {
@@ -260,7 +259,6 @@ export class BaseShape {
     }
     if (flipHorizontal) point.x = helper._reversePoint(point.x, center.x)
     if (flipVertical) point.y = helper._reversePoint(point.y, center.y)
-    let cu = CanvasUtil2.getInstance()
     let judgePointDistance = 5 / 1
     let fixMousePoint = {
       x: point.x - center.x,
@@ -338,7 +336,6 @@ export class BaseShape {
           return {type: EditType.ControlPoint, lineIndex, pointIndex: item.pointIndex, cpIndex: item.index}
         }
       }
-
     }
     return {type: undefined, lineIndex: -1, pointIndex: -1, cpIndex: -1}
   }
@@ -927,6 +924,7 @@ export class BaseShape {
       let {center, realRotation, lineShapes, flipHorizontal, flipVertical} = this.conf
       if (cu.editModeType === EditModeType.Select) {
         const {lineIndex, pointIndex, cpIndex, type} = this.editEnter
+        //未选中任何内容，还属于判断阶段
         if (pointIndex === -1) {
           let result = this.checkMousePointOnEditStatus(event.point)
           //用于判断是否与之前保存的值不同，仅在不同时才重绘
@@ -951,6 +949,8 @@ export class BaseShape {
           }
           document.body.style.cursor = "default"
         } else {
+          this.originalLineShapes = cloneDeep(this.conf.lineShapes)
+
           //TODO 是否可以统一反转？
           //反转到0度，好判断
           if (realRotation) {
@@ -997,15 +997,15 @@ export class BaseShape {
               }
             }
             cu.render()
-            return
           }
+
           if (type === EditType.Point || type === EditType.CenterPoint) {
             let point = this.getPoint(this.conf.lineShapes[lineIndex].points[pointIndex])
             let oldPoint = this.getPoint(this.original.lineShapes[lineIndex].points[pointIndex], this.original)
             helper.movePoint(point, oldPoint, move)
             cu.render()
-            return
           }
+
           if (type === EditType.Line) {
             console.log('onMouseMove-enterLineIndex')
             let oldStartPoint = this.getPoint(this.original.lineShapes[lineIndex].points[pointIndex], this.original)
@@ -1022,8 +1022,9 @@ export class BaseShape {
             }
             helper.movePoint(endPoint, oldEndPoint, move)
             cu.render()
-            return
           }
+
+          this.checkAcr()
         }
       }
       if (cu.editModeType === EditModeType.Edit) {
@@ -1294,10 +1295,15 @@ export class BaseShape {
   }
 
   pointRadiusChange(e: any, val: any) {
+    this.originalLineShapes = cloneDeep(this.conf.lineShapes)
+
     let point = this.getPoint(this.conf.lineShapes[val.lineIndex].points[val.pointIndex])
     point.radius = e
-    this.checkAcr()
-    this.originalLineShapes = cloneDeep(this.conf.lineShapes)
+    if (e === 0) {
+      point.realRadius = 0
+    } else {
+      this.checkAcr()
+    }
     CanvasUtil2.getInstance().render()
     EventBus.emit(EventKeys.POINT_INFO, Object.assign({}, val, {point}))
   }
@@ -1380,8 +1386,8 @@ export class BaseShape {
           switch (lineType) {
             case LineType.Line:
               // console.log('startPoint-radius', startPoint.radius)
-              if (startPoint.radius) {
-                fillPath.arcTo2(startPoint.center, endPoint.center, startPoint.radius)
+              if (startPoint.realRadius) {
+                fillPath.arcTo2(startPoint.center, endPoint.center, startPoint.realRadius)
               } else {
                 fillPath.lineTo2(startPoint.center)
               }
@@ -1401,12 +1407,12 @@ export class BaseShape {
               if (endPoint.cp1.use) cp = endPoint.cp1
               strokePath.quadraticCurveTo2(cp!, endPoint.center)
 
-              if (startPoint.radius) {
-                fillPath.arcTo2(startPoint.center, endPoint.acrPoint!, startPoint.radius)
+              if (startPoint.realRadius) {
+                fillPath.arcTo2(startPoint.center, endPoint.acrPoint!, startPoint.realRadius)
                 // fillPath.lineTo2(endPoint.acrPoint!)
                 fillPath.quadraticCurveTo2(endPoint.acrCp!, endPoint.center)
               } else {
-                if (endPoint.radius) {
+                if (endPoint.realRadius) {
                   // fillPath.quadraticCurveTo2(cp!, startPoint.acrPoint!)
                   fillPath.quadraticCurveTo2(startPoint.acrCp!, startPoint.acrPoint!)
                 } else {
@@ -1430,6 +1436,7 @@ export class BaseShape {
   }
 
   getPoint(pointInfo: PointInfo, conf: BaseConfig = this.conf): BezierPoint {
+    if (!pointInfo) return null as any
     if (pointInfo.type === PointType.Single) {
       return pointInfo.point!
     } else {
@@ -1444,18 +1451,31 @@ export class BaseShape {
   originalLineShapes: LineShape[] = []
 
   //检查圆弧
-  checkAcr() {
-    if (!this.originalLineShapes.length) return
+  checkAcr(isInit = false) {
+    if (!this.originalLineShapes.length && !isInit) return
+    console.time()
     this.conf.lineShapes.map((line, indexI, arrI) => {
-      if (line.points.length > 2 && this.originalLineShapes[indexI].points.length === line.points.length) {
+      if (line.points.length > 2 && (this.originalLineShapes[indexI]?.points.length === line.points.length || isInit)) {
         line.points.map((point, indexJ, arrJ) => {
           let p = this.getPoint(point)
           if (p.radius) {
+            let prePoint: BezierPoint = undefined as any
+            let oldPrePoint: BezierPoint = undefined as any
+            let nextPoint = this.getPoint(arrJ[indexJ + 1])
             if (indexJ === 0) {
               if (line.close) {
-                let prePoint = this.getPoint(arrJ[arrJ.length - 1])
-                let nextPoint = this.getPoint(arrJ[indexJ + 1])
-                let oldPrePoint = this.getPoint(this.originalLineShapes[indexI].points[arrJ.length - 1])
+                prePoint = this.getPoint(arrJ[arrJ.length - 1])
+                oldPrePoint = this.getPoint(this.originalLineShapes[indexI]?.points[arrJ.length - 1])
+              }
+            } else {
+              prePoint = this.getPoint(arrJ[indexJ - 1])
+              oldPrePoint = this.getPoint(this.originalLineShapes[indexI]?.points[indexJ - 1])
+            }
+
+            if (isInit) {
+              this.judge(prePoint, p, nextPoint)
+            } else {
+              if (prePoint && oldPrePoint) {
                 let oldCurrentPoint = this.getPoint(this.originalLineShapes[indexI].points[indexJ])
                 let oldNextPoint = this.getPoint(this.originalLineShapes[indexI].points[indexJ + 1])
 
@@ -1473,6 +1493,7 @@ export class BaseShape {
         })
       }
     })
+    console.timeEnd()
   }
 
   judge(prePoint: BezierPoint, currentPoint: BezierPoint, nextPoint: BezierPoint) {
@@ -1480,21 +1501,16 @@ export class BaseShape {
     let lineType2 = helper.judgeLineType({startPoint: currentPoint, endPoint: nextPoint})
 
     if (lineType === LineType.Line && lineType2 === LineType.Line) {
-
-      let degree = Math2.getDegree(currentPoint.center, nextPoint.center, prePoint.center)
-      let d2 = degree / 2
-      // console.log('角度', degree, d2)
-      //得到已知角度tan值
-      let tan = Math.tan(Math2.jiaodu2hudu(d2))
-      // console.log('tan值', tan)
-      //tanA = a/b。可知b = a/ tanA。所以领边的长就是lines2.point?.radius! / tan
-      let adjacentSide = currentPoint.radius! / tan
-      console.log('当前radius（对边）对应的邻边长', adjacentSide)
+      let {
+        adjacentSide,
+        tan
+      } = this.getAdjacentSide(currentPoint.center, prePoint.center, nextPoint.center, currentPoint.radius!)
 
       let front = Math2.getHypotenuse2(currentPoint.center!, prePoint.center)
       let back = Math2.getHypotenuse2(currentPoint.center!, nextPoint.center)
-      console.log('front', front)
-      console.log('back', back)
+      // console.log('当前radius（对边）对应的邻边长', adjacentSide)
+      // console.log('front', front)
+      // console.log('back', back)
       let maxRadius = currentPoint.radius
       if (back < adjacentSide) {
         maxRadius = back * tan
@@ -1505,153 +1521,70 @@ export class BaseShape {
       }
       currentPoint.realRadius = maxRadius
     } else if (lineType === LineType.Bezier2 && lineType2 === LineType.Bezier2) {
+      let frontT = -1
+      let backT = -1
+      let center = currentPoint.center
+      for (let i = 0.1; i <= 1; i = i + 0.1) {
+        let start = Bezier.getPointByT_2(-i, [prePoint.center!, prePoint.cp2!, currentPoint.center!])
+        let end = Bezier.getPointByT_2(i, [currentPoint.center!, nextPoint.cp1!, nextPoint.center!])
+        console.log('start', start, 'end', end)
 
-    } else {
+        let adjacent = this.getAdjacentSide(center, start, end, currentPoint.radius!).adjacentSide
+        let front = Math2.getHypotenuse2(center!, start)
+        let back = Math2.getHypotenuse2(center!, end)
+        console.log('frontT', frontT, 'backT', backT, 'adjacent', adjacent)
 
-    }
-  }
+        if (back > adjacent && front > adjacent) {
+          frontT = -i
+          backT = i
 
-  ttt() {
-    let lines = this.conf.lineShapes[0]
-    let lines1 = lines.points[1]
-    //中间点，既要作圆的那个点
-    let lines2 = lines.points[2]
-    let lines3 = lines.points[3]
-    console.log(
-      lines1,
-      lines2,
-      lines3,
-    )
-
-    let frontT = -1
-    let backT = -1
-    let center = lines2.point!.center
-    console.time()
-    for (let i = 0.1; i <= 1; i = i + 0.1) {
-      let start = Bezier.getPointByT_2(-i, [lines1.point?.center!, lines1.point?.cp2!, lines2.point?.center!])
-      // console.log('i', i)
-      let end = Bezier.getPointByT_2(i, [lines2.point?.center!, lines3.point?.cp1!, lines3.point?.center!])
-      console.log('start', start, 'end', end)
-
-      let adjacent = this.getAdjacentSide(center, start, end, lines2.point?.radius!)
-      let front = Math2.getHypotenuse2(center!, start)
-      let back = Math2.getHypotenuse2(center!, end)
-      if (back > adjacent && front > adjacent) {
-        frontT = -i
-        backT = i
-        console.log('frontT', frontT, 'backT', backT)
-
-        for (let j = i; j >= 0; j = j - 0.05) {
-          start = Bezier.getPointByT_2(-j, [lines1.point?.center!, lines1.point?.cp2!, lines2.point?.center!])
-          adjacent = this.getAdjacentSide(center, start, end, lines2.point?.radius!)
-          front = Math2.getHypotenuse2(center!, start)
-          // console.log('j', j, 'front', front, 'start', start, 'adjacent', adjacent)
-          if (front < adjacent) {
-            frontT = -(j + 0.05)
-            start = Bezier.getPointByT_2(frontT, [lines1.point?.center!, lines1.point?.cp2!, lines2.point?.center!])
-            break
+          for (let j = i; j >= 0; j = j - 0.05) {
+            start = Bezier.getPointByT_2(-j, [prePoint.center!, prePoint.cp2!, currentPoint.center!])
+            adjacent = this.getAdjacentSide(center, start, end, currentPoint.radius!).adjacentSide
+            front = Math2.getHypotenuse2(center!, start)
+            // console.log('j', j, 'front', front, 'start', start, 'adjacent', adjacent)
+            if (front < adjacent) {
+              frontT = -(j + 0.05)
+              start = Bezier.getPointByT_2(frontT, [prePoint.center!, prePoint.cp2!, currentPoint.center!])
+              break
+            }
           }
-        }
 
-        for (let j = i; j >= 0; j = j - 0.05) {
-          end = Bezier.getPointByT_2(j, [lines2.point?.center!, lines3.point?.cp1!, lines3.point?.center!])
-          adjacent = this.getAdjacentSide(center, start, end, lines2.point?.radius!)
-          back = Math2.getHypotenuse2(center!, end)
-          if (back < adjacent) {
-            backT = (j + 0.05)
-            end = Bezier.getPointByT_2(j, [lines2.point?.center!, lines3.point?.cp1!, lines3.point?.center!])
-            break
+          for (let j = i; j >= 0; j = j - 0.05) {
+            end = Bezier.getPointByT_2(j, [currentPoint.center!, nextPoint.cp1!, nextPoint.center!])
+            adjacent = this.getAdjacentSide(center, start, end, currentPoint.radius!).adjacentSide
+            back = Math2.getHypotenuse2(center!, end)
+            if (back < adjacent) {
+              backT = (j + 0.05)
+              end = Bezier.getPointByT_2(j, [currentPoint.center!, nextPoint.cp1!, nextPoint.center!])
+              break
+            }
           }
+
+          let bjs = new BezierJs([prePoint.center!, prePoint.cp2!, currentPoint.center!])
+          let c = bjs.split(1 + frontT)
+
+          prePoint.acrCp = c.left.points[1]
+          prePoint.acrPoint = start
+
+          let bjs2 = new BezierJs([currentPoint.center!, nextPoint.cp1!, nextPoint.center!])
+          c = bjs2.split(backT)
+
+          nextPoint.acrCp = c.right.points[1]
+          nextPoint.acrPoint = end
+          console.log(
+            'frontT', frontT,
+            'start', start,
+            'backT', backT,
+            'end', end
+          )
+          break
         }
-
-
-        let bjs = new BezierJs([lines1.point?.center!, lines1.point?.cp2!, lines2.point?.center!])
-        let c = bjs.split(1 + frontT)
-
-        lines1.point!.acrCp = c.left.points[1]
-        lines1.point!.acrPoint = start
-
-        let bjs2 = new BezierJs([lines2.point?.center!, lines3.point?.cp1!, lines3.point?.center!])
-        c = bjs2.split(backT)
-
-        lines3.point!.acrCp = c.right.points[1]
-        lines3.point!.acrPoint = end
-        console.log(
-          'frontT', frontT,
-          'start', start,
-          'backT', backT,
-          'end', end
-        )
-        console.timeEnd()
-
-        break
       }
-
-      // if (isMax) {
-      //   console.log('d', isMax, i)
-      //   for (let j = i - 0.1; j <= i; j = j + 0.01) {
-      //     start = Bezier.getPointByT_2(-j, [lines1.point?.center!, lines1.point?.cp2!, lines2.point?.center!])
-      //     end = Bezier.getPointByT_2(j, [lines1.point?.center!, lines1.point?.cp2!, lines2.point?.center!])
-      //     // console.log('i', i)
-      //     console.log('start', start)
-      //     let isMax = this.test(lines2.point?.center!, start, end, lines2.point?.radius!)
-      //     if (isMax) {
-      //       console.log('d2', j)
-      //       lines1.point!.acrPoint = start
-      //       break
-      //     }
-      //   }
-      //   break
-      // }
+    } else {
     }
-
-    // for (let i = 0.1; i <= 1; i = i + 0.1) {
-    //   let start = Bezier.getPointByT_2(-i, [lines1.point?.center!, lines1.point?.cp2!, lines2.point?.center!])
-    //   // console.log('i', i)
-    //   console.log('start', start)
-    //   let end = lines3.point?.center!
-    //   let isMax = this.test(lines2.point?.center!, start, end, lines2.point?.radius!)
-    //   if (isMax) {
-    //     console.log('d', isMax, i)
-    //     for (let j = i - 0.1; j <= i; j = j + 0.01) {
-    //       start = Bezier.getPointByT_2(-j, [lines1.point?.center!, lines1.point?.cp2!, lines2.point?.center!])
-    //       // console.log('i', i)
-    //       console.log('start', start)
-    //       let isMax = this.test(lines2.point?.center!, start, end, lines2.point?.radius!)
-    //       if (isMax) {
-    //         console.log('d2', j)
-    //         lines1.point!.acrPoint = start
-    //         break
-    //       }
-    //     }
-    //     break
-    //   }
-    // }
-
   }
 
-  test(center: P, start: P, end: P, r: number) {
-    let degree = Math2.getDegree(center, end, start)
-    let d2 = degree / 2
-    // console.log('角度', degree, d2)
-    //得到已知角度tan值
-    let tan = Math.tan(Math2.jiaodu2hudu(d2))
-    // console.log('tan值', tan)
-    //tanA = a/b。可知b = a/ tanA。所以领边的长就是lines2.point?.radius! / tan
-    console.log('当前radius（对边）对应的邻边长', r / tan)
-    let s = r / tan
-
-    let front = Math2.getHypotenuse2(center!, start)
-    let back = Math2.getHypotenuse2(center!, end)
-    console.log('front', front)
-    console.log('back', back)
-    return front > s
-    // return front > s && back > s
-    // //公共同上
-    // console.log('2-3这条边最大的radius（对边）值', back * tan)
-    //
-    // let tanX =
-  }
 
   //获取acr圆弧的邻边长
   getAdjacentSide(center: P, start: P, end: P, r: number) {
@@ -1663,7 +1596,7 @@ export class BaseShape {
     // console.log('tan值', tan)
     //tanA = a/b。可知b = a/ tanA。所以领边的长就是lines2.point?.radius! / tan
     // console.log('当前radius（对边）对应的邻边长', r / tan)
-    return r / tan
+    return {tan, adjacentSide: r / tan}
   }
 
 }

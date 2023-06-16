@@ -1,4 +1,4 @@
-import {memo, MouseEvent, ReactNode, useRef, useState} from "react";
+import {KeyboardEvent, memo, MouseEvent, ReactNode, useRef, useState} from "react";
 // import './index.scss'
 import styles from './index.module.scss'
 import cx from "classnames";
@@ -87,6 +87,29 @@ export default memo((props: IProps) => {
     window.addEventListener('mouseup', onMouseUp)
   })
 
+  function onKeyDown(e: KeyboardEvent) {
+    let s = Number(value)
+    switch (e.keyCode) {
+      //上
+      case 38:
+        s++
+        break
+      //下
+      case 40:
+        s--
+        break
+    }
+    if (props.min !== undefined) {
+      if (s < props.min) s = props.min
+    }
+    onChange(s)
+    setTimeout(() => {
+      let length = String(s).length
+      // @ts-ignore
+      e.target.setSelectionRange(length, length)
+    })
+  }
+
 
   return (
     <div className={cx(styles['d-input'], !prefix && styles['padding'])}>
@@ -97,7 +120,10 @@ export default memo((props: IProps) => {
           {prefix}
         </div>
       }
-      <input type="text" value={value} onChange={e => onChange(Number(e.target.value))}/>
+      <input type="text" value={value}
+             onChange={e => onChange(Number(e.target.value))}
+             onKeyDown={onKeyDown}
+      />
       {suffix && <div className={styles.suffix}>{suffix}</div>}
     </div>
   )

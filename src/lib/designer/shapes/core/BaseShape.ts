@@ -1185,7 +1185,7 @@ export class BaseShape {
   }
 
   calcNewCenterAndWidthAndHeight() {
-    console.log('重新计算中心点和宽高')
+    // console.log('重新计算中心点和宽高')
     // return
     if (!this.conf.isCustom) return
     let {center, realRotation, flipHorizontal, flipVertical} = this.conf
@@ -1454,7 +1454,7 @@ export class BaseShape {
 
   originalLineShapes: LineShape[] = []
 
-  //检查圆弧
+  //检查圆弧，很耗时，需要手动调用
   checkAcr(isInit = false) {
     if (!this.originalLineShapes.length && !isInit) return
     console.time()
@@ -1527,9 +1527,9 @@ export class BaseShape {
     } else if (lineType === LineType.Bezier2 && lineType2 === LineType.Bezier2) {
       this.judgeBothBezier2Line(prePoint, currentPoint, nextPoint)
     } else {
+      //TODO
     }
   }
-
 
   //判断两个都是贝塞尔曲线时的圆弧
   //TODO 判断的，不够精细，快速改变raduis时，因为t是0.1的增减幅度，会导致图形抖动
@@ -1619,7 +1619,6 @@ export class BaseShape {
       }
     }
   }
-
 
   //获取acr圆弧的邻边长
   getAdjacentSide(center: P, start: P, end: P, r: number) {

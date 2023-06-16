@@ -1408,9 +1408,13 @@ export class BaseShape {
               strokePath.quadraticCurveTo2(cp!, endPoint.center)
 
               if (startPoint.realRadius) {
-                fillPath.arcTo2(startPoint.center, endPoint.acrPoint!, startPoint.realRadius)
-                // fillPath.lineTo2(endPoint.acrPoint!)
-                fillPath.quadraticCurveTo2(endPoint.acrCp!, endPoint.center)
+                if (startPoint.radius! > startPoint.realRadius) {
+                  fillPath.bezierCurveTo2(startPoint.center, endPoint.cp1, endPoint.center)
+                } else {
+                  fillPath.arcTo2(startPoint.center, endPoint.acrPoint!, startPoint.realRadius)
+                  // fillPath.lineTo2(endPoint.acrPoint!)
+                  fillPath.quadraticCurveTo2(endPoint.acrCp!, endPoint.center)
+                }
               } else {
                 if (endPoint.realRadius) {
                   // fillPath.quadraticCurveTo2(cp!, startPoint.acrPoint!)
@@ -1524,19 +1528,21 @@ export class BaseShape {
       let frontT = -1
       let backT = -1
       let center = currentPoint.center
-      for (let i = 0.1; i <= 1; i = i + 0.1) {
+      for (let index = 1, i = 0.1; index <= 10; index++, i = i + 0.1) {
         let start = Bezier.getPointByT_2(-i, [prePoint.center!, prePoint.cp2!, currentPoint.center!])
         let end = Bezier.getPointByT_2(i, [currentPoint.center!, nextPoint.cp1!, nextPoint.center!])
         console.log('start', start, 'end', end)
 
-        let adjacent = this.getAdjacentSide(center, start, end, currentPoint.radius!).adjacentSide
+        let temp = this.getAdjacentSide(center, start, end, currentPoint.radius!)
+        let adjacent = temp.adjacentSide
         let front = Math2.getHypotenuse2(center!, start)
         let back = Math2.getHypotenuse2(center!, end)
-        console.log('frontT', frontT, 'backT', backT, 'adjacent', adjacent)
+        console.log('front', front, 'back', back, 'adjacent', adjacent)
 
         if (back > adjacent && front > adjacent) {
           frontT = -i
           backT = i
+          console.log('frontT', frontT, 'backT', backT, 'adjacent', adjacent)
 
           for (let j = i; j >= 0; j = j - 0.05) {
             start = Bezier.getPointByT_2(-j, [prePoint.center!, prePoint.cp2!, currentPoint.center!])
@@ -1578,7 +1584,23 @@ export class BaseShape {
             'backT', backT,
             'end', end
           )
+          currentPoint.realRadius = currentPoint.radius
           break
+        } else {
+          //走到这，说明没有符合条件的两个点
+          if (index === 10) {
+            let maxRadius = currentPoint.radius
+            let {tan, adjacentSide} = temp
+            if (back < adjacentSide) {
+              maxRadius = back * tan
+              adjacentSide = back
+            }
+            if (front < adjacentSide) {
+              maxRadius = front * tan
+              adjacentSide = front
+            }
+            currentPoint.realRadius = maxRadius
+          }
         }
       }
     } else {

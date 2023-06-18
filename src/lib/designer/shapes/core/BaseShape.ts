@@ -1359,7 +1359,7 @@ export class BaseShape {
     return pathList
   }
 
-  getCustomShapePath2(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
+  getCustomShapePath2(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     this.conf.lineShapes.map((line) => {
@@ -1528,6 +1528,70 @@ export class BaseShape {
       this.judgeBothBezier2Line(prePoint, currentPoint, nextPoint)
     } else {
       //TODO
+      if (lineType === LineType.Bezier2) {
+        console.log('1')
+        let center = currentPoint.center
+        let radius = currentPoint.radius!
+        for (let i = 0.1; i <= 1; i = i + 0.1) {
+          let start = Bezier.getPointByT_2(-i, [prePoint.center!, prePoint.cp2!, currentPoint.center!])
+          // console.log('i', i)
+          console.log('start', start)
+          let end = nextPoint?.center!
+          let temp = this.getAdjacentSide(center, start, end, radius)
+          let adjacent = temp.adjacentSide
+          let front = Math2.getHypotenuse2(center!, start)
+          let back = Math2.getHypotenuse2(center!, end)
+          // console.log('front', front, 'back', back, 'adjacent', adjacent, 'radius', radius)
+
+          if (back > adjacent && front > adjacent){
+            for (let j = i - 0.1; j <= i; j = j + 0.01) {
+              start = Bezier.getPointByT_2(-j, [prePoint.center!, prePoint.cp2!, currentPoint.center!])
+              // console.log('i', i)
+              console.log('start', start)
+              adjacent = this.getAdjacentSide(center, start, end, radius).adjacentSide
+              if (back > adjacent && front > adjacent){
+                console.log('d2', j)
+                prePoint!.acrPoint = start
+                break
+              }
+            }
+            break
+          }
+        }
+      }
+      if (lineType2 === LineType.Bezier2) {
+        console.log('2')
+
+        let center = currentPoint.center
+        let radius = currentPoint.radius!
+        for (let i = 0.1; i <= 1; i = i + 0.1) {
+          let start = prePoint.center
+          // console.log('i', i)
+          let end = Bezier.getPointByT_2(i, [currentPoint.center!, nextPoint.cp1!, nextPoint.center!])
+          console.log('end', end)
+          let temp = this.getAdjacentSide(center, start, end, radius)
+          let adjacent = temp.adjacentSide
+          let front = Math2.getHypotenuse2(center!, start)
+          let back = Math2.getHypotenuse2(center!, end)
+          // console.log('front', front, 'back', back, 'adjacent', adjacent, 'radius', radius)
+
+          if (back > adjacent && front > adjacent){
+            for (let j = i - 0.1; j <= i; j = j + 0.01) {
+               end = Bezier.getPointByT_2(j, [currentPoint.center!, nextPoint.cp1!, nextPoint.center!])
+              // console.log('i', i)
+              console.log('end', end)
+              adjacent = this.getAdjacentSide(center, start, end, radius).adjacentSide
+              if (back > adjacent && front > adjacent){
+                console.log('d2', j)
+                nextPoint!.acrPoint = start
+                break
+              }
+            }
+            break
+          }
+        }
+
+      }
     }
   }
 

@@ -8,7 +8,6 @@
 
 
 ## Open-Design
-## Open-Design
 
 **Open-Design** is a graphic drawing using Canvas,Online design tool based on [ React ](https://reactjs.org/),If you
 have used Figma\ MasterGo, you will be familiar with it.

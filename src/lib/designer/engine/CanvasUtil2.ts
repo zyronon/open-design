@@ -253,7 +253,7 @@ export default class CanvasUtil2 {
     }
     // if (e.type !== 'mousemove') {
     if (e.type === 'dblclick') {
-      console.log('handleEvent', e.type)
+      // console.log('handleEvent', e.type)
     }
     if (!this.isMouseDown) {
       if (this.boxSelection) {
@@ -299,7 +299,7 @@ export default class CanvasUtil2 {
 
   onKeyDown = (e: any) => {
     if (this.isMouseDown) return
-    console.log('onKeyDown', e.keyCode)
+    // console.log('onKeyDown', e.keyCode)
     //Esc
     if (e.keyCode === 27) {
       if (this.editShape) {

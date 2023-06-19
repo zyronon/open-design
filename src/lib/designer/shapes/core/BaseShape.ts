@@ -287,7 +287,7 @@ export class BaseShape {
         let line: Line = {startPoint, endPoint}
         let lineType = helper.judgeLineType(line)
         if (helper.isInLine(fixMousePoint, line, lineType)) {
-          console.log('在线上')
+          // console.log('在线上')
           let returnData = {
             type: EditType.Line,
             lineType,
@@ -575,7 +575,7 @@ export class BaseShape {
 
   _dblclick(event: BaseEvent2, parents: BaseShape[] = []) {
     // console.log('on-dblclick',)
-    console.log('core-dblclick', this.editStartPointInfo, this.editHover)
+    // console.log('core-dblclick', this.editStartPointInfo, this.editHover)
     if (this.onDbClick(event, parents)) return
     if (this.status === ShapeStatus.Edit) {
       let cu = CanvasUtil2.getInstance()
@@ -709,8 +709,8 @@ export class BaseShape {
       if (cu.editModeType === EditModeType.Select) {
         let result = this.checkMousePointOnEditStatus(event.point)
         let {lineIndex, pointIndex, cpIndex, type, lineType} = result
-        console.log('pointIndex', pointIndex)
-        console.log('result', result)
+        // console.log('pointIndex', pointIndex)
+        // console.log('result', result)
         //如果hover在点上，先处理hover
         if (pointIndex !== -1) {
           this.conf.isCustom = true
@@ -1359,7 +1359,7 @@ export class BaseShape {
     return pathList
   }
 
-  getCustomShapePath2(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
+  getCustomShapePath2(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     this.conf.lineShapes.map((line) => {
@@ -1409,6 +1409,8 @@ export class BaseShape {
 
               if (startPoint.realRadius) {
                 if (startPoint.radius! > startPoint.realRadius) {
+                  // fillPath.arcTo2(startPoint.center, endPoint.acrPoint!, startPoint.realRadius)
+                  // fillPath.quadraticCurveTo2(endPoint.acrCp!, endPoint.center)
                   fillPath.bezierCurveTo2(startPoint.center, endPoint.cp1, endPoint.center)
                 } else {
                   fillPath.arcTo2(startPoint.center, endPoint.acrPoint!, startPoint.realRadius)
@@ -1543,13 +1545,13 @@ export class BaseShape {
           let back = Math2.getHypotenuse2(center!, end)
           // console.log('front', front, 'back', back, 'adjacent', adjacent, 'radius', radius)
 
-          if (back > adjacent && front > adjacent){
+          if (back > adjacent && front > adjacent) {
             for (let j = i - 0.1; j <= i; j = j + 0.01) {
               start = Bezier.getPointByT_2(-j, [prePoint.center!, prePoint.cp2!, currentPoint.center!])
               // console.log('i', i)
               console.log('start', start)
               adjacent = this.getAdjacentSide(center, start, end, radius).adjacentSide
-              if (back > adjacent && front > adjacent){
+              if (back > adjacent && front > adjacent) {
                 console.log('d2', j)
                 prePoint!.acrPoint = start
                 break
@@ -1580,20 +1582,26 @@ export class BaseShape {
       let back = Math2.getHypotenuse2(center!, end)
       console.log('front', front, 'back', back, 'adjacent', adjacent, 'radius', radius)
 
-      if (back > adjacent && front > adjacent){
+      if (back > adjacent && front > adjacent) {
         for (let j = i - 0.1; j <= i; j = j + 0.01) {
           end = Bezier.getPointByT_2(j, [currentPoint.center!, nextPoint.cp1!, nextPoint.center!])
           // console.log('i', i)
           console.log('end1', end)
           adjacent = this.getAdjacentSide(center, start, end, radius).adjacentSide
-          if (back > adjacent && front > adjacent){
+          if (back > adjacent && front > adjacent) {
             console.log('d2', j)
-            nextPoint!.acrPoint = end
+
+            let bjs2 = new BezierJs([currentPoint.center!, nextPoint.cp1!, nextPoint.center!])
+            let c = bjs2.split(j)
+
+            nextPoint.acrCp = c.right.points[1]
+            nextPoint.acrPoint = end
+            currentPoint.realRadius = radius
             break
           }
         }
         break
-      }else {
+      } else {
         //走到这，说明没有符合条件的两个点
         if (index === 10) {
           let maxRadius = currentPoint.radius

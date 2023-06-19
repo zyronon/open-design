@@ -64,6 +64,8 @@ export class BaseShape {
     this.checkAcr(true)
     // @ts-ignore
     window.t = () => this.checkAcr(true)
+    // @ts-ignore
+    window.tt = this.getClipboardContents
   }
 
   get status() {
@@ -1565,6 +1567,22 @@ export class BaseShape {
         console.log('2')
         this.judgeAnyBezier2Line(prePoint, currentPoint, nextPoint)
       }
+    }
+  }
+
+  async getClipboardContents() {
+    try {
+      const clipboardItems = await navigator.clipboard.read();
+      console.log('clipboardItems', clipboardItems)
+      for (const clipboardItem of clipboardItems) {
+        for (const type of clipboardItem.types) {
+          const blob = await clipboardItem.getType(type);
+          let r = await blob.text()
+          console.log('blob', r)
+        }
+      }
+    } catch (err: any) {
+      console.error(err.name, err.message);
     }
   }
 

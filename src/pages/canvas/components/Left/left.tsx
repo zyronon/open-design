@@ -81,6 +81,11 @@ export default memo((props: any) => {
       ]
     }
   ]
+
+  function test(){
+    // @ts-ignore
+    window.tt()
+  }
   return (
     <div className={cx('left-wrapper', {'hide': props.hide})}>
       <div className="temp">
@@ -94,6 +99,9 @@ export default memo((props: any) => {
           复制2
         </div>
         <div className="component" onClick={() => props.init()}>
+          刷新
+        </div>
+        <div className="component" onClick={test}>
           刷新
         </div>
       </div>

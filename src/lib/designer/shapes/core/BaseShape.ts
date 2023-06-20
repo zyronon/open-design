@@ -1405,6 +1405,7 @@ export class BaseShape {
               let cp: P2
               if (startPoint.cp2.use) cp = startPoint.cp2
               if (endPoint.cp1.use) cp = endPoint.cp1
+              strokePath.lineTo2(startPoint.center)
               strokePath.quadraticCurveTo2(cp!, endPoint.center)
 
               if (startPoint.realRadius) {
@@ -1418,6 +1419,7 @@ export class BaseShape {
                   fillPath.quadraticCurveTo2(endPoint.acrCp!, endPoint.center)
                 }
               } else {
+                fillPath.lineTo2(startPoint.center)
                 if (endPoint.realRadius) {
                   // fillPath.quadraticCurveTo2(cp!, startPoint.acrPoint!)
                   fillPath.quadraticCurveTo2(startPoint.acrCp!, startPoint.acrPoint!)
@@ -1426,7 +1428,6 @@ export class BaseShape {
                 }
               }
               // fillPath.quadraticCurveTo2(cp!, endPoint.center)
-
               break
           }
         }

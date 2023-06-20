@@ -141,10 +141,10 @@ const ShapeInfo = (props: any) => {
             <div className="base-info">
               <div className="row grid2">
                 <div className="col">
-                  <BaseInput value={conf?.layout?.x?.toFixed2()} prefix={<span className={'gray'}>X</span>}/>
+                  <BaseInput value={pointInfo?.point?.center?.x?.toFixed2()} prefix={<span className={'gray'}>X</span>}/>
                 </div>
                 <div className="col">
-                  <BaseInput value={conf?.layout?.y?.toFixed2()} prefix={<span className={'gray'}>Y</span>}/>
+                  <BaseInput value={pointInfo?.point?.center?.y?.toFixed2()} prefix={<span className={'gray'}>Y</span>}/>
                 </div>
               </div>
               <div className="row grid2">

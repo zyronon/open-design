@@ -104,7 +104,6 @@ export class Rectangle extends ParentShape {
     } = this.conf
     let {x, y, w, h} = newLayout
 
-
     ctx.lineWidth = lineWidth ?? defaultConfig.lineWidth
     ctx.fillStyle = fillColor
 
@@ -121,7 +120,6 @@ export class Rectangle extends ParentShape {
         ctx.stroke(path)
       }
     })
-
 
     //描边
     let lw2 = ctx.lineWidth / 2
@@ -239,15 +237,15 @@ export class Rectangle extends ParentShape {
     ctx.fillStyle = fillColor
 
     let {strokePathList, fillPathList} = this.getCustomShapePath2()
-    strokePathList.map(({close, path}) => {
-      ctx.stroke(path)
-    })
     fillPathList.map(({close, path}) => {
       if (close) {
         ctx.fill(path)
       } else {
         ctx.stroke(path)
       }
+    })
+    strokePathList.map(({close, path}) => {
+      ctx.stroke(path)
     })
 
     if ((this.editHover.type === EditType.Line

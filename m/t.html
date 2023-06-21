@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh" class="light">
+<head>
+    <script>
+      +function () {
+        if (!window.fetch) return;
+        var res = location.pathname.match(/file\/(\d+)/) || location.hash.match(/file\/(\d+)/);
+        if (!res || !res[1]) return;
+        var inviteBatchIdReg = location.search.match(/inviteBatchId=([^&]*)/);
+        var inviteDocumentIdReg = location.search.match(/inviteDocumentId=([^&]*)/);
+        var option = {
+          pageName: 'file'
+        };
+        if (inviteBatchIdReg) option.inviteBatchId = inviteBatchIdReg[1];
+        if (inviteDocumentIdReg) option.inviteDocumentId = inviteDocumentIdReg[1];
+        var MASTER_PRELOAD = {
+          ['documentInfo_' + res[1]]: fetch('/api/v1/documents/' +
+            res[1] + (option.inviteBatchId && option.inviteDocumentId ?
+              '?inviteBatchId=' + option.inviteBatchId + '&inviteDocumentId=' + option.inviteDocumentId + '&pageName=' + option.pageName : '?pageName=' + option.pageName), {
+            data: option,
+          }).then(d => {
+            return d.json().then(body => {
+              if (d.status !== 200) {
+                return Promise.reject({response: {data: body, status: d.status}});
+              }
+              if (body.data && body.data.fileKey) {
+                MASTER_PRELOAD['fileData_' + body.data.fileKey] = fetch('/data/' + body.data.fileKey, {
+                  cache: 'no-cache',
+                }).then((d) => {
+                  if (!d || d.status !== 200) throw new Error('load 404');
+                  let headerContentLength = d.headers.get('Content-Length');
+                  MASTER_PRELOAD['fileSize_' + body.data.fileKey] = headerContentLength === null || headerContentLength === undefined ? undefined : parseInt(headerContentLength);
+                  if (MASTER_PRELOAD['fileSizeCallback_' + body.data.fileKey]) {
+                    MASTER_PRELOAD['fileSizeCallback_' + body.data.fileKey]();
+                    delete MASTER_PRELOAD['fileSizeCallback_' + body.data.fileKey];
+                  }
+                  return d.arrayBuffer().then((buffer) => Object.assign(d, {
+                    data: buffer,
+                  }));
+                });
+              } else {
+                return Promise.reject({
+                  response: d
+                });
+              }
+              return body.data;
+            });
+          })
+        };
+        window.MASTER_PRELOAD = MASTER_PRELOAD;
+      }();
+    </script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,maximum-scale=1,minimum-scale=1,initial-scale=1,user-scalable=no">
+    <meta name="description"
+          content="MasterGo 是一款面向团队的专业 UI / UX 设计工具，支持多人同时编辑、随时在线评审、设计一键交付，让想法更快实现。">
+    <link rel="apple-touch-icon" sizes="180x180"
+          href="https://static.mastergo.com/static/favicon/apple-touch-icon-new.png">
+    <link rel="icon" type="image/png" sizes="32x32"
+          href="https://static.mastergo.com/static/favicon/favicon-32x32-new.png">
+    <link rel="icon" type="image/png" sizes="16x16"
+          href="https://static.mastergo.com/static/favicon/favicon-16x16-new.png">
+    <script id="injectWasmLoad">
+      var simd = "true" === window.localStorage.getItem("master-feature-simd"),
+        wasmhead = document.createElement("link");
+      wasmhead.href = "https://static.mastergo.com/static/resources/3a19ce3dd/masterkit.wasm.br", simd && (wasmhead.href = wasmhead.href.replace(".wasm", ".s.wasm")), wasmhead.setAttribute("rel", "preload"), wasmhead.setAttribute("as", "fetch"), wasmhead.setAttribute("crossorigin", "anonymous"), document.head.append(wasmhead)
+    </script>
+    <link href="https://static.mastergo.com/static/css/app.21c3c396.css" rel="preload" as="style">
+    <link href="https://static.mastergo.com/static/css/chunk-libs-master.79c8533c.css" rel="preload" as="style">
+    <link href="https://static.mastergo.com/static/js/app.3fb959ef.js" rel="preload" as="script">
+    <link href="https://static.mastergo.com/static/js/chunk-libs-master.d02ab60e.js" rel="preload" as="script">
+    <link href="https://static.mastergo.com/static/js/chunk-libs.3e321a78.js" rel="preload" as="script">
+    <link href="https://static.mastergo.com/static/js/runtime.dbf5d6ac.js" rel="preload" as="script">
+    <link href="https://static.mastergo.com/static/css/chunk-libs-master.79c8533c.css" rel="stylesheet">
+    <link href="https://static.mastergo.com/static/css/app.21c3c396.css" rel="stylesheet">
+</head>
+<body>
+<div id="app"></div>
+<script type="text/javascript" src="https://static.mastergo.com/static/js/chunk-libs.3e321a78.js"></script>
+<script type="text/javascript" src="https://static.mastergo.com/static/js/chunk-libs-master.d02ab60e.js"></script>
+<script type="text/javascript" src="https://static.mastergo.com/static/js/runtime.dbf5d6ac.js"></script>
+<script type="text/javascript" src="https://static.mastergo.com/static/js/app.3fb959ef.js"></script>
+</body>
+</html>

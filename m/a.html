@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script src="./masterkit.js"></script>
+    <script>
+        let url = 'https://static.mastergo.com/static/resources/3a19ce3dd/masterkit.wasm';
+
+
+        (async () => {
+            // const response = await fetch(url);
+            const fetchPromise = fetch(url);
+            const { instance } = await WebAssembly.instantiateStreaming(fetchPromise);
+        })()
+
+        // let m = {}
+        // createMasterKitModule(m).then(r => {
+        //     console.log(1);
+        // })
+
+
+    </script>
+</head>
+
+<body>
+
+</body>
+
+</html>

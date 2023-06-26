@@ -1638,20 +1638,32 @@ export class BaseShape {
               'adjacentSide2', adjacentSide2,
               'arcCenter', arcCenter
             )
+
+            let s = Bezier.arcToBezier3_2(start, endPoint, arcCenter)
+            console.log('s', s)
+
+            nextPoint.acrCp = c.right.points[1]
+            nextPoint.acrPoint = endPoint
+            currentPoint.realRadius = radius
+
+            let a = c.left.points[1]
             setTimeout(() => {
               let cu = CanvasUtil2.getInstance()
               let ctx = cu.ctx
               ctx.save()
               draw.calcPosition(ctx, this.conf)
-              draw.round(ctx, arcCenter, 4)
+              draw.round2(ctx, arcCenter, 4)
+              draw.round2(ctx, c.left.points[1], 4)
+              draw.round2(ctx, endPoint, 4)
+              draw.round2(ctx, s[0], 4)
+              draw.round2(ctx, s[1], 4)
+              ctx.moveTo2(start)
+              // ctx.bezierCurveTo2(s[0], s[1], endPoint)
+              ctx.bezierCurveTo2(s[0], a, endPoint)
+              ctx.stroke()
 
               ctx.restore()
             })
-
-
-            nextPoint.acrCp = c.right.points[1]
-            nextPoint.acrPoint = endPoint
-            currentPoint.realRadius = radius
             break
           }
         }

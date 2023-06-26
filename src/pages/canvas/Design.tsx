@@ -1,28 +1,17 @@
 import React, {RefObject} from "react"
 import './index.scss'
-import BaseInput from "../../components/BaseInput"
-import {Down, FullScreen, PreviewClose, Unlock,} from "@icon-park/react"
-import BaseIcon from "../../components/BaseIcon"
-import BaseButton from "../../components/BaseButton"
-import FlipIcon from "../../assets/icon/FlipIcon"
-import RotateIcon from "../../assets/icon/RotateIcon"
-import AngleIcon from "../../assets/icon/AngleIcon"
+import {Down,} from "@icon-park/react"
 import {withRouter} from "../../components/WithRouter"
 import Fps from "../../components/Fps"
 import {BaseOption, BaseSelect} from "../../components/BaseSelect2"
-import {Colors, defaultConfig, rects} from "../../lib/designer/utils/constant"
-import {EditModeType, EventTypes, IState, RectColorType, ShapeType} from "../../lib/designer/types/type"
-import BaseSlotButton from "../../components/BaseSlotButton"
+import {defaultConfig, rects} from "../../lib/designer/utils/constant"
+import {EditModeType, EventTypes, IState, ShapeType} from "../../lib/designer/types/type"
 import Icon from '@icon-park/react/es/all'
 import {message} from "antd"
 import Left from "./components/Left/left"
 import EventBus from "../../lib/designer/event/eventBus"
 import cx from "classnames"
 import CanvasUtil2 from "../../lib/designer/engine/CanvasUtil2"
-import {BaseConfig} from "../../lib/designer/config/BaseConfig"
-import {BaseRadio, BaseRadioGroup} from "../../components/BaseRadio"
-import {TextAlign} from "../canvas-old/type"
-import helper from "../../lib/designer/utils/helper";
 import ShapeInfo from "./components/ShapeInfo"
 
 

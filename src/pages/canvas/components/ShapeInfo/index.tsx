@@ -2,12 +2,11 @@ import React, {memo, useEffect, useRef, useState} from "react"
 import BaseInput from "../../../../components/BaseInput"
 import AngleIcon from "../../../../assets/icon/AngleIcon"
 import {BaseRadio, BaseRadioGroup} from "../../../../components/BaseRadio"
-import {TextAlign} from "../../../canvas-old/type"
 import BaseButton from "../../../../components/BaseButton"
 import {BaseConfig} from "../../../../lib/designer/config/BaseConfig"
 import {BaseShape} from "../../../../lib/designer/shapes/core/BaseShape"
 import './index.scss'
-import {BezierPoint, ShapeStatus, ShapeType, TextMode} from "../../../../lib/designer/types/type"
+import {BezierPoint, ShapeStatus, ShapeType, TextAlign, TextMode} from "../../../../lib/designer/types/type"
 import BaseIcon from "../../../../components/BaseIcon"
 import {
   AlignTextLeft,

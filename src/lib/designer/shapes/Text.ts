@@ -3,11 +3,10 @@ import {BaseConfig, Rect} from "../config/BaseConfig"
 import {ParentShape} from "./core/ParentShape";
 import draw from "../utils/draw"
 import {Colors, defaultConfig} from "../utils/constant"
-import {BaseEvent2} from "../types/type";
+import {BaseEvent2, TextMode} from "../types/type";
 import {BaseShape} from "./core/BaseShape";
 import {Cancer} from "@icon-park/react";
 import CanvasUtil2, {CU} from "../engine/CanvasUtil2";
-import {TextMode} from "../../../pages/canvas-old/type";
 import helper from "../utils/helper"
 
 export class Text extends ParentShape {

@@ -1608,8 +1608,7 @@ export class BaseShape {
             //的对边
             let endAdjacentSide = Math.abs(endPoint.y - center.y)
             //对边除斜边得到sin
-            let sin = endAdjacentSide / backSide
-            let asin = Math.asin(sin)
+            let asin = Math.asin(endAdjacentSide / backSide)
             //角度
             let sinDegree = Math2.hudu2juedu(asin)
 
@@ -1617,7 +1616,11 @@ export class BaseShape {
             let allDegree = sinDegree + d2
             //用三角公式就可以算出圆心。
 
-            console.log('c', c, 'd2', j, 'start', start, 'sin', sin, 'asin', asin)
+            let sin = Math.sin(Math2.jiaodu2hudu(d2))
+            let Hypotenuse = radius / sin
+
+
+            console.log('c', c, 'd2', j, 'start', start,)
 
 
             nextPoint.acrCp = c.right.points[1]

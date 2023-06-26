@@ -1,5 +1,5 @@
 // 读取页面节点
-const page = mg.document.children[1]
+const page = mg.document.children[2]
 let cs = page.children
 let s = cs[0]
 //
@@ -11,4 +11,4 @@ let s = cs[0]
 console.log(s);
 // console.log(s.cornerRadius);
 console.log(s.penNetwork);
-console.log(s.penPaths);
+console.log(s.penPaths.data);

@@ -20,12 +20,34 @@ function arcToBezier(e, t, n, 开始角度, 结束角度, 应该是反转 = fals
   return 应该是反转 ? `C ${f} ${m} ${h} ${p} ${r} ${s}` : `C ${h} ${p} ${f} ${m} ${l} ${c}`
 }
 
+function arcToBezier2(radius, centerX, centerY, startAngle, endAngle, reverse = false) {
+  if (reverse) {
+    const e = startAngle;
+    startAngle = endAngle;
+    endAngle = e;
+  }
+  if (endAngle < startAngle) {
+    endAngle += 2 * Math.PI;
+  }
+  const r = centerX + Math.cos(startAngle) * radius
+  let s = centerY + Math.sin(startAngle) * radius
+  let l = centerX + Math.cos(endAngle) * radius
+  let c = centerY + Math.sin(endAngle) * radius
+  let d = endAngle - startAngle
+  let u = 4 * Math.tan(d / 4) / 3
+  let h = r - u * (s - centerY)
+  let p = s + u * (r - centerX)
+  let f = l + u * (c - centerY)
+  let m = c - u * (l - centerX);
+  return reverse ? `C ${f} ${m} ${h} ${p} ${r} ${s}` : `C ${h} ${p} ${f} ${m} ${l} ${c}`
+}
+
 function genPath(e, t) {
   let cornerRadius = [
     30, 30, 30, 30
   ]
   let n, i, a, r;
-  let { x: X, y: Y, width: Width, height: Height } = e;
+  let {x: X, y: Y, width: Width, height: Height} = e;
   // const Stroke12 = this.strokeWeight / 2;
   // if (t && this.strokeAlign === o["H"].INSIDE || t && this.strokeAlign === o["H"].OUTSIDE) {
   //   X += Stroke12
@@ -67,6 +89,7 @@ function genPath(e, t) {
     }
   }
 }
+
 //猜测应该是计算指定长度的点的
 function calLen(e, t, n) {
   if (0 === n)
@@ -82,7 +105,7 @@ function calLen(e, t, n) {
 }
 
 let s = genPath({
-  x: 0, 
+  x: 0,
   y: 0,
   width: 300,
   height: 500

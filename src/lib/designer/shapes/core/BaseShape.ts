@@ -32,6 +32,7 @@ import {Math2} from "../../utils/math"
 import {Bezier} from "../../utils/bezier"
 import {BBox, Bezier as BezierJs} from "bezier-js";
 import {EventKeys} from "../../event/eventKeys";
+import {stat} from "fs"
 
 export class BaseShape {
   hoverType: MouseOptionType = MouseOptionType.None
@@ -1389,7 +1390,12 @@ export class BaseShape {
               if (startPoint.realRadius) {
                 fillPath.arcTo2(startPoint.center, endPoint.center, startPoint.realRadius)
               } else {
-                fillPath.lineTo2(startPoint.center)
+                if (startPoint.acrPoint) {
+                  fillPath.lineTo2(startPoint.center)
+                  // fillPath.lineTo2(startPoint.acrPoint!)
+                } else {
+                  fillPath.lineTo2(startPoint.center)
+                }
               }
               strokePath.lineTo2(startPoint.center)
               break
@@ -1409,7 +1415,7 @@ export class BaseShape {
               strokePath.quadraticCurveTo2(cp!, endPoint.center)
 
               if (startPoint.realRadius) {
-                if (startPoint.radius! > startPoint.realRadius) {
+                if (startPoint.radius! > startPoint.realRadius && false) {
                   // fillPath.arcTo2(startPoint.center, endPoint.acrPoint!, startPoint.realRadius)
                   // fillPath.quadraticCurveTo2(endPoint.acrCp!, endPoint.center)
                   fillPath.bezierCurveTo2(startPoint.center, endPoint.cp1, endPoint.center)
@@ -1572,31 +1578,50 @@ export class BaseShape {
   judgeAnyBezier2Line(prePoint: BezierPoint, currentPoint: BezierPoint, nextPoint: BezierPoint, r?: number) {
     let center = currentPoint.center
     let radius = r ?? currentPoint.radius!
+    let start = prePoint.center
+    let frontSide = Math2.getHypotenuse2(center!, start)
     for (let index = 1, i = 0.1; index <= 10; index++, i = i + 0.1) {
-      let start = prePoint.center
-      // console.log('i', i)
-      let end = Bezier.getPointByT_2(i, [currentPoint.center!, nextPoint.cp1!, nextPoint.center!])
-      // console.log('end1', end)
-      let temp = this.getAdjacentSide(center, start, end, radius)
-      let adjacent = temp.adjacentSide
-      let front = Math2.getHypotenuse2(center!, start)
-      let back = Math2.getHypotenuse2(center!, end)
-      console.log('front', front, 'back', back, 'adjacent', adjacent, 'radius', radius)
-
-      if (back > adjacent && front > adjacent) {
+      let endPoint = Bezier.getPointByT_2(i, [currentPoint.center!, nextPoint.cp1!, nextPoint.center!])
+      let backSide = Math2.getHypotenuse2(center!, endPoint)
+      let temp = this.getAdjacentSide(center, start, endPoint, radius)
+      let adjacentSide = temp.adjacentSide
+      console.log('i', i, 'frontSide', frontSide, 'back', backSide, 'adjacent', adjacentSide, 'radius', radius)
+      if (backSide > adjacentSide && frontSide > adjacentSide) {
         for (let j = i - 0.1; j <= i; j = j + 0.01) {
-          end = Bezier.getPointByT_2(j, [currentPoint.center!, nextPoint.cp1!, nextPoint.center!])
-          // console.log('i', i)
-          console.log('end1', end)
-          adjacent = this.getAdjacentSide(center, start, end, radius).adjacentSide
-          if (back > adjacent && front > adjacent) {
-            console.log('d2', j)
+          endPoint = Bezier.getPointByT_2(j, [currentPoint.center!, nextPoint.cp1!, nextPoint.center!])
+          backSide = Math2.getHypotenuse2(center!, endPoint)
+          console.log('j', j, 'frontSide', frontSide, 'back', backSide, 'adjacent', adjacentSide, 'radius', radius,)
+          temp = this.getAdjacentSide(center, start, endPoint, radius)
+          adjacentSide = temp.adjacentSide
+          if (backSide > adjacentSide && frontSide > adjacentSide) {
 
             let bjs2 = new BezierJs([currentPoint.center!, nextPoint.cp1!, nextPoint.center!])
             let c = bjs2.split(j)
 
+            let degree = temp.degree
+            let d2 = temp.d2
+            start = Math2.getRotatedPoint(endPoint, center, degree)
+            prePoint.acrPoint = start
+
+
+            //终点与中心点，构成的三角形
+            //的对边
+            let endAdjacentSide = Math.abs(endPoint.y - center.y)
+            //对边除斜边得到sin
+            let sin = endAdjacentSide / backSide
+            let asin = Math.asin(sin)
+            //角度
+            let sinDegree = Math2.hudu2juedu(asin)
+
+            //上面的角度加上圆弧的一半角度。
+            let allDegree = sinDegree + d2
+            //用三角公式就可以算出圆心。
+
+            console.log('c', c, 'd2', j, 'start', start, 'sin', sin, 'asin', asin)
+
+
             nextPoint.acrCp = c.right.points[1]
-            nextPoint.acrPoint = end
+            nextPoint.acrPoint = endPoint
             currentPoint.realRadius = radius
             break
           }
@@ -1604,16 +1629,16 @@ export class BaseShape {
         break
       } else {
         //走到这，说明没有符合条件的两个点
-        if (index === 10) {
+        if (index === 10 && false) {
           let maxRadius = currentPoint.radius
           let {tan, adjacentSide} = temp
-          if (back < adjacentSide) {
-            maxRadius = back * tan
-            adjacentSide = back
+          if (backSide < adjacentSide) {
+            maxRadius = backSide * tan
+            adjacentSide = backSide
           }
-          if (front < adjacentSide) {
-            maxRadius = front * tan
-            adjacentSide = front
+          if (frontSide < adjacentSide) {
+            maxRadius = frontSide * tan
+            adjacentSide = frontSide
           }
           currentPoint.realRadius = maxRadius
           this.judgeAnyBezier2Line(prePoint, currentPoint, nextPoint, Math.floor(maxRadius!))
@@ -1721,7 +1746,7 @@ export class BaseShape {
     // console.log('tan值', tan)
     //tanA = a/b。可知b = a/ tanA。所以领边的长就是lines2.point?.radius! / tan
     // console.log('当前radius（对边）对应的邻边长', r / tan)
-    return {tan, adjacentSide: r / tan}
+    return {tan, adjacentSide: r / tan, degree, d2}
   }
 
 }

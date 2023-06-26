@@ -693,7 +693,11 @@ export class Ellipse extends ParentShape {
     let {layout,} = this._conf
     let {w, h} = layout
     let w2 = w / 2, h2 = h / 2
-    let ox = 0.5522848 * w2, oy = 0.5522848 * h2
+    //为什么是0.5522847，请看https://xiaochaowei.com/2022/07/20/BezierCurveFittedAnyCurve/
+    // let ox = 0.5522847 * w2, oy = 0.5522847 * h2
+
+    //为什么是0.551915024494，请看https://spencermortensen.com/articles/bezier-circle/
+    let ox = 0.551915024494 * w2, oy = 0.551915024494 * h2
 
     //图形为整圆时的，4个线段中间点，以及相邻两个控制点。
     let right = {

@@ -80,7 +80,7 @@ const Math2 = {
    * nx = cosθ * (ax - cx) - sinθ * (ay - cy) + cx
    * ny = sinθ * (ax - cx) + cosθ * (ay - cy) + cy
    */
-  getRotatedPoint(point: any, center: any, rotate: number) {
+  getRotatedPoint(point: any, center: any, rotate: number)  {
     if (rotate === 0) return clone(point)
     return {
       x: (point.x - center.x) * Math.cos(this.jiaodu2hudu(rotate)) - (point.y - center.y) * Math.sin(this.jiaodu2hudu(rotate)) + center.x,

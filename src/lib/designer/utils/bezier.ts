@@ -109,7 +109,7 @@ const Bezier = {
    * */
   getPointByT_3(t: number, points: [P, P, P, P]) {
     //如何t是负值，那么应该从终点开始算
-    if (t < 0)  t = 1 - Math.abs(t)
+    if (t < 0) t = 1 - Math.abs(t)
     let [p0, p1, p2, p3] = points
     let x = Math.pow(1 - t, 3) * p0.x + 3 * Math.pow(1 - t, 2) * t * p1.x
       + 3 * (1 - t) * Math.pow(t, 2) * p2.x + Math.pow(t, 3) * p3.x
@@ -123,7 +123,7 @@ const Bezier = {
    * */
   getPointByT_2(t: number, points: [P, P, P]) {
     //如何t是负值，那么应该从终点开始算
-    if (t < 0)  t = 1 - Math.abs(t)
+    if (t < 0) t = 1 - Math.abs(t)
     let [p0, p1, p2] = points
     let x = Math.pow(1 - t, 2) * p0.x + 2 * (1 - t) * t * p1.x + Math.pow(t, 2) * p2.x
     let y = Math.pow(1 - t, 2) * p0.y + 2 * (1 - t) * t * p1.y + Math.pow(t, 2) * p2.y
@@ -224,6 +224,51 @@ const Bezier = {
     let t2 = (-b - Math.sqrt(delta)) / (2 * a);
     //0到0.02和0.98到1的范围是起点和终点。写0-1会导致点选不上
     return [t1, t2].filter(v => 0.02 <= v && v <= 0.98)
+  },
+  //正圆弧转到三次曲线
+  arcToBezier3(radius: number, centerX: number, centerY: number, startAngle: number, endAngle: number, reverse = false) {
+    if (reverse) {
+      const e = startAngle;
+      startAngle = endAngle;
+      endAngle = e;
+    }
+    if (endAngle < startAngle) {
+      endAngle += 2 * Math.PI;
+    }
+    const r = centerX + Math.cos(startAngle) * radius
+    let s = centerY + Math.sin(startAngle) * radius
+    let l = centerX + Math.cos(endAngle) * radius
+    let c = centerY + Math.sin(endAngle) * radius
+    let d = endAngle - startAngle
+    let u = 4 * Math.tan(d / 4) / 3
+    let h = r - u * (s - centerY)
+    let p = s + u * (r - centerX)
+    let f = l + u * (c - centerY)
+    let m = c - u * (l - centerX);
+    return reverse ? `C ${f} ${m} ${h} ${p} ${r} ${s}` : `C ${h} ${p} ${f} ${m} ${l} ${c}`
+  },
+  //正圆弧转到三次曲线
+  //TODO　https://stackoverflow.com/questions/734076/how-to-best-approximate-a-geometrical-arc-with-a-bezier-curve
+  arcToBezier3_2(start: P, end: P, center: P) {
+    const {x: x1, y: y1} = start
+    const {x: x4, y: y4} = end
+    const {x: xc, y: yc} = center
+    let ax = x1 - xc
+    let ay = y1 - yc
+    let bx = x4 - xc
+    let by = y4 - yc
+    let q1 = ax * ax + ay * ay
+    let q2 = q1 + ax * bx + ay * by
+    let k2 = (4 / 3) * (Math.sqrt(2 * q1 * q2) - q2) / (ax * by - ay * bx)
+
+    let x2 = xc + ax - k2 * ay
+    let y2 = yc + ay + k2 * ax
+    let x3 = xc + bx + k2 * by
+    let y3 = yc + by - k2 * bx
+    return [
+      {x: x2, y: y2},
+      {x: x3, y: y3},
+    ]
   }
 }
 export {Bezier}

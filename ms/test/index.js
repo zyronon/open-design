@@ -1,5 +1,5 @@
 // 读取页面节点
-const page = mg.document.children[2]
+const page = mg.document.children[3]
 let cs = page.children
 let s = cs[0]
 //

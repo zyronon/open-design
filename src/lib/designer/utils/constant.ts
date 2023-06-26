@@ -669,239 +669,6 @@ let temp = {
 }
 export const rects222 = [
   {
-    "name": "孙矩形111111",
-    "layout": {
-      "x": 100,
-      "y": 100,
-      "w": 100,
-      "h": 300
-    },
-    "rotation": 0,
-    "lineWidth": 2,
-    "type": "RECTANGLE",
-    "color": "gray",
-    "radius": 0,
-    "children": [],
-    "borderColor": "rgb(0,0,0)",
-    "fillColor": "#4C4C4C",
-    "flipHorizontal": false,
-    "flipVertical": false,
-    "percent": {
-      "x": 0,
-      "y": 0
-    },
-    "relativeCenter": {
-      "x": 0,
-      "y": 0
-    },
-    "realRotation": 0,
-    "start": {
-      "x": 100,
-      "y": 100
-    },
-    "absolute": {
-      "x": 100,
-      "y": 100
-    },
-    "original": {
-      "x": 100,
-      "y": 100
-    },
-    "center": {
-      "x": 150,
-      "y": 250
-    },
-    "box": {
-      "leftX": 100,
-      "rightX": 200,
-      "topY": 100,
-      "bottomY": 400,
-      "topLeft": {
-        "x": 100,
-        "y": 100
-      },
-      "topRight": {
-        "x": 200,
-        "y": 100
-      },
-      "bottomLeft": {
-        "x": 100,
-        "y": 400
-      },
-      "bottomRight": {
-        "x": 200,
-        "y": 400
-      }
-    },
-    "strokeAlign": "INSIDE",
-    "lineShapes": [
-      {
-        "close": true,
-        "points": [
-          {
-            "type": "Single",
-            "point": {
-              "id": "ecef064f-d245-413d-abc6-87083f6823c5",
-              "cp1": {
-                "use": false,
-                "x": 0,
-                "y": 0,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "center": {
-                "use": true,
-                "x": -50,
-                "y": -150,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "cp2": {
-                "use": false,
-                "x": 0,
-                "y": 0,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "type": "RightAngle"
-            }
-          },
-          {
-            "type": "Single",
-            "point": {
-              "id": "bcb68c30-4b93-4965-a2cb-43b9c2131d94",
-              "cp1": {
-                "use": false,
-                "x": 0,
-                "y": 0,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "center": {
-                "use": true,
-                "x": 50,
-                "y": -150,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "cp2": {
-                "use": false,
-                "x": 0,
-                "y": 0,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "type": "RightAngle"
-            }
-          },
-          {
-            "type": "Single",
-            "point": {
-              "id": "3332f3ff-f8d1-4525-b9d1-deb42eb05bf0",
-              "cp1": {
-                "use": false,
-                "x": 0,
-                "y": 0,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "center": {
-                "use": true,
-                "x": 50,
-                "y": 150,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "cp2": {
-                "use": false,
-                "x": 0,
-                "y": 0,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "type": "RightAngle"
-            }
-          },
-          {
-            "type": "Single",
-            "point": {
-              "id": "20c70096-7065-4861-a29e-57179ac24f9d",
-              "cp1": {
-                "use": false,
-                "x": 0,
-                "y": 0,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "center": {
-                "use": true,
-                "x": -50,
-                "y": 150,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "cp2": {
-                "use": false,
-                "x": 0,
-                "y": 0,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "type": "RightAngle"
-            }
-          }
-        ]
-      }
-    ],
-    "commonPoints": [],
-    "isCustom": false,
-    "isComplete": true,
-    "id": "fc30454c-854b-4318-8b8b-cb743f91172d"
-  },
-  {
-    "name": "孙矩形111111",
-    layout: {
-      "x": 420,
-      "y": 100,
-      "w": 200,
-      "h": 400,
-    },
-    "rotation": 0,
-    "lineWidth": 2,
-    "type": ShapeType.RECTANGLE,
-    "color": "gray",
-    "radius": 0,
-    children: [],
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "rgb(241,238,238)",
-    flipHorizontal: false,
-    flipVertical: false
-  },
-  {
     "name": "多边形",
     layout: {
       "x": 550,
@@ -1156,15 +923,36 @@ export const rects222 = [
     flipHorizontal: false,
     flipVertical: false
   },
+  {
+    "name": "矩形",
+    layout: {
+      "x": 50,
+      "y": 50,
+      "w": 350,
+      "h": 400,
+    },
+    "rotation": 0,
+    "lineWidth": 2,
+    "type": ShapeType.RECTANGLE,
+    "color": "gray",
+    "radius": 0,
+    children: [],
+    "borderColor": "rgb(0,0,0)",
+    "fillColor": "#4C4C4C",
+    flipHorizontal: false,
+    flipVertical: false,
+    isComplete: true,
+    isCustom: false
+  },
 ]
 export const rects = [
   {
     "name": "孙矩形111111",
     "layout": {
-      "x": 100,
-      "y": 100,
-      "w": 100,
-      "h": 300
+      "x": 8.226608187134502,
+      "y": 39,
+      "w": 319.7733918128655,
+      "h": 443.4579439252336
     },
     "rotation": 0,
     "lineWidth": 2,
@@ -1176,6 +964,9 @@ export const rects = [
     "fillColor": "#4C4C4C",
     "flipHorizontal": false,
     "flipVertical": false,
+    "isComplete": true,
+    "isCustom": true,
+    "id": "35010d25-dcbb-4c75-ac16-09d26dad65ff",
     "percent": {
       "x": 0,
       "y": 0
@@ -1186,41 +977,41 @@ export const rects = [
     },
     "realRotation": 0,
     "start": {
-      "x": 100,
-      "y": 100
+      "x": 50,
+      "y": 50
     },
     "absolute": {
-      "x": 100,
-      "y": 100
+      "x": 8.226608187134502,
+      "y": 39
     },
     "original": {
-      "x": 100,
-      "y": 100
+      "x": 8.226608187134502,
+      "y": 39
     },
     "center": {
-      "x": 150,
-      "y": 250
+      "x": 168.11330409356725,
+      "y": 260.7289719626168
     },
     "box": {
-      "leftX": 100,
-      "rightX": 200,
-      "topY": 100,
-      "bottomY": 400,
+      "leftX": 8.226608187134502,
+      "rightX": 328,
+      "topY": 39,
+      "bottomY": 482.4579439252336,
       "topLeft": {
-        "x": 100,
-        "y": 100
+        "x": 8.226608187134502,
+        "y": 39
       },
       "topRight": {
-        "x": 200,
-        "y": 100
+        "x": 328,
+        "y": 39
       },
       "bottomLeft": {
-        "x": 100,
-        "y": 400
+        "x": 8.226608187134502,
+        "y": 482.4579439252336
       },
       "bottomRight": {
-        "x": 200,
-        "y": 400
+        "x": 328,
+        "y": 482.4579439252336
       }
     },
     "strokeAlign": "INSIDE",
@@ -1231,7 +1022,7 @@ export const rects = [
           {
             "type": "Single",
             "point": {
-              "id": "ecef064f-d245-413d-abc6-87083f6823c5",
+              "id": "e201704e-3cef-475f-b76a-becc6b69c00c",
               "cp1": {
                 "use": false,
                 "x": 0,
@@ -1243,8 +1034,8 @@ export const rects = [
               },
               "center": {
                 "use": true,
-                "x": -50,
-                "y": -150,
+                "x": -119.11330409356725,
+                "y": -221.7289719626168,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
@@ -1265,7 +1056,7 @@ export const rects = [
           {
             "type": "Single",
             "point": {
-              "id": "bcb68c30-4b93-4965-a2cb-43b9c2131d94",
+              "id": "b13d6a24-cc6e-40bb-9b06-994f63c9d337",
               "cp1": {
                 "use": false,
                 "x": 0,
@@ -1277,8 +1068,8 @@ export const rects = [
               },
               "center": {
                 "use": true,
-                "x": 50,
-                "y": -150,
+                "x": 156.88669590643275,
+                "y": -219.7289719626168,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
@@ -1293,13 +1084,17 @@ export const rects = [
                 "rx": 0,
                 "ry": 0
               },
-              "type": "RightAngle"
+              "type": "RightAngle",
+              "acrPoint": {
+                "x": 102.02436262828009,
+                "y": 88.5813063571945
+              }
             }
           },
           {
             "type": "Single",
             "point": {
-              "id": "3332f3ff-f8d1-4525-b9d1-deb42eb05bf0",
+              "id": "f7537620-433d-4b22-85b7-7b36e4177ae6",
               "cp1": {
                 "use": false,
                 "x": 0,
@@ -1311,8 +1106,8 @@ export const rects = [
               },
               "center": {
                 "use": true,
-                "x": 50,
-                "y": 150,
+                "x": 159.88669590643275,
+                "y": 221.2710280373832,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
@@ -1327,28 +1122,28 @@ export const rects = [
                 "rx": 0,
                 "ry": 0
               },
-              realRadius: 50,
-              radius: 50,
-              "type": "RightAngle"
+              "type": "RightAngle",
+              "radius": 129,
+              "realRadius": 129
             }
           },
           {
             "type": "Single",
             "point": {
-              "id": "20c70096-7065-4861-a29e-57179ac24f9d",
+              "id": "289e90ce-615f-414c-9ea0-70ca8b81c5bb",
               "cp1": {
                 "use": true,
-                "x": -50,
-                "y": 150,
+                "x": -27.613304093567237,
+                "y": 228.2710280373832,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
                 "ry": 0
               },
               "center": {
-                "use": false,
-                "x": -50,
-                "y": 100,
+                "use": true,
+                "x": -115.11330409356725,
+                "y": 128.2710280373832,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
@@ -1356,23 +1151,28 @@ export const rects = [
               },
               "cp2": {
                 "use": false,
-                "x": 0,
-                "y": 0,
+                "x": -202.61330409356725,
+                "y": 28.271028037383203,
                 "px": 0,
                 "py": 0,
                 "rx": 0,
                 "ry": 0
               },
-              "type": "MirrorAngleAndLength"
+              "type": "MirrorAngleAndLength",
+              "acrCp": {
+                "x": -122.125,
+                "y": 196
+              },
+              "acrPoint": {
+                "x": -39.760000000000005,
+                "y": 218.2357
+              }
             }
           }
         ]
       }
     ],
-    "commonPoints": [],
-    "isCustom": true,
-    "isComplete": true,
-    "id": "fc30454c-854b-4318-8b8b-cb743f91172d"
+    "commonPoints": []
   }
 ]
 

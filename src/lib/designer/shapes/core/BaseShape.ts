@@ -1615,12 +1615,38 @@ export class BaseShape {
             //上面的角度加上圆弧的一半角度。
             let allDegree = sinDegree + d2
             //用三角公式就可以算出圆心。
-
+            //sin = 对边/斜边
             let sin = Math.sin(Math2.jiaodu2hudu(d2))
-            let Hypotenuse = radius / sin
+            //得到斜边
+            let hypotenuse = radius / sin
 
+            let sinAll = Math.sin(Math2.jiaodu2hudu(allDegree))
+            //对边
+            let oppositeSide = sinAll * hypotenuse
 
-            console.log('c', c, 'd2', j, 'start', start,)
+            let cosAll = Math.cos(Math2.jiaodu2hudu(allDegree))
+            //邻边
+            let adjacentSide2 = cosAll * hypotenuse
+
+            let arcCenter = {
+              x: center.x - adjacentSide2,
+              y: center.y - oppositeSide,
+            }
+
+            console.log('c', c, 'd2', j, 'start', start, 'hypotenuse', hypotenuse,
+              'oppositeSide', oppositeSide,
+              'adjacentSide2', adjacentSide2,
+              'arcCenter', arcCenter
+            )
+            setTimeout(() => {
+              let cu = CanvasUtil2.getInstance()
+              let ctx = cu.ctx
+              ctx.save()
+              draw.calcPosition(ctx, this.conf)
+              draw.round(ctx, arcCenter, 4)
+
+              ctx.restore()
+            })
 
 
             nextPoint.acrCp = c.right.points[1]

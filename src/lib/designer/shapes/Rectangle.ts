@@ -129,7 +129,7 @@ export class Rectangle extends ParentShape {
       x -= lw2, y -= lw2, w += lw2 * 2, h += lw2 * 2, radius += lw2
     }
     ctx.strokeStyle = borderColor
-    // strokePathList = this.getShapePath({x, y, w, h}, radius)
+    strokePathList = this.getShapePath({x, y, w, h}, radius)
     strokePathList.map(line => {
       ctx.stroke(line.path)
     })

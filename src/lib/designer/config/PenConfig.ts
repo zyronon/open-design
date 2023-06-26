@@ -26,7 +26,12 @@ export interface Region {
   windingRule: WindingRule
 }
 
-export type PenNetworkPath = [number, number, number, number]
+export interface PenNetworkPath {
+  start: number,
+  end: number
+  tangentStart: P,
+  tangentEnd: P,
+}
 
 export interface PenNetwork {
   ctrlNodes: P[]

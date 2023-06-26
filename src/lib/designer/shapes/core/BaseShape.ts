@@ -1603,7 +1603,6 @@ export class BaseShape {
             start = Math2.getRotatedPoint(endPoint, center, degree)
             prePoint.acrPoint = start
 
-
             //终点与中心点，构成的三角形
             //的对边
             let endAdjacentSide = Math.abs(endPoint.y - center.y)

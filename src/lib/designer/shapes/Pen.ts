@@ -100,13 +100,14 @@ export class Pen extends ParentShape {
       ctx.stroke(path)
     })
 
+    //渲染hover在线上时，线段的中心点
     if ((this.editHover.type === EditType.Line
         || this.editHover.type === EditType.CenterPoint)
       && this.editHover.pointIndex !== -1
     ) {
       draw.drawRound(ctx, this.hoverLineCenterPoint)
     }
-    // let {lineIndex, pointIndex, type} = this.editStartPointInfo
+    let {lineIndex, pointIndex, type} = this.editStartPointInfo
     // //先绘制控制线，好被后续的圆点遮盖
     // if (pointIndex !== -1 && type !== EditType.Line) {
     //   let line = lineShapes[lineIndex]
@@ -137,18 +138,19 @@ export class Pen extends ParentShape {
 
     const {nodes, paths} = this._conf.penNetwork
 
+    //绘制所有点
     nodes.map((node) => {
       // if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
       // if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
       draw.drawRound(ctx, node)
     })
-    // if (pointIndex !== -1 && type !== EditType.Line) {
-    //   let line = lineShapes[lineIndex]
-    //   let point = this.getPoint(line.points[pointIndex])
-    //   if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
-    //   if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
-    //   draw.currentPoint(ctx, point.center)
-    // }
+    //绘制选中的当前点和控制点
+    if (pointIndex !== -1 && type !== EditType.Line) {
+      let {point, start, end} = this.getControlPoint(lineIndex, pointIndex)
+      if (start) draw.controlPoint(ctx, start, point)
+      if (end) draw.controlPoint(ctx, end, point)
+      draw.currentPoint(ctx, point)
+    }
     ctx.restore()
   }
 
@@ -196,7 +198,7 @@ export class Pen extends ParentShape {
     return []
   }
 
-  getCustomShapePath3(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
+  getCustomShapePath3(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     const {nodes, paths} = this._conf.penNetwork

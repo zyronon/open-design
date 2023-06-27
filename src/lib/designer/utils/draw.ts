@@ -244,7 +244,7 @@ export default {
     }
     // this.round(topLeft, r2, ctx, ShapeType.SELECT)
   },
-  controlPoint(ctx: CanvasRenderingContext2D, rect: any, center: P2) {
+  controlPoint(ctx: CanvasRenderingContext2D, rect: any, center: P) {
     let handScale = CanvasUtil2.getInstance().handScale
     let d = 3 / handScale
     let {x, y, w = 2 * d, h = 2 * d, lineWidth = 1} = rect

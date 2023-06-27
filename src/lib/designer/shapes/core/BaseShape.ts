@@ -1865,11 +1865,11 @@ export class BaseShape {
     let line: PenNetworkPath = path[pointIndex]
     let preLine: PenNetworkPath
     if (pointIndex === 0) {
-      preLine = path[pointIndex - 1]
-    } else {
       preLine = path[path.length - 1]
+    } else {
+      preLine = path[pointIndex - 1]
     }
-    return {start: line.tangentStart, end: preLine.tangentEnd}
+    return {start: preLine.tangentStart, end: preLine.tangentEnd, point: nodes[line.start]}
   }
 
   movePoint(lineIndex: number, pointIndex: number, move: P) {
@@ -1892,11 +1892,11 @@ export class BaseShape {
     let preLine: PenNetworkPath
     let oldPreLine: PenNetworkPath
     if (pointIndex === 0) {
-      preLine = path[pointIndex - 1]
-      oldPreLine = oldPath[pointIndex - 1]
-    } else {
       preLine = path[path.length - 1]
       oldPreLine = oldPath[path.length - 1]
+    } else {
+      preLine = path[pointIndex - 1]
+      oldPreLine = oldPath[pointIndex - 1]
     }
     if (preLine.tangentEnd) {
       helper.movePoint2(preLine.tangentEnd, oldPreLine.tangentEnd!, move)

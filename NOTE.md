@@ -66,6 +66,10 @@
     - 直线，直接计算当前点与起点和终点的分别长度，相加是否与起点和终点的长度相等
     - 曲线，代入贝塞尔曲线的公式t为0.5时的位置
 
+- 平滑圆角
+  - https://m.sohu.com/a/416527912_463970/?pvid=000115_3w_a
+  - https://www.figma.com/blog/desperately-seeking-squircles/
+
 - 如何计算点最大的圆角radius呢？
     - arcTo画圆，只需传半径radius。acrTo原理是以当前角的1/2作出中心线，
     - 然后两个邻边垂直于中心线（长度为radius）画圆。所以radius为对边，中心线为斜边，两侧线段分别为各自的领边

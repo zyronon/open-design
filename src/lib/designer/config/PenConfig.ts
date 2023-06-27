@@ -18,7 +18,10 @@ export interface PenNetworkNode {
   x: number
   y: number
   cornerRadius: number
-  handleMirroring: HandleMirroring
+  realCornerRadius?: number,//真实的圆角
+  handleMirroring: HandleMirroring,
+  cornerTangentStart: P,
+  cornerTangentEnd: P,
 }
 
 export interface Region {
@@ -31,6 +34,8 @@ export interface PenNetworkPath {
   end: number
   tangentStart: P,
   tangentEnd: P,
+  arcCP: P,
+  arcPoint: P
 }
 
 export interface PenNetwork {

@@ -120,6 +120,7 @@ export interface BaseConfig extends Layout, Geometry, Text {
    * */
   cornerSmooth: number,//控制角的平滑程度，值域为 [0, 1]。
   cornerRadius: number,//圆角。
+  realCornerRadius: number,
   topLeftRadius: number,
   topRightRadius: number,
   bottomLeftRadius: number,

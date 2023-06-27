@@ -1,5 +1,6 @@
-import {FontWeight, ShapeType, StrokeAlign, TextMode} from "../types/type"
+import {FontWeight, P, ShapeType, StrokeAlign, TextMode} from "../types/type"
 import {FontFamily, TextAlign} from "../config/TextConfig"
+import {HandleMirroring, PenConfig} from "../config/PenConfig"
 
 export const fontFamilies = [
   {
@@ -945,235 +946,81 @@ export const rects222 = [
     isCustom: false
   },
 ]
-export const rects = [
+export const rects: PenConfig[] = [
   {
-    "name": "孙矩形111111",
-    "layout": {
-      "x": 1224,
-      "y": 19.99999999999997,
-      "w": 279,
-      "h": 443.4579439252337
+    "name": "矩形",
+    layout: {
+      "x": 0,
+      "y": 0,
+      "w": 100,
+      "h": 300,
     },
     "rotation": 0,
     "lineWidth": 2,
-    "type": "RECTANGLE",
-    "color": "gray",
+    "type": ShapeType.PEN,
     "radius": 0,
-    "children": [],
+    children: [],
     "borderColor": "rgb(0,0,0)",
     "fillColor": "#4C4C4C",
-    "flipHorizontal": false,
-    "flipVertical": false,
-    "isComplete": true,
-    "isCustom": true,
-    "id": "35010d25-dcbb-4c75-ac16-09d26dad65ff",
-    "percent": {
-      "x": 0,
-      "y": 0
-    },
-    "relativeCenter": {
-      "x": 0,
-      "y": 0
-    },
-    "realRotation": 0,
-    "start": {
-      "x": 50,
-      "y": 50
-    },
-    "absolute": {
-      "x": 1224,
-      "y": 19.99999999999997
-    },
-    "original": {
-      "x": 1224,
-      "y": 19.99999999999997
-    },
-    "center": {
-      "x": 1363.5,
-      "y": 241.7289719626168
-    },
-    "box": {
-      "leftX": 1224,
-      "rightX": 1503,
-      "topY": 19.99999999999997,
-      "bottomY": 463.4579439252336,
-      "topLeft": {
-        "x": 1224,
-        "y": 19.99999999999997
-      },
-      "topRight": {
-        "x": 1503,
-        "y": 19.99999999999997
-      },
-      "bottomLeft": {
-        "x": 1224,
-        "y": 463.4579439252336
-      },
-      "bottomRight": {
-        "x": 1503,
-        "y": 463.4579439252336
-      }
-    },
-    "strokeAlign": "INSIDE",
-    "lineShapes": [
-      {
-        "close": true,
-        "points": [
-          {
-            "type": "Single",
-            "point": {
-              "id": "e201704e-3cef-475f-b76a-becc6b69c00c",
-              "cp1": {
-                "use": false,
-                "x": 0,
-                "y": 0,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "center": {
-                "use": true,
-                "x": -139.5,
-                "y": -221.7289719626168,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "cp2": {
-                "use": false,
-                "x": 0,
-                "y": 0,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "type": "RightAngle"
-            }
-          },
-          {
-            "type": "Single",
-            "point": {
-              "id": "b13d6a24-cc6e-40bb-9b06-994f63c9d337",
-              "cp1": {
-                "use": false,
-                "x": 0,
-                "y": 0,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "center": {
-                "use": true,
-                "x": 136.5,
-                "y": -219.7289719626168,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "cp2": {
-                "use": false,
-                "x": 0,
-                "y": 0,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "type": "RightAngle",
-              "acrPoint": {
-                "x": 138.52436262828007,
-                "y": 77.8523343945777
-              }
-            }
-          },
-          {
-            "type": "Single",
-            "point": {
-              "id": "f7537620-433d-4b22-85b7-7b36e4177ae6",
-              "cp1": {
-                "use": false,
-                "x": 0,
-                "y": 0,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "center": {
-                "use": true,
-                "x": 139.5,
-                "y": 221.2710280373832,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "cp2": {
-                "use": false,
-                "x": 0,
-                "y": 0,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "type": "RightAngle",
-              "radius": 129,
-              "realRadius": 129
-            }
-          },
-          {
-            "type": "Single",
-            "point": {
-              "id": "289e90ce-615f-414c-9ea0-70ca8b81c5bb",
-              "cp1": {
-                "use": true,
-                "x": -47.999999999999986,
-                "y": 228.2710280373832,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "center": {
-                "use": true,
-                "x": -135.5,
-                "y": 128.2710280373832,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "cp2": {
-                "use": false,
-                "x": -202.61330409356725,
-                "y": 28.271028037383203,
-                "px": 0,
-                "py": 0,
-                "rx": 0,
-                "ry": 0
-              },
-              "type": "MirrorAngleAndLength",
-              "acrCp": {
-                "x": -85.625,
-                "y": 185.2710280373832
-              },
-              "acrPoint": {
-                "x": -3.2600000000000016,
-                "y": 207.5067280373832
-              }
-            }
-          }
-        ]
-      }
-    ],
-    "commonPoints": []
-  }
+    flipHorizontal: false,
+    flipVertical: false,
+    isComplete: true,
+    isCustom: false,
+    cornerRadius: 0,
+    realCornerRadius: 0,
+    penNetwork: {
+      ctrlNodes: [],
+      nodes: [
+        {
+          x: 0,
+          y: 0,
+          cornerRadius: 0,
+          realCornerRadius: 0,
+          handleMirroring: 'NONE',
+        },
+        {
+          x: 0,
+          y: 100,
+          cornerRadius: 0,
+          realCornerRadius: 0,
+          handleMirroring: 'NONE',
+        },
+        {
+          x: 100,
+          y: 300,
+          cornerRadius: 0,
+          realCornerRadius: 0,
+          handleMirroring: 'NONE',
+        },
+        {
+          x: 0,
+          y: 300,
+          cornerRadius: 0,
+          realCornerRadius: 0,
+          handleMirroring: 'NONE',
+        },
+      ],
+      paths: [
+        {
+          start: 0,
+          end: 1,
+        },
+        {
+          start: 1,
+          end: 2,
+        },
+        {
+          start: 2,
+          end: 3,
+        },
+        {
+          start: 3,
+          end: 0,
+        },
+      ],
+      regions: [],
+    }
+  },
 ]
 
 const defaultCurrentMat = [

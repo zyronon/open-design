@@ -1,4 +1,5 @@
 import {P} from "../types/type";
+import {BaseConfig} from "./BaseConfig"
 
 export type StrokeCap =
   'NONE'
@@ -20,8 +21,8 @@ export interface PenNetworkNode {
   cornerRadius: number
   realCornerRadius?: number,//真实的圆角
   handleMirroring: HandleMirroring,
-  cornerTangentStart: P,
-  cornerTangentEnd: P,
+  cornerTangentStart?: P,
+  cornerTangentEnd?: P,
 }
 
 export interface Region {
@@ -32,10 +33,10 @@ export interface Region {
 export interface PenNetworkPath {
   start: number,
   end: number
-  tangentStart: P,
-  tangentEnd: P,
-  arcCP: P,
-  arcPoint: P
+  tangentStart?: P,
+  tangentEnd?: P,
+  arcCP?: P,
+  arcPoint?: P
 }
 
 export interface PenNetwork {
@@ -45,6 +46,6 @@ export interface PenNetwork {
   regions: Region[]
 }
 
-export interface PenConfig {
-  pointNetwork: PenNetwork
+export interface PenConfig extends BaseConfig {
+  penNetwork: PenNetwork
 }

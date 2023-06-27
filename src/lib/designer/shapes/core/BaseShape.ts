@@ -33,6 +33,7 @@ import {Bezier} from "../../utils/bezier"
 import {BBox, Bezier as BezierJs} from "bezier-js";
 import {EventKeys} from "../../event/eventKeys";
 import {stat} from "fs"
+import {PenNetworkPath2} from "../../config/PenConfig";
 
 export class BaseShape {
   hoverType: MouseOptionType = MouseOptionType.None
@@ -305,6 +306,92 @@ export class BaseShape {
         }
       }
     }
+    let {lineIndex, pointIndex} = this.editStartPointInfo
+    if (pointIndex !== -1) {
+      let waitCheckPoints: any[] = []
+      let line = lineShapes[lineIndex]
+      let point = this.getPoint(line.points[pointIndex])
+      if (point.cp1.use) waitCheckPoints.push({pointIndex, index: 1, point: point.cp1})
+      if (point.cp2.use) waitCheckPoints.push({pointIndex, index: 2, point: point.cp2})
+      if (pointIndex === 0) {
+        point = this.getPoint(line.points[line.points.length - 1])
+        if (point.cp1.use) waitCheckPoints.push({pointIndex: line.points.length - 1, index: 1, point: point.cp1})
+        if (point.cp2.use) waitCheckPoints.push({pointIndex: line.points.length - 1, index: 2, point: point.cp2})
+      } else {
+        point = this.getPoint(line.points[pointIndex - 1])
+        if (point.cp1.use) waitCheckPoints.push({pointIndex: pointIndex - 1, index: 1, point: point.cp1})
+        if (point.cp2.use) waitCheckPoints.push({pointIndex: pointIndex - 1, index: 2, point: point.cp2})
+      }
+      if (pointIndex === line.points.length - 1) {
+        point = this.getPoint(line.points[0])
+        if (point.cp1.use) waitCheckPoints.push({pointIndex: 0, index: 1, point: point.cp1})
+        if (point.cp2.use) waitCheckPoints.push({pointIndex: 0, index: 2, point: point.cp2})
+      } else {
+        point = this.getPoint(line.points[pointIndex + 1])
+        if (point.cp1.use) waitCheckPoints.push({pointIndex: pointIndex + 1, index: 1, point: point.cp1})
+        if (point.cp2.use) waitCheckPoints.push({pointIndex: pointIndex + 1, index: 2, point: point.cp2})
+      }
+      for (let i = 0; i < waitCheckPoints.length; i++) {
+        let item = waitCheckPoints[i]
+        if (helper.isInPoint(fixMousePoint, item.point, judgePointDistance)) {
+          console.log('在cp点上')
+          return {type: EditType.ControlPoint, lineIndex, pointIndex: item.pointIndex, cpIndex: item.index}
+        }
+      }
+    }
+    return {type: undefined, lineIndex: -1, pointIndex: -1, cpIndex: -1}
+  }
+
+  checkMousePointOnEditStatus2(point: P): CurrentOperationInfo {
+    // console.log('------------------')
+    let {center, lineShapes, realRotation, flipVertical, flipHorizontal} = this.conf
+    //反转到0度，好判断
+    if (realRotation) {
+      point = Math2.getRotatedPoint(point, center, -realRotation)
+    }
+    if (flipHorizontal) point.x = helper._reversePoint(point.x, center.x)
+    if (flipVertical) point.y = helper._reversePoint(point.y, center.y)
+    let judgePointDistance = 5 / 1
+    let fixMousePoint = {
+      x: point.x - center.x,
+      y: point.y - center.y
+    }
+    const {nodes, paths} = this.conf.penNetwork
+
+    for (let lineIndex = 0; lineIndex < paths.length; lineIndex++) {
+      let path = paths[lineIndex]
+      for (let pointIndex = 0; pointIndex < path.length; pointIndex++) {
+        let line = path[pointIndex]
+        let startPoint = nodes[path[pointIndex].start]
+        // console.log('isInPoint', fixMousePoint, startPoint.center)
+        // console.log('s',helper.isInPoint(fixMousePoint, startPoint.center, judgePointDistance))
+        if (helper.isInPoint(fixMousePoint, startPoint, judgePointDistance)) {
+          console.log('在点上')
+          return {type: EditType.Point, lineIndex, pointIndex, cpIndex: -1}
+        }
+        let endPoint = nodes[path[pointIndex].end]
+        let line1: PenNetworkPath2 = {...line, startPoint, endPoint}
+        let lineType = helper.judgeLineType2(line)
+        if (helper.isInLine2(fixMousePoint, line1, lineType)) {
+          console.log('在线上')
+          let returnData = {
+            type: EditType.Line,
+            lineType,
+            lineIndex,
+            pointIndex,
+            lineCenterPoint: helper.getLineCenterPoint2(line1, lineType),
+            cpIndex: -1
+          }
+          if (helper.isInPoint(fixMousePoint, this.hoverLineCenterPoint, judgePointDistance)) {
+            console.log('hover在线的中点上')
+            returnData.type = EditType.CenterPoint
+          }
+          return returnData
+        }
+      }
+    }
+
+    return {type: undefined, lineIndex: -1, pointIndex: -1, cpIndex: -1}
     let {lineIndex, pointIndex} = this.editStartPointInfo
     if (pointIndex !== -1) {
       let waitCheckPoints: any[] = []
@@ -709,7 +796,7 @@ export class BaseShape {
 
     if (this.status === ShapeStatus.Edit) {
       if (cu.editModeType === EditModeType.Select) {
-        let result = this.checkMousePointOnEditStatus(event.point)
+        let result = this.checkMousePointOnEditStatus2(event.point)
         let {lineIndex, pointIndex, cpIndex, type, lineType} = result
         // console.log('pointIndex', pointIndex)
         // console.log('result', result)
@@ -921,7 +1008,6 @@ export class BaseShape {
       }
     }
 
-
     if (this.status === ShapeStatus.Edit) {
       let cu = CanvasUtil2.getInstance()
       let {center, realRotation, lineShapes, flipHorizontal, flipVertical} = this.conf
@@ -929,7 +1015,7 @@ export class BaseShape {
         const {lineIndex, pointIndex, cpIndex, type} = this.editEnter
         //未选中任何内容，还属于判断阶段
         if (pointIndex === -1) {
-          let result = this.checkMousePointOnEditStatus(event.point)
+          let result = this.checkMousePointOnEditStatus2(event.point)
           //用于判断是否与之前保存的值不同，仅在不同时才重绘
           if (this.editHover.pointIndex !== result.pointIndex) {
             if (result.type === EditType.Line) {
@@ -1362,7 +1448,7 @@ export class BaseShape {
     return pathList
   }
 
-  getCustomShapePath2(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
+  getCustomShapePath2(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     this.conf.lineShapes.map((line) => {

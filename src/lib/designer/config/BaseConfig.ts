@@ -1,5 +1,6 @@
 //属性参考：https://developers.mastergo.com/apis/node-frame.html
 import {BezierPoint, LineShape, P, P2, ShapeType, StrokeAlign} from "../types/type"
+import {PenNetwork} from "./PenConfig";
 
 interface Layout {
   absoluteTransform: Transform//图层节点相对于包含它的页面的位置，以变换矩阵的方式呈现。
@@ -132,6 +133,8 @@ export interface BaseConfig extends Layout, Geometry, Text {
   blendMode: number//图层的混合模式。
   isMask: boolean//图层是否是蒙版。
   effects: any[]//返回一个特效数组，具体数据结构可以查看 Effect。
+  penNetwork: PenNetwork
+
 }
 
 export enum FontFamily {

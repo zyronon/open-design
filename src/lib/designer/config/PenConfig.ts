@@ -38,6 +38,10 @@ export interface PenNetworkPath {
   arcCP?: P,
   arcPoint?: P
 }
+export interface PenNetworkPath2 extends PenNetworkPath{
+  startPoint: P,
+  endPoint: P,
+}
 
 export interface PenNetwork {
   nodes: PenNetworkNode[]
@@ -46,5 +50,5 @@ export interface PenNetwork {
 }
 
 export interface PenConfig extends BaseConfig {
-  penNetwork: PenNetwork
+  // penNetwork: PenNetwork
 }

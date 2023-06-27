@@ -33,7 +33,7 @@ import {Bezier} from "../../utils/bezier"
 import {BBox, Bezier as BezierJs} from "bezier-js";
 import {EventKeys} from "../../event/eventKeys";
 import {stat} from "fs"
-import {PenNetworkPath2} from "../../config/PenConfig";
+import {PenNetworkPath, PenNetworkPath2} from "../../config/PenConfig";
 
 export class BaseShape {
   hoverType: MouseOptionType = MouseOptionType.None
@@ -358,6 +358,7 @@ export class BaseShape {
     }
     const {nodes, paths} = this.conf.penNetwork
 
+    //判断是否在点上、线上、hover在线的中点上
     for (let lineIndex = 0; lineIndex < paths.length; lineIndex++) {
       let path = paths[lineIndex]
       for (let pointIndex = 0; pointIndex < path.length; pointIndex++) {
@@ -391,32 +392,20 @@ export class BaseShape {
       }
     }
 
-    return {type: undefined, lineIndex: -1, pointIndex: -1, cpIndex: -1}
-    let {lineIndex, pointIndex} = this.editStartPointInfo
-    if (pointIndex !== -1) {
+    //判断是否在cp点上
+    let {lineIndex, pointIndex, type} = this.editStartPointInfo
+    if (pointIndex !== -1 && type === EditType.Point) {
       let waitCheckPoints: any[] = []
-      let line = lineShapes[lineIndex]
-      let point = this.getPoint(line.points[pointIndex])
-      if (point.cp1.use) waitCheckPoints.push({pointIndex, index: 1, point: point.cp1})
-      if (point.cp2.use) waitCheckPoints.push({pointIndex, index: 2, point: point.cp2})
+      let path = paths[lineIndex]
+      let line: PenNetworkPath = path[pointIndex]
+      if (line.tangentStart) waitCheckPoints.push({pointIndex, index: 1, point: line.tangentStart})
+      let preLine: PenNetworkPath
       if (pointIndex === 0) {
-        point = this.getPoint(line.points[line.points.length - 1])
-        if (point.cp1.use) waitCheckPoints.push({pointIndex: line.points.length - 1, index: 1, point: point.cp1})
-        if (point.cp2.use) waitCheckPoints.push({pointIndex: line.points.length - 1, index: 2, point: point.cp2})
+        preLine = path[pointIndex - 1]
       } else {
-        point = this.getPoint(line.points[pointIndex - 1])
-        if (point.cp1.use) waitCheckPoints.push({pointIndex: pointIndex - 1, index: 1, point: point.cp1})
-        if (point.cp2.use) waitCheckPoints.push({pointIndex: pointIndex - 1, index: 2, point: point.cp2})
+        preLine = path[path.length - 1]
       }
-      if (pointIndex === line.points.length - 1) {
-        point = this.getPoint(line.points[0])
-        if (point.cp1.use) waitCheckPoints.push({pointIndex: 0, index: 1, point: point.cp1})
-        if (point.cp2.use) waitCheckPoints.push({pointIndex: 0, index: 2, point: point.cp2})
-      } else {
-        point = this.getPoint(line.points[pointIndex + 1])
-        if (point.cp1.use) waitCheckPoints.push({pointIndex: pointIndex + 1, index: 1, point: point.cp1})
-        if (point.cp2.use) waitCheckPoints.push({pointIndex: pointIndex + 1, index: 2, point: point.cp2})
-      }
+      if (preLine.tangentEnd) waitCheckPoints.push({pointIndex, index: 2, point: preLine.tangentEnd})
       for (let i = 0; i < waitCheckPoints.length; i++) {
         let item = waitCheckPoints[i]
         if (helper.isInPoint(fixMousePoint, item.point, judgePointDistance)) {
@@ -516,7 +505,7 @@ export class BaseShape {
     let {x, y} = draw.calcPosition(ctx, this.conf)
     let newLayout = {...this.conf.layout, x, y}
     // let newLayout = {...this.conf.layout, }
-    console.log('this.status', this.status)
+    // console.log('this.status', this.status)
     if (this.status === ShapeStatus.Edit) {
       this.drawEdit(ctx, newLayout)
     } else {
@@ -798,8 +787,7 @@ export class BaseShape {
       if (cu.editModeType === EditModeType.Select) {
         let result = this.checkMousePointOnEditStatus2(event.point)
         let {lineIndex, pointIndex, cpIndex, type, lineType} = result
-        // console.log('pointIndex', pointIndex)
-        // console.log('result', result)
+        console.log('result', result)
         //如果hover在点上，先处理hover
         if (pointIndex !== -1) {
           this.conf.isCustom = true
@@ -875,11 +863,12 @@ export class BaseShape {
             //新增一个点，下标也要加1，以选中它
             result.pointIndex += 1
           }
+          const {nodes, paths} = this.conf.penNetwork
 
           EventBus.emit(EventKeys.POINT_INFO, {
             lineIndex,
             pointIndex,
-            point: this.getPoint(this.conf.lineShapes[lineIndex].points[pointIndex])
+            point: nodes[paths[lineIndex][pointIndex].start]
           })
 
           this.editEnter = result
@@ -1051,69 +1040,62 @@ export class BaseShape {
           let {x, y} = event.point
           let move = {x: x - cu.fixMouseStart.x, y: y - cu.fixMouseStart.y}
           // let move = {x: 0, y: y - cu.fixMouseStart.y}
+          const {nodes, paths} = this.conf.penNetwork
+          const {nodes: oldNodes, paths: oldPaths} = this.original.penNetwork
 
-          if (type === EditType.ControlPoint) {
-            let point = this.getPoint(this.conf.lineShapes[lineIndex].points[pointIndex])
-            let oldPoint = this.getPoint(this.original.lineShapes[lineIndex].points[pointIndex], this.original)
-            if (cpIndex === 1) {
-              point.cp1.x = oldPoint.cp1.x + move.x
-              point.cp1.y = oldPoint.cp1.y + move.y
-              if (point.type === BezierPointType.MirrorAngleAndLength) {
-                let p = Math2.getRotatedPoint(point.cp1, point.center, 180)
-                point.cp2.x = p.x
-                point.cp2.y = p.y
-              }
-              if (point.type === BezierPointType.MirrorAngle) {
-                let moveDegree = Math2.getDegree(point.center, oldPoint.cp1, point.cp1)
-                let p = Math2.getRotatedPoint(oldPoint.cp2, point.center, moveDegree)
-                point.cp2.x = p.x
-                point.cp2.y = p.y
-              }
-            }
-            if (cpIndex === 2) {
-              point.cp2.x = oldPoint.cp2.x + move.x
-              point.cp2.y = oldPoint.cp2.y + move.y
-              if (point.type === BezierPointType.MirrorAngleAndLength) {
-                let p = Math2.getRotatedPoint(point.cp2, point.center, 180)
-                point.cp1.x = p.x
-                point.cp1.y = p.y
-              }
-              if (point.type === BezierPointType.MirrorAngle) {
-                let moveDegree = Math2.getDegree(point.center, oldPoint.cp2, point.cp2)
-                let p = Math2.getRotatedPoint(oldPoint.cp1, point.center, moveDegree)
-                point.cp1.x = p.x
-                point.cp1.y = p.y
-              }
-            }
-            cu.render()
-          }
+          // if (type === EditType.ControlPoint) {
+          //   let point = this.getPoint(this.conf.lineShapes[lineIndex].points[pointIndex])
+          //   let oldPoint = this.getPoint(this.original.lineShapes[lineIndex].points[pointIndex], this.original)
+          //   if (cpIndex === 1) {
+          //     point.cp1.x = oldPoint.cp1.x + move.x
+          //     point.cp1.y = oldPoint.cp1.y + move.y
+          //     if (point.type === BezierPointType.MirrorAngleAndLength) {
+          //       let p = Math2.getRotatedPoint(point.cp1, point.center, 180)
+          //       point.cp2.x = p.x
+          //       point.cp2.y = p.y
+          //     }
+          //     if (point.type === BezierPointType.MirrorAngle) {
+          //       let moveDegree = Math2.getDegree(point.center, oldPoint.cp1, point.cp1)
+          //       let p = Math2.getRotatedPoint(oldPoint.cp2, point.center, moveDegree)
+          //       point.cp2.x = p.x
+          //       point.cp2.y = p.y
+          //     }
+          //   }
+          //   if (cpIndex === 2) {
+          //     point.cp2.x = oldPoint.cp2.x + move.x
+          //     point.cp2.y = oldPoint.cp2.y + move.y
+          //     if (point.type === BezierPointType.MirrorAngleAndLength) {
+          //       let p = Math2.getRotatedPoint(point.cp2, point.center, 180)
+          //       point.cp1.x = p.x
+          //       point.cp1.y = p.y
+          //     }
+          //     if (point.type === BezierPointType.MirrorAngle) {
+          //       let moveDegree = Math2.getDegree(point.center, oldPoint.cp2, point.cp2)
+          //       let p = Math2.getRotatedPoint(oldPoint.cp1, point.center, moveDegree)
+          //       point.cp1.x = p.x
+          //       point.cp1.y = p.y
+          //     }
+          //   }
+          //   cu.render()
+          // }
 
           if (type === EditType.Point || type === EditType.CenterPoint) {
-            let point = this.getPoint(this.conf.lineShapes[lineIndex].points[pointIndex])
-            let oldPoint = this.getPoint(this.original.lineShapes[lineIndex].points[pointIndex], this.original)
-            helper.movePoint(point, oldPoint, move)
+            this.movePoint(lineIndex, pointIndex, move)
             cu.render()
           }
 
           if (type === EditType.Line) {
             console.log('onMouseMove-enterLineIndex')
-            let oldStartPoint = this.getPoint(this.original.lineShapes[lineIndex].points[pointIndex], this.original)
-            let startPoint = this.getPoint(this.conf.lineShapes[lineIndex].points[pointIndex])
-            helper.movePoint(startPoint, oldStartPoint, move)
-            let endPoint: BezierPoint
-            let oldEndPoint: BezierPoint
-            if (pointIndex === lineShapes[lineIndex].points.length - 1) {
-              endPoint = this.getPoint(this.conf.lineShapes[lineIndex].points[0])
-              oldEndPoint = this.getPoint(this.original.lineShapes[lineIndex].points[0], this.original)
+            this.movePoint(lineIndex, pointIndex, move)
+            if (pointIndex === paths[lineIndex].length - 1) {
+              this.movePoint(lineIndex, 0, move)
             } else {
-              endPoint = this.getPoint(this.conf.lineShapes[lineIndex].points[pointIndex + 1])
-              oldEndPoint = this.getPoint(this.original.lineShapes[lineIndex].points[pointIndex + 1], this.original)
+              this.movePoint(lineIndex, pointIndex + 1, move)
             }
-            helper.movePoint(endPoint, oldEndPoint, move)
             cu.render()
           }
 
-          this.checkAcr()
+          // this.checkAcr()
         }
       }
       if (cu.editModeType === EditModeType.Edit) {
@@ -1875,6 +1857,50 @@ export class BaseShape {
     //tanA = a/b。可知b = a/ tanA。所以领边的长就是lines2.point?.radius! / tan
     // console.log('当前radius（对边）对应的邻边长', r / tan)
     return {tan, adjacentSide: r / tan, degree, d2}
+  }
+
+  getControlPoint(lineIndex: number, pointIndex: number) {
+    const {nodes, paths} = this.conf.penNetwork
+    let path = paths[lineIndex]
+    let line: PenNetworkPath = path[pointIndex]
+    let preLine: PenNetworkPath
+    if (pointIndex === 0) {
+      preLine = path[pointIndex - 1]
+    } else {
+      preLine = path[path.length - 1]
+    }
+    return {start: line.tangentStart, end: preLine.tangentEnd}
+  }
+
+  movePoint(lineIndex: number, pointIndex: number, move: P) {
+    const {nodes, paths} = this.conf.penNetwork
+    const {nodes: oldNodes, paths: oldPaths} = this.original.penNetwork
+
+    let path = paths[lineIndex]
+    let oldPath = oldPaths[lineIndex]
+    let line: PenNetworkPath = path[pointIndex]
+    let oldLine: PenNetworkPath = oldPaths[lineIndex][pointIndex]
+
+    let point = nodes[line.start]
+    let oldPoint = oldNodes[oldLine.start]
+    helper.movePoint2(point, oldPoint, move)
+
+    if (line.tangentStart) {
+      helper.movePoint2(line.tangentStart, oldLine.tangentStart!, move)
+    }
+
+    let preLine: PenNetworkPath
+    let oldPreLine: PenNetworkPath
+    if (pointIndex === 0) {
+      preLine = path[pointIndex - 1]
+      oldPreLine = oldPath[pointIndex - 1]
+    } else {
+      preLine = path[path.length - 1]
+      oldPreLine = oldPath[path.length - 1]
+    }
+    if (preLine.tangentEnd) {
+      helper.movePoint2(preLine.tangentEnd, oldPreLine.tangentEnd!, move)
+    }
   }
 
 }

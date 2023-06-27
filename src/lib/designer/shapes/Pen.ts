@@ -82,10 +82,10 @@ export class Pen extends ParentShape {
   }
 
   drawEdit(ctx: CanvasRenderingContext2D, newLayout: Rect): any {
-    this.log('drawEdit',)
+    // this.log('drawEdit',)
     ctx.save()
     let {
-      fillColor, lineShapes
+      fillColor
     } = this.conf
 
     ctx.save()
@@ -100,12 +100,12 @@ export class Pen extends ParentShape {
       ctx.stroke(path)
     })
 
-    // if ((this.editHover.type === EditType.Line
-    //     || this.editHover.type === EditType.CenterPoint)
-    //   && this.editHover.pointIndex !== -1
-    // ) {
-    //   draw.drawRound(ctx, this.hoverLineCenterPoint)
-    // }
+    if ((this.editHover.type === EditType.Line
+        || this.editHover.type === EditType.CenterPoint)
+      && this.editHover.pointIndex !== -1
+    ) {
+      draw.drawRound(ctx, this.hoverLineCenterPoint)
+    }
     // let {lineIndex, pointIndex, type} = this.editStartPointInfo
     // //先绘制控制线，好被后续的圆点遮盖
     // if (pointIndex !== -1 && type !== EditType.Line) {

@@ -31,6 +31,7 @@ import {EventKeys} from "../../../../lib/designer/event/eventKeys";
 import {clone, cloneDeep} from "lodash";
 import {fontFamilies, fontSize, fontWeight} from "../../../../lib/designer/utils/constant";
 import CanvasUtil2 from "../../../../lib/designer/engine/CanvasUtil2"
+import {PenNetworkNode} from "../../../../lib/designer/config/PenConfig";
 
 enum ChangeColorType {
   Border = 'Border',
@@ -48,7 +49,7 @@ const ShapeInfo = (props: any) => {
   const [pointInfo, setPointInfo] = useState<{
     lineIndex: number,
     pointIndex: number,
-    point: BezierPoint
+    point: PenNetworkNode
   }>({} as any)
 
 
@@ -68,7 +69,7 @@ const ShapeInfo = (props: any) => {
       setConf(s.conf)
     })
     EventBus.on(EventKeys.POINT_INFO, (val: any) => {
-      // console.log('pointInfo', val)
+      console.log('pointInfo', val)
       setPointInfo(val)
     })
     EventBus.on(EventKeys.MODE, (val: any) => {
@@ -140,15 +141,15 @@ const ShapeInfo = (props: any) => {
             <div className="base-info">
               <div className="row grid2">
                 <div className="col">
-                  <BaseInput value={pointInfo?.point?.center?.x?.toFixed2()} prefix={<span className={'gray'}>X</span>}/>
+                  <BaseInput value={pointInfo?.point?.x?.toFixed2()} prefix={<span className={'gray'}>X</span>}/>
                 </div>
                 <div className="col">
-                  <BaseInput value={pointInfo?.point?.center?.y?.toFixed2()} prefix={<span className={'gray'}>Y</span>}/>
+                  <BaseInput value={pointInfo?.point?.y?.toFixed2()} prefix={<span className={'gray'}>Y</span>}/>
                 </div>
               </div>
               <div className="row grid2">
                 <div className="col">
-                  <BaseInput value={pointInfo.point?.radius}
+                  <BaseInput value={pointInfo.point?.cornerRadius}
                              onChange={pointRadiusChange}
                              min={0}
                              prefix={<AngleIcon style={{fontSize: "16rem"}}/>}/>

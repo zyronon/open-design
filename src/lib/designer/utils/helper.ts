@@ -629,6 +629,7 @@ export default {
     return false
   },
 
+  //TODO 废弃
   movePoint(target: BezierPoint, oldPoint: BezierPoint, move: P) {
     target.center.x = oldPoint.center.x + move.x
     target.center.y = oldPoint.center.y + move.y
@@ -640,6 +641,10 @@ export default {
       target.cp2.x = oldPoint.cp2.x + move.x
       target.cp2.y = oldPoint.cp2.y + move.y
     }
+  },
+  movePoint2(target: P, oldPoint: P, move: P) {
+    target.x = oldPoint.x + move.x
+    target.y = oldPoint.y + move.y
   },
   /**
    * 判断点是否在图形内

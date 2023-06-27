@@ -30,6 +30,7 @@ export interface Region {
   windingRule: WindingRule
 }
 
+//TODO 这里叫path，可能会让人困惑
 export interface PenNetworkPath {
   start: number,
   end: number

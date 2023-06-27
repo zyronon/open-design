@@ -576,7 +576,7 @@ export class BaseShape {
   }
 
   _dblclick(event: BaseEvent2, parents: BaseShape[] = []) {
-    console.log('on-dblclick',)
+    // console.log('on-dblclick',)
     // console.log('core-dblclick', this.editStartPointInfo, this.editHover)
     if (this.onDbClick(event, parents)) return
     if (this.status === ShapeStatus.Edit) {

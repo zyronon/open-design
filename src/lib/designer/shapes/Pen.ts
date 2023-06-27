@@ -134,14 +134,14 @@ export class Pen extends ParentShape {
     //     if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
     //   }
     // }
-    // lineShapes.map(line => {
-    //   line.points.map((pointInfo) => {
-    //     let point = this.getPoint(pointInfo)
-    //     // if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
-    //     // if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
-    //     draw.drawRound(ctx, point.center)
-    //   })
-    // })
+
+    const {nodes, paths} = this._conf.penNetwork
+
+    nodes.map((node) => {
+      // if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
+      // if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
+      draw.drawRound(ctx, node)
+    })
     // if (pointIndex !== -1 && type !== EditType.Line) {
     //   let line = lineShapes[lineIndex]
     //   let point = this.getPoint(line.points[pointIndex])
@@ -149,7 +149,6 @@ export class Pen extends ParentShape {
     //   if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
     //   draw.currentPoint(ctx, point.center)
     // }
-
     ctx.restore()
   }
 

@@ -162,23 +162,23 @@ export class Pen extends ParentShape {
   }
 
   onDbClick(event: BaseEvent2, parents: BaseShape[]): boolean {
-    console.log('pen-onDbClick')
-    let cu = CanvasUtil2.getInstance()
-    if (this.status === ShapeStatus.Edit) {
-      this.status = ShapeStatus.Select
-      cu.editShape = undefined
-      cu.selectedShape = this
-      cu.mode = ShapeType.SELECT
-    } else {
-      this.status = ShapeStatus.Edit
-      cu.editShape = this
-      cu.mode = ShapeType.EDIT
-    }
+    // console.log('pen-onDbClick')
+    // let cu = CanvasUtil2.getInstance()
+    // if (this.status === ShapeStatus.Edit) {
+    //   this.status = ShapeStatus.Select
+    //   cu.editShape = undefined
+    //   cu.selectedShape = this
+    //   cu.mode = ShapeType.SELECT
+    // } else {
+    //   this.status = ShapeStatus.Edit
+    //   cu.editShape = this
+    //   cu.mode = ShapeType.EDIT
+    // }
     return false
   }
 
   onMouseDown(event: BaseEvent2, parents: BaseShape[]): boolean {
-    console.log('pen-onMouseDown')
+    // console.log('pen-onMouseDown')
     return false
   }
 
@@ -188,7 +188,7 @@ export class Pen extends ParentShape {
   }
 
   onMouseUp(event: BaseEvent2, parents: BaseShape[]): boolean {
-    console.log('pen-onMouseUp')
+    // console.log('pen-onMouseUp')
     this.mouseDown = false
     return false
   }

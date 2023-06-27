@@ -946,12 +946,12 @@ export const rects222 = [
     isCustom: false
   },
 ]
-export const rects: PenConfig[] = [
+export const rects: any[] = [
   {
     "name": "矩形",
     layout: {
-      "x": 0,
-      "y": 0,
+      "x": 100,
+      "y": 100,
       "w": 100,
       "h": 300,
     },
@@ -962,6 +962,8 @@ export const rects: PenConfig[] = [
     children: [],
     "borderColor": "rgb(0,0,0)",
     "fillColor": "#4C4C4C",
+    // "borderColor": "red",
+    // "fillColor": "red",
     flipHorizontal: false,
     flipVertical: false,
     isComplete: true,
@@ -969,17 +971,30 @@ export const rects: PenConfig[] = [
     cornerRadius: 0,
     realCornerRadius: 0,
     penNetwork: {
-      ctrlNodes: [],
       nodes: [
         {
-          x: 0,
-          y: 0,
+          x: -50,
+          y: -150,
           cornerRadius: 0,
           realCornerRadius: 0,
           handleMirroring: 'NONE',
         },
         {
-          x: 0,
+          x: 50,
+          y: -150,
+          cornerRadius: 0,
+          realCornerRadius: 0,
+          handleMirroring: 'NONE',
+        },
+        {
+          x: 50,
+          y: 150,
+          cornerRadius: 0,
+          realCornerRadius: 0,
+          handleMirroring: 'NONE',
+        },
+        {
+          x: -50,
           y: 100,
           cornerRadius: 0,
           realCornerRadius: 0,
@@ -987,36 +1002,63 @@ export const rects: PenConfig[] = [
         },
         {
           x: 100,
-          y: 300,
+          y: -150,
           cornerRadius: 0,
           realCornerRadius: 0,
           handleMirroring: 'NONE',
         },
         {
-          x: 0,
-          y: 300,
+          x: 200,
+          y: -150,
+          cornerRadius: 0,
+          realCornerRadius: 0,
+          handleMirroring: 'NONE',
+        },
+        {
+          x: 150,
+          y: 0,
           cornerRadius: 0,
           realCornerRadius: 0,
           handleMirroring: 'NONE',
         },
       ],
       paths: [
-        {
-          start: 0,
-          end: 1,
-        },
-        {
-          start: 1,
-          end: 2,
-        },
-        {
-          start: 2,
-          end: 3,
-        },
-        {
-          start: 3,
-          end: 0,
-        },
+        [
+          {
+            start: 0,
+            end: 1,
+          },
+          {
+            start: 1,
+            end: 2,
+          },
+          {
+            start: 2,
+            end: 3,
+            tangentEnd: {
+              x: -50,
+              y: 150,
+            }
+          },
+          {
+            start: 3,
+            end: 0,
+          },
+        ],
+        [
+          {
+            start: 4,
+            end: 5,
+          },
+          {
+            start: 5,
+            end: 6,
+          },
+          {
+            start: 6,
+            end: 4,
+          },
+        ]
       ],
       regions: [],
     }

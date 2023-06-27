@@ -8,6 +8,7 @@ import {Bezier} from "./bezier"
 import {Math2} from "./math"
 import EventBus from "../event/eventBus";
 import {EventKeys} from "../event/eventKeys";
+import {PenNetworkPath} from "../config/PenConfig"
 
 export default {
   /**
@@ -461,12 +462,26 @@ export default {
       type: BezierPointType.RightAngle
     }
   },
+  //TODO 废弃
   judgeLineType({startPoint, endPoint}: Line): LineType {
     let lineType: LineType = LineType.Line
     if (!startPoint.cp2.use && !endPoint.cp1.use) {
       lineType = LineType.Line
     } else {
       if (startPoint.cp2.use && endPoint.cp1.use) {
+        lineType = LineType.Bezier3
+      } else {
+        lineType = LineType.Bezier2
+      }
+    }
+    return lineType
+  },
+  judgeLineType2(line: PenNetworkPath): LineType {
+    let lineType: LineType = LineType.Line
+    if (!line.tangentStart && !line.tangentEnd) {
+      lineType = LineType.Line
+    } else {
+      if (line.tangentStart && line.tangentEnd) {
         lineType = LineType.Bezier3
       } else {
         lineType = LineType.Bezier2

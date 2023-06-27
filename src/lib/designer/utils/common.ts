@@ -6,6 +6,7 @@ import {Star} from "../shapes/Star";
 import {Polygon} from "../shapes/Polygon";
 import {AssetImage} from "../shapes/AssetImage";
 import {Text} from "../shapes/Text"
+import {Pen} from "../shapes/Pen"
 
 export const getShapeFromConfig = (props: ShapeProps): any => {
   const {conf} = props
@@ -32,9 +33,9 @@ export const getShapeFromConfig = (props: ShapeProps): any => {
     case ShapeType.TEXT:
       r = new Text(props)
       break
-    // case ShapeType.PEN:
-    //   r = new Pen(props)
-    //   break
+    case ShapeType.PEN:
+      r = new Pen(props)
+      break
     // case ShapeType.PENCIL:
     //   r = new Pencil(props)
     //   break

@@ -40,9 +40,8 @@ export interface PenNetworkPath {
 }
 
 export interface PenNetwork {
-  ctrlNodes: P[]
   nodes: PenNetworkNode[]
-  paths: PenNetworkPath[]
+  paths: PenNetworkPath[][]
   regions: Region[]
 }
 

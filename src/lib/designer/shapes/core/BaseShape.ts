@@ -921,6 +921,7 @@ export class BaseShape {
       }
     }
 
+
     if (this.status === ShapeStatus.Edit) {
       let cu = CanvasUtil2.getInstance()
       let {center, realRotation, lineShapes, flipHorizontal, flipVertical} = this.conf

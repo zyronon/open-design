@@ -279,7 +279,6 @@ export class BaseShape {
           // console.log('在点上')
           return {type: EditType.Point, lineIndex, pointIndex, cpIndex: -1}
         }
-        let endPoint = nodes[path[pointIndex][1]]
         let lineType = helper.judgeLineType2(line)
         if (helper.isInLine2(fixMousePoint, line, lineType, nodes, ctrlNodes)) {
           // console.log('在线上')
@@ -699,13 +698,6 @@ export class BaseShape {
           //图省事儿，直接把editHover设为默认值。不然鼠标移动点或线时。还会渲染hoverLineCenterPoint
           //但hoverLineCenterPoint的点又不正确
           this.editHover = cloneDeep(this.defaultCurrentOperationInfo)
-          let point: BezierPoint = {
-            id: uuid(),
-            cp1: getP2(),
-            center: {...getP2(true), ...this.hoverLineCenterPoint},
-            cp2: getP2(),
-            type: BezierPointType.RightAngle
-          }
           let point1: PenNetworkNode = {
             ...this.hoverLineCenterPoint,
             cornerRadius: 0,
@@ -762,6 +754,7 @@ export class BaseShape {
               } else {
                 ctrlNodes.push(right.points[cpIndex])
                 line[3] = ctrlNodes.length - 1
+                endPoint.cps[0] = line[3]
               }
 
               if (endPoint.handleMirroring === HandleMirroring.MirrorAngleAndLength) {

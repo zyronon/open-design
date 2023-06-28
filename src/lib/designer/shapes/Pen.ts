@@ -113,26 +113,22 @@ export class Pen extends ParentShape {
     let {lineIndex, pointIndex, type} = this.editStartPointInfo
     let path = paths[lineIndex]
 
-    //先绘制控制线，好被后续的圆点遮盖
+    //先绘制控制附近两个点的控制点与线条，好被后续的圆点遮盖
     if (pointIndex !== -1 && type !== EditType.Line) {
       let line = path[pointIndex]
-      let point = nodes[line[0]]
-      if (point.cps[0] !== -1) draw.controlPoint(ctx, ctrlNodes[point.cps[0]], point)
-      if (point.cps[1] !== -1) draw.controlPoint(ctx, ctrlNodes[point.cps[1]], point)
       let point2 = nodes[line[1]]
       if (point2.cps[0] !== -1) draw.controlPoint(ctx, ctrlNodes[point2.cps[0]], point2)
       if (point2.cps[1] !== -1) draw.controlPoint(ctx, ctrlNodes[point2.cps[1]], point2)
 
-      if (pointIndex === path.length - 1) {
-        line = path[0]
+      if (pointIndex === 0) {
+        line = path[path.length - 1]
       } else {
-        line = path[pointIndex + 1]
+        line = path[pointIndex - 1]
       }
       let point3 = nodes[line[0]]
       if (point3.cps[0] !== -1) draw.controlPoint(ctx, ctrlNodes[point3.cps[0]], point3)
       if (point3.cps[1] !== -1) draw.controlPoint(ctx, ctrlNodes[point3.cps[1]], point3)
     }
-
 
     //绘制所有点
     nodes.map((node) => {
@@ -141,7 +137,7 @@ export class Pen extends ParentShape {
       draw.drawRound(ctx, node)
     })
 
-    //绘制选中的当前点和控制点
+    //再绘制选中的当前点和控制点，之所以分开绘制，是因为遮盖问题
     if (pointIndex !== -1 && type !== EditType.Line) {
       let point = nodes[path[pointIndex][0]]
       if (point.cps[0] !== -1) draw.controlPoint(ctx, ctrlNodes[point.cps[0]], point)

@@ -356,7 +356,7 @@ export class BaseShape {
       x: point.x - center.x,
       y: point.y - center.y
     }
-    const {nodes, paths} = this.conf.penNetwork
+    const {nodes, paths, ctrlNodes} = this.conf.penNetwork
 
     //判断是否在点上、线上、hover在线的中点上
     for (let lineIndex = 0; lineIndex < paths.length; lineIndex++) {
@@ -380,7 +380,7 @@ export class BaseShape {
             lineType,
             lineIndex,
             pointIndex,
-            lineCenterPoint: helper.getLineCenterPoint2(line1, lineType),
+            lineCenterPoint: helper.getLineCenterPoint2(line, lineType, nodes, ctrlNodes),
             cpIndex: -1
           }
           if (helper.isInPoint(fixMousePoint, this.hoverLineCenterPoint, judgePointDistance)) {
@@ -1430,7 +1430,7 @@ export class BaseShape {
     return pathList
   }
 
-  getCustomShapePath2(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
+  getCustomShapePath2(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     this.conf.lineShapes.map((line) => {

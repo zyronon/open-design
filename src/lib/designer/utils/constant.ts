@@ -971,6 +971,12 @@ export const rects: any[] = [
     cornerRadius: 0,
     realCornerRadius: 0,
     penNetwork: {
+      ctrlNodes: [
+        {
+          x: -50,
+          y: 150,
+        }
+      ],
       nodes: [
         {
           x: -50,
@@ -978,6 +984,8 @@ export const rects: any[] = [
           cornerRadius: 0,
           realCornerRadius: 0,
           handleMirroring: 'NONE',
+          cornerCps: [-1, -1],
+          cps: [-1, -1],
         },
         {
           x: 50,
@@ -985,6 +993,8 @@ export const rects: any[] = [
           cornerRadius: 0,
           realCornerRadius: 0,
           handleMirroring: 'NONE',
+          cornerCps: [-1, -1],
+          cps: [-1, -1],
         },
         {
           x: 50,
@@ -992,6 +1002,8 @@ export const rects: any[] = [
           cornerRadius: 0,
           realCornerRadius: 0,
           handleMirroring: 'NONE',
+          cornerCps: [-1, -1],
+          cps: [-1, -1],
         },
         {
           x: -50,
@@ -999,6 +1011,8 @@ export const rects: any[] = [
           cornerRadius: 0,
           realCornerRadius: 0,
           handleMirroring: 'NONE',
+          cornerCps: [-1, -1],
+          cps: [0, -1],
         },
         {
           x: 100,
@@ -1006,6 +1020,8 @@ export const rects: any[] = [
           cornerRadius: 0,
           realCornerRadius: 0,
           handleMirroring: 'NONE',
+          cornerCps: [-1, -1],
+          cps: [-1, -1],
         },
         {
           x: 200,
@@ -1013,6 +1029,8 @@ export const rects: any[] = [
           cornerRadius: 0,
           realCornerRadius: 0,
           handleMirroring: 'NONE',
+          cornerCps: [-1, -1],
+          cps: [-1, -1],
         },
         {
           x: 150,
@@ -1020,45 +1038,22 @@ export const rects: any[] = [
           cornerRadius: 0,
           realCornerRadius: 0,
           handleMirroring: 'NONE',
+          cornerCps: [-1, -1],
+          cps: [-1, -1],
         },
       ],
       paths: [
         [
-          {
-            start: 0,
-            end: 1,
-          },
-          {
-            start: 1,
-            end: 2,
-          },
-          {
-            start: 2,
-            end: 3,
-            tangentEnd: {
-              x: -50,
-              y: 150,
-            }
-          },
-          {
-            start: 3,
-            end: 0,
-          },
+          [0, 1, -1, -1, -1, -1],
+          [1, 2, -1, -1, -1, -1],
+          [2, 3, -1, 0, -1, -1],
+          [3, 0, -1, -1, -1, -1],
         ],
         [
-          {
-            start: 4,
-            end: 5,
-          },
-          {
-            start: 5,
-            end: 6,
-          },
-          {
-            start: 6,
-            end: 4,
-          },
-        ]
+          [4, 5, -1, -1, -1, -1],
+          [5, 6, -1, -1, -1, -1],
+          [6, 4, -1, 0, -1, -1],
+        ],
       ],
       regions: [],
     }

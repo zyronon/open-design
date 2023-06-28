@@ -17,6 +17,7 @@ import {
 } from "../types/type"
 import {BaseShape} from "./core/BaseShape"
 import {PenConfig} from "../config/PenConfig"
+import {Bezier} from "../utils/bezier"
 
 export class Pen extends ParentShape {
   mouseDown: boolean = false
@@ -198,34 +199,35 @@ export class Pen extends ParentShape {
     return []
   }
 
-  getCustomShapePath3(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
+  getCustomShapePath3(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
-    const {nodes, paths} = this._conf.penNetwork
+    const {nodes, paths, ctrlNodes} = this._conf.penNetwork
 
     paths.map(path => {
       if (path.length) {
         let strokePath = new Path2D()
         let fillPath = new Path2D()
-        strokePath.moveTo2(nodes[path[0].start])
-        fillPath.moveTo2(nodes[path[0].start])
+        strokePath.moveTo2(nodes[path[0][0]])
+        fillPath.moveTo2(nodes[path[0][0]])
         path.map(line => {
           let lineType = helper.judgeLineType2(line)
+          let endPoint = nodes[line[1]]
           switch (lineType) {
             case LineType.Line:
-              strokePath.lineTo2(nodes[line.end])
-              fillPath.lineTo2(nodes[line.end])
+              strokePath.lineTo2(endPoint)
+              fillPath.lineTo2(endPoint)
               break
             case LineType.Bezier3:
-              strokePath.bezierCurveTo2(line.tangentStart!, line.tangentEnd!, nodes[line.end])
-              fillPath.bezierCurveTo2(line.tangentStart!, line.tangentEnd!, nodes[line.end])
+              strokePath.bezierCurveTo2(ctrlNodes[line[2]], ctrlNodes[line[3]], endPoint)
+              fillPath.bezierCurveTo2(ctrlNodes[line[2]], ctrlNodes[line[3]], endPoint)
               break
             case LineType.Bezier2:
-              let cp: P
-              if (line.tangentStart) cp = line.tangentStart
-              if (line.tangentEnd) cp = line.tangentEnd
-              strokePath.quadraticCurveTo2(cp!, nodes[line.end])
-              fillPath.quadraticCurveTo2(cp!, nodes[line.end])
+              let cp: number = 0
+              if (line[2] !== -1) cp = line[2]
+              if (line[3] !== -1) cp = line[3]
+              strokePath.quadraticCurveTo2(ctrlNodes[cp], endPoint)
+              fillPath.quadraticCurveTo2(ctrlNodes[cp], endPoint)
               break
           }
         })

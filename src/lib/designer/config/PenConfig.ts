@@ -19,10 +19,10 @@ export interface PenNetworkNode {
   x: number
   y: number
   cornerRadius: number
-  realCornerRadius?: number,//真实的圆角
+  realCornerRadius: number,//真实的圆角
   handleMirroring: HandleMirroring,
-  cornerTangentStart?: P,
-  cornerTangentEnd?: P,
+  cornerCps: [number, number]
+  cps: [number, number]
 }
 
 export interface Region {
@@ -30,21 +30,11 @@ export interface Region {
   windingRule: WindingRule
 }
 
-//TODO 这里叫path，可能会让人困惑
-export interface PenNetworkPath {
-  start: number,
-  end: number
-  tangentStart?: P,
-  tangentEnd?: P,
-  arcCP?: P,
-  arcPoint?: P
-}
-export interface PenNetworkPath2 extends PenNetworkPath{
-  startPoint: P,
-  endPoint: P,
-}
+//起点下标、终点下标、控制点1下标、控制点2下标，arc控制点下标、arc终起点下标
+export  type PenNetworkPath = [number, number, number, number, number, number, number]
 
 export interface PenNetwork {
+  ctrlNodes: P[],
   nodes: PenNetworkNode[]
   paths: PenNetworkPath[][]
   regions: Region[]

@@ -8,7 +8,7 @@ import {Bezier} from "./bezier"
 import {Math2} from "./math"
 import EventBus from "../event/eventBus";
 import {EventKeys} from "../event/eventKeys";
-import {PenNetworkPath, PenNetworkPath2} from "../config/PenConfig"
+import {PenNetworkNode, PenNetworkPath} from "../config/PenConfig"
 
 export default {
   /**
@@ -478,10 +478,10 @@ export default {
   },
   judgeLineType2(line: PenNetworkPath): LineType {
     let lineType: LineType = LineType.Line
-    if (!line.tangentStart && !line.tangentEnd) {
+    if (line[2] === -1 && line[3] === -1) {
       lineType = LineType.Line
     } else {
-      if (line.tangentStart && line.tangentEnd) {
+      if (line[2] !== -1 && line[3] !== -1) {
         lineType = LineType.Bezier3
       } else {
         lineType = LineType.Bezier2
@@ -506,18 +506,19 @@ export default {
     }
   },
   //获取线段的中间点
-  getLineCenterPoint2(line: PenNetworkPath2, lineType: LineType) {
-    let {startPoint: p0, endPoint: p1} = line
+  getLineCenterPoint2(line: PenNetworkPath, lineType: LineType, nodes: PenNetworkNode[], ctrlNodes: P[]) {
+    let p0 = nodes[line[0]]
+    let p1 = nodes[line[1]]
     switch (lineType) {
       case LineType.Line:
         return this.getStraightLineCenterPoint(p0, p1)
       case LineType.Bezier2:
-        let cp: P
-        if (line.tangentStart) cp = line.tangentStart
-        if (line.tangentEnd) cp = line.tangentEnd
-        return Bezier.getPointByT_2(0.5, [p0, cp!, p1])
+        let cp: number = 0
+        if (line[2] !== -1) cp = line[2]
+        if (line[3] !== -1) cp = line[3]
+        return Bezier.getPointByT_2(0.5, [p0, ctrlNodes[cp], p1])
       case LineType.Bezier3:
-        return Bezier.getPointByT_3(0.5, [p0, line.tangentStart!, line.tangentEnd!, p1])
+        return Bezier.getPointByT_3(0.5, [p0, ctrlNodes[line[2]], ctrlNodes[line[3]], p1])
     }
   },
   //获取直线的中间点

@@ -513,10 +513,10 @@ export default {
       case LineType.Line:
         return this.getStraightLineCenterPoint(p0, p1)
       case LineType.Bezier2:
-        let cp: number = 0
-        if (line[2] !== -1) cp = line[2]
-        if (line[3] !== -1) cp = line[3]
-        return Bezier.getPointByT_2(0.5, [p0, ctrlNodes[cp], p1])
+        let cp: P
+        if (line[2] !== -1) cp = ctrlNodes[line[2]]
+        if (line[3] !== -1) cp = ctrlNodes[line[3]]
+        return Bezier.getPointByT_2(0.5, [p0, cp!, p1])
       case LineType.Bezier3:
         return Bezier.getPointByT_3(0.5, [p0, ctrlNodes[line[2]], ctrlNodes[line[3]], p1])
     }
@@ -587,9 +587,9 @@ export default {
     }
     return false
   },
-  isInLine2(target: P, line: PenNetworkPath2, lineType: LineType): boolean {
-    let start = line.startPoint
-    let end = line.endPoint
+  isInLine2(target: P, line: PenNetworkPath, lineType: LineType, nodes: PenNetworkNode[], ctrlNodes: P[]): boolean {
+    let start = nodes[line[0]]
+    let end = nodes[line[1]]
     let line1 = Math2.getHypotenuse2(target, start)
     let line2 = Math2.getHypotenuse2(target, end)
     let line3 = Math2.getHypotenuse2(start, end)
@@ -598,10 +598,12 @@ export default {
       let d = 0.04
       return inRange(line1 + line2, line3 - d, line3 + d);
     }
+    let p1 = ctrlNodes[line[2]]
+    let p2 = ctrlNodes[line[3]]
     if (lineType === LineType.Bezier2) {
       let cp: P
-      if (line.tangentStart) cp = line.tangentStart
-      if (line.tangentEnd) cp = line.tangentEnd
+      if (line[2] !== -1) cp = p1
+      if (line[3] !== -1) cp = p2
       let t1 = Bezier.getTByPoint_2(start.x, cp!.x, end.x, target.x)
       let t2 = Bezier.getTByPoint_2(start.y, cp!.y, end.y, target.y)
       // console.log(t1, t2)
@@ -617,11 +619,11 @@ export default {
       }
     }
     if (lineType === LineType.Bezier3) {
-      let t1 = Bezier.getTByPoint_3(start.x, line.tangentStart!.x, line.tangentEnd!.x, end.x, target.x)
-      let t2 = Bezier.getTByPoint_3(start.y, line.tangentStart!.y, line.tangentEnd!.y, end.y, target.y)
+      let t1 = Bezier.getTByPoint_3(start.x, p1.x, p2.x, end.x, target.x)
+      let t2 = Bezier.getTByPoint_3(start.y, p1.y, p2.y, end.y, target.y)
       if (t1.length || t2.length) {
         let t = t1[0] ?? t2[0]
-        let p = Bezier.getPointByT_3(t, [start, line.tangentStart!, line.tangentEnd!, end])
+        let p = Bezier.getPointByT_3(t, [start, p1, p2, end])
         let r = this.isInPoint(target, p, 4)
         // console.log('p', target, p, r)
         return r

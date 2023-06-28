@@ -13,7 +13,14 @@ export type StrokeCap =
   | 'LINE'
 
 export type WindingRule = 'Nonzero' | 'Evenodd'
-export type HandleMirroring = "NONE" | "ANGLE" | "ANGLE_AND_LENGTH"
+
+//点的类型
+export enum HandleMirroring {
+  RightAngle = 'RightAngle',//直角
+  MirrorAngleAndLength = 'MirrorAngleAndLength',//完全对称
+  MirrorAngle = 'MirrorAngle',//角度对称
+  NoMirror = 'NoMirror',//不对称
+}
 
 export interface PenNetworkNode {
   x: number

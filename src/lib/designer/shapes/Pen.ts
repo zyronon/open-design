@@ -137,7 +137,7 @@ export class Pen extends ParentShape {
     //   }
     // }
 
-    const {nodes, paths} = this._conf.penNetwork
+    const {nodes, paths, ctrlNodes} = this._conf.penNetwork
 
     //绘制所有点
     nodes.map((node) => {
@@ -145,11 +145,12 @@ export class Pen extends ParentShape {
       // if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
       draw.drawRound(ctx, node)
     })
+
     //绘制选中的当前点和控制点
     if (pointIndex !== -1 && type !== EditType.Line) {
-      let {point, start, end} = this.getControlPoint(lineIndex, pointIndex)
-      if (start) draw.controlPoint(ctx, start, point)
-      if (end) draw.controlPoint(ctx, end, point)
+      let point = nodes[paths[lineIndex][pointIndex][0]]
+      if (point.cps[0] !== -1) draw.controlPoint(ctx, ctrlNodes[point.cps[0]], point)
+      if (point.cps[1] !== -1) draw.controlPoint(ctx, ctrlNodes[point.cps[1]], point)
       draw.currentPoint(ctx, point)
     }
     ctx.restore()

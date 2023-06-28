@@ -984,40 +984,40 @@ export class BaseShape {
 
           if (type === EditType.ControlPoint) {
             let point = nodes[paths[lineIndex][pointIndex][0]]
+            let cp0 = ctrlNodes[point.cps[0]]
+            let oldCp0 = oldCtrlNodes[point.cps[0]]
+            let cp1 = ctrlNodes[point.cps[1]]
+            let oldCp1 = oldCtrlNodes[point.cps[1]]
+
             // let oldPoint = oldNodes[paths[lineIndex][pointIndex][0]]
             if (cpIndex === 0) {
-
-              let cp0 = ctrlNodes[point.cps[0]]
-              let oldCp0 = oldCtrlNodes[point.cps[0]]
-
               cp0.x = oldCp0.x + move.x
               cp0.y = oldCp0.y + move.y
               if (point.handleMirroring === HandleMirroring.MirrorAngleAndLength) {
                 let p = Math2.getRotatedPoint(cp0, point, 180)
-                let cp1 = ctrlNodes[point.cps[1]]
                 cp1.x = p.x
                 cp1.y = p.y
               }
-              if (point.type === BezierPointType.MirrorAngle) {
-                let moveDegree = Math2.getDegree(point.center, oldPoint.cp1, point.cp1)
-                let p = Math2.getRotatedPoint(oldPoint.cp2, point.center, moveDegree)
-                point.cp2.x = p.x
-                point.cp2.y = p.y
+              if (point.handleMirroring === HandleMirroring.MirrorAngle) {
+                let moveDegree = Math2.getDegree(point, oldCp0, cp0)
+                let p = Math2.getRotatedPoint(oldCp1, point, moveDegree)
+                cp1.x = p.x
+                cp1.y = p.y
               }
             }
-            if (cpIndex === 2) {
-              point.cp2.x = oldPoint.cp2.x + move.x
-              point.cp2.y = oldPoint.cp2.y + move.y
-              if (point.type === BezierPointType.MirrorAngleAndLength) {
-                let p = Math2.getRotatedPoint(point.cp2, point.center, 180)
-                point.cp1.x = p.x
-                point.cp1.y = p.y
+            if (cpIndex === 1) {
+              cp1.x = oldCp1.x + move.x
+              cp1.y = oldCp1.y + move.y
+              if (point.handleMirroring === HandleMirroring.MirrorAngleAndLength) {
+                let p = Math2.getRotatedPoint(cp1, point, 180)
+                cp0.x = p.x
+                cp0.y = p.y
               }
-              if (point.type === BezierPointType.MirrorAngle) {
-                let moveDegree = Math2.getDegree(point.center, oldPoint.cp2, point.cp2)
-                let p = Math2.getRotatedPoint(oldPoint.cp1, point.center, moveDegree)
-                point.cp1.x = p.x
-                point.cp1.y = p.y
+              if (point.handleMirroring === HandleMirroring.MirrorAngle) {
+                let moveDegree = Math2.getDegree(point, oldCp1, cp1)
+                let p = Math2.getRotatedPoint(cp1, point, moveDegree)
+                cp0.x = p.x
+                cp0.y = p.y
               }
             }
             cu.render()

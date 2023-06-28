@@ -32,7 +32,7 @@ import {Math2} from "../../utils/math"
 import {Bezier} from "../../utils/bezier"
 import {BBox, Bezier as BezierJs} from "bezier-js";
 import {EventKeys} from "../../event/eventKeys";
-import {HandleMirroring, PenNetworkPath} from "../../config/PenConfig";
+import {HandleMirroring, PenNetworkNode, PenNetworkPath} from "../../config/PenConfig";
 
 export class BaseShape {
   hoverType: MouseOptionType = MouseOptionType.None
@@ -276,13 +276,13 @@ export class BaseShape {
         // console.log('isInPoint', fixMousePoint, startPoint.center)
         // console.log('s',helper.isInPoint(fixMousePoint, startPoint.center, judgePointDistance))
         if (helper.isInPoint(fixMousePoint, startPoint, judgePointDistance)) {
-          console.log('在点上')
+          // console.log('在点上')
           return {type: EditType.Point, lineIndex, pointIndex, cpIndex: -1}
         }
         let endPoint = nodes[path[pointIndex][1]]
         let lineType = helper.judgeLineType2(line)
         if (helper.isInLine2(fixMousePoint, line, lineType, nodes, ctrlNodes)) {
-          console.log('在线上')
+          // console.log('在线上')
           let returnData = {
             type: EditType.Line,
             lineType,
@@ -292,7 +292,7 @@ export class BaseShape {
             cpIndex: -1
           }
           if (helper.isInPoint(fixMousePoint, this.hoverLineCenterPoint, judgePointDistance)) {
-            console.log('hover在线的中点上')
+            // console.log('hover在线的中点上')
             returnData.type = EditType.CenterPoint
           }
           return returnData
@@ -312,7 +312,7 @@ export class BaseShape {
       for (let i = 0; i < waitCheckPoints.length; i++) {
         let item = waitCheckPoints[i]
         if (helper.isInPoint(fixMousePoint, item.point, judgePointDistance)) {
-          console.log('在cp点上')
+          // console.log('在cp点上')
           return {type: EditType.ControlPoint, lineIndex, pointIndex: item.pointIndex, cpIndex: item.index}
         }
       }
@@ -693,6 +693,8 @@ export class BaseShape {
         console.log('result', result)
         //如果hover在点上，先处理hover
         if (pointIndex !== -1) {
+          const {nodes, paths, ctrlNodes} = this.conf.penNetwork
+
           this.conf.isCustom = true
           //图省事儿，直接把editHover设为默认值。不然鼠标移动点或线时。还会渲染hoverLineCenterPoint
           //但hoverLineCenterPoint的点又不正确
@@ -704,60 +706,85 @@ export class BaseShape {
             cp2: getP2(),
             type: BezierPointType.RightAngle
           }
+          let point1: PenNetworkNode = {
+            ...this.hoverLineCenterPoint,
+            cornerRadius: 0,
+            realCornerRadius: 0,
+            handleMirroring: HandleMirroring.RightAngle,
+            cornerCps: [-1, -1],
+            cps: [-1, -1],
+          }
           if (type === EditType.CenterPoint) {
+            let line: PenNetworkPath = paths[lineIndex][pointIndex]
             if (lineType === LineType.Line) {
-              this.conf.lineShapes[lineIndex].points.splice(pointIndex + 1, 0, {type: PointType.Single, point})
+              nodes.push(point1)
+              paths[lineIndex].push([nodes.length - 1, line[1], -1, -1, -1, -1])
+              line[1] = nodes.length - 1
             } else {
-              let lineShape = this.conf.lineShapes[lineIndex]
-              let startPoint = this.getPoint(lineShape.points[pointIndex])
-              let endPoint: BezierPoint
-              if (pointIndex === lineShape.points.length - 1) {
-                endPoint = this.getPoint(lineShape.points[0])
-              } else {
-                endPoint = this.getPoint(lineShape.points[pointIndex + 1])
-              }
+              let startPoint = nodes[line[0]]
+              let endPoint = nodes[line[1]]
+              let p0 = ctrlNodes[line[2]]
+              let p1 = ctrlNodes[line[3]]
               let b: BezierJs
               if (lineType === LineType.Bezier2) {
-                let cp: P2
-                if (startPoint.cp2.use) cp = startPoint.cp2
-                if (endPoint.cp1.use) cp = endPoint.cp1
-                b = new BezierJs(startPoint.center, cp!, endPoint.center)
+                let cp: P
+                if (line[2] !== -1) cp = p0
+                if (line[3] !== -1) cp = p1
+                b = new BezierJs(startPoint, cp!, endPoint)
               }
               if (lineType === LineType.Bezier3) {
-                b = new BezierJs(startPoint.center, startPoint.cp2, endPoint.cp1, endPoint.center)
+                b = new BezierJs(startPoint, p0, p1, endPoint)
               }
               let {left, right} = b!.split(0.5)
 
-              startPoint.cp2.x = left.points[1].x
-              startPoint.cp2.y = left.points[1].y
-              startPoint.cp2.use = true
-              if (startPoint.type === BezierPointType.MirrorAngleAndLength) {
-                startPoint.type = BezierPointType.MirrorAngle
+              if (p0) {
+                p0.x = left.points[1].x
+                p0.y = left.points[1].y
               } else {
-                startPoint.type = BezierPointType.NoMirror
+                //如果没有控制点，那么加一个
+                ctrlNodes.push(left.points[1])
+                line[2] = ctrlNodes.length - 1
+                //记得同步到point里面的cps里面去
+                startPoint.cps[1] = line[2]
+              }
+
+              if (startPoint.handleMirroring === HandleMirroring.MirrorAngleAndLength) {
+                startPoint.handleMirroring = HandleMirroring.MirrorAngle
+              } else {
+                startPoint.handleMirroring = HandleMirroring.NoMirror
               }
 
               //如果是三次曲线，会在多出的中间点出加上控制点。所以这里要取第2个值，第一个值是中间点的控制点
-              if (lineType === LineType.Bezier3) {
-                endPoint.cp1.x = right.points[2].x
-                endPoint.cp1.y = right.points[2].y
+              let cpIndex = lineType === LineType.Bezier3 ? 2 : 1
+              if (p1) {
+                p1.x = right.points[cpIndex].x
+                p1.y = right.points[cpIndex].y
               } else {
-                endPoint.cp1.x = right.points[1].x
-                endPoint.cp1.y = right.points[1].y
-              }
-              endPoint.cp1.use = true
-              if (endPoint.type === BezierPointType.MirrorAngleAndLength) {
-                endPoint.type = BezierPointType.MirrorAngle
-              } else {
-                endPoint.type = BezierPointType.NoMirror
+                ctrlNodes.push(right.points[cpIndex])
+                line[3] = ctrlNodes.length - 1
               }
 
-              if (lineType === LineType.Bezier3) {
-                point.type = BezierPointType.MirrorAngle
-                point.cp1 = {...getP2(true), ...left.points[2]}
-                point.cp2 = {...getP2(true), ...right.points[1]}
+              if (endPoint.handleMirroring === HandleMirroring.MirrorAngleAndLength) {
+                endPoint.handleMirroring = HandleMirroring.MirrorAngle
+              } else {
+                endPoint.handleMirroring = HandleMirroring.NoMirror
               }
-              this.conf.lineShapes[lineIndex].points.splice(pointIndex + 1, 0, {type: PointType.Single, point})
+
+              //先定义，后push的，所以length不减1
+              let newLine: PenNetworkPath = [nodes.length, line[1], -1, line[3], -1, -1]
+              if (lineType === LineType.Bezier3) {
+                ctrlNodes.push(left.points[2])
+                ctrlNodes.push(right.points[1])
+                point1.handleMirroring = HandleMirroring.MirrorAngle
+                point1.cps = [ctrlNodes.length - 1, ctrlNodes.length - 2]
+                newLine = [nodes.length - 1, line[1], ctrlNodes.length - 2, line[3], -1, -1]
+                line[3] = ctrlNodes.length - 2
+              } else {
+                line[3] = -1
+              }
+              nodes.push(point1)
+              paths[lineIndex].splice(pointIndex + 1, 0, newLine)
+              line[1] = nodes.length - 1
               // console.log('b2', b!.bbox())
             }
             //这里新增了一个点，但是老配置如果不更新。后面移动时就会找错点
@@ -766,7 +793,6 @@ export class BaseShape {
             //新增一个点，下标也要加1，以选中它
             result.pointIndex += 1
           }
-          const {nodes, paths} = this.conf.penNetwork
 
           EventBus.emit(EventKeys.POINT_INFO, {
             lineIndex,

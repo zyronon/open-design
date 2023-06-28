@@ -37,8 +37,8 @@ export interface Region {
   windingRule: WindingRule
 }
 
-//起点下标、终点下标、控制点1下标、控制点2下标，arc控制点下标、arc终起点下标
-export  type PenNetworkPath = [number, number, number, number, number, number, number]
+//起点下标、终点下标、控制点0下标、控制点1下标，arc控制点下标、arc终/起点下标
+export  type PenNetworkPath = [number, number, number, number, number, number]
 
 export interface PenNetwork {
   ctrlNodes: P[],

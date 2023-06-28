@@ -108,36 +108,31 @@ export class Pen extends ParentShape {
     ) {
       draw.drawRound(ctx, this.hoverLineCenterPoint)
     }
-    let {lineIndex, pointIndex, type} = this.editStartPointInfo
-    // //先绘制控制线，好被后续的圆点遮盖
-    // if (pointIndex !== -1 && type !== EditType.Line) {
-    //   let line = lineShapes[lineIndex]
-    //   let point
-    //   if (pointIndex === 0) {
-    //     if (line.close) {
-    //       point = this.getPoint(line.points[line.points.length - 1])
-    //       if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
-    //       if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
-    //     }
-    //   } else {
-    //     point = this.getPoint(line.points[pointIndex - 1])
-    //     if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
-    //     if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
-    //   }
-    //   if (pointIndex === line.points.length - 1) {
-    //     if (line.close) {
-    //       point = this.getPoint(line.points[0])
-    //       if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
-    //       if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
-    //     }
-    //   } else {
-    //     point = this.getPoint(line.points[pointIndex + 1])
-    //     if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
-    //     if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
-    //   }
-    // }
-
     const {nodes, paths, ctrlNodes} = this._conf.penNetwork
+
+    let {lineIndex, pointIndex, type} = this.editStartPointInfo
+    let path = paths[lineIndex]
+
+    //先绘制控制线，好被后续的圆点遮盖
+    if (pointIndex !== -1 && type !== EditType.Line) {
+      let line = path[pointIndex]
+      let point = nodes[line[0]]
+      if (point.cps[0] !== -1) draw.controlPoint(ctx, ctrlNodes[point.cps[0]], point)
+      if (point.cps[1] !== -1) draw.controlPoint(ctx, ctrlNodes[point.cps[1]], point)
+      let point2 = nodes[line[1]]
+      if (point2.cps[0] !== -1) draw.controlPoint(ctx, ctrlNodes[point2.cps[0]], point2)
+      if (point2.cps[1] !== -1) draw.controlPoint(ctx, ctrlNodes[point2.cps[1]], point2)
+
+      if (pointIndex === path.length - 1) {
+        line = path[0]
+      } else {
+        line = path[pointIndex + 1]
+      }
+      let point3 = nodes[line[0]]
+      if (point3.cps[0] !== -1) draw.controlPoint(ctx, ctrlNodes[point3.cps[0]], point3)
+      if (point3.cps[1] !== -1) draw.controlPoint(ctx, ctrlNodes[point3.cps[1]], point3)
+    }
+
 
     //绘制所有点
     nodes.map((node) => {
@@ -148,7 +143,7 @@ export class Pen extends ParentShape {
 
     //绘制选中的当前点和控制点
     if (pointIndex !== -1 && type !== EditType.Line) {
-      let point = nodes[paths[lineIndex][pointIndex][0]]
+      let point = nodes[path[pointIndex][0]]
       if (point.cps[0] !== -1) draw.controlPoint(ctx, ctrlNodes[point.cps[0]], point)
       if (point.cps[1] !== -1) draw.controlPoint(ctx, ctrlNodes[point.cps[1]], point)
       draw.currentPoint(ctx, point)

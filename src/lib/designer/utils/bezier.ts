@@ -55,10 +55,8 @@ const Bezier = {
     let {x: p1X, y: p1Y} = previousPoint
     let {x: p2X, y: p2Y} = nextPoint
     let m = (p2Y - p1Y) / (p2X - p1X)
-    console.log('m', m)
-    if (m === Infinity) {
-      m = 100
-    }
+    // console.log('m', m)
+    if (m === Infinity) m = 100
     let A = Math2.getHypotenuse2(nextPoint, previousPoint)
     let X = A * 0.25
     let rx = targetPoint.x + (X / Math.sqrt(1 + Math.pow(m, 2)));

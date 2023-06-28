@@ -280,14 +280,14 @@ export class BaseShape {
           return {type: EditType.Point, lineIndex, pointIndex, cpIndex: -1}
         }
         let lineType = helper.judgeLineType2(line)
-        if (helper.isInLine2(fixMousePoint, line, lineType, nodes, ctrlNodes)) {
+        if (helper.isInLine(fixMousePoint, line, lineType, nodes, ctrlNodes)) {
           // console.log('在线上')
           let returnData = {
             type: EditType.Line,
             lineType,
             lineIndex,
             pointIndex,
-            lineCenterPoint: helper.getLineCenterPoint2(line, lineType, nodes, ctrlNodes),
+            lineCenterPoint: helper.getLineCenterPoint(line, lineType, nodes, ctrlNodes),
             cpIndex: -1
           }
           if (helper.isInPoint(fixMousePoint, this.hoverLineCenterPoint, judgePointDistance)) {
@@ -577,12 +577,12 @@ export class BaseShape {
         }
         let previousPointInfo = nodes[preLine[0]]
         let nextPointInfo = nodes[line[1]]
-        console.log(previousPointInfo, nextPointInfo, point)
+        // console.log(previousPointInfo, nextPointInfo, point)
         let {l, r} = Bezier.getTargetPointControlPoints(
           previousPointInfo,
           point,
           nextPointInfo)
-        console.log(l, r)
+        // console.log(l, r)
         ctrlNodes.push(l)
         ctrlNodes.push(r)
         point.cps = [ctrlNodes.length - 2, ctrlNodes.length - 1]
@@ -920,7 +920,9 @@ export class BaseShape {
 
     if (this.status === ShapeStatus.Edit) {
       let cu = CanvasUtil2.getInstance()
-      let {center, realRotation, lineShapes, flipHorizontal, flipVertical} = this.conf
+      let {center, realRotation, flipHorizontal, flipVertical} = this.conf
+      const {nodes, paths, ctrlNodes} = this.conf.penNetwork
+
       if (cu.editModeType === EditModeType.Select) {
         const {lineIndex, pointIndex, cpIndex, type} = this.editEnter
         //未选中任何内容，还属于判断阶段
@@ -961,7 +963,6 @@ export class BaseShape {
           let {x, y} = event.point
           let move = {x: x - cu.fixMouseStart.x, y: y - cu.fixMouseStart.y}
           // let move = {x: 0, y: y - cu.fixMouseStart.y}
-          const {nodes, paths, ctrlNodes} = this.conf.penNetwork
           const {nodes: oldNodes, paths: oldPaths, ctrlNodes: oldCtrlNodes} = this.original.penNetwork
 
           // if (type === EditType.ControlPoint) {
@@ -1061,40 +1062,49 @@ export class BaseShape {
           // this.checkAcr()
         }
       }
+
       if (cu.editModeType === EditModeType.Edit) {
         let {lineIndex, pointIndex} = this.editStartPointInfo
         if (pointIndex == -1) return
-        let lastPoint = this.getPoint(this.conf.lineShapes[lineIndex].points[pointIndex])
+        let path = paths[lineIndex]
+        let line = path[pointIndex]
+        let preLine = path[pointIndex === 0 ? path.length - 1 : pointIndex - 1]
+        let lastPoint = nodes[line[0]]
         if (lastPoint) {
           // console.log('pen-onMouseMove', lastPoint.center, event.point)
-          let cu = CanvasUtil2.getInstance()
           let ctx = cu.ctx
           if (this.mouseDown) {
             let fixMousePoint = {
               x: event.point.x - center.x,
               y: event.point.y - center.y
             }
-            lastPoint.cp2 = merge(getP2(true), fixMousePoint)
-            let cp1 = helper.horizontalReversePoint(cloneDeep(lastPoint.cp2), lastPoint.center)
-            lastPoint.cp1 = helper.verticalReversePoint(cp1, lastPoint.center)
-            lastPoint.type = BezierPointType.MirrorAngleAndLength
+            ctrlNodes.push(fixMousePoint)
+            lastPoint.cps[1] = ctrlNodes.length - 1
+            let cp1 = helper.horizontalReversePoint(cloneDeep(fixMousePoint), lastPoint)
+            ctrlNodes.push(cp1)
+            lastPoint.cps[0] = helper.verticalReversePoint(cp1, lastPoint)
+            lastPoint.handleMirroring = HandleMirroring.MirrorAngleAndLength
+            line[2] = lastPoint.cps[1]
+            preLine[3] = lastPoint.cps[0]
           } else {
             cu.waitRenderOtherStatusFunc.push(() => {
               ctx.save()
               ctx.beginPath()
               let fixLastPoint = {
-                x: center.x + lastPoint.center.x,
-                y: center.y + lastPoint.center.y,
+                x: center.x + lastPoint.x,
+                y: center.y + lastPoint.y,
               }
               ctx.moveTo2(fixLastPoint)
               ctx.strokeStyle = defaultConfig.strokeStyle
-              if (lastPoint.cp2.use) {
+              if (lastPoint.cps[1] !== -1) {
+                let cp = ctrlNodes[lastPoint.cps[1]]
                 let fixLastPointCp2 = {
-                  x: center.x + lastPoint.cp2.x,
-                  y: center.y + lastPoint.cp2.y,
+                  x: center.x + cp.x,
+                  y: center.y + cp.y,
                 }
                 ctx.quadraticCurveTo2(fixLastPointCp2, event.point)
               } else {
+                console.log('event.point',event.point)
                 ctx.lineTo2(event.point)
               }
               // ctx.closePath()
@@ -1833,10 +1843,10 @@ export class BaseShape {
 
     let point = nodes[line[0]]
     let oldPoint = oldNodes[oldLine[0]]
-    helper.movePoint2(point, oldPoint, move)
+    helper.movePoint(point, oldPoint, move)
 
     if (line[2] !== -1) {
-      helper.movePoint2(ctrlNodes[line[2]], oldCtrlNodes[line[2]], move)
+      helper.movePoint(ctrlNodes[line[2]], oldCtrlNodes[line[2]], move)
     }
 
     let preLine: PenNetworkPath
@@ -1849,7 +1859,7 @@ export class BaseShape {
       oldPreLine = oldPath[pointIndex - 1]
     }
     if (preLine[3] !== -1) {
-      helper.movePoint2(ctrlNodes[preLine[3]], oldCtrlNodes[oldPreLine[3]], move)
+      helper.movePoint(ctrlNodes[preLine[3]], oldCtrlNodes[oldPreLine[3]], move)
     }
   }
 

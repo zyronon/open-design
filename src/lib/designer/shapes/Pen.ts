@@ -144,6 +144,11 @@ export class Pen extends ParentShape {
       if (point.cps[1] !== -1) draw.controlPoint(ctx, ctrlNodes[point.cps[1]], point)
       draw.currentPoint(ctx, point)
     }
+
+    if (this.tempPoint) {
+      draw.currentPoint(ctx, this.tempPoint)
+    }
+
     ctx.restore()
   }
 
@@ -191,7 +196,7 @@ export class Pen extends ParentShape {
     return []
   }
 
-  getCustomShapePath3(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
+  getCustomShapePath3(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     const {nodes, paths, ctrlNodes} = this._conf.penNetwork

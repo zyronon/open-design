@@ -250,6 +250,7 @@ export class BaseShape {
   editStartPointInfo: CurrentOperationInfo = cloneDeep(this.defaultCurrentOperationInfo)
   editHover: CurrentOperationInfo = cloneDeep(this.defaultCurrentOperationInfo)
   editEnter: CurrentOperationInfo = cloneDeep(this.defaultCurrentOperationInfo)
+  tempPoint?: P
 
   checkMousePointOnEditStatus2(point: P): CurrentOperationInfo {
     // console.log('------------------')
@@ -685,13 +686,14 @@ export class BaseShape {
     }
 
     if (this.status === ShapeStatus.Edit) {
+      const {nodes, paths, ctrlNodes} = this.conf.penNetwork
+
       if (cu.editModeType === EditModeType.Select) {
         let result = this.checkMousePointOnEditStatus2(event.point)
         let {lineIndex, pointIndex, cpIndex, type, lineType} = result
         // console.log('result', cloneDeep(result))
         //如果hover在点上，先处理hover
         if (pointIndex !== -1) {
-          const {nodes, paths, ctrlNodes} = this.conf.penNetwork
 
           this.conf.isCustom = true
           //图省事儿，直接把editHover设为默认值。不然鼠标移动点或线时。还会渲染hoverLineCenterPoint
@@ -816,55 +818,85 @@ export class BaseShape {
           x: event.point.x - center.x,
           y: event.point.y - center.y
         }
-        let endPoint = helper.getDefaultBezierPoint(fixMousePoint)
-
+        // let endPoint = helper.getDefaultBezierPoint(fixMousePoint)
+        let endPoint: PenNetworkNode = {
+          ...fixMousePoint,
+          cornerRadius: 0,
+          realCornerRadius: 0,
+          handleMirroring: HandleMirroring.RightAngle,
+          cornerCps: [-1, -1],
+          cps: [-1, -1],
+        }
         let {lineIndex, pointIndex} = this.editStartPointInfo
-        if (pointIndex === -1) {
-          //新增一条线
-          this.conf.isCustom = true
-          this.conf.lineShapes.push({
-            close: false,
-            points: [{type: PointType.Single, point: endPoint}]
-          })
-          this.editStartPointInfo.lineIndex = this.conf.lineShapes.length - 1
-          this.editStartPointInfo.pointIndex = 0
+        if (pointIndex === -1 && !this.tempPoint) {
+          // //新增一条线
+          // this.conf.isCustom = true
+          // this.conf.lineShapes.push({
+          //   close: false,
+          //   points: [{type: PointType.Single, point: endPoint}]
+          // })
+          // this.editStartPointInfo.lineIndex = this.conf.lineShapes.length - 1
+          // this.editStartPointInfo.pointIndex = 0
+          this.tempPoint = fixMousePoint
         } else {
-          let line = this.conf.lineShapes[lineIndex]
-          if (line) {
-            let pointInfo = line.points[pointIndex]
-            //是否新增线段并将起点设为共同点
-            let isChangeCommonAddNewLine = false
-            //起点在线段的最后一位
-            if (line.points.length - 1 === pointIndex) {
-              //如果线段闭合，那么需要将起点设为共同点，并新增一条线
-              if (line.close) {
-                isChangeCommonAddNewLine = true
-              } else {
-                line.points.push({type: PointType.Single, point: endPoint})
-                this.editStartPointInfo.pointIndex += 1
-              }
-            } else {
-              isChangeCommonAddNewLine = true
+          if (this.tempPoint) {
+            let startPoint: PenNetworkNode = {
+              ...this.tempPoint,
+              cornerRadius: 0,
+              realCornerRadius: 0,
+              handleMirroring: HandleMirroring.RightAngle,
+              cornerCps: [-1, -1],
+              cps: [-1, -1],
             }
-
-            if (isChangeCommonAddNewLine) {
-              this.conf.lineShapes.push({
-                close: false,
-                points: [
-                  {type: PointType.Common, targetId: pointInfo.point!.id},
-                  {type: PointType.Single, point: endPoint},
-                ]
-              })
-              if (pointInfo.type === PointType.Single) {
-                this.conf.commonPoints.push(pointInfo.point!)
-                this.conf.lineShapes[lineIndex].points[pointIndex].type = PointType.Common
-                this.conf.lineShapes[lineIndex].points[pointIndex].targetId = pointInfo.point!.id
-                this.conf.lineShapes[lineIndex].points[pointIndex].point = undefined
-              }
-              this.editStartPointInfo.lineIndex += 1
+            nodes.push(startPoint)
+            nodes.push(endPoint)
+            paths.push([[nodes.length - 2, nodes.length - 1, -1, -1, -1, -1]])
+            this.editStartPointInfo.lineIndex += 1
+            this.editStartPointInfo.pointIndex = 1
+            this.tempPoint = undefined
+          } else {
+            let path = paths[lineIndex]
+            if (path) {
+              let line = path[pointIndex]
+              // let point = nodes[line[0]]
+              nodes.push(endPoint)
+              path.push([line[1], nodes.length - 1, -1, -1, -1, -1])
               this.editStartPointInfo.pointIndex = 1
+              //是否新增线段并将起点设为共同点
+              // let isChangeCommonAddNewLine = false
+              //起点在线段的最后一位
+              // if (path.points.length - 1 === pointIndex) {
+              //   //如果线段闭合，那么需要将起点设为共同点，并新增一条线
+              //   if (path.close) {
+              //     isChangeCommonAddNewLine = true
+              //   } else {
+              //     path.points.push({type: PointType.Single, point: endPoint})
+              //     this.editStartPointInfo.pointIndex += 1
+              //   }
+              // } else {
+              //   isChangeCommonAddNewLine = true
+              // }
+
+
+              // if (isChangeCommonAddNewLine) {
+              //   this.conf.lineShapes.push({
+              //     close: false,
+              //     points: [
+              //       {type: PointType.Common, targetId: line.point!.id},
+              //       {type: PointType.Single, point: endPoint},
+              //     ]
+              //   })
+              //   if (line.type === PointType.Single) {
+              //     this.conf.commonPoints.push(line.point!)
+              //     this.conf.lineShapes[lineIndex].points[pointIndex].type = PointType.Common
+              //     this.conf.lineShapes[lineIndex].points[pointIndex].targetId = line.point!.id
+              //     this.conf.lineShapes[lineIndex].points[pointIndex].point = undefined
+              //   }
+              //   this.editStartPointInfo.lineIndex += 1
+              //   this.editStartPointInfo.pointIndex = 1
+              // }
+              this.conf.isCustom = true
             }
-            this.conf.isCustom = true
           }
         }
         CanvasUtil2.getInstance().render()
@@ -1088,12 +1120,12 @@ export class BaseShape {
             preLine[3] = lastPoint.cps[0]
           } else {
             cu.waitRenderOtherStatusFunc.push(() => {
-              ctx.save()
-              ctx.beginPath()
               let fixLastPoint = {
                 x: center.x + lastPoint.x,
                 y: center.y + lastPoint.y,
               }
+              ctx.save()
+              ctx.beginPath()
               ctx.moveTo2(fixLastPoint)
               ctx.strokeStyle = defaultConfig.strokeStyle
               if (lastPoint.cps[1] !== -1) {
@@ -1104,12 +1136,10 @@ export class BaseShape {
                 }
                 ctx.quadraticCurveTo2(fixLastPointCp2, event.point)
               } else {
-                console.log('event.point',event.point)
                 ctx.lineTo2(event.point)
               }
-              // ctx.closePath()
               ctx.stroke()
-              draw.drawRound(ctx, fixLastPoint)
+              draw.drawRound(ctx, event.point)
               ctx.restore()
             })
           }
@@ -1403,7 +1433,7 @@ export class BaseShape {
     return pathList
   }
 
-  getCustomShapePath2(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
+  getCustomShapePath2(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     this.conf.lineShapes.map((line) => {

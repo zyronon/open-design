@@ -453,6 +453,7 @@ export default {
       effects: [],
     } as any, newConfig)
   },
+  //TODO 废弃
   getDefaultBezierPoint(p: P) {
     return {
       id: uuid(),

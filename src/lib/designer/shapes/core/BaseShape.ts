@@ -577,11 +577,12 @@ export class BaseShape {
         }
         let previousPointInfo = nodes[preLine[0]]
         let nextPointInfo = nodes[line[1]]
-        // console.log(previousPointInfo, nextPointInfo)
+        console.log(previousPointInfo, nextPointInfo, point)
         let {l, r} = Bezier.getTargetPointControlPoints(
           previousPointInfo,
           point,
           nextPointInfo)
+        console.log(l, r)
         ctrlNodes.push(l)
         ctrlNodes.push(r)
         point.cps = [ctrlNodes.length - 2, ctrlNodes.length - 1]
@@ -687,7 +688,7 @@ export class BaseShape {
       if (cu.editModeType === EditModeType.Select) {
         let result = this.checkMousePointOnEditStatus2(event.point)
         let {lineIndex, pointIndex, cpIndex, type, lineType} = result
-        console.log('result', result)
+        // console.log('result', cloneDeep(result))
         //如果hover在点上，先处理hover
         if (pointIndex !== -1) {
           const {nodes, paths, ctrlNodes} = this.conf.penNetwork
@@ -696,7 +697,7 @@ export class BaseShape {
           //图省事儿，直接把editHover设为默认值。不然鼠标移动点或线时。还会渲染hoverLineCenterPoint
           //但hoverLineCenterPoint的点又不正确
           this.editHover = cloneDeep(this.defaultCurrentOperationInfo)
-          let point1: PenNetworkNode = {
+          let point: PenNetworkNode = {
             ...this.hoverLineCenterPoint,
             cornerRadius: 0,
             realCornerRadius: 0,
@@ -707,8 +708,8 @@ export class BaseShape {
           if (type === EditType.CenterPoint) {
             let line: PenNetworkPath = paths[lineIndex][pointIndex]
             if (lineType === LineType.Line) {
-              nodes.push(point1)
-              paths[lineIndex].push([nodes.length - 1, line[1], -1, -1, -1, -1])
+              nodes.push(point)
+              paths[lineIndex].splice(pointIndex + 1, 0, [nodes.length - 1, line[1], -1, -1, -1, -1])
               line[1] = nodes.length - 1
             } else {
               let startPoint = nodes[line[0]]
@@ -766,14 +767,14 @@ export class BaseShape {
               if (lineType === LineType.Bezier3) {
                 ctrlNodes.push(left.points[2])
                 ctrlNodes.push(right.points[1])
-                point1.handleMirroring = HandleMirroring.MirrorAngle
-                point1.cps = [ctrlNodes.length - 1, ctrlNodes.length - 2]
+                point.handleMirroring = HandleMirroring.MirrorAngle
+                point.cps = [ctrlNodes.length - 1, ctrlNodes.length - 2]
                 newLine = [nodes.length - 1, line[1], ctrlNodes.length - 2, line[3], -1, -1]
                 line[3] = ctrlNodes.length - 2
               } else {
                 line[3] = -1
               }
-              nodes.push(point1)
+              nodes.push(point)
               paths[lineIndex].splice(pointIndex + 1, 0, newLine)
               line[1] = nodes.length - 1
               // console.log('b2', b!.bbox())

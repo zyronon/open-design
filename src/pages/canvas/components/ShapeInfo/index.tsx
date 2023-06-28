@@ -69,7 +69,7 @@ const ShapeInfo = (props: any) => {
       setConf(s.conf)
     })
     EventBus.on(EventKeys.POINT_INFO, (val: any) => {
-      console.log('pointInfo', val)
+      // console.log('pointInfo', val)
       setPointInfo(val)
     })
     EventBus.on(EventKeys.MODE, (val: any) => {

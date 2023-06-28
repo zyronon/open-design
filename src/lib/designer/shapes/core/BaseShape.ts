@@ -560,36 +560,34 @@ export class BaseShape {
     if (this.status === ShapeStatus.Edit) {
       let cu = CanvasUtil2.getInstance()
       const {lineIndex, pointIndex} = this.editStartPointInfo
+      const {nodes, paths, ctrlNodes} = this.conf.penNetwork
+
       if (pointIndex !== -1) {
-        let line = this.conf.lineShapes[lineIndex]
-        let currentPoint = line.points[pointIndex]
-        if (currentPoint.point!.type !== BezierPointType.RightAngle) {
-          currentPoint.point!.cp1.use = false
-          currentPoint.point!.cp2.use = false
-          currentPoint.point!.type = BezierPointType.RightAngle
+        let path = paths[lineIndex]
+        let line = path[pointIndex]
+        let preLine = path[pointIndex === 0 ? path.length - 1 : pointIndex - 1]
+        let point = nodes[line[0]]
+        if (point.handleMirroring !== HandleMirroring.RightAngle) {
+          point.cps = [-1, -1]
+          point.handleMirroring = HandleMirroring.RightAngle
+          line[2] = -1
+          preLine[3] = -1
           cu.render()
           return
         }
-        let previousPointInfo: PointInfo
-        let nextPointInfo: PointInfo
-        if (pointIndex === 0 && line.close) {
-          previousPointInfo = line.points[line.points.length - 1]
-        } else {
-          previousPointInfo = line.points[pointIndex - 1]
-        }
-        if (pointIndex === line.points.length - 1 && line.close) {
-          nextPointInfo = line.points[0]
-        } else {
-          nextPointInfo = line.points[pointIndex + 1]
-        }
-        console.log(previousPointInfo, nextPointInfo)
+        let previousPointInfo = nodes[preLine[0]]
+        let nextPointInfo = nodes[line[1]]
+        // console.log(previousPointInfo, nextPointInfo)
         let {l, r} = Bezier.getTargetPointControlPoints(
-          previousPointInfo.point?.center!,
-          currentPoint.point?.center!,
-          nextPointInfo.point?.center!)
-        currentPoint.point!.cp1 = {...getP2(true), ...l}
-        currentPoint.point!.cp2 = {...getP2(true), ...r}
-        currentPoint.point!.type = BezierPointType.MirrorAngleAndLength
+          previousPointInfo,
+          point,
+          nextPointInfo)
+        ctrlNodes.push(l)
+        ctrlNodes.push(r)
+        point.cps = [ctrlNodes.length - 2, ctrlNodes.length - 1]
+        line[2] = point.cps[1]
+        preLine[3] = point.cps[0]
+        point.handleMirroring = HandleMirroring.MirrorAngleAndLength
         cu.render()
       } else {
         this.status = ShapeStatus.Select

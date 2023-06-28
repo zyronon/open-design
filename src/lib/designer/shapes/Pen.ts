@@ -56,7 +56,7 @@ export class Pen extends ParentShape {
     let {strokePathList, fillPathList} = this.getCustomShapePath3()
 
     fillPathList.map(({close, path}) => {
-      ctx.fill(path)
+      ctx.fill(path,'evenodd')
     })
     strokePathList.map(line => {
       ctx.stroke(line.path)
@@ -94,9 +94,10 @@ export class Pen extends ParentShape {
     ctx.fillStyle = fillColor
 
     let {strokePathList, fillPathList} = this.getCustomShapePath3()
-    // fillPathList.map(({close, path}) => {
-    //   ctx.fill(path)
-    // })
+    fillPathList.map(({close, path}) => {
+      // ctx.fill(path, 'evenodd')
+      ctx.fill(path)
+    })
     strokePathList.map(({close, path}) => {
       ctx.stroke(path)
     })
@@ -104,26 +105,26 @@ export class Pen extends ParentShape {
     //渲染hover在线上时，线段的中心点
     if ((this.editHover.type === EditType.Line
         || this.editHover.type === EditType.CenterPoint)
-      && this.editHover.pointIndex !== -1
+      && this.editHover.lineIndex !== -1
     ) {
       draw.drawRound(ctx, this.hoverLineCenterPoint)
     }
     const {nodes, paths, ctrlNodes} = this._conf.penNetwork
 
-    let {lineIndex, pointIndex, type} = this.editStartPointInfo
-    let path = paths[lineIndex]
+    let {pathIndex, lineIndex, pointIndex, type} = this.editStartPointInfo
+    let path = paths[pathIndex]
 
     //先绘制控制附近两个点的控制点与线条，好被后续的圆点遮盖
-    if (pointIndex !== -1 && type !== EditType.Line) {
-      let line = path[pointIndex]
+    if (lineIndex !== -1 && type !== EditType.Line) {
+      let line = path[lineIndex]
       let point2 = nodes[line[1]]
       if (point2.cps[0] !== -1) draw.controlPoint(ctx, ctrlNodes[point2.cps[0]], point2)
       if (point2.cps[1] !== -1) draw.controlPoint(ctx, ctrlNodes[point2.cps[1]], point2)
 
-      if (pointIndex === 0) {
+      if (lineIndex === 0) {
         line = path[path.length - 1]
       } else {
-        line = path[pointIndex - 1]
+        line = path[lineIndex - 1]
       }
       let point3 = nodes[line[0]]
       if (point3.cps[0] !== -1) draw.controlPoint(ctx, ctrlNodes[point3.cps[0]], point3)
@@ -131,15 +132,19 @@ export class Pen extends ParentShape {
     }
 
     //绘制所有点
-    nodes.map((node) => {
-      // if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
-      // if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
-      draw.drawRound(ctx, node)
+    paths.map((path) => {
+      path.map(line => {
+        // if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
+        // if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
+        draw.drawRound(ctx, nodes[line[0]])
+        //TODO 这个只需要最后一条线时才绘制吧？
+        draw.drawRound(ctx, nodes[line[1]])
+      })
     })
 
     //再绘制选中的当前点和控制点，之所以分开绘制，是因为遮盖问题
-    if (pointIndex !== -1 && type !== EditType.Line) {
-      let point = nodes[path[pointIndex][0]]
+    if (lineIndex !== -1 && type !== EditType.Line) {
+      let point = nodes[path[lineIndex][pointIndex ?? 0]]
       if (point.cps[0] !== -1) draw.controlPoint(ctx, ctrlNodes[point.cps[0]], point)
       if (point.cps[1] !== -1) draw.controlPoint(ctx, ctrlNodes[point.cps[1]], point)
       draw.currentPoint(ctx, point)
@@ -209,9 +214,12 @@ export class Pen extends ParentShape {
         fillPath.moveTo2(nodes[path[0][0]])
         path.map(line => {
           let lineType = helper.judgeLineType2(line)
+          let startPoint = nodes[line[0]]
           let endPoint = nodes[line[1]]
           switch (lineType) {
             case LineType.Line:
+              // strokePath.moveTo2(startPoint)
+              // fillPath.moveTo2(startPoint)
               strokePath.lineTo2(endPoint)
               fillPath.lineTo2(endPoint)
               break
@@ -228,6 +236,16 @@ export class Pen extends ParentShape {
               break
           }
         })
+        // fillPath.moveTo2(nodes[path[0][0]])
+        fillPath.moveTo2(nodes[path[path.length - 1][0]])
+        fillPath.closePath()
+        // fillPath.lineTo2(nodes[path[0][0]])
+        // fillPath.lineTo2({x: 100, y: 100})
+        // fillPath.lineTo2({x: 100, y: 50})
+
+
+        // fillPath.closePath()
+        // strokePath.closePath()
         strokePathList.push({close: true, path: strokePath})
         fillPathList.push({close: true, path: fillPath})
       }

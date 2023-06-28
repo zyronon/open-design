@@ -267,8 +267,9 @@ export enum EditType {
 export type CurrentOperationInfo = {
   type: EditType | undefined,
   lineType?: LineType,
+  pathIndex: number,
   lineIndex: number,
-  pointIndex: number,
+  pointIndex?: number,
   cpIndex: number
   lineCenterPoint?: P,
 }

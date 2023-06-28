@@ -153,34 +153,34 @@ export class Polygon extends ParentShape {
 
     if ((this.editHover.type === EditType.Line
         || this.editHover.type === EditType.CenterPoint)
-      && this.editHover.pointIndex !== -1
+      && this.editHover.lineIndex !== -1
     ) {
       draw.drawRound(ctx, this.hoverLineCenterPoint)
     }
-    let {lineIndex, pointIndex, type} = this.editStartPointInfo
+    let {pathIndex, lineIndex, type} = this.editStartPointInfo
     //先绘制控制线，好被后续的圆点遮盖
-    if (pointIndex !== -1 && type !== EditType.Line) {
-      let line = lineShapes[lineIndex]
+    if (lineIndex !== -1 && type !== EditType.Line) {
+      let line = lineShapes[pathIndex]
       let point
-      if (pointIndex === 0) {
+      if (lineIndex === 0) {
         if (line.close) {
           point = this.getPoint(line.points[line.points.length - 1])
           if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
           if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
         }
       } else {
-        point = this.getPoint(line.points[pointIndex - 1])
+        point = this.getPoint(line.points[lineIndex - 1])
         if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
         if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
       }
-      if (pointIndex === line.points.length - 1) {
+      if (lineIndex === line.points.length - 1) {
         if (line.close) {
           point = this.getPoint(line.points[0])
           if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
           if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
         }
       } else {
-        point = this.getPoint(line.points[pointIndex + 1])
+        point = this.getPoint(line.points[lineIndex + 1])
         if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
         if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
       }
@@ -193,9 +193,9 @@ export class Polygon extends ParentShape {
         draw.drawRound(ctx, point.center)
       })
     })
-    if (pointIndex !== -1 && type !== EditType.Line) {
-      let line = lineShapes[lineIndex]
-      let point = this.getPoint(line.points[pointIndex])
+    if (lineIndex !== -1 && type !== EditType.Line) {
+      let line = lineShapes[pathIndex]
+      let point = this.getPoint(line.points[lineIndex])
       if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
       if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
       draw.currentPoint(ctx, point.center)

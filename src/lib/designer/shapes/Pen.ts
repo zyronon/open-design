@@ -56,7 +56,8 @@ export class Pen extends ParentShape {
     let {strokePathList, fillPathList} = this.getCustomShapePath3()
 
     fillPathList.map(({close, path}) => {
-      ctx.fill(path,'evenodd')
+      // ctx.fill(path,'evenodd')
+      ctx.fill(path,'nonzero')
     })
     strokePathList.map(line => {
       ctx.stroke(line.path)
@@ -236,9 +237,10 @@ export class Pen extends ParentShape {
               break
           }
         })
+        // fillPath.beginPath()
         // fillPath.moveTo2(nodes[path[0][0]])
-        fillPath.moveTo2(nodes[path[path.length - 1][0]])
-        fillPath.closePath()
+        // fillPath.moveTo2(nodes[path[path.length - 1][0]])
+        // fillPath.closePath()
         // fillPath.lineTo2(nodes[path[0][0]])
         // fillPath.lineTo2({x: 100, y: 100})
         // fillPath.lineTo2({x: 100, y: 50})

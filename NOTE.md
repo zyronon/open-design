@@ -67,40 +67,55 @@
     - 曲线，代入贝塞尔曲线的公式t为0.5时的位置
 
 - 平滑圆角
-  - https://m.sohu.com/a/416527912_463970/?pvid=000115_3w_a
-  - https://www.figma.com/blog/desperately-seeking-squircles/
+    - https://m.sohu.com/a/416527912_463970/?pvid=000115_3w_a
+    - https://www.figma.com/blog/desperately-seeking-squircles/
 
 - 如何计算点最大的圆角radius呢？
     - arcTo画圆，只需传半径radius。acrTo原理是以当前角的1/2作出中心线，
     - 然后两个邻边垂直于中心线（长度为radius）画圆。所以radius为对边，中心线为斜边，两侧线段分别为各自的领边
     - 已知，某一个的度数，和对边的长度
     - 可以利用tanA（当前角度的1/2）=a(radius)/b(未知的领边长)
+- 一条边是曲线时，如何计算最大圆角？
+- canvas如何仅填充交叉区域？
+  - https://stackoverflow.com/questions/37127144/how-can-i-fill-enclosed-shapes-in-a-line
 
 ```js
    let lines = this.conf.lineShapes[0]
-    let lines1 = lines.points[1]
-    //中间点，既要作圆的那个点
-    let lines2 = lines.points[2]
-    let lines3 = lines.points[3]
-    console.log(
-      lines1,
-      lines2,
-      lines3,
-    )
-    let degree = Math2.getDegree(lines2.point?.center!, lines3.point?.center!, lines1.point?.center!)
+let lines1 = lines.points[1]
+//中间点，既要作圆的那个点
+let lines2 = lines.points[2]
+let lines3 = lines.points[3]
+console.log(
+  lines1,
+  lines2,
+  lines3,
+)
+let degree = Math2.getDegree(lines2.point?.center
+!, lines3.point?.center
+!, lines1.point?.center
+!
+)
 
-    let d2 = degree / 2
-    console.log('d2', d2)
-    //得到已知角度tan值
-    let tan = Math.tan(Math2.jiaodu2hudu(d2))
-    console.log('tan', tan)
-    //tanA = a/b。可知b = a/ tanA。所以领边的长就是lines2.point?.radius! / tan
-    console.log('当前radius（对边）对应的邻边长', lines2.point?.radius! / tan)
+let d2 = degree / 2
+console.log('d2', d2)
+//得到已知角度tan值
+let tan = Math.tan(Math2.jiaodu2hudu(d2))
+console.log('tan', tan)
+//tanA = a/b。可知b = a/ tanA。所以领边的长就是lines2.point?.radius! / tan
+console.log('当前radius（对边）对应的邻边长', lines2.point?.radius
+! / tan
+)
 
-    let a = Math2.getHypotenuse2(lines2.point?.center!, lines1.point?.center!)
-    let a2 = Math2.getHypotenuse2(lines2.point?.center!, lines3.point?.center!)
-    console.log('2-1', a)
-    console.log('2-3', a2)
-    //公共同上
-    console.log('2-3这条边最大的radius（对边）值', a2 * tan)
+let a = Math2.getHypotenuse2(lines2.point?.center
+!, lines1.point?.center
+!
+)
+let a2 = Math2.getHypotenuse2(lines2.point?.center
+!, lines3.point?.center
+!
+)
+console.log('2-1', a)
+console.log('2-3', a2)
+//公共同上
+console.log('2-3这条边最大的radius（对边）值', a2 * tan)
 ```

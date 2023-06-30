@@ -18,6 +18,7 @@ import {
 import {BaseShape} from "./core/BaseShape"
 import {PenConfig} from "../config/PenConfig"
 import {Bezier} from "../utils/bezier"
+import {Math2} from "../utils/math"
 
 export class Pen extends ParentShape {
   mouseDown: boolean = false
@@ -57,7 +58,7 @@ export class Pen extends ParentShape {
 
     fillPathList.map(({close, path}) => {
       // ctx.fill(path,'evenodd')
-      ctx.fill(path,'nonzero')
+      ctx.fill(path, 'nonzero')
     })
     strokePathList.map(line => {
       ctx.stroke(line.path)
@@ -202,54 +203,75 @@ export class Pen extends ParentShape {
     return []
   }
 
-  getCustomShapePath3(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
+  getCustomShapePath3(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     const {nodes, paths, ctrlNodes} = this._conf.penNetwork
 
+    let path = paths[0]
+    for (let i = 0; i < path.length - 2; i++) {
+      for (let j = i + 2; j < path.length; j++) {
+        let lastPoint = (j === path.length - 1 ? nodes[path[j][1]] : nodes[path[j + 1][0]])
+        let ip = Math2.isIntersection(nodes[path[i][0]], nodes[path[i + 1][0]], nodes[path[j][0]], lastPoint)
+        if (ip) {
+          console.log(ip, i, j)
+          let fillPath = new Path2D()
+          fillPath.moveTo2(ip);
+          for (let t = i + 1; t < j; t++) {
+            let line = path[t]
+
+            let lineType = helper.judgeLineType2(line)
+            let startPoint = nodes[line[0]]
+            let endPoint = nodes[line[1]]
+            if (t === i + 1) {
+              fillPath.lineTo2(startPoint);
+            }
+            switch (lineType) {
+              case LineType.Line:
+                fillPath.lineTo2(endPoint)
+                break
+              case LineType.Bezier3:
+                fillPath.bezierCurveTo2(ctrlNodes[line[2]], ctrlNodes[line[3]], endPoint)
+                break
+              case LineType.Bezier2:
+                let cp: number = 0
+                if (line[2] !== -1) cp = line[2]
+                if (line[3] !== -1) cp = line[3]
+                fillPath.quadraticCurveTo2(ctrlNodes[cp], endPoint)
+                break
+            }
+
+          }
+
+          fillPathList.push({close: true, path: fillPath})
+        }
+      }
+    }
+
     paths.map(path => {
       if (path.length) {
         let strokePath = new Path2D()
-        let fillPath = new Path2D()
         strokePath.moveTo2(nodes[path[0][0]])
-        fillPath.moveTo2(nodes[path[0][0]])
         path.map(line => {
           let lineType = helper.judgeLineType2(line)
           let startPoint = nodes[line[0]]
           let endPoint = nodes[line[1]]
           switch (lineType) {
             case LineType.Line:
-              // strokePath.moveTo2(startPoint)
-              // fillPath.moveTo2(startPoint)
               strokePath.lineTo2(endPoint)
-              fillPath.lineTo2(endPoint)
               break
             case LineType.Bezier3:
               strokePath.bezierCurveTo2(ctrlNodes[line[2]], ctrlNodes[line[3]], endPoint)
-              fillPath.bezierCurveTo2(ctrlNodes[line[2]], ctrlNodes[line[3]], endPoint)
               break
             case LineType.Bezier2:
               let cp: number = 0
               if (line[2] !== -1) cp = line[2]
               if (line[3] !== -1) cp = line[3]
               strokePath.quadraticCurveTo2(ctrlNodes[cp], endPoint)
-              fillPath.quadraticCurveTo2(ctrlNodes[cp], endPoint)
               break
           }
         })
-        // fillPath.beginPath()
-        // fillPath.moveTo2(nodes[path[0][0]])
-        // fillPath.moveTo2(nodes[path[path.length - 1][0]])
-        // fillPath.closePath()
-        // fillPath.lineTo2(nodes[path[0][0]])
-        // fillPath.lineTo2({x: 100, y: 100})
-        // fillPath.lineTo2({x: 100, y: 50})
-
-
-        // fillPath.closePath()
-        // strokePath.closePath()
         strokePathList.push({close: true, path: strokePath})
-        fillPathList.push({close: true, path: fillPath})
       }
     })
     return {strokePathList, fillPathList}

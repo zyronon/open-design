@@ -80,7 +80,7 @@ const Math2 = {
    * nx = cosθ * (ax - cx) - sinθ * (ay - cy) + cx
    * ny = sinθ * (ax - cx) + cosθ * (ay - cy) + cy
    */
-  getRotatedPoint(point: any, center: any, rotate: number)  {
+  getRotatedPoint(point: any, center: any, rotate: number) {
     if (rotate === 0) return clone(point)
     return {
       x: (point.x - center.x) * Math.cos(this.jiaodu2hudu(rotate)) - (point.y - center.y) * Math.sin(this.jiaodu2hudu(rotate)) + center.x,
@@ -161,6 +161,26 @@ const Math2 = {
     angle = angle < 0 ? angle + 360 : angle
     return angle
   },
+  //判断两条线是否交叉
+  // https://stackoverflow.com/questions/37127144/how-can-i-fill-enclosed-shapes-in-a-line
+  isIntersection(p0: P, p1: P, p2: P, p3: P): P {
+    let d1x = p1.x - p0.x,
+      d1y = p1.y - p0.y,
+      d2x = p3.x - p2.x,
+      d2y = p3.y - p2.y,
+      d = d1x * d2y - d2x * d1y,
+      px, py, s, t;
+    if (d) {
+      px = p0.x - p2.x;
+      py = p0.y - p2.y;
+      s = (d1x * py - d1y * px) / d;
+      if (s >= 0 && s <= 1) {
+        t = (d2x * py - d2y * px) / d;
+        if (t >= 0 && t <= 1) return {x: p0.x + (t * d1x), y: p0.y + (t * d1y)};
+      }
+    }
+    return null as any
+  }
 }
 export {Math2}
 

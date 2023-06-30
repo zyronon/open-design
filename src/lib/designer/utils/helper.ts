@@ -454,16 +454,6 @@ export default {
     } as any, newConfig)
   },
   //TODO 废弃
-  getDefaultBezierPoint(p: P) {
-    return {
-      id: uuid(),
-      cp1: getP2(),
-      center: {...getP2(true), ...p},
-      cp2: getP2(),
-      type: BezierPointType.RightAngle
-    }
-  },
-  //TODO 废弃
   judgeLineType({startPoint, endPoint}: Line): LineType {
     let lineType: LineType = LineType.Line
     if (!startPoint.cp2.use && !endPoint.cp1.use) {

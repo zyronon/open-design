@@ -1,6 +1,7 @@
 import {clone} from "lodash"
 import {LineType, P} from "../types/type"
 import {PenNetworkLine, PenNetworkNode} from "../config/PenConfig";
+import {Bezier} from "bezier-js";
 
 const Math2 = {
   getHypotenuse2(p1: P, p2: P): number {
@@ -179,14 +180,66 @@ const Math2 = {
     }
     return null as any
   },
-  isIntersection2(line: PenNetworkLine, line2: PenNetworkLine, nodes: PenNetworkNode[]) {
-    let p0 = nodes[line[0]],
-      p1 = nodes[line[1]],
-      p2 = nodes[line2[0]],
-      p3 = nodes[line2[1]]
+  isIntersection2(line: PenNetworkLine, line2: PenNetworkLine, nodes: PenNetworkNode[], ctrlNodes: P[]) {
+    let p1 = nodes[line[0]],
+      p2 = nodes[line[1]],
+      p3 = nodes[line2[0]],
+      p4 = nodes[line2[1]]
     if (line[6] === LineType.Line && line2[6] === LineType.Line) {
 
+    } else if (line[6] === LineType.Line && line2[6] === LineType.Bezier2) {
+      let cp: P
+      if (line2[2] !== -1) cp = ctrlNodes[line2[2]]
+      if (line2[3] !== -1) cp = ctrlNodes[line2[3]]
+      let b = new Bezier(p3, cp!, p4)
+      let intersects = b.intersects({p1, p2})
+      if (intersects.length) {
+        let lastIntersects = intersects[intersects.length - 1] as number
+        if (lastIntersects === 0) return null
+        let a = b.split(lastIntersects)
+        console.log('Bezier2', a)
+        return {
+          intersectsPoint: b.get(lastIntersects as number),
+          startLine: {
+            type: line[6],
+            lines: [
+              [nodes[line[0]], nodes[line[1]]]
+            ]
+          },
+          endLine: {
+            type: line2[6],
+            lines: [
+              a.left.points
+            ]
+          }
+        }
+      }
+    } else if (line[6] === LineType.Line && line2[6] === LineType.Bezier3) {
+      let b = new Bezier(p3, ctrlNodes[line2[2]],ctrlNodes[line2[3]], p4)
+      let intersects = b.intersects({p1, p2})
+      if (intersects.length) {
+        let lastIntersects = intersects[intersects.length - 1] as number
+        if (lastIntersects === 0) return null
+        let a = b.split(lastIntersects)
+        console.log('Bezier3', a)
+        return {
+          intersectsPoint: b.get(lastIntersects as number),
+          startLine: {
+            type: line[6],
+            lines: [
+              [nodes[line[0]], nodes[line[1]]]
+            ]
+          },
+          endLine: {
+            type: line2[6],
+            lines: [
+              a.left.points
+            ]
+          }
+        }
+      }
     }
+    return null as any
   }
 }
 export {Math2}

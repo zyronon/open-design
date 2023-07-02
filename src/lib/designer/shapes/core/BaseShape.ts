@@ -306,6 +306,7 @@ export class BaseShape {
     }
 
     //判断是否在cp点上
+    //TODO　目前只判断了当前点的控制点。应该把前后两个点的控制点都判断的
     let {pathIndex, lineIndex, type} = this.editStartPointInfo
     if (lineIndex !== -1 && type === EditType.Point) {
       let waitCheckPoints: any[] = []
@@ -314,6 +315,21 @@ export class BaseShape {
       let point = nodes[line[0]]
       if (point.cps[0] !== -1) waitCheckPoints.push({lineIndex, index: 0, point: ctrlNodes[point.cps[0]]})
       if (point.cps[1] !== -1) waitCheckPoints.push({lineIndex, index: 1, point: ctrlNodes[point.cps[1]]})
+
+      point = nodes[line[1]]
+      if (point.cps[0] !== -1) waitCheckPoints.push({lineIndex, index: 0, point: ctrlNodes[point.cps[0]]})
+      if (point.cps[1] !== -1) waitCheckPoints.push({lineIndex, index: 1, point: ctrlNodes[point.cps[1]]})
+
+      if (lineIndex === 0) {
+        lineIndex = path.length - 1
+      } else {
+        lineIndex = lineIndex - 1
+      }
+      line = path[lineIndex]
+      point = nodes[line[0]]
+      if (point.cps[0] !== -1) waitCheckPoints.push({lineIndex, index: 0, point: ctrlNodes[point.cps[0]]})
+      if (point.cps[1] !== -1) waitCheckPoints.push({lineIndex, index: 1, point: ctrlNodes[point.cps[1]]})
+
       for (let i = 0; i < waitCheckPoints.length; i++) {
         let item = waitCheckPoints[i]
         if (helper.isInPoint(fixMousePoint, item.point, judgePointDistance)) {
@@ -815,11 +831,11 @@ export class BaseShape {
             result.lineIndex += 1
           }
 
-          // EventBus.emit(EventKeys.POINT_INFO, {
-          //   pathIndex: pathIndex,
-          //   lineIndex: lineIndex,
-          //   point: nodes[paths[pathIndex][lineIndex][0]]
-          // })
+          EventBus.emit(EventKeys.POINT_INFO, {
+            pathIndex: pathIndex,
+            lineIndex: lineIndex,
+            point: nodes[paths[pathIndex][lineIndex][0]]
+          })
 
           this.editEnter = result
           if (this.editStartPointInfo.pathIndex !== pathIndex
@@ -1929,6 +1945,7 @@ export class BaseShape {
     let oldPreLine: PenNetworkLine
     if (pointIndex === 0) {
       preLine = path[path.length - 1]
+      if (preLine[1] !== line[0])return
       oldPreLine = oldPath[path.length - 1]
     } else {
       preLine = path[pointIndex - 1]

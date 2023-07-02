@@ -211,11 +211,12 @@ export class Pen extends ParentShape {
     let path = paths[0]
     for (let i = 0; i < path.length - 1; i++) {
       let ip, a = 0, b = 0
-      for (let j = i; j < path.length; j++) {
+      for (let j = i + 1; j < path.length; j++) {
         let currentLine = path[i]
         let nextLine = path[j]
-        let lastPoint = (j === path.length - 1 ? nodes[path[j][1]] : nodes[path[j + 1][0]])
-        let t = Math2.isIntersection(nodes[path[i][0]], nodes[path[i + 1][0]], nodes[path[j][0]], lastPoint)
+        let t = Math2.isIntersection2(currentLine, nextLine, nodes, ctrlNodes)
+        // let lastPoint = (j === path.length - 1 ? nodes[path[j][1]] : nodes[path[j + 1][0]])
+        // let t = Math2.isIntersection(nodes[path[i][0]], nodes[path[i + 1][0]], nodes[path[j][0]], lastPoint)
         if (t) {
           ip = t
           a = i
@@ -223,19 +224,28 @@ export class Pen extends ParentShape {
         }
       }
       if (ip) {
-        console.log(ip, a, b)
+        console.log('ip', ip, a, b)
         let fillPath = new Path2D()
-        fillPath.moveTo2(ip);
-        for (let t = a + 1; t < b; t++) {
-          console.log('t', t)
+        fillPath.moveTo2(ip.intersectsPoint);
+        for (let t = a + 1; t <= b; t++) {
           let line = path[t]
-
-          let lineType = helper.judgeLineType2(line)
+          let lineType = line[6]
           let startPoint = nodes[line[0]]
           let endPoint = nodes[line[1]]
-          if (t === i + 1) {
-            fillPath.lineTo2(startPoint);
+          if (t === a + 1) {
+            fillPath.lineTo2(ip.startLine.lines[0][1]);
           }
+          if (t === b) {
+            // @ts-ignore
+            if (ip.type === LineType.Bezier2) {
+              fillPath.quadraticCurveTo2(ip.endLine.lines[0][1], ip.endLine.lines[0][2])
+            }
+            if (ip.type === LineType.Bezier3) {
+              fillPath.bezierCurveTo2(ip.endLine.lines[0][1], ip.endLine.lines[0][2], ip.endLine.lines[0][3])
+            }
+            break
+          }
+          console.log('t', t, lineType)
           switch (lineType) {
             case LineType.Line:
               fillPath.lineTo2(endPoint)
@@ -251,7 +261,7 @@ export class Pen extends ParentShape {
               break
           }
         }
-        // fillPathList.push({close: true, path: fillPath})
+        fillPathList.push({close: true, path: fillPath})
       }
     }
 
@@ -284,7 +294,7 @@ export class Pen extends ParentShape {
           }
         })
         strokePathList.push({close: true, path: strokePath})
-        fillPathList.push({close: true, path: fillPath})
+        // fillPathList.push({close: true, path: fillPath})
       }
     })
     return {strokePathList, fillPathList}

@@ -331,9 +331,9 @@ const Math2 = {
       let b = new Bezier(p1, cp!, p2)
       let b1 = new Bezier(p3, ctrlNodes[line2[2]], ctrlNodes[line2[3]], p4)
 
-      //TODO　好卡好卡
+      //TODO　打开控制台就好卡好卡，关了又是正常的
       let intersects = b.intersects(b1)
-      console.log('Bezier2-Bezier3', intersects)
+      // console.log('Bezier2-Bezier3', intersects)
 
       if (intersects.length) {
         let lastIntersects = intersects[intersects.length - 1] as string

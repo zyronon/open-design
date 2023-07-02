@@ -8,7 +8,7 @@ import {Bezier} from "./bezier"
 import {Math2} from "./math"
 import EventBus from "../event/eventBus";
 import {EventKeys} from "../event/eventKeys";
-import {PenNetworkNode, PenNetworkPath} from "../config/PenConfig"
+import {PenNetworkNode, PenNetworkLine} from "../config/PenConfig"
 
 export default {
   /**
@@ -467,7 +467,7 @@ export default {
     }
     return lineType
   },
-  judgeLineType2(line: PenNetworkPath): LineType {
+  judgeLineType2(line: PenNetworkLine): LineType {
     let lineType: LineType = LineType.Line
     if (line[2] === -1 && line[3] === -1) {
       lineType = LineType.Line
@@ -481,7 +481,7 @@ export default {
     return lineType
   },
   //获取线段的中间点
-  getLineCenterPoint(line: PenNetworkPath, lineType: LineType, nodes: PenNetworkNode[], ctrlNodes: P[]) {
+  getLineCenterPoint(line: PenNetworkLine, lineType: LineType, nodes: PenNetworkNode[], ctrlNodes: P[]) {
     let p0 = nodes[line[0]]
     let p1 = nodes[line[1]]
     switch (lineType) {
@@ -519,7 +519,7 @@ export default {
     return (target.x - r < judge.x && judge.x < target.x + r) &&
       (target.y - r < judge.y && judge.y < target.y + r)
   },
-  isInLine(target: P, line: PenNetworkPath, lineType: LineType, nodes: PenNetworkNode[], ctrlNodes: P[]): boolean {
+  isInLine(target: P, line: PenNetworkLine, lineType: LineType, nodes: PenNetworkNode[], ctrlNodes: P[]): boolean {
     let start = nodes[line[0]]
     let end = nodes[line[1]]
     let line1 = Math2.getHypotenuse2(target, start)

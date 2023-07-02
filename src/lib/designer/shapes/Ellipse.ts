@@ -336,7 +336,6 @@ export class Ellipse extends ParentShape {
         if (this.ellipseEnterType === EllipseHoverType.Start) {
           this._conf.startT = lineIndex + t[0] ?? 0.5
         }
-
         if (this.ellipseEnterType === EllipseHoverType.InsideDiameter) {
           let s = Bezier.getPointByT_3(t[0], bs)
           console.log('s', s)

@@ -113,7 +113,7 @@ export class Pen extends ParentShape {
     }
     const {nodes, paths, ctrlNodes} = this._conf.penNetwork
 
-    let {pathIndex, lineIndex, pointIndex, type} = this.editStartPointInfo
+    let {pathIndex, lineIndex, pointIndex, cpIndex, type} = this.editStartPointInfo
     let path = paths[pathIndex]
 
     //先绘制控制附近两个点的控制点与线条，好被后续的圆点遮盖
@@ -203,77 +203,90 @@ export class Pen extends ParentShape {
     return []
   }
 
-  getCustomShapePath3(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
-    console.time()
+  getCustomShapePath3(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     const {nodes, paths, ctrlNodes} = this._conf.penNetwork
 
     let path = paths[0]
-    for (let i = 0; i < path.length - 2; i++) {
-      for (let j = i + 2; j < path.length; j++) {
+    for (let i = 0; i < path.length - 1; i++) {
+      let ip, a = 0, b = 0
+      for (let j = i; j < path.length; j++) {
+        let currentLine = path[i]
+        let nextLine = path[j]
         let lastPoint = (j === path.length - 1 ? nodes[path[j][1]] : nodes[path[j + 1][0]])
-        let ip = Math2.isIntersection(nodes[path[i][0]], nodes[path[i + 1][0]], nodes[path[j][0]], lastPoint)
-        if (ip) {
-          // console.log(ip, i, j)
-          let fillPath = new Path2D()
-          fillPath.moveTo2(ip);
-          for (let t = i + 1; t < j; t++) {
-            let line = path[t]
-
-            let lineType = helper.judgeLineType2(line)
-            let startPoint = nodes[line[0]]
-            let endPoint = nodes[line[1]]
-            if (t === i + 1) {
-              fillPath.lineTo2(startPoint);
-            }
-            switch (lineType) {
-              case LineType.Line:
-                fillPath.lineTo2(endPoint)
-                break
-              case LineType.Bezier3:
-                fillPath.bezierCurveTo2(ctrlNodes[line[2]], ctrlNodes[line[3]], endPoint)
-                break
-              case LineType.Bezier2:
-                let cp: number = 0
-                if (line[2] !== -1) cp = line[2]
-                if (line[3] !== -1) cp = line[3]
-                fillPath.quadraticCurveTo2(ctrlNodes[cp], endPoint)
-                break
-            }
-          }
-          fillPathList.push({close: true, path: fillPath})
+        let t = Math2.isIntersection(nodes[path[i][0]], nodes[path[i + 1][0]], nodes[path[j][0]], lastPoint)
+        if (t) {
+          ip = t
+          a = i
+          b = j
         }
+      }
+      if (ip) {
+        console.log(ip, a, b)
+        let fillPath = new Path2D()
+        fillPath.moveTo2(ip);
+        for (let t = a + 1; t < b; t++) {
+          console.log('t', t)
+          let line = path[t]
+
+          let lineType = helper.judgeLineType2(line)
+          let startPoint = nodes[line[0]]
+          let endPoint = nodes[line[1]]
+          if (t === i + 1) {
+            fillPath.lineTo2(startPoint);
+          }
+          switch (lineType) {
+            case LineType.Line:
+              fillPath.lineTo2(endPoint)
+              break
+            case LineType.Bezier3:
+              fillPath.bezierCurveTo2(ctrlNodes[line[2]], ctrlNodes[line[3]], endPoint)
+              break
+            case LineType.Bezier2:
+              let cp: number = 0
+              if (line[2] !== -1) cp = line[2]
+              if (line[3] !== -1) cp = line[3]
+              fillPath.quadraticCurveTo2(ctrlNodes[cp], endPoint)
+              break
+          }
+        }
+        // fillPathList.push({close: true, path: fillPath})
       }
     }
 
     paths.map(path => {
       if (path.length) {
         let strokePath = new Path2D()
+        let fillPath = new Path2D()
         strokePath.moveTo2(nodes[path[0][0]])
+        fillPath.moveTo2(nodes[path[0][0]])
         path.map(line => {
-          let lineType = helper.judgeLineType2(line)
+          let lineType = line[6]
           let startPoint = nodes[line[0]]
           let endPoint = nodes[line[1]]
           switch (lineType) {
             case LineType.Line:
               strokePath.lineTo2(endPoint)
+              fillPath.lineTo2(endPoint)
               break
             case LineType.Bezier3:
               strokePath.bezierCurveTo2(ctrlNodes[line[2]], ctrlNodes[line[3]], endPoint)
+              fillPath.bezierCurveTo2(ctrlNodes[line[2]], ctrlNodes[line[3]], endPoint)
               break
             case LineType.Bezier2:
               let cp: number = 0
               if (line[2] !== -1) cp = line[2]
               if (line[3] !== -1) cp = line[3]
               strokePath.quadraticCurveTo2(ctrlNodes[cp], endPoint)
+              fillPath.quadraticCurveTo2(ctrlNodes[cp], endPoint)
               break
           }
         })
         strokePathList.push({close: true, path: strokePath})
+        fillPathList.push({close: true, path: fillPath})
       }
     })
-    console.timeEnd()
     return {strokePathList, fillPathList}
   }
 }

@@ -1,8 +1,6 @@
-import {clone, inRange} from "lodash"
-import {jiaodu2hudu} from "../../../utils"
-import {BezierPoint, Line, LineType, P, P2} from "../types/type"
-import helper from "./helper";
-import {Bezier} from "./bezier"
+import {clone} from "lodash"
+import {LineType, P} from "../types/type"
+import {PenNetworkLine, PenNetworkNode} from "../config/PenConfig";
 
 const Math2 = {
   getHypotenuse2(p1: P, p2: P): number {
@@ -161,7 +159,7 @@ const Math2 = {
     angle = angle < 0 ? angle + 360 : angle
     return angle
   },
-  //判断两条线是否交叉
+  //判断两条直线是否交叉
   // https://stackoverflow.com/questions/37127144/how-can-i-fill-enclosed-shapes-in-a-line
   isIntersection(p0: P, p1: P, p2: P, p3: P): P {
     let d1x = p1.x - p0.x,
@@ -180,6 +178,15 @@ const Math2 = {
       }
     }
     return null as any
+  },
+  isIntersection2(line: PenNetworkLine, line2: PenNetworkLine, nodes: PenNetworkNode[]) {
+    let p0 = nodes[line[0]],
+      p1 = nodes[line[1]],
+      p2 = nodes[line2[0]],
+      p3 = nodes[line2[1]]
+    if (line[6] === LineType.Line && line2[6] === LineType.Line) {
+
+    }
   }
 }
 export {Math2}

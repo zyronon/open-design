@@ -129,9 +129,9 @@ export interface BaseEvent2 {
 }
 
 export enum LineType {
-  Line = 'Line',
-  Bezier2 = 'Bezier2',
-  Bezier3 = 'Bezier3',
+  Line = 1,
+  Bezier2 = 2,
+  Bezier3 = 3,
 }
 
 //简单点

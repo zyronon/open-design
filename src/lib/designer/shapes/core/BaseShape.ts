@@ -1,12 +1,9 @@
 import {
   BaseEvent2,
   BezierPoint,
-  BezierPointType,
   CurrentOperationInfo,
   EditModeType,
   EditType,
-  getP2,
-  Line,
   LinePath,
   LineShape,
   LineType,
@@ -20,19 +17,18 @@ import {
   ShapeType
 } from "../../types/type"
 import CanvasUtil2 from "../../engine/CanvasUtil2"
-import {cloneDeep, eq, merge} from "lodash"
+import {cloneDeep, eq} from "lodash"
 import {getShapeFromConfig} from "../../utils/common"
 import EventBus from "../../event/eventBus"
 import {BaseConfig, Rect} from "../../config/BaseConfig"
 import helper from "../../utils/helper"
 import draw from "../../utils/draw"
 import {defaultConfig} from "../../utils/constant"
-import {v4 as uuid} from "uuid"
 import {Math2} from "../../utils/math"
 import {Bezier} from "../../utils/bezier"
 import {BBox, Bezier as BezierJs} from "bezier-js";
 import {EventKeys} from "../../event/eventKeys";
-import {HandleMirroring, PenNetworkNode, PenNetworkPath} from "../../config/PenConfig";
+import {HandleMirroring, PenNetworkLine, PenNetworkNode} from "../../config/PenConfig";
 
 export class BaseShape {
   hoverType: MouseOptionType = MouseOptionType.None
@@ -314,15 +310,15 @@ export class BaseShape {
     if (lineIndex !== -1 && type === EditType.Point) {
       let waitCheckPoints: any[] = []
       let path = paths[pathIndex]
-      let line: PenNetworkPath = path[lineIndex]
+      let line: PenNetworkLine = path[lineIndex]
       let point = nodes[line[0]]
-      if (point.cps[0] !== -1) waitCheckPoints.push({lineIndex: lineIndex, index: 0, point: ctrlNodes[point.cps[0]]})
-      if (point.cps[1] !== -1) waitCheckPoints.push({lineIndex: lineIndex, index: 1, point: ctrlNodes[point.cps[1]]})
+      if (point.cps[0] !== -1) waitCheckPoints.push({lineIndex, index: 0, point: ctrlNodes[point.cps[0]]})
+      if (point.cps[1] !== -1) waitCheckPoints.push({lineIndex, index: 1, point: ctrlNodes[point.cps[1]]})
       for (let i = 0; i < waitCheckPoints.length; i++) {
         let item = waitCheckPoints[i]
         if (helper.isInPoint(fixMousePoint, item.point, judgePointDistance)) {
           // console.log('在cp点上')
-          return {type: EditType.ControlPoint, pathIndex: pathIndex, lineIndex: item.pointIndex, cpIndex: item.index}
+          return {type: EditType.ControlPoint, pathIndex, lineIndex: item.lineIndex, cpIndex: item.index}
         }
       }
     }
@@ -582,6 +578,16 @@ export class BaseShape {
           point.handleMirroring = HandleMirroring.RightAngle
           line[2] = -1
           preLine[3] = -1
+          if (line[6] === LineType.Bezier3) {
+            line[6] = LineType.Bezier2
+          } else {
+            line[6] = LineType.Line
+          }
+          if (preLine[6] === LineType.Bezier3) {
+            preLine[6] = LineType.Bezier2
+          } else {
+            preLine[6] = LineType.Line
+          }
           cu.render()
           return
         }
@@ -598,6 +604,16 @@ export class BaseShape {
         point.cps = [ctrlNodes.length - 2, ctrlNodes.length - 1]
         line[2] = point.cps[1]
         preLine[3] = point.cps[0]
+        if (line[6] === LineType.Bezier2) {
+          line[6] = LineType.Bezier3
+        } else {
+          line[6] = LineType.Bezier2
+        }
+        if (preLine[6] === LineType.Bezier2) {
+          preLine[6] = LineType.Bezier3
+        } else {
+          preLine[6] = LineType.Bezier2
+        }
         point.handleMirroring = HandleMirroring.MirrorAngleAndLength
         cu.render()
       } else {
@@ -719,10 +735,10 @@ export class BaseShape {
             cps: [-1, -1],
           }
           if (type === EditType.CenterPoint) {
-            let line: PenNetworkPath = paths[pathIndex][lineIndex]
+            let line: PenNetworkLine = paths[pathIndex][lineIndex]
             if (lineType === LineType.Line) {
               nodes.push(point)
-              paths[pathIndex].splice(lineIndex + 1, 0, [nodes.length - 1, line[1], -1, -1, -1, -1])
+              paths[pathIndex].splice(lineIndex + 1, 0, [nodes.length - 1, line[1], -1, -1, -1, -1, LineType.Line])
               line[1] = nodes.length - 1
             } else {
               let startPoint = nodes[line[0]]
@@ -776,13 +792,13 @@ export class BaseShape {
               }
 
               //先定义，后push的，所以length不减1
-              let newLine: PenNetworkPath = [nodes.length, line[1], -1, line[3], -1, -1]
+              let newLine: PenNetworkLine = [nodes.length, line[1], -1, line[3], -1, -1, LineType.Bezier2]
               if (lineType === LineType.Bezier3) {
                 ctrlNodes.push(left.points[2])
                 ctrlNodes.push(right.points[1])
                 point.handleMirroring = HandleMirroring.MirrorAngle
                 point.cps = [ctrlNodes.length - 1, ctrlNodes.length - 2]
-                newLine = [nodes.length - 1, line[1], ctrlNodes.length - 2, line[3], -1, -1]
+                newLine = [nodes.length - 1, line[1], ctrlNodes.length - 2, line[3], -1, -1, LineType.Bezier3]
                 line[3] = ctrlNodes.length - 2
               } else {
                 line[3] = -1
@@ -799,11 +815,11 @@ export class BaseShape {
             result.lineIndex += 1
           }
 
-          EventBus.emit(EventKeys.POINT_INFO, {
-            pathIndex: pathIndex,
-            lineIndex: lineIndex,
-            point: nodes[paths[pathIndex][lineIndex][0]]
-          })
+          // EventBus.emit(EventKeys.POINT_INFO, {
+          //   pathIndex: pathIndex,
+          //   lineIndex: lineIndex,
+          //   point: nodes[paths[pathIndex][lineIndex][0]]
+          // })
 
           this.editEnter = result
           if (this.editStartPointInfo.pathIndex !== pathIndex
@@ -863,7 +879,7 @@ export class BaseShape {
               }
               nodes.push(startPoint)
               nodes.push(endPoint)
-              paths.push([[nodes.length - 2, nodes.length - 1, -1, -1, -1, -1]])
+              paths.push([[nodes.length - 2, nodes.length - 1, -1, -1, -1, -1, LineType.Line]])
               this.editStartPointInfo.pathIndex = paths.length - 1
               this.editStartPointInfo.lineIndex = 0
               this.tempPoint = undefined
@@ -872,7 +888,7 @@ export class BaseShape {
               let line = path[lineIndex]
               // let point = nodes[line[0]]
               nodes.push(endPoint)
-              let newLine: PenNetworkPath = [line[0], nodes.length - 1, -1, -1, -1, -1]
+              let newLine: PenNetworkLine = [line[0], nodes.length - 1, -1, -1, -1, -1, LineType.Line]
               if (lineIndex !== path.length - 1) {
                 paths.push([newLine])
                 this.editStartPointInfo.pathIndex = paths.length - 1
@@ -986,6 +1002,7 @@ export class BaseShape {
 
       if (cu.editModeType === EditModeType.Select) {
         const {pathIndex, lineIndex, cpIndex, type} = this.editEnter
+        // console.log('this.editEnter', this.editEnter)
         //未选中任何内容，还属于判断阶段
         if (lineIndex === -1) {
           let result = this.checkMousePointOnEditStatus(event.point)
@@ -1289,7 +1306,7 @@ export class BaseShape {
 
   calcNewCenterAndWidthAndHeight() {
     // console.log('重新计算中心点和宽高')
-    // return
+    return
     if (!this.conf.isCustom) return
     let {center, realRotation, flipHorizontal, flipVertical} = this.conf
 
@@ -1897,8 +1914,8 @@ export class BaseShape {
 
     let path = paths[lineIndex]
     let oldPath = oldPaths[lineIndex]
-    let line: PenNetworkPath = path[pointIndex]
-    let oldLine: PenNetworkPath = oldPaths[lineIndex][pointIndex]
+    let line: PenNetworkLine = path[pointIndex]
+    let oldLine: PenNetworkLine = oldPaths[lineIndex][pointIndex]
 
     let point = nodes[line[0]]
     let oldPoint = oldNodes[oldLine[0]]
@@ -1908,8 +1925,8 @@ export class BaseShape {
       helper.movePoint(ctrlNodes[line[2]], oldCtrlNodes[line[2]], move)
     }
 
-    let preLine: PenNetworkPath
-    let oldPreLine: PenNetworkPath
+    let preLine: PenNetworkLine
+    let oldPreLine: PenNetworkLine
     if (pointIndex === 0) {
       preLine = path[path.length - 1]
       oldPreLine = oldPath[path.length - 1]

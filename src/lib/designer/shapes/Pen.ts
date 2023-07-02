@@ -204,6 +204,7 @@ export class Pen extends ParentShape {
   }
 
   getCustomShapePath3(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
+    console.time()
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     const {nodes, paths, ctrlNodes} = this._conf.penNetwork
@@ -214,7 +215,7 @@ export class Pen extends ParentShape {
         let lastPoint = (j === path.length - 1 ? nodes[path[j][1]] : nodes[path[j + 1][0]])
         let ip = Math2.isIntersection(nodes[path[i][0]], nodes[path[i + 1][0]], nodes[path[j][0]], lastPoint)
         if (ip) {
-          console.log(ip, i, j)
+          // console.log(ip, i, j)
           let fillPath = new Path2D()
           fillPath.moveTo2(ip);
           for (let t = i + 1; t < j; t++) {
@@ -240,9 +241,7 @@ export class Pen extends ParentShape {
                 fillPath.quadraticCurveTo2(ctrlNodes[cp], endPoint)
                 break
             }
-
           }
-
           fillPathList.push({close: true, path: fillPath})
         }
       }
@@ -274,6 +273,7 @@ export class Pen extends ParentShape {
         strokePathList.push({close: true, path: strokePath})
       }
     })
+    console.timeEnd()
     return {strokePathList, fillPathList}
   }
 }

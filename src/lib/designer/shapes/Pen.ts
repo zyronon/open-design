@@ -4,20 +4,9 @@ import helper from "../utils/helper"
 import {Colors, defaultConfig} from "../utils/constant"
 import draw from "../utils/draw"
 import {ParentShape} from "./core/ParentShape";
-import {
-  BaseEvent2,
-  BezierPoint, EditType,
-  LinePath,
-  LineShape,
-  LineType,
-  P, P2,
-  PointInfo,
-  ShapeStatus,
-  ShapeType
-} from "../types/type"
+import {BaseEvent2, EditType, LinePath, LineShape, LineType, P, ShapeStatus} from "../types/type"
 import {BaseShape} from "./core/BaseShape"
 import {PenConfig} from "../config/PenConfig"
-import {Bezier} from "../utils/bezier"
 import {Math2} from "../utils/math"
 
 export class Pen extends ParentShape {
@@ -62,6 +51,12 @@ export class Pen extends ParentShape {
     })
     strokePathList.map(line => {
       ctx.stroke(line.path)
+    })
+
+    ctx.strokeStyle = 'white'
+    fillPathList.map(({close, path}) => {
+      // ctx.fill(path,'evenodd')
+      ctx.stroke(path)
     })
   }
 
@@ -235,17 +230,18 @@ export class Pen extends ParentShape {
           if (t === a + 1) {
             fillPath.lineTo2(ip.startLine.lines[0][1]);
           }
+          console.log('t', t, lineType)
+
           if (t === b) {
-            // @ts-ignore
-            if (ip.type === LineType.Bezier2) {
+            if (ip.endLine.type === LineType.Bezier2) {
               fillPath.quadraticCurveTo2(ip.endLine.lines[0][1], ip.endLine.lines[0][2])
             }
-            if (ip.type === LineType.Bezier3) {
-              fillPath.bezierCurveTo2(ip.endLine.lines[0][1], ip.endLine.lines[0][2], ip.endLine.lines[0][3])
+            if (ip.endLine.type === LineType.Bezier3) {
+              // @ts-ignore
+              fillPath.bezierCurveTo2(...ip.endLine.lines[0].slice(1))
             }
             break
           }
-          console.log('t', t, lineType)
           switch (lineType) {
             case LineType.Line:
               fillPath.lineTo2(endPoint)

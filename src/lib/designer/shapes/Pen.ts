@@ -219,20 +219,33 @@ export class Pen extends ParentShape {
         }
       }
       if (ip) {
-        console.log('ip', ip, a, b)
+        // console.log('ip', ip, a, b)
         let fillPath = new Path2D()
         fillPath.moveTo2(ip.intersectsPoint);
+
+        if (ip.startLine.type === LineType.Line) {
+          // @ts-ignore
+          fillPath.lineTo2(...ip.startLine.lines[0].slice(1));
+        }
+        if (ip.startLine.type === LineType.Bezier2) {
+          // @ts-ignore
+          fillPath.quadraticCurveTo2(...ip.startLine.lines[0].slice(1))
+        }
+        if (ip.startLine.type === LineType.Bezier3) {
+          // @ts-ignore
+          fillPath.bezierCurveTo2(...ip.startLine.lines[0].slice(1))
+        }
         for (let t = a + 1; t <= b; t++) {
           let line = path[t]
           let lineType = line[6]
           let startPoint = nodes[line[0]]
           let endPoint = nodes[line[1]]
-          if (t === a + 1) {
-            fillPath.lineTo2(ip.startLine.lines[0][1]);
-          }
-          console.log('t', t, lineType)
-
+          // console.log('t', t, lineType)
           if (t === b) {
+            if (ip.endLine.type === LineType.Line) {
+              // @ts-ignore
+              fillPath.lineTo2(...ip.endLine.lines[0].slice(1));
+            }
             if (ip.endLine.type === LineType.Bezier2) {
               fillPath.quadraticCurveTo2(ip.endLine.lines[0][1], ip.endLine.lines[0][2])
             }

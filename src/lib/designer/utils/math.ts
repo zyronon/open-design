@@ -161,6 +161,7 @@ const Math2 = {
     return angle
   },
   //判断两条直线是否交叉
+  //TODO 判断不准确，两条没相交的直线也会被认定为交叉了
   // https://stackoverflow.com/questions/37127144/how-can-i-fill-enclosed-shapes-in-a-line
   isIntersection(p0: P, p1: P, p2: P, p3: P): P {
     let d1x = p1.x - p0.x,
@@ -186,7 +187,24 @@ const Math2 = {
       p3 = nodes[line2[0]],
       p4 = nodes[line2[1]]
     if (line[6] === LineType.Line && line2[6] === LineType.Line) {
-
+      let p = this.isIntersection(p1, p2, p3, p4)
+      if (p) {
+        return {
+          intersectsPoint: p,
+          startLine: {
+            type: line[6],
+            lines: [
+              [p, nodes[line[1]]]
+            ]
+          },
+          endLine: {
+            type: line2[6],
+            lines: [
+              [nodes[line2[0]], p]
+            ]
+          }
+        }
+      }
     } else if (line[6] === LineType.Line && line2[6] === LineType.Bezier2) {
       let cp: P
       if (line2[2] !== -1) cp = ctrlNodes[line2[2]]
@@ -197,13 +215,14 @@ const Math2 = {
         let lastIntersects = intersects[intersects.length - 1] as number
         if (lastIntersects === 0) return null
         let a = b.split(lastIntersects)
-        // console.log('Bezier2', a)
+        let p = b.get(lastIntersects as number)
+        console.log('Bezier2', a)
         return {
-          intersectsPoint: b.get(lastIntersects as number),
+          intersectsPoint: p,
           startLine: {
             type: line[6],
             lines: [
-              [nodes[line[0]], nodes[line[1]]]
+              [p, nodes[line[1]]]
             ]
           },
           endLine: {
@@ -215,25 +234,128 @@ const Math2 = {
         }
       }
     } else if (line[6] === LineType.Line && line2[6] === LineType.Bezier3) {
-      let b = new Bezier(p3, ctrlNodes[line2[2]],ctrlNodes[line2[3]], p4)
+      let b = new Bezier(p3, ctrlNodes[line2[2]], ctrlNodes[line2[3]], p4)
       let intersects = b.intersects({p1, p2})
       if (intersects.length) {
         let lastIntersects = intersects[intersects.length - 1] as number
         if (lastIntersects === 0) return null
         let a = b.split(lastIntersects)
+        let p = b.get(lastIntersects as number)
         console.log('Bezier3', a)
         return {
-          intersectsPoint: b.get(lastIntersects as number),
+          intersectsPoint: p,
           startLine: {
             type: line[6],
             lines: [
-              [nodes[line[0]], nodes[line[1]]]
+              [p, nodes[line[1]]]
             ]
           },
           endLine: {
             type: line2[6],
             lines: [
               a.left.points
+            ]
+          }
+        }
+      }
+    } else if (line[6] === LineType.Bezier2 && line2[6] === LineType.Line) {
+      let cp: P
+      if (line[2] !== -1) cp = ctrlNodes[line[2]]
+      if (line[3] !== -1) cp = ctrlNodes[line[3]]
+      let b = new Bezier(p1, cp!, p2)
+      let intersects = b.intersects({p1: p3, p2: p4})
+      if (intersects.length) {
+        let lastIntersects = intersects[intersects.length - 1] as number
+        if (lastIntersects === 0) return null
+        let a = b.split(lastIntersects)
+        let p = b.get(lastIntersects as number)
+        // console.log('Bezier2', a)
+        return {
+          intersectsPoint: p,
+          startLine: {
+            type: line[6],
+            lines: [
+              a.right.points
+            ]
+          },
+          endLine: {
+            type: line2[6],
+            lines: [
+              [nodes[line2[0]], p]
+            ]
+          }
+        }
+      }
+    } else if (line[6] === LineType.Bezier2 && line2[6] === LineType.Bezier2) {
+      let cp: P
+      if (line[2] !== -1) cp = ctrlNodes[line[2]]
+      if (line[3] !== -1) cp = ctrlNodes[line[3]]
+      let b = new Bezier(p1, cp!, p2)
+
+      if (line2[2] !== -1) cp = ctrlNodes[line2[2]]
+      if (line2[3] !== -1) cp = ctrlNodes[line2[3]]
+      let b1 = new Bezier(p3, cp!, p4)
+
+      let intersects = b.intersects(b1)
+      // console.log('Bezier2-Bezier2', intersects)
+
+      if (intersects.length) {
+        let lastIntersects = intersects[intersects.length - 1] as string
+        let strs = lastIntersects.split('/')
+
+        // if (lastIntersects === 0) return null
+        let a = b.split(Number(strs[0]))
+        let a1 = b1.split(Number(strs[1]))
+        let p = b.get(Number(strs[0]))
+        // console.log('Bezier2-Bezier2', strs)
+        return {
+          intersectsPoint: p,
+          startLine: {
+            type: line[6],
+            lines: [
+              a.right.points
+            ]
+          },
+          endLine: {
+            type: line2[6],
+            lines: [
+              a1.left.points
+            ]
+          }
+        }
+      }
+    } else if (line[6] === LineType.Bezier2 && line2[6] === LineType.Bezier3) {
+      let cp: P
+      if (line[2] !== -1) cp = ctrlNodes[line[2]]
+      if (line[3] !== -1) cp = ctrlNodes[line[3]]
+      let b = new Bezier(p1, cp!, p2)
+      let b1 = new Bezier(p3, ctrlNodes[line2[2]], ctrlNodes[line2[3]], p4)
+
+      //TODO　好卡好卡
+      let intersects = b.intersects(b1)
+      console.log('Bezier2-Bezier3', intersects)
+
+      if (intersects.length) {
+        let lastIntersects = intersects[intersects.length - 1] as string
+        let strs = lastIntersects.split('/')
+
+        // if (lastIntersects === 0) return null
+        let a = b.split(Number(strs[0]))
+        let a1 = b1.split(Number(strs[1]))
+        let p = b.get(Number(strs[0]))
+        // console.log('Bezier2-Bezier2', strs)
+        return {
+          intersectsPoint: p,
+          startLine: {
+            type: line[6],
+            lines: [
+              a.right.points
+            ]
+          },
+          endLine: {
+            type: line2[6],
+            lines: [
+              a1.left.points
             ]
           }
         }

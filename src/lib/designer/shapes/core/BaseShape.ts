@@ -276,7 +276,7 @@ export class BaseShape {
       let line = paths[lineIndex]
       let lineType = line[6]
       if (helper.isInLine(fixMousePoint, line, lineType, nodes, ctrlNodes)) {
-        // console.log('在线上')
+        console.log('在线上')
         let returnData = {
           type: EditType.Line,
           lineIndex,
@@ -294,6 +294,7 @@ export class BaseShape {
 
     //判断是否在cp点上
     //TODO　目前只判断了当前点的控制点。应该把前后两个点的控制点都判断的
+
     // let {pathIndex, lineIndex, type} = this.editStartPointInfo
     // if (lineIndex !== -1 && type === EditType.Point) {
     //   let waitCheckPoints: any[] = []
@@ -720,6 +721,7 @@ export class BaseShape {
       let {lineIndex, pointIndex, cpIndex, type} = result
 
       if (cu.editModeType === EditModeType.Select) {
+        // let {lineIndex, pointIndex, cpIndex, type} = this.editHover
         // console.log('result', cloneDeep(result))
         //如果hover在点上，先处理hover
         if (type) {
@@ -817,16 +819,17 @@ export class BaseShape {
             result.lineIndex += 1
           }
 
-          EventBus.emit(EventKeys.POINT_INFO, {
-            pointIndex: pointIndex,
-            lineIndex: lineIndex,
-            point: nodes[paths[lineIndex][0]]
-          })
+          // EventBus.emit(EventKeys.POINT_INFO, {
+          //   pointIndex: pointIndex,
+          //   lineIndex: lineIndex,
+          //   point: nodes[paths[lineIndex][0]]
+          // })
 
           this.editEnter = result
           if (this.editStartPointInfo.lineIndex !== lineIndex
             || this.editStartPointInfo.pointIndex !== pointIndex
             || this.editStartPointInfo.cpIndex !== cpIndex
+            || this.editStartPointInfo.type !== type
           ) {
             this.editStartPointInfo = result
             cu.render()
@@ -1003,7 +1006,7 @@ export class BaseShape {
         const {lineIndex, cpIndex, type} = this.editEnter
         // console.log('this.editEnter', this.editEnter)
         //未选中任何内容，还属于判断阶段
-        if (lineIndex === -1) {
+        if (!type) {
           let result = this.checkMousePointOnEditStatus(event.point)
           //用于判断是否与之前保存的值不同，仅在不同时才重绘
           if (this.editHover.type !== result.type) {
@@ -1021,7 +1024,7 @@ export class BaseShape {
             return true
           }
           //hover时，消费事件。不然会把cursor = "default"
-          if (result.lineIndex !== -1) {
+          if (result.type) {
             document.body.style.cursor = "pointer"
             return true
           }

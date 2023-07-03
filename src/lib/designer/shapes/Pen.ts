@@ -137,8 +137,8 @@ export class Pen extends ParentShape {
     })
 
     //再绘制选中的当前点和控制点，之所以分开绘制，是因为遮盖问题
-    if (lineIndex !== -1 && type !== EditType.Line) {
-      let point = nodes[paths[lineIndex][pointIndex ?? 0]]
+    if (type === EditType.Point) {
+      let point = nodes[pointIndex]
       if (point.cps[0] !== -1) draw.controlPoint(ctx, ctrlNodes[point.cps[0]], point)
       if (point.cps[1] !== -1) draw.controlPoint(ctx, ctrlNodes[point.cps[1]], point)
       draw.currentPoint(ctx, point)

@@ -108,20 +108,19 @@ export class Pen extends ParentShape {
     }
     const {nodes, paths, ctrlNodes} = this._conf.penNetwork
 
-    let {pathIndex, lineIndex, pointIndex, cpIndex, type} = this.editStartPointInfo
-    let path = paths[pathIndex]
+    let {lineIndex, pointIndex, cpIndex, type} = this.editStartPointInfo
 
     //先绘制控制附近两个点的控制点与线条，好被后续的圆点遮盖
     if (lineIndex !== -1 && type !== EditType.Line) {
-      let line = path[lineIndex]
+      let line = paths[lineIndex]
       let point2 = nodes[line[1]]
       if (point2.cps[0] !== -1) draw.controlPoint(ctx, ctrlNodes[point2.cps[0]], point2)
       if (point2.cps[1] !== -1) draw.controlPoint(ctx, ctrlNodes[point2.cps[1]], point2)
 
       if (lineIndex === 0) {
-        line = path[path.length - 1]
+        line = paths[paths.length - 1]
       } else {
-        line = path[lineIndex - 1]
+        line = paths[lineIndex - 1]
       }
       let point3 = nodes[line[0]]
       if (point3.cps[0] !== -1) draw.controlPoint(ctx, ctrlNodes[point3.cps[0]], point3)
@@ -129,19 +128,17 @@ export class Pen extends ParentShape {
     }
 
     //绘制所有点
-    paths.map((path) => {
-      path.map(line => {
-        // if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
-        // if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
-        draw.drawRound(ctx, nodes[line[0]])
-        //TODO 这个只需要最后一条线时才绘制吧？
-        draw.drawRound(ctx, nodes[line[1]])
-      })
+    paths.map(line => {
+      // if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
+      // if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
+      draw.drawRound(ctx, nodes[line[0]])
+      //TODO 这个只需要最后一条线时才绘制吧？
+      draw.drawRound(ctx, nodes[line[1]])
     })
 
     //再绘制选中的当前点和控制点，之所以分开绘制，是因为遮盖问题
     if (lineIndex !== -1 && type !== EditType.Line) {
-      let point = nodes[path[lineIndex][pointIndex ?? 0]]
+      let point = nodes[paths[lineIndex][pointIndex ?? 0]]
       if (point.cps[0] !== -1) draw.controlPoint(ctx, ctrlNodes[point.cps[0]], point)
       if (point.cps[1] !== -1) draw.controlPoint(ctx, ctrlNodes[point.cps[1]], point)
       draw.currentPoint(ctx, point)
@@ -198,17 +195,16 @@ export class Pen extends ParentShape {
     return []
   }
 
-  getCustomShapePath3(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
+  getCustomShapePath3(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     const {nodes, paths, ctrlNodes} = this._conf.penNetwork
 
-    let path = paths[0]
-    for (let i = 0; i < path.length - 1; i++) {
+    for (let i = 0; i < paths.length - 1; i++) {
       let ip, a = 0, b = 0
-      for (let j = i + 1; j < path.length; j++) {
-        let currentLine = path[i]
-        let nextLine = path[j]
+      for (let j = i + 1; j < paths.length; j++) {
+        let currentLine = paths[i]
+        let nextLine = paths[j]
         let t = Math2.isIntersection2(currentLine, nextLine, nodes, ctrlNodes)
         // let lastPoint = (j === path.length - 1 ? nodes[path[j][1]] : nodes[path[j + 1][0]])
         // let t = Math2.isIntersection(nodes[path[i][0]], nodes[path[i + 1][0]], nodes[path[j][0]], lastPoint)
@@ -236,7 +232,7 @@ export class Pen extends ParentShape {
           fillPath.bezierCurveTo2(...ip.startLine.lines[0].slice(1))
         }
         for (let t = a + 1; t <= b; t++) {
-          let line = path[t]
+          let line = paths[t]
           let lineType = line[6]
           let startPoint = nodes[line[0]]
           let endPoint = nodes[line[1]]
@@ -274,31 +270,27 @@ export class Pen extends ParentShape {
       }
     }
 
-    paths.map(path => {
-      if (path.length) {
-        let strokePath = new Path2D()
-        path.map(line => {
-          let lineType = line[6]
-          let startPoint = nodes[line[0]]
-          let endPoint = nodes[line[1]]
-          strokePath.moveTo2(startPoint)
-          switch (lineType) {
-            case LineType.Line:
-              strokePath.lineTo2(endPoint)
-              break
-            case LineType.Bezier3:
-              strokePath.bezierCurveTo2(ctrlNodes[line[2]], ctrlNodes[line[3]], endPoint)
-              break
-            case LineType.Bezier2:
-              let cp: number = 0
-              if (line[2] !== -1) cp = line[2]
-              if (line[3] !== -1) cp = line[3]
-              strokePath.quadraticCurveTo2(ctrlNodes[cp], endPoint)
-              break
-          }
-        })
-        strokePathList.push({close: true, path: strokePath})
+    paths.map(line => {
+      let strokePath = new Path2D()
+      let lineType = line[6]
+      let startPoint = nodes[line[0]]
+      let endPoint = nodes[line[1]]
+      strokePath.moveTo2(startPoint)
+      switch (lineType) {
+        case LineType.Line:
+          strokePath.lineTo2(endPoint)
+          break
+        case LineType.Bezier3:
+          strokePath.bezierCurveTo2(ctrlNodes[line[2]], ctrlNodes[line[3]], endPoint)
+          break
+        case LineType.Bezier2:
+          let cp: number = 0
+          if (line[2] !== -1) cp = line[2]
+          if (line[3] !== -1) cp = line[3]
+          strokePath.quadraticCurveTo2(ctrlNodes[cp], endPoint)
+          break
       }
+      strokePathList.push({close: true, path: strokePath})
     })
     return {strokePathList, fillPathList}
   }

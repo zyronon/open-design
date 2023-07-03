@@ -5,7 +5,6 @@ import {cloneDeep} from "lodash"
 import {Colors, defaultConfig} from "../utils/constant"
 import {mat4} from "gl-matrix"
 import {getShapeFromConfig} from "../utils/common"
-import {Rectangle} from "../shapes/Rectangle"
 import {BaseConfig} from "../config/BaseConfig"
 import helper from "../utils/helper"
 import draw from "../utils/draw"
@@ -415,45 +414,45 @@ export default class CanvasUtil2 {
       let w = e.point.x - this.mouseStart.x
       let h = e.point.y - this.mouseStart.y
       switch (this.mode) {
-        case ShapeType.RECTANGLE:
-          if (this.newShape) {
-            this.newShape.conf.w = w
-            this.newShape.conf.h = h
-            this.newShape.conf.center = {
-              x: this.newShape.conf.x + (w / 2),
-              y: this.newShape.conf.y + (h / 2)
-            }
-            //太小了select都看不见
-            if (w > 10) {
-              this.newShape.status = ShapeStatus.Select
-            }
-            // EventBus.emit(EventMapTypes.onMouseMove, this.newShape)
-            this.newShape.conf = helper.initConf(this.newShape.conf)
-            this.render()
-          } else {
-            let x = this.mouseStart.x
-            let y = this.mouseStart.y
-            this.newShape = new Rectangle({
-              "x": x,
-              "y": y,
-              "abX": 0,
-              "abY": 0,
-              "w": 0,
-              "h": 0,
-              "rotate": 0,
-              "lineWidth": 2,
-              "type": ShapeType.RECTANGLE,
-              "color": "gray",
-              "radius": 0,
-              "children": [],
-              "borderColor": "rgb(216,216,216)",
-              "fillColor": "rgb(216,216,216)",
-            })
-            EventBus.emit(EventTypes.onMouseDown, this.newShape)
-            this.children.push(this.newShape)
-          }
-          // this.drawNewShape(coordinate)
-          break
+        // case ShapeType.RECTANGLE:
+        //   if (this.newShape) {
+        //     this.newShape.conf.w = w
+        //     this.newShape.conf.h = h
+        //     this.newShape.conf.center = {
+        //       x: this.newShape.conf.x + (w / 2),
+        //       y: this.newShape.conf.y + (h / 2)
+        //     }
+        //     //太小了select都看不见
+        //     if (w > 10) {
+        //       this.newShape.status = ShapeStatus.Select
+        //     }
+        //     // EventBus.emit(EventMapTypes.onMouseMove, this.newShape)
+        //     this.newShape.conf = helper.initConf(this.newShape.conf)
+        //     this.render()
+        //   } else {
+        //     let x = this.mouseStart.x
+        //     let y = this.mouseStart.y
+        //     this.newShape = new Rectangle({
+        //       "x": x,
+        //       "y": y,
+        //       "abX": 0,
+        //       "abY": 0,
+        //       "w": 0,
+        //       "h": 0,
+        //       "rotate": 0,
+        //       "lineWidth": 2,
+        //       "type": ShapeType.RECTANGLE,
+        //       "color": "gray",
+        //       "radius": 0,
+        //       "children": [],
+        //       "borderColor": "rgb(216,216,216)",
+        //       "fillColor": "rgb(216,216,216)",
+        //     })
+        //     EventBus.emit(EventTypes.onMouseDown, this.newShape)
+        //     this.children.push(this.newShape)
+        //   }
+        //   // this.drawNewShape(coordinate)
+        //   break
         case ShapeType.MOVE:
           const transform = new Float32Array([
             1, 0, 0, 0,

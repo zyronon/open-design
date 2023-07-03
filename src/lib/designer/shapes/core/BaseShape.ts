@@ -238,9 +238,8 @@ export class BaseShape {
 
   defaultCurrentOperationInfo: CurrentOperationInfo = {
     type: undefined,
-    pathIndex: -1,
     lineIndex: -1,
-    pointIndex: 0,
+    pointIndex: -1,
     cpIndex: -1
   }
   hoverLineCenterPoint: P = {x: 0, y: 0}

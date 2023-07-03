@@ -33,7 +33,7 @@ export type IState = {
   },
   handScale: number,
   oldHandScale: number,
-  sPoint: { x: number, y: number },
+  sPoint: {x: number, y: number},
   activeHand: boolean,
   fps: number,
   currentMat: any
@@ -266,10 +266,8 @@ export enum EditType {
 //当前操作信息
 export type CurrentOperationInfo = {
   type: EditType | undefined,
-  lineType?: LineType,
-  pathIndex: number,
   lineIndex: number,
-  pointIndex?: number,
+  pointIndex: number,
   cpIndex: number
   lineCenterPoint?: P,
 }

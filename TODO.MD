@@ -1,4 +1,5 @@
- # 优化
+# 优化
+
 - 完成pen
 - pen的旋转和翻转
 - 实现其他基于pen的图形
@@ -16,13 +17,14 @@
 - 添加测试库
 - 完善eslint验证
 - 完善框选不能选中的情况
-  - 参考：https://leetcode.cn/problems/rectangle-overlap/solution/ju-xing-zhong-die-by-leetcode-solution/
+    - 参考：https://leetcode.cn/problems/rectangle-overlap/solution/ju-xing-zhong-die-by-leetcode-solution/
 - 辅助线，可以自定义颜色和名字
-
+- 如何计算不相连的N条线段，合围出来的区域呢？
 
 # bug
+
 -[x] 如果是线条是曲线，无法选中终点
-  - 0到0.02和0.98到1的范围是起点和终点。写0-1会导致点选不上
+    - 0到0.02和0.98到1的范围是起点和终点。写0-1会导致点选不上
 
 
 

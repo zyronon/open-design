@@ -277,33 +277,27 @@ export class Pen extends ParentShape {
     paths.map(path => {
       if (path.length) {
         let strokePath = new Path2D()
-        let fillPath = new Path2D()
-        strokePath.moveTo2(nodes[path[0][0]])
-        fillPath.moveTo2(nodes[path[0][0]])
         path.map(line => {
           let lineType = line[6]
           let startPoint = nodes[line[0]]
           let endPoint = nodes[line[1]]
+          strokePath.moveTo2(startPoint)
           switch (lineType) {
             case LineType.Line:
               strokePath.lineTo2(endPoint)
-              fillPath.lineTo2(endPoint)
               break
             case LineType.Bezier3:
               strokePath.bezierCurveTo2(ctrlNodes[line[2]], ctrlNodes[line[3]], endPoint)
-              fillPath.bezierCurveTo2(ctrlNodes[line[2]], ctrlNodes[line[3]], endPoint)
               break
             case LineType.Bezier2:
               let cp: number = 0
               if (line[2] !== -1) cp = line[2]
               if (line[3] !== -1) cp = line[3]
               strokePath.quadraticCurveTo2(ctrlNodes[cp], endPoint)
-              fillPath.quadraticCurveTo2(ctrlNodes[cp], endPoint)
               break
           }
         })
         strokePathList.push({close: true, path: strokePath})
-        // fillPathList.push({close: true, path: fillPath})
       }
     })
     return {strokePathList, fillPathList}

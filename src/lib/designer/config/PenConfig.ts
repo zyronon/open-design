@@ -43,7 +43,7 @@ export  type PenNetworkLine = [number, number, number, number, number, number, L
 export interface PenNetwork {
   ctrlNodes: P[],
   nodes: PenNetworkNode[]
-  paths: PenNetworkLine[][]
+  paths: PenNetworkLine[]
   regions: Region[]
 }
 

@@ -234,6 +234,7 @@ export default class CanvasUtil2 {
   handleEvent = async (e: any) => {
     let screenPoint = {x: e.x, y: e.y}
     let canvasPoint = {x: e.x - this.canvasRect.left, y: e.y - this.canvasRect.top}
+    let movement = {x: e.movementX, y: e.movementY}
 
     //修正当前鼠标点为变换过后的点，确保和图形同一transform
     const {x: handX, y: handY} = this.handMove
@@ -241,6 +242,8 @@ export default class CanvasUtil2 {
     let event: BaseEvent2 = {
       capture: false,
       e,
+      nativeEvent: e,
+      movement,
       screenPoint,
       canvasPoint,
       point,
@@ -460,7 +463,7 @@ export default class CanvasUtil2 {
             0, 0, 1, 0,
             // x - startX, y - startY, 0, 1,
             //因为transform是连续的，所以用当前偏移量，而不是从x-startX
-            e.e.movementX, e.e.movementY, 0, 1,
+            e.movement.x, e.movement.y, 0, 1,
           ])
           const newCurrentMat = mat4.multiply(out, transform, this.currentMat)
           this.currentMat = newCurrentMat

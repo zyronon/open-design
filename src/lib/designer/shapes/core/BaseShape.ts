@@ -266,7 +266,7 @@ export class BaseShape {
 
     for (let i = 0; i < nodes.length; i++) {
       if (helper.isInPoint(fixMousePoint, nodes[i], judgePointDistance)) {
-        console.log('在点上')
+        // console.log('在点上')
         return {type: EditType.Point, lineIndex: -1, pointIndex: i, cpIndex: -1}
       }
     }
@@ -276,7 +276,7 @@ export class BaseShape {
       let line = paths[lineIndex]
       let lineType = line[6]
       if (helper.isInLine(fixMousePoint, line, lineType, nodes, ctrlNodes)) {
-        console.log('在线上')
+        // console.log('在线上')
         let returnData = {
           type: EditType.Line,
           lineIndex,
@@ -482,7 +482,7 @@ export class BaseShape {
   event(event: BaseEvent2, parents?: BaseShape[], isParentDbClick?: boolean, from?: string): boolean {
     //TODO 感觉应该在这里先判断是否被消费了
 
-    let {e, point, type} = event
+    let {nativeEvent, point, type} = event
 
     // if (type !== 'mousemove') {
     // if (type === 'dblclick') {
@@ -815,8 +815,9 @@ export class BaseShape {
             //这里新增了一个点，但是老配置如果不更新。后面移动时就会找错点
             this.original = cloneDeep(this.conf)
             cu.render()
-            //新增一个点，下标也要加1，以选中它
-            result.lineIndex += 1
+            result.lineIndex = -1
+            result.pointIndex = nodes.length - 1
+            result.type = EditType.Point
           }
 
           // EventBus.emit(EventKeys.POINT_INFO, {
@@ -971,7 +972,7 @@ export class BaseShape {
 
     if (this.status === ShapeStatus.Select) {
       this.isSelectHover = true
-      let {e, point, type} = event
+      let {nativeEvent, point, type} = event
       switch (this.enterType) {
         case MouseOptionType.Left:
           return this.dragLeft(point)
@@ -1003,7 +1004,7 @@ export class BaseShape {
       const {nodes, paths, ctrlNodes} = this.conf.penNetwork
 
       if (cu.editModeType === EditModeType.Select) {
-        const {lineIndex, cpIndex, type} = this.editEnter
+        const {lineIndex, cpIndex, pointIndex, type} = this.editEnter
         // console.log('this.editEnter', this.editEnter)
         //未选中任何内容，还属于判断阶段
         if (!type) {
@@ -1087,18 +1088,13 @@ export class BaseShape {
           }
 
           if (type === EditType.Point || type === EditType.CenterPoint) {
-            this.movePoint(lineIndex, lineIndex, move)
+            this.movePoint2(pointIndex, event.movement)
             cu.render()
           }
 
           if (type === EditType.Line) {
-            console.log('onMouseMove-enterLineIndex')
-            this.movePoint(lineIndex, lineIndex, move)
-            if (lineIndex === paths[lineIndex].length - 1) {
-              this.movePoint(lineIndex, 0, move)
-            } else {
-              this.movePoint(lineIndex, lineIndex + 1, move)
-            }
+            this.movePoint2(paths[lineIndex][0], event.movement)
+            this.movePoint2(paths[lineIndex][1], event.movement)
             cu.render()
           }
 
@@ -1903,4 +1899,14 @@ export class BaseShape {
     }
   }
 
+  movePoint2(pointIndex: number, move: P) {
+    const {nodes, ctrlNodes} = this.conf.penNetwork
+
+    let point = nodes[pointIndex]
+    helper.movePoint2(point, move)
+
+    point.cps.map(v => {
+      if (v !== -1) helper.movePoint2(ctrlNodes[v], move)
+    })
+  }
 }

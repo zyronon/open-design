@@ -28,8 +28,8 @@ export interface PenNetworkNode {
   cornerRadius: number
   realCornerRadius: number,//真实的圆角
   handleMirroring: HandleMirroring,
-  cornerCps: [number, number]
-  cps: [number, number]
+  cornerCps: number[]
+  cps: number[]
 }
 
 export interface Region {

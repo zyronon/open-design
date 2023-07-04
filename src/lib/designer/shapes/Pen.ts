@@ -129,8 +129,9 @@ export class Pen extends ParentShape {
       }, []).map(v => nodes[v])
 
       points.map(point => {
-        if (point.cps[0] !== -1) draw.controlPoint(ctx, ctrlNodes[point.cps[0]], point)
-        if (point.cps[1] !== -1) draw.controlPoint(ctx, ctrlNodes[point.cps[1]], point)
+        point.cps.map(v => {
+          if (v !== -1) draw.controlPoint(ctx, ctrlNodes[v], point)
+        })
         if (eq(point, currentPoint)) {
           draw.currentPoint(ctx, point)
         } else {

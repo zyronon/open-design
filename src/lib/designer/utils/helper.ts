@@ -564,9 +564,14 @@ export default {
     return false
   },
 
+  //TODO 废弃
   movePoint(target: P, oldPoint: P, move: P) {
     target.x = oldPoint.x + move.x
     target.y = oldPoint.y + move.y
+  },
+  movePoint2(target: P, move: P) {
+    target.x += move.x
+    target.y += move.y
   },
   /**
    * 判断点是否在图形内

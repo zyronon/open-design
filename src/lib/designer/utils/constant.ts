@@ -1117,12 +1117,8 @@ export const rects: any[] = [{
         "realCornerRadius": 0,
         "handleMirroring": "RightAngle",
         "cornerCps": [
-          -1,
-          -1
         ],
         "cps": [
-          -1,
-          -1
         ]
       },
       {
@@ -1132,12 +1128,8 @@ export const rects: any[] = [{
         "realCornerRadius": 0,
         "handleMirroring": "RightAngle",
         "cornerCps": [
-          -1,
-          -1
         ],
         "cps": [
-          -1,
-          -1
         ]
       },
       {
@@ -1147,8 +1139,6 @@ export const rects: any[] = [{
         "realCornerRadius": 0,
         "handleMirroring": "MirrorAngleAndLength",
         "cornerCps": [
-          -1,
-          -1
         ],
         "cps": [
           3,
@@ -1162,12 +1152,9 @@ export const rects: any[] = [{
         "realCornerRadius": 0,
         "handleMirroring": "NoMirror",
         "cornerCps": [
-          -1,
-          -1
         ],
         "cps": [
           0,
-          -1
         ]
       },
       {
@@ -1177,12 +1164,8 @@ export const rects: any[] = [{
         "realCornerRadius": 0,
         "handleMirroring": "RightAngle",
         "cornerCps": [
-          -1,
-          -1
         ],
         "cps": [
-          -1,
-          -1
         ]
       },
       {
@@ -1192,12 +1175,8 @@ export const rects: any[] = [{
         "realCornerRadius": 0,
         "handleMirroring": "RightAngle",
         "cornerCps": [
-          -1,
-          -1
         ],
         "cps": [
-          -1,
-          -1
         ]
       },
       {
@@ -1207,12 +1186,8 @@ export const rects: any[] = [{
         "realCornerRadius": 0,
         "handleMirroring": "RightAngle",
         "cornerCps": [
-          -1,
-          -1
         ],
         "cps": [
-          -1,
-          -1
         ]
       },
       {
@@ -1222,12 +1197,8 @@ export const rects: any[] = [{
         "realCornerRadius": 0,
         "handleMirroring": "RightAngle",
         "cornerCps": [
-          -1,
-          -1
         ],
         "cps": [
-          -1,
-          -1
         ]
       },
       {
@@ -1237,8 +1208,6 @@ export const rects: any[] = [{
         "realCornerRadius": 0,
         "handleMirroring": "MirrorAngleAndLength",
         "cornerCps": [
-          -1,
-          -1
         ],
         "cps": [
           5,

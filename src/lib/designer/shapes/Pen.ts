@@ -109,9 +109,6 @@ export class Pen extends ParentShape {
     }
     const {nodes, paths, ctrlNodes} = this._conf.penNetwork
 
-    let {lineIndex, pointIndex, cpIndex, type} = this.editStartPointInfo
-
-
     //绘制所有点
     nodes.map(point => {
       // if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
@@ -119,8 +116,9 @@ export class Pen extends ParentShape {
       draw.drawRound(ctx, point)
     })
 
+    let {pointIndex, type} = this.editStartPointInfo
     //再绘制选中的当前点和控制点，之所以分开绘制，是因为遮盖问题
-    if (type === EditType.Point) {
+    if (type === EditType.Point || type === EditType.ControlPoint) {
       let currentPoint = nodes[pointIndex]
       let points = paths.filter(p => p.slice(0, 2).includes(pointIndex)).reduce((p: number[], c: PenNetworkLine) => {
         if (!p.includes(c[0])) p.push(c[0])
@@ -193,7 +191,7 @@ export class Pen extends ParentShape {
     return []
   }
 
-  getCustomShapePath3(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
+  getCustomShapePath3(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     const {nodes, paths, ctrlNodes} = this._conf.penNetwork

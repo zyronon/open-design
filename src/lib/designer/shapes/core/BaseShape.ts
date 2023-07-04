@@ -295,37 +295,31 @@ export class BaseShape {
     //判断是否在cp点上
     //TODO　目前只判断了当前点的控制点。应该把前后两个点的控制点都判断的
 
-    // let {pathIndex, lineIndex, type} = this.editStartPointInfo
-    // if (lineIndex !== -1 && type === EditType.Point) {
-    //   let waitCheckPoints: any[] = []
-    //   let path = paths[pathIndex]
-    //   let line: PenNetworkLine = path[lineIndex]
-    //   let point = nodes[line[0]]
-    //   if (point.cps[0] !== -1) waitCheckPoints.push({lineIndex, index: 0, point: ctrlNodes[point.cps[0]]})
-    //   if (point.cps[1] !== -1) waitCheckPoints.push({lineIndex, index: 1, point: ctrlNodes[point.cps[1]]})
-    //
-    //   point = nodes[line[1]]
-    //   if (point.cps[0] !== -1) waitCheckPoints.push({lineIndex, index: 0, point: ctrlNodes[point.cps[0]]})
-    //   if (point.cps[1] !== -1) waitCheckPoints.push({lineIndex, index: 1, point: ctrlNodes[point.cps[1]]})
-    //
-    //   if (lineIndex === 0) {
-    //     lineIndex = path.length - 1
-    //   } else {
-    //     lineIndex = lineIndex - 1
-    //   }
-    //   line = path[lineIndex]
-    //   point = nodes[line[0]]
-    //   if (point.cps[0] !== -1) waitCheckPoints.push({lineIndex, index: 0, point: ctrlNodes[point.cps[0]]})
-    //   if (point.cps[1] !== -1) waitCheckPoints.push({lineIndex, index: 1, point: ctrlNodes[point.cps[1]]})
-    //
-    //   for (let i = 0; i < waitCheckPoints.length; i++) {
-    //     let item = waitCheckPoints[i]
-    //     if (helper.isInPoint(fixMousePoint, item.point, judgePointDistance)) {
-    //       // console.log('在cp点上')
-    //       return {type: EditType.ControlPoint, pathIndex, lineIndex: item.lineIndex, cpIndex: item.index}
-    //     }
-    //   }
-    // }
+    let {pointIndex, type} = this.editStartPointInfo
+    if (type === EditType.Point) {
+      let waitCheckPoints: any[] = []
+      waitCheckPoints.push({pointIndex})
+      paths.map((line, index) => {
+        if (line.slice(0, 2).includes(pointIndex)) {
+          if (line[0] !== pointIndex) waitCheckPoints.push({pointIndex: line[0]})
+          if (line[1] !== pointIndex) waitCheckPoints.push({pointIndex: line[1]})
+        }
+      })
+
+      // console.log('waitCheckPoints', waitCheckPoints, pointIndex)
+      for (let i = 0; i < waitCheckPoints.length; i++) {
+        let item = waitCheckPoints[i]
+        for (let j = 0; j < nodes[item.pointIndex].cps.length; j++) {
+          let cpIndex = nodes[item.pointIndex].cps[j]
+          if (cpIndex !== -1) {
+            if (helper.isInPoint(fixMousePoint, ctrlNodes[cpIndex], judgePointDistance)) {
+              console.log('在cp点上')
+              return {type: EditType.ControlPoint, pointIndex: item.pointIndex, lineIndex: -1, cpIndex: j}
+            }
+          }
+        }
+      }
+    }
     return {type: undefined, pointIndex: -1, lineIndex: -1, cpIndex: -1}
   }
 
@@ -721,7 +715,7 @@ export class BaseShape {
       let {lineIndex, pointIndex, cpIndex, type} = result
 
       if (cu.editModeType === EditModeType.Select) {
-        // let {lineIndex, pointIndex, cpIndex, type} = this.editHover
+        let {lineIndex, pointIndex, cpIndex, type} = this.editHover
         // console.log('result', cloneDeep(result))
         //如果hover在点上，先处理hover
         if (type) {
@@ -1009,6 +1003,7 @@ export class BaseShape {
         //未选中任何内容，还属于判断阶段
         if (!type) {
           let result = this.checkMousePointOnEditStatus(event.point)
+          // console.log('re',result)
           //用于判断是否与之前保存的值不同，仅在不同时才重绘
           if (this.editHover.type !== result.type) {
             if (result.type === EditType.Line) {
@@ -1047,7 +1042,7 @@ export class BaseShape {
           const {nodes: oldNodes, paths: oldPaths, ctrlNodes: oldCtrlNodes} = this.original.penNetwork
 
           if (type === EditType.ControlPoint) {
-            let point = nodes[paths[lineIndex][0]]
+            let point = nodes[pointIndex]
             let cp0 = ctrlNodes[point.cps[0]]
             let oldCp0 = oldCtrlNodes[point.cps[0]]
             let cp1 = ctrlNodes[point.cps[1]]
@@ -1055,8 +1050,8 @@ export class BaseShape {
 
             // let oldPoint = oldNodes[paths[lineIndex][pointIndex][0]]
             if (cpIndex === 0) {
-              cp0.x = oldCp0.x + move.x
-              cp0.y = oldCp0.y + move.y
+              cp0.x += event.movement.x
+              cp0.y += event.movement.y
               if (point.handleMirroring === HandleMirroring.MirrorAngleAndLength) {
                 let p = Math2.getRotatedPoint(cp0, point, 180)
                 cp1.x = p.x
@@ -1070,8 +1065,8 @@ export class BaseShape {
               }
             }
             if (cpIndex === 1) {
-              cp1.x = oldCp1.x + move.x
-              cp1.y = oldCp1.y + move.y
+              cp1.x += event.movement.x
+              cp1.y += event.movement.y
               if (point.handleMirroring === HandleMirroring.MirrorAngleAndLength) {
                 let p = Math2.getRotatedPoint(cp1, point, 180)
                 cp0.x = p.x
@@ -1439,7 +1434,7 @@ export class BaseShape {
     return pathList
   }
 
-  getCustomShapePath2(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
+  getCustomShapePath2(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     this.conf.lineShapes.map((line) => {

@@ -6,8 +6,9 @@ import draw from "../utils/draw"
 import {ParentShape} from "./core/ParentShape";
 import {BaseEvent2, EditType, LinePath, LineShape, LineType, P, ShapeStatus} from "../types/type"
 import {BaseShape} from "./core/BaseShape"
-import {PenConfig} from "../config/PenConfig"
+import {PenConfig, PenNetworkLine} from "../config/PenConfig"
 import {Math2} from "../utils/math"
+import {eq} from "lodash"
 
 export class Pen extends ParentShape {
   mouseDown: boolean = false
@@ -110,38 +111,34 @@ export class Pen extends ParentShape {
 
     let {lineIndex, pointIndex, cpIndex, type} = this.editStartPointInfo
 
-    //先绘制控制附近两个点的控制点与线条，好被后续的圆点遮盖
-    if (lineIndex !== -1 && type !== EditType.Line) {
-      let line = paths[lineIndex]
-      let point2 = nodes[line[1]]
-      if (point2.cps[0] !== -1) draw.controlPoint(ctx, ctrlNodes[point2.cps[0]], point2)
-      if (point2.cps[1] !== -1) draw.controlPoint(ctx, ctrlNodes[point2.cps[1]], point2)
-
-      if (lineIndex === 0) {
-        line = paths[paths.length - 1]
-      } else {
-        line = paths[lineIndex - 1]
-      }
-      let point3 = nodes[line[0]]
-      if (point3.cps[0] !== -1) draw.controlPoint(ctx, ctrlNodes[point3.cps[0]], point3)
-      if (point3.cps[1] !== -1) draw.controlPoint(ctx, ctrlNodes[point3.cps[1]], point3)
-    }
 
     //绘制所有点
-    paths.map(line => {
+    nodes.map(point => {
       // if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
       // if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
-      draw.drawRound(ctx, nodes[line[0]])
-      //TODO 这个只需要最后一条线时才绘制吧？
-      draw.drawRound(ctx, nodes[line[1]])
+      draw.drawRound(ctx, point)
     })
 
     //再绘制选中的当前点和控制点，之所以分开绘制，是因为遮盖问题
     if (type === EditType.Point) {
-      let point = nodes[pointIndex]
-      if (point.cps[0] !== -1) draw.controlPoint(ctx, ctrlNodes[point.cps[0]], point)
-      if (point.cps[1] !== -1) draw.controlPoint(ctx, ctrlNodes[point.cps[1]], point)
-      draw.currentPoint(ctx, point)
+      let currentPoint = nodes[pointIndex]
+      let points = paths.filter(p => p.slice(0, 2).includes(pointIndex)).reduce((p: number[], c: PenNetworkLine) => {
+        if (!p.includes(c[0])) p.push(c[0])
+        if (!p.includes(c[1])) p.push(c[1])
+        return p
+      }, []).map(v => nodes[v])
+
+      points.map(point => {
+        if (point.cps[0] !== -1) draw.controlPoint(ctx, ctrlNodes[point.cps[0]], point)
+        if (point.cps[1] !== -1) draw.controlPoint(ctx, ctrlNodes[point.cps[1]], point)
+        if (eq(point, currentPoint)) {
+          draw.currentPoint(ctx, point)
+        } else {
+          draw.drawRound(ctx, point)
+        }
+      })
+
+      // draw.currentPoint(ctx, point)
     }
 
     if (this.tempPoint) {

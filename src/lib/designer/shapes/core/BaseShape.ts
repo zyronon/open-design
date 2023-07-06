@@ -561,20 +561,19 @@ export class BaseShape {
     if (this.onDbClick(event, parents)) return
     if (this.status === ShapeStatus.Edit) {
       let cu = CanvasUtil2.getInstance()
-      const {pointIndex, lineIndex, type} = this.editStartPointInfo
+      const {pointIndex, type} = this.editStartPointInfo
       const {nodes, paths, ctrlNodes} = this.conf.penNetwork
 
       if (type) {
         if (type !== EditType.Line) {
-          let line = paths[lineIndex]
           let point = nodes[pointIndex]
           if (point.handleMirroring !== HandleMirroring.RightAngle) {
             point.cps = [-1, -1]
             point.handleMirroring = HandleMirroring.RightAngle
             paths.map((line, index) => {
               if (line.slice(0, 2).includes(pointIndex)) {
-                if (line[0] !== pointIndex) line[2] = -1
-                if (line[1] !== pointIndex) line[3] = -1
+                if (line[0] === pointIndex) line[2] = -1
+                if (line[1] === pointIndex) line[3] = -1
                 if (line[6] === LineType.Bezier3) {
                   line[6] = LineType.Bezier2
                 } else {
@@ -583,6 +582,7 @@ export class BaseShape {
               }
             })
           } else {
+            //TODO　无法为第一个或最后一个生成控制点
             let preLine: PenNetworkLine = undefined as any
             let nextLine: PenNetworkLine = undefined as any
             let relationLine = paths.filter((line, index) => line.slice(0, 2).includes(pointIndex))
@@ -851,9 +851,20 @@ export class BaseShape {
         }
       }
 
+      //TODO 缺少temPoint
       if (cu.editModeType === EditModeType.Edit) {
-        if (!type) {
-          this.mouseDown = true
+        this.conf.isCustom = true
+        this.mouseDown = true
+        if (type === EditType.Point) {
+          let lastPoint = nodes[this.editStartPointInfo.pointIndex]
+          if (lastPoint.cps[1] !== -1) {
+            paths.push([this.editStartPointInfo.pointIndex, pointIndex, lastPoint.cps[1], -1, -1, -1, LineType.Bezier2])
+          } else {
+            paths.push([this.editStartPointInfo.pointIndex, pointIndex, -1, -1, -1, -1, LineType.Line])
+          }
+        } else {
+          let {pointIndex, lineIndex, type} = this.editStartPointInfo
+          let lastPoint = nodes[pointIndex]
           let fixMousePoint = {
             x: event.point.x - center.x,
             y: event.point.y - center.y
@@ -866,94 +877,18 @@ export class BaseShape {
             cornerCps: [-1, -1],
             cps: [-1, -1],
           }
-          let {pointIndex, lineIndex, type} = this.editStartPointInfo
-          console.log(this.editStartPointInfo)
-          if (!type && !this.tempPoint) {
-            // //新增一条线
-            // this.conf.isCustom = true
-            // this.conf.lineShapes.push({
-            //   close: false,
-            //   points: [{type: PointType.Single, point: endPoint}]
-            // })
-            // this.editStartPointInfo.lineIndex = this.conf.lineShapes.length - 1
-            // this.editStartPointInfo.pointIndex = 0
-            this.tempPoint = fixMousePoint
+          nodes.push(endPoint)
+
+          if (lastPoint.cps[1] !== -1) {
+            paths.push([pointIndex, nodes.length - 1, lastPoint.cps[1], -1, -1, -1, LineType.Bezier2])
           } else {
-            if (this.tempPoint) {
-              let startPoint: PenNetworkNode = {
-                ...this.tempPoint,
-                cornerRadius: 0,
-                realCornerRadius: 0,
-                handleMirroring: HandleMirroring.RightAngle,
-                cornerCps: [-1, -1],
-                cps: [-1, -1],
-              }
-              nodes.push(startPoint)
-              nodes.push(endPoint)
-              paths.push([nodes.length - 2, nodes.length - 1, -1, -1, -1, -1, LineType.Line])
-              this.editStartPointInfo.lineIndex = paths.length - 1
-              this.editStartPointInfo.pointIndex = -1
-              this.editStartPointInfo.type = EditType.Line
-              this.tempPoint = undefined
-            } else {
-              let line = paths[lineIndex]
-              nodes.push(endPoint)
-              let newLine: PenNetworkLine = [line[0], nodes.length - 1, -1, -1, -1, -1, LineType.Line]
-              if (lineIndex !== paths.length - 1) {
-                paths.push(newLine)
-                this.editStartPointInfo.lineIndex = paths.length - 1
-                this.editStartPointInfo.pointIndex = -1
-              } else {
-                paths.push(newLine)
-                this.editStartPointInfo.lineIndex = paths.length - 1
-                this.editStartPointInfo.pointIndex = -1
-              }
-
-              //是否新增线段并将起点设为共同点
-              // let isChangeCommonAddNewLine = false
-              //起点在线段的最后一位
-              // if (path.points.length - 1 === pointIndex) {
-              //   //如果线段闭合，那么需要将起点设为共同点，并新增一条线
-              //   if (path.close) {
-              //     isChangeCommonAddNewLine = true
-              //   } else {
-              //     path.points.push({type: PointType.Single, point: endPoint})
-              //     this.editStartPointInfo.pointIndex += 1
-              //   }
-              // } else {
-              //   isChangeCommonAddNewLine = true
-              // }
-              // if (isChangeCommonAddNewLine) {
-              //   this.conf.lineShapes.push({
-              //     close: false,
-              //     points: [
-              //       {type: PointType.Common, targetId: line.point!.id},
-              //       {type: PointType.Single, point: endPoint},
-              //     ]
-              //   })
-              //   if (line.type === PointType.Single) {
-              //     this.conf.commonPoints.push(line.point!)
-              //     this.conf.lineShapes[lineIndex].points[pointIndex].type = PointType.Common
-              //     this.conf.lineShapes[lineIndex].points[pointIndex].targetId = line.point!.id
-              //     this.conf.lineShapes[lineIndex].points[pointIndex].point = undefined
-              //   }
-              //   this.editStartPointInfo.lineIndex += 1
-              //   this.editStartPointInfo.pointIndex = 1
-              // }
-              // this.conf.isCustom = true
-            }
+            paths.push([pointIndex, nodes.length - 1, -1, -1, -1, -1, LineType.Line])
           }
-        } else {
-          if (this.editStartPointInfo.pointIndex !== pointIndex
-            || this.editStartPointInfo.lineIndex !== lineIndex
-            || this.editStartPointInfo.cpIndex !== cpIndex
-          ) {
-            this.editStartPointInfo = result
-            cu.render()
-          }
+          this.editStartPointInfo.lineIndex = -1
+          this.editStartPointInfo.pointIndex = nodes.length - 1
+          this.editStartPointInfo.type = EditType.Point
+          cu.render()
         }
-
-        CanvasUtil2.getInstance().render()
       }
     }
 
@@ -1046,6 +981,7 @@ export class BaseShape {
                 cp1.y = p.y
               }
               if (point.handleMirroring === HandleMirroring.MirrorAngle) {
+                //这里不能直接用反转，因为长度不一直对称
                 let moveDegree = Math2.getDegree(point, oldCp0, cp0)
                 let p = Math2.getRotatedPoint(oldCp1, point, moveDegree)
                 cp1.x = p.x
@@ -1109,27 +1045,36 @@ export class BaseShape {
       }
 
       if (cu.editModeType === EditModeType.Edit) {
-        let {pointIndex, lineIndex} = this.editStartPointInfo
-        if (lineIndex == -1) return
-        let line = paths[lineIndex]
-        let preLine = paths[lineIndex === 0 ? paths.length - 1 : lineIndex - 1]
-        let lastPoint = nodes[line[0]]
-        if (lastPoint) {
+        let {pointIndex, lineIndex, type} = this.editStartPointInfo
+        if (!type) return
+
+        if (type === EditType.Point) {
           // console.log('pen-onMouseMove', lastPoint.center, event.point)
+          let lastPoint = nodes[pointIndex]
           let ctx = cu.ctx
           if (this.mouseDown) {
+            let line = paths[paths.length - 1]
             let fixMousePoint = {
               x: event.point.x - center.x,
               y: event.point.y - center.y
             }
-            ctrlNodes.push(fixMousePoint)
-            lastPoint.cps[1] = ctrlNodes.length - 1
-            let cp1 = helper.horizontalReversePoint(cloneDeep(fixMousePoint), lastPoint)
-            ctrlNodes.push(cp1)
-            lastPoint.cps[0] = helper.verticalReversePoint(cp1, lastPoint)
-            lastPoint.handleMirroring = HandleMirroring.MirrorAngleAndLength
-            line[2] = lastPoint.cps[1]
-            preLine[3] = lastPoint.cps[0]
+            let cp1 = helper.reversePoint(cloneDeep(fixMousePoint), lastPoint)
+            if (line[3] === -1) {
+              ctrlNodes.push(fixMousePoint)
+              ctrlNodes.push(cp1)
+              lastPoint.cps[0] = ctrlNodes.length - 1
+              lastPoint.cps[1] = ctrlNodes.length - 2
+              lastPoint.handleMirroring = HandleMirroring.MirrorAngleAndLength
+              line[3] = lastPoint.cps[0]
+              if (line[6] === LineType.Line){
+                line[6] = LineType.Bezier2
+              }else {
+                line[6] = LineType.Bezier3
+              }
+            } else {
+              ctrlNodes[lastPoint.cps[0]] = cp1
+              ctrlNodes[lastPoint.cps[1]] = fixMousePoint
+            }
           } else {
             cu.waitRenderOtherStatusFunc.push(() => {
               let fixLastPoint = {

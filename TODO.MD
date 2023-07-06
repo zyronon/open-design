@@ -20,6 +20,7 @@
     - 参考：https://leetcode.cn/problems/rectangle-overlap/solution/ju-xing-zhong-die-by-leetcode-solution/
 - 辅助线，可以自定义颜色和名字
 - 如何计算不相连的N条线段，合围出来的区域呢？
+- 检测是否开启硬件加速
 
 # bug
 

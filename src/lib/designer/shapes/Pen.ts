@@ -196,7 +196,8 @@ export class Pen extends ParentShape {
     let fillPathList: LinePath[] = []
     const {nodes, paths, ctrlNodes} = this._conf.penNetwork
 
-    for (let i = 0; i < paths.length - 1; i++) {
+    // for (let i = 0; i < paths.length - 1; i++) {
+    for (let i = 0; i < 0; i++) {
       let ip, a = 0, b = 0
       for (let j = i + 1; j < paths.length; j++) {
         let currentLine = paths[i]

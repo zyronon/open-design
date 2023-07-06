@@ -139,6 +139,7 @@ class Design extends React.Component<any, IState> {
   setCanvasUtilEditModeType = (type: EditModeType) => {
     this.setState({editModeType: type})
     this.state.cu.editModeType = type
+    this.state.cu.render()
   }
 
   inputOnChange = () => {

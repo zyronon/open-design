@@ -17,7 +17,7 @@ import {
   ShapeType
 } from "../../types/type"
 import CanvasUtil2 from "../../engine/CanvasUtil2"
-import {cloneDeep, eq} from "lodash"
+import {cloneDeep, eq, merge} from "lodash"
 import {getShapeFromConfig} from "../../utils/common"
 import EventBus from "../../event/eventBus"
 import {BaseConfig, Rect} from "../../config/BaseConfig"
@@ -29,6 +29,7 @@ import {Bezier} from "../../utils/bezier"
 import {BBox, Bezier as BezierJs} from "bezier-js";
 import {EventKeys} from "../../event/eventKeys";
 import {HandleMirroring, PenNetworkLine, PenNetworkNode} from "../../config/PenConfig";
+import {equal} from "assert";
 
 export class BaseShape {
   hoverType: MouseOptionType = MouseOptionType.None
@@ -717,19 +718,19 @@ export class BaseShape {
         // console.log('editHover', cloneDeep(this.editHover))
         //如果hover在点上，先处理hover
         if (type) {
-          this.conf.isCustom = true
           //图省事儿，直接把editHover设为默认值。不然鼠标移动点或线时。还会渲染hoverLineCenterPoint
           //但hoverLineCenterPoint的点又不正确
           this.editHover = cloneDeep(this.defaultCurrentOperationInfo)
-          let point: PenNetworkNode = {
-            ...this.hoverLineCenterPoint,
-            cornerRadius: 0,
-            realCornerRadius: 0,
-            handleMirroring: HandleMirroring.RightAngle,
-            cornerCps: [-1, -1],
-            cps: [-1, -1],
-          }
           if (type === EditType.CenterPoint) {
+            let point: PenNetworkNode = {
+              ...this.hoverLineCenterPoint,
+              cornerRadius: 0,
+              realCornerRadius: 0,
+              handleMirroring: HandleMirroring.RightAngle,
+              cornerCps: [-1, -1],
+              cps: [-1, -1],
+            }
+            this.conf.isCustom = true
             let line: PenNetworkLine = paths[lineIndex]
             let lineType = line[6]
             if (lineType === LineType.Line) {
@@ -792,9 +793,9 @@ export class BaseShape {
               if (lineType === LineType.Bezier3) {
                 ctrlNodes.push(left.points[2])
                 ctrlNodes.push(right.points[1])
-                point.handleMirroring = HandleMirroring.MirrorAngle
-                point.cps = [ctrlNodes.length - 1, ctrlNodes.length - 2]
-                newLine = [nodes.length - 1, line[1], ctrlNodes.length - 2, line[3], -1, -1, LineType.Bezier3]
+                point.handleMirroring = HandleMirroring.MirrorAngleAndLength
+                point.cps = [ctrlNodes.length - 2, ctrlNodes.length - 1]
+                newLine = [nodes.length, line[1], ctrlNodes.length - 1, line[3], -1, -1, LineType.Bezier3]
                 line[3] = ctrlNodes.length - 2
               } else {
                 line[3] = -1
@@ -812,18 +813,16 @@ export class BaseShape {
             result.type = EditType.Point
           }
 
-          // EventBus.emit(EventKeys.POINT_INFO, {
-          //   pointIndex: pointIndex,
-          //   lineIndex: lineIndex,
-          //   point: nodes[paths[lineIndex][0]]
-          // })
+          if (type !== EditType.Line) {
+            EventBus.emit(EventKeys.POINT_INFO, {
+              pointIndex: pointIndex,
+              lineIndex: lineIndex,
+              point: this.getPoint2(result)
+            })
+          }
 
           this.editEnter = result
-          if (this.editStartPointInfo.lineIndex !== lineIndex
-            || this.editStartPointInfo.pointIndex !== pointIndex
-            || this.editStartPointInfo.cpIndex !== cpIndex
-            || this.editStartPointInfo.type !== type
-          ) {
+          if (JSON.stringify(this.editStartPointInfo) !== JSON.stringify(result)) {
             this.editStartPointInfo = result
             cu.render()
           }
@@ -999,31 +998,7 @@ export class BaseShape {
         const {lineIndex, cpIndex, pointIndex, type} = this.editEnter
         // console.log('this.editEnter', this.editEnter)
         //未选中任何内容，还属于判断阶段
-        if (!type) {
-          let result = this.checkMousePointOnEditStatus(event.point)
-          // console.log('re',result)
-          //用于判断是否与之前保存的值不同，仅在不同时才重绘
-          if (this.editHover.type !== result.type) {
-            if (result.type === EditType.Line) {
-              this.hoverLineCenterPoint = result.lineCenterPoint!
-            }
-            if (result.type === EditType.ControlPoint) {
-              this.editHover.cpIndex = result.cpIndex
-            }
-            this.editHover.type = result.type
-            this.editHover.lineIndex = result.lineIndex
-            this.editHover.pointIndex = result.pointIndex
-            document.body.style.cursor = "pointer"
-            cu.render()
-            return true
-          }
-          //hover时，消费事件。不然会把cursor = "default"
-          if (result.type) {
-            document.body.style.cursor = "pointer"
-            return true
-          }
-          document.body.style.cursor = "default"
-        } else {
+        if (type) {
           this.originalLineShapes = cloneDeep(this.conf.lineShapes)
 
           //TODO 是否可以统一反转？
@@ -1072,7 +1047,7 @@ export class BaseShape {
               }
               if (point.handleMirroring === HandleMirroring.MirrorAngle) {
                 let moveDegree = Math2.getDegree(point, oldCp1, cp1)
-                let p = Math2.getRotatedPoint(cp1, point, moveDegree)
+                let p = Math2.getRotatedPoint(oldCp0, point, moveDegree)
                 cp0.x = p.x
                 cp0.y = p.y
               }
@@ -1090,8 +1065,31 @@ export class BaseShape {
             this.movePoint2(paths[lineIndex][1], event.movement)
             cu.render()
           }
-
           // this.checkAcr()
+        } else {
+          let result = this.checkMousePointOnEditStatus(event.point)
+          // console.log('re',result)
+          //用于判断是否与之前保存的值不同，仅在不同时才重绘
+          if (this.editHover.type !== result.type) {
+            if (result.type === EditType.Line) {
+              this.hoverLineCenterPoint = result.lineCenterPoint!
+            }
+            if (result.type === EditType.ControlPoint) {
+              this.editHover.cpIndex = result.cpIndex
+            }
+            this.editHover.type = result.type
+            this.editHover.lineIndex = result.lineIndex
+            this.editHover.pointIndex = result.pointIndex
+            document.body.style.cursor = "pointer"
+            cu.render()
+            return true
+          }
+          //hover时，消费事件。不然会把cursor = "default"
+          if (result.type) {
+            document.body.style.cursor = "pointer"
+            return true
+          }
+          document.body.style.cursor = "default"
         }
       }
 
@@ -1901,5 +1899,23 @@ export class BaseShape {
     point.cps.map(v => {
       if (v !== -1) helper.movePoint2(ctrlNodes[v], move)
     })
+  }
+
+  getPoint2({type, pointIndex, cpIndex}: CurrentOperationInfo) {
+    const {nodes, ctrlNodes} = this.conf.penNetwork
+    let point: PenNetworkNode = {
+      ...this.hoverLineCenterPoint,
+      cornerRadius: 0,
+      realCornerRadius: 0,
+      handleMirroring: HandleMirroring.RightAngle,
+      cornerCps: [-1, -1],
+      cps: [-1, -1],
+    }
+    if (type === EditType.ControlPoint) {
+      point = merge(point, ctrlNodes[nodes[pointIndex].cps[cpIndex]])
+    } else {
+      point = nodes[pointIndex]
+    }
+    return point
   }
 }

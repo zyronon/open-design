@@ -29,7 +29,6 @@ import {Bezier} from "../../utils/bezier"
 import {BBox, Bezier as BezierJs} from "bezier-js";
 import {EventKeys} from "../../event/eventKeys";
 import {HandleMirroring, PenNetworkLine, PenNetworkNode} from "../../config/PenConfig";
-import {equal} from "assert";
 
 export class BaseShape {
   hoverType: MouseOptionType = MouseOptionType.None
@@ -557,7 +556,7 @@ export class BaseShape {
   }
 
   _dblclick(event: BaseEvent2, parents: BaseShape[] = []) {
-    // console.log('on-dblclick',)
+    console.log('on-dblclick',)
     // console.log('core-dblclick', this.editStartPointInfo, this.editHover)
     if (this.onDbClick(event, parents)) return
     if (this.status === ShapeStatus.Edit) {
@@ -566,52 +565,68 @@ export class BaseShape {
       const {nodes, paths, ctrlNodes} = this.conf.penNetwork
 
       if (type) {
-        let line = paths[lineIndex]
-        let preLine = paths[lineIndex === 0 ? paths.length - 1 : lineIndex - 1]
-        let point = nodes[line[0]]
-        if (point.handleMirroring !== HandleMirroring.RightAngle) {
-          point.cps = [-1, -1]
-          point.handleMirroring = HandleMirroring.RightAngle
-          line[2] = -1
-          preLine[3] = -1
-          if (line[6] === LineType.Bezier3) {
-            line[6] = LineType.Bezier2
+        if (type !== EditType.Line) {
+          let line = paths[lineIndex]
+          let point = nodes[pointIndex]
+          if (point.handleMirroring !== HandleMirroring.RightAngle) {
+            point.cps = [-1, -1]
+            point.handleMirroring = HandleMirroring.RightAngle
+            paths.map((line, index) => {
+              if (line.slice(0, 2).includes(pointIndex)) {
+                if (line[0] !== pointIndex) line[2] = -1
+                if (line[1] !== pointIndex) line[3] = -1
+                if (line[6] === LineType.Bezier3) {
+                  line[6] = LineType.Bezier2
+                } else {
+                  line[6] = LineType.Line
+                }
+              }
+            })
           } else {
-            line[6] = LineType.Line
-          }
-          if (preLine[6] === LineType.Bezier3) {
-            preLine[6] = LineType.Bezier2
-          } else {
-            preLine[6] = LineType.Line
+            let preLine: PenNetworkLine = undefined as any
+            let nextLine: PenNetworkLine = undefined as any
+            let relationLine = paths.filter((line, index) => line.slice(0, 2).includes(pointIndex))
+            for (let i = 0; i < relationLine.length; i++) {
+              let curLine = relationLine[i]
+              if (curLine[1] === pointIndex) {
+                if (!preLine) {
+                  preLine = curLine
+                }
+              }
+              if (curLine[0] === pointIndex) {
+                nextLine = curLine
+              }
+            }
+            if (!preLine && !nextLine) return console.error('没有前后线')
+            let previousPointInfo = nodes[preLine[0]]
+            let nextPointInfo = nodes[nextLine[1]]
+            // console.log(previousPointInfo, nextPointInfo, point)
+            let {l, r} = Bezier.getTargetPointControlPoints(
+              previousPointInfo,
+              point,
+              nextPointInfo)
+            // console.log(l, r)
+            ctrlNodes.push(l)
+            ctrlNodes.push(r)
+            point.cps = [ctrlNodes.length - 2, ctrlNodes.length - 1]
+            preLine[3] = point.cps[0]
+            nextLine[2] = point.cps[1]
+            if (nextLine[6] === LineType.Bezier2) {
+              nextLine[6] = LineType.Bezier3
+            } else {
+              nextLine[6] = LineType.Bezier2
+            }
+            if (preLine[6] === LineType.Bezier2) {
+              preLine[6] = LineType.Bezier3
+            } else {
+              preLine[6] = LineType.Bezier2
+            }
+            point.handleMirroring = HandleMirroring.MirrorAngleAndLength
           }
           cu.render()
-          return
-        }
-        let previousPointInfo = nodes[preLine[0]]
-        let nextPointInfo = nodes[line[1]]
-        // console.log(previousPointInfo, nextPointInfo, point)
-        let {l, r} = Bezier.getTargetPointControlPoints(
-          previousPointInfo,
-          point,
-          nextPointInfo)
-        // console.log(l, r)
-        ctrlNodes.push(l)
-        ctrlNodes.push(r)
-        point.cps = [ctrlNodes.length - 2, ctrlNodes.length - 1]
-        line[2] = point.cps[1]
-        preLine[3] = point.cps[0]
-        if (line[6] === LineType.Bezier2) {
-          line[6] = LineType.Bezier3
         } else {
-          line[6] = LineType.Bezier2
+          this.status = ShapeStatus.Select
         }
-        if (preLine[6] === LineType.Bezier2) {
-          preLine[6] = LineType.Bezier3
-        } else {
-          preLine[6] = LineType.Bezier2
-        }
-        point.handleMirroring = HandleMirroring.MirrorAngleAndLength
-        cu.render()
       } else {
         this.status = ShapeStatus.Select
       }
@@ -621,7 +636,7 @@ export class BaseShape {
   }
 
   _mousedown(event: BaseEvent2, parents: BaseShape[] = []) {
-    // this.log('core-mousedown')
+    this.log('core-mousedown')
     // console.log('mousedown', this.conf.name, this.enterType, this.hoverType)
     EventBus.emit(EventKeys.SELECT_SHAPE, this)
     if (this.onMouseDown(event, parents)) return
@@ -714,8 +729,8 @@ export class BaseShape {
       let {lineIndex, pointIndex, cpIndex, type} = result
 
       if (cu.editModeType === EditModeType.Select) {
-        let {lineIndex, pointIndex, cpIndex, type} = this.editHover
-        // console.log('editHover', cloneDeep(this.editHover))
+        //这里还得再判断点击结果，因为如果是原地点击的话，editHover是没有值的
+        // let {lineIndex, pointIndex, cpIndex, type} = this.editHover
         //如果hover在点上，先处理hover
         if (type) {
           //图省事儿，直接把editHover设为默认值。不然鼠标移动点或线时。还会渲染hoverLineCenterPoint

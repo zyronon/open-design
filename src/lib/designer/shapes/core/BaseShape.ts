@@ -293,10 +293,8 @@ export class BaseShape {
     }
 
     //判断是否在cp点上
-    //TODO　目前只判断了当前点的控制点。应该把前后两个点的控制点都判断的
-
     let {pointIndex, type} = this.editStartPointInfo
-    if (type === EditType.Point) {
+    if (type === EditType.Point || type === EditType.ControlPoint) {
       let waitCheckPoints: any[] = []
       waitCheckPoints.push({pointIndex})
       paths.map((line, index) => {
@@ -563,10 +561,10 @@ export class BaseShape {
     if (this.onDbClick(event, parents)) return
     if (this.status === ShapeStatus.Edit) {
       let cu = CanvasUtil2.getInstance()
-      const {pointIndex, lineIndex} = this.editStartPointInfo
+      const {pointIndex, lineIndex, type} = this.editStartPointInfo
       const {nodes, paths, ctrlNodes} = this.conf.penNetwork
 
-      if (lineIndex !== -1) {
+      if (type) {
         let line = paths[lineIndex]
         let preLine = paths[lineIndex === 0 ? paths.length - 1 : lineIndex - 1]
         let point = nodes[line[0]]
@@ -711,12 +709,12 @@ export class BaseShape {
       const {nodes, paths, ctrlNodes} = this.conf.penNetwork
 
       let result = this.checkMousePointOnEditStatus(event.point)
-      console.log('result', result)
+      console.log('result', cloneDeep(result))
       let {lineIndex, pointIndex, cpIndex, type} = result
 
       if (cu.editModeType === EditModeType.Select) {
         let {lineIndex, pointIndex, cpIndex, type} = this.editHover
-        // console.log('result', cloneDeep(result))
+        // console.log('editHover', cloneDeep(this.editHover))
         //如果hover在点上，先处理hover
         if (type) {
           this.conf.isCustom = true
@@ -833,7 +831,7 @@ export class BaseShape {
         }
 
         //能走到这，说明未选中任何点。那么判断是否已选中，选中就给取消掉
-        if (this.editStartPointInfo.lineIndex !== -1) {
+        if (this.editStartPointInfo.type) {
           this.editStartPointInfo = cloneDeep(this.defaultCurrentOperationInfo)
           cu.render()
         }

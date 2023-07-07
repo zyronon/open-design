@@ -37,7 +37,7 @@ export class Pen extends ParentShape {
   drawShape(ctx: CanvasRenderingContext2D, newLayout: Rect, parent?: BaseConfig): any {
     if (this.status === ShapeStatus.Edit) return
     let {
-      fillColor, lineWidth, borderColor
+      fillColor, lineWidth, borderColor, center
     } = this.conf
 
     ctx.lineWidth = lineWidth ?? defaultConfig.lineWidth
@@ -59,6 +59,13 @@ export class Pen extends ParentShape {
       // ctx.fill(path,'evenodd')
       ctx.stroke(path)
     })
+
+    //绘制所有点
+    this._conf.penNetwork.nodes.map(point => {
+      draw.drawRound(ctx, point)
+    })
+
+    draw.drawRound(ctx, {x: 0, y: 0})
   }
 
   drawHover(ctx: CanvasRenderingContext2D, newLayout: Rect): any {
@@ -156,18 +163,6 @@ export class Pen extends ParentShape {
   }
 
   onDbClick(event: BaseEvent2, parents: BaseShape[]): boolean {
-    // console.log('pen-onDbClick')
-    // let cu = CanvasUtil2.getInstance()
-    // if (this.status === ShapeStatus.Edit) {
-    //   this.status = ShapeStatus.Select
-    //   cu.editShape = undefined
-    //   cu.selectedShape = this
-    //   cu.mode = ShapeType.SELECT
-    // } else {
-    //   this.status = ShapeStatus.Edit
-    //   cu.editShape = this
-    //   cu.mode = ShapeType.EDIT
-    // }
     return false
   }
 
@@ -196,8 +191,8 @@ export class Pen extends ParentShape {
     let fillPathList: LinePath[] = []
     const {nodes, paths, ctrlNodes} = this._conf.penNetwork
 
-    // for (let i = 0; i < paths.length - 1; i++) {
-    for (let i = 0; i < 0; i++) {
+    for (let i = 0; i < paths.length - 1; i++) {
+      // for (let i = 0; i < 0; i++) {
       let ip, a = 0, b = 0
       for (let j = i + 1; j < paths.length; j++) {
         let currentLine = paths[i]
@@ -212,7 +207,7 @@ export class Pen extends ParentShape {
         }
       }
       if (ip) {
-        // console.log('ip', ip, a, b)
+        console.log('ip', ip, a, b)
         let fillPath = new Path2D()
         fillPath.moveTo2(ip.intersectsPoint);
 

@@ -191,8 +191,53 @@ export class Pen extends ParentShape {
     let fillPathList: LinePath[] = []
     const {nodes, paths, ctrlNodes} = this._conf.penNetwork
 
+    let ps = []
     for (let i = 0; i < paths.length - 1; i++) {
-      // for (let i = 0; i < 0; i++) {
+      for (let j = i; j < paths.length; j++) {
+        let currentLine = paths[i]
+        let nextLine = paths[j]
+        let t = Math2.isIntersection2(currentLine, nextLine, nodes, ctrlNodes)
+        if (t) {
+          console.log('t', t)
+          ps.push({
+            p: t.intersectsPoint,
+            is: [i, j]
+          })
+        }
+      }
+    }
+
+    console.log('ps', JSON.stringify(ps, null, 2))
+    let cu = CanvasUtil2.getInstance()
+    let {ctx} = cu
+    ctx.save()
+    ctx.strokeStyle = 'red'
+
+    const test = (lineIndex: number, list: any[]) => {
+      let rIndex = list.findIndex(v => {
+        return v.is.includes(lineIndex)
+      })
+      if (rIndex !== -1) {
+        let item = list[rIndex]
+        ctx.lineTo2(item.p)
+        console.log('uite.p', item.p)
+        list.splice(rIndex, 1)
+        let i = 0
+        if (item.is[0] === lineIndex) {
+          i = 1
+        }
+        test(item.is[i], list)
+      }
+    }
+
+    ctx.moveTo2(ps[0].p)
+    // ps.shift()
+    test(ps[0].is[0], ps)
+
+    ctx.stroke()
+    ctx.restore()
+    // for (let i = 0; i < paths.length - 1; i++) {
+    for (let i = 0; i < 0; i++) {
       let ip, a = 0, b = 0
       for (let j = i + 1; j < paths.length; j++) {
         let currentLine = paths[i]

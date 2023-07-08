@@ -1623,7 +1623,7 @@ export const rects: any[] = [
   {
     "name": "矩形",
     "layout": {
-      "x": 100,
+      "x": 1100,
       "y": 100,
       "w": 300,
       "h": 300

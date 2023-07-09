@@ -212,6 +212,7 @@ export class Pen extends ParentShape {
     let {ctx} = cu
     ctx.save()
     ctx.strokeStyle = 'red'
+    ctx.fillStyle = 'red'
 
     const test = (lineIndex: number, list: any[]) => {
       let rIndex = list.findIndex(v => {
@@ -235,6 +236,7 @@ export class Pen extends ParentShape {
     test(ps[0].is[0], ps)
 
     ctx.stroke()
+    ctx.fill()
     ctx.restore()
     // for (let i = 0; i < paths.length - 1; i++) {
     for (let i = 0; i < 0; i++) {

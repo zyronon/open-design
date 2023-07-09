@@ -1623,7 +1623,7 @@ export const rects: any[] = [
   {
     "name": "矩形",
     "layout": {
-      "x": 1100,
+      "x": 700,
       "y": 100,
       "w": 300,
       "h": 300
@@ -1681,7 +1681,7 @@ export const rects: any[] = [
           "cps": [-1, -1]
         },
         {
-          "x": -50,
+          "x": 10,
           "y": -150,
           "cornerRadius": 0,
           "realCornerRadius": 0,
@@ -1690,7 +1690,7 @@ export const rects: any[] = [
           "cps": [-1, -1]
         },
         {
-          "x": 50,
+          "x": -10,
           "y": -150,
           "cornerRadius": 0,
           "realCornerRadius": 0,
@@ -1699,7 +1699,7 @@ export const rects: any[] = [
           "cps": [-1, -1]
         },
         {
-          "x": 50,
+          "x": 100,
           "y": 150,
           "cornerRadius": 0,
           "realCornerRadius": 0,
@@ -1708,7 +1708,7 @@ export const rects: any[] = [
           "cps": [-1, -1]
         },
         {
-          "x": -50,
+          "x": -100,
           "y": 150,
           "cornerRadius": 0,
           "realCornerRadius": 0,

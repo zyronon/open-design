@@ -211,8 +211,8 @@ export class Pen extends ParentShape {
     let cu = CanvasUtil2.getInstance()
     let {ctx} = cu
     ctx.save()
-    ctx.strokeStyle = 'red'
-    ctx.fillStyle = 'red'
+    ctx.strokeStyle = 'gray'
+    ctx.fillStyle = 'gray'
 
     const test = (lineIndex: number, list: any[]) => {
       let rIndex = list.findIndex(v => {

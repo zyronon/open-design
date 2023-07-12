@@ -9,6 +9,7 @@ import {BaseShape} from "./core/BaseShape"
 import {PenConfig, PenNetworkLine} from "../config/PenConfig"
 import {Math2} from "../utils/math"
 import {cloneDeep, eq} from "lodash"
+import {convexHull} from "../utils/test";
 
 export class Pen extends ParentShape {
   mouseDown: boolean = false
@@ -61,8 +62,11 @@ export class Pen extends ParentShape {
     })
 
     //绘制所有点
-    this._conf.penNetwork.nodes.map(point => {
-      draw.drawRound(ctx, point)
+    ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
+    this._conf.penNetwork.nodes.map((point, i) => {
+      // let a = helper.getStraightLineCenterPoint(fixStartPoint, fixEndPoint)
+      ctx.fillText(i + '', point.x, point.y)
+      // draw.drawRound(ctx, point)
     })
 
     draw.drawRound(ctx, {x: 0, y: 0})
@@ -249,25 +253,36 @@ export class Pen extends ParentShape {
     })
 
 //筛选出终点没人连的
-    let s = newPaths.filter(v => newPaths.find(w => v[1] === w[0]))
+    let closeLines = newPaths.filter(v => newPaths.find(w => v[1] === w[0]))
     //筛选出起点没人连的
-    s = s.filter(v => s.find(w => v[0] === w[1]))
-    console.log('s', s)
+    closeLines = closeLines.filter(v => closeLines.find(w => v[0] === w[1]))
+    console.log('closeLines', closeLines)
     // console.log('lineMaps', lineMaps)
     // console.log('newPaths', newPaths)
     // console.log('newNodes', newNodes)
+
+
+    let b = closeLines.map(value => value[0])
+    let c = closeLines.map(value => value[1])
+    let d = Array.from(new Set(b.concat(c)))
+    let e = d.map(v => newNodes[v])
+    let g = convexHull(e)
+    // console.log(b, c, d, e, g)
     let cu = CanvasUtil2.getInstance()
     let {ctx} = cu
-    newNodes.map(point => {
-      draw.drawRound(ctx, point)
+    ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
+    newNodes.map((point, i) => {
+      ctx.fillText(i + '', point.x, point.y)
+      // draw.drawRound(ctx, point)
     })
+
 
     let {center, realRotation, flipHorizontal, flipVertical} = this.conf
     cu.waitRenderOtherStatusFunc.push(() => {
       ctx.save()
       ctx.strokeStyle = 'red'
       ctx.fillStyle = 'red'
-      s.map(line => {
+      closeLines.map(line => {
         let startPoint = newNodes[line[0]]
         let fixStartPoint = {
           x: center.x + startPoint.x,
@@ -282,12 +297,25 @@ export class Pen extends ParentShape {
         ctx.lineTo2(fixEndPoint)
         cu.ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
         let a = helper.getStraightLineCenterPoint(fixStartPoint, fixEndPoint)
-        ctx.fillText(`${line[0]}-${line[1]}`, a.x-20, a.y)
+        ctx.fillText(`${line[0]}-${line[1]}`, a.x - 20, a.y)
       })
       ctx.stroke()
+
+      // let start = {
+      //   x: g[0].x + center.x,
+      //   y: g[0].y + center.y,
+      // }
+      // ctx.moveTo2(start)
+      // g.map(v => {
+      //   start = {
+      //     x: v.x + center.x,
+      //     y: v.y + center.y,
+      //   }
+      //   ctx.lineTo2(start)
+      // })
+      // ctx.fill()
       ctx.restore()
     })
-
 
     // let ps = []
     // for (let i = 0; i < paths.length - 1; i++) {
@@ -406,7 +434,6 @@ export class Pen extends ParentShape {
         fillPathList.push({close: true, path: fillPath})
       }
     }
-
 
     paths.map(line => {
       let strokePath = new Path2D()

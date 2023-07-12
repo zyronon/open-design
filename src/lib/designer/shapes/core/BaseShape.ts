@@ -851,34 +851,26 @@ export class BaseShape {
         }
       }
 
-      //TODO 缺少temPoint
       if (cu.editModeType === EditModeType.Edit) {
         this.conf.isCustom = true
         this.mouseDown = true
-        if (type === EditType.Point) {
-          let lastPoint = nodes[this.editStartPointInfo.pointIndex]
-          if (lastPoint.cps[1] !== -1) {
-            paths.push([this.editStartPointInfo.pointIndex, pointIndex, lastPoint.cps[1], -1, -1, -1, LineType.Bezier2])
-          } else {
-            paths.push([this.editStartPointInfo.pointIndex, pointIndex, -1, -1, -1, -1, LineType.Line])
-          }
-        } else {
-          let {pointIndex, lineIndex, type} = this.editStartPointInfo
-          let lastPoint = nodes[pointIndex]
-          let fixMousePoint = {
-            x: event.point.x - center.x,
-            y: event.point.y - center.y
-          }
-          let endPoint: PenNetworkNode = {
-            ...fixMousePoint,
-            cornerRadius: 0,
-            realCornerRadius: 0,
-            handleMirroring: HandleMirroring.RightAngle,
-            cornerCps: [-1, -1],
-            cps: [-1, -1],
-          }
-          nodes.push(endPoint)
+        let fixMousePoint = {
+          x: event.point.x - center.x,
+          y: event.point.y - center.y
+        }
+        let endPoint: PenNetworkNode = {
+          ...fixMousePoint,
+          cornerRadius: 0,
+          realCornerRadius: 0,
+          handleMirroring: HandleMirroring.RightAngle,
+          cornerCps: [-1, -1],
+          cps: [-1, -1],
+        }
+        let {pointIndex, lineIndex, type} = this.editStartPointInfo
 
+        if (type) {
+          let lastPoint = nodes[pointIndex]
+          nodes.push(endPoint)
           if (lastPoint.cps[1] !== -1) {
             paths.push([pointIndex, nodes.length - 1, lastPoint.cps[1], -1, -1, -1, LineType.Bezier2])
           } else {
@@ -887,8 +879,28 @@ export class BaseShape {
           this.editStartPointInfo.lineIndex = -1
           this.editStartPointInfo.pointIndex = nodes.length - 1
           this.editStartPointInfo.type = EditType.Point
-          cu.render()
+        } else {
+          if (this.tempPoint) {
+            let startPoint: PenNetworkNode = {
+              ...this.tempPoint,
+              cornerRadius: 0,
+              realCornerRadius: 0,
+              handleMirroring: HandleMirroring.RightAngle,
+              cornerCps: [-1, -1],
+              cps: [-1, -1],
+            }
+            nodes.push(startPoint)
+            nodes.push(endPoint)
+            paths.push([nodes.length - 2, nodes.length - 1, -1, -1, -1, -1, LineType.Line])
+            this.editStartPointInfo.lineIndex = -1
+            this.editStartPointInfo.pointIndex = nodes.length - 1
+            this.editStartPointInfo.type = EditType.Point
+            this.tempPoint = undefined
+          } else {
+            this.tempPoint = fixMousePoint
+          }
         }
+        cu.render()
       }
     }
 
@@ -1045,6 +1057,26 @@ export class BaseShape {
       }
 
       if (cu.editModeType === EditModeType.Edit) {
+        if (this.tempPoint){
+          let lastPoint = this.tempPoint
+          let ctx = cu.ctx
+          cu.waitRenderOtherStatusFunc.push(() => {
+            let fixLastPoint = {
+              x: center.x + lastPoint.x,
+              y: center.y + lastPoint.y,
+            }
+            ctx.save()
+            ctx.beginPath()
+            ctx.moveTo2(fixLastPoint)
+            ctx.strokeStyle = defaultConfig.strokeStyle
+            ctx.lineTo2(event.point)
+            ctx.stroke()
+            draw.drawRound(ctx, event.point)
+            ctx.restore()
+          })
+          cu.render()
+          return
+        }
         let {pointIndex, lineIndex, type} = this.editStartPointInfo
         if (!type) return
 
@@ -1066,9 +1098,9 @@ export class BaseShape {
               lastPoint.cps[1] = ctrlNodes.length - 2
               lastPoint.handleMirroring = HandleMirroring.MirrorAngleAndLength
               line[3] = lastPoint.cps[0]
-              if (line[6] === LineType.Line){
+              if (line[6] === LineType.Line) {
                 line[6] = LineType.Bezier2
-              }else {
+              } else {
                 line[6] = LineType.Bezier3
               }
             } else {

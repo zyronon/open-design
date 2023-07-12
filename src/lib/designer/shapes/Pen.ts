@@ -186,13 +186,13 @@ export class Pen extends ParentShape {
     return []
   }
 
-  getCustomShapePath3(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
+  getCustomShapePath3(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     const {nodes, paths, ctrlNodes} = this._conf.penNetwork
 
     let newNodes = cloneDeep(nodes)
-    let lineMaps = new Map<number, {index: number, point: P}[]>()
+    let lineMaps = new Map<number, { index: number, point: P }[]>()
 
     for (let i = 0; i < paths.length - 1; i++) {
       for (let j = i; j < paths.length; j++) {
@@ -248,7 +248,11 @@ export class Pen extends ParentShape {
       }
     })
 
-
+//筛选出终点没人连的
+    let s = newPaths.filter(v => newPaths.find(w => v[1] === w[0]))
+    //筛选出起点没人连的
+    s = s.filter(v => s.find(w => v[0] === w[1]))
+    console.log('s', s)
     // console.log('lineMaps', lineMaps)
     // console.log('newPaths', newPaths)
     // console.log('newNodes', newNodes)
@@ -258,14 +262,31 @@ export class Pen extends ParentShape {
       draw.drawRound(ctx, point)
     })
 
-    // ctx.strokeStyle = 'red'
-    // newPaths.map(line => {
-    //   let startPoint = newNodes[line[0]]
-    //   let endPoint = newNodes[line[1]]
-    //   ctx.moveTo2(startPoint)
-    //   ctx.lineTo2(endPoint)
-    // })
-    // ctx.stroke()
+    let {center, realRotation, flipHorizontal, flipVertical} = this.conf
+    cu.waitRenderOtherStatusFunc.push(() => {
+      ctx.save()
+      ctx.strokeStyle = 'red'
+      ctx.fillStyle = 'red'
+      s.map(line => {
+        let startPoint = newNodes[line[0]]
+        let fixStartPoint = {
+          x: center.x + startPoint.x,
+          y: center.y + startPoint.y,
+        }
+        let endPoint = newNodes[line[1]]
+        let fixEndPoint = {
+          x: center.x + endPoint.x,
+          y: center.y + endPoint.y,
+        }
+        ctx.moveTo2(fixStartPoint)
+        ctx.lineTo2(fixEndPoint)
+        cu.ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
+        let a = helper.getStraightLineCenterPoint(fixStartPoint, fixEndPoint)
+        ctx.fillText(`${line[0]}-${line[1]}`, a.x-20, a.y)
+      })
+      ctx.stroke()
+      ctx.restore()
+    })
 
 
     // let ps = []

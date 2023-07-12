@@ -8,7 +8,7 @@ import {BaseEvent2, EditType, LinePath, LineShape, LineType, P, ShapeStatus} fro
 import {BaseShape} from "./core/BaseShape"
 import {PenConfig, PenNetworkLine} from "../config/PenConfig"
 import {Math2} from "../utils/math"
-import {eq} from "lodash"
+import {cloneDeep, eq} from "lodash"
 
 export class Pen extends ParentShape {
   mouseDown: boolean = false
@@ -186,58 +186,136 @@ export class Pen extends ParentShape {
     return []
   }
 
-  getCustomShapePath3(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
+  getCustomShapePath3(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     const {nodes, paths, ctrlNodes} = this._conf.penNetwork
 
-    let ps = []
+    let newNodes = cloneDeep(nodes)
+    let lineMaps = new Map<number, {index: number, point: P}[]>()
+
     for (let i = 0; i < paths.length - 1; i++) {
       for (let j = i; j < paths.length; j++) {
         let currentLine = paths[i]
         let nextLine = paths[j]
         let t = Math2.isIntersection2(currentLine, nextLine, nodes, ctrlNodes)
         if (t) {
-          console.log('t', t)
-          ps.push({
-            p: t.intersectsPoint,
-            is: [i, j]
-          })
+          newNodes.push(t.intersectsPoint)
+          let data = {
+            index: newNodes.length - 1,
+            point: t.intersectsPoint
+          }
+          let lineMap = lineMaps.get(i)
+          if (lineMap) {
+            lineMap.push(data)
+            lineMaps.set(i, lineMap)
+          } else {
+            lineMaps.set(i, [data])
+          }
+          lineMap = lineMaps.get(j)
+          if (lineMap) {
+            lineMap.push(data)
+            lineMaps.set(j, lineMap)
+          } else {
+            lineMaps.set(j, [data])
+          }
         }
       }
     }
 
-    console.log('ps', JSON.stringify(ps, null, 2))
+    let newPaths: any[] = []
+    paths.map((line, index) => {
+      let lineMap = lineMaps.get(index)
+      if (lineMap) {
+        let startPoint = newNodes[line[0]]
+        let endPoint = newNodes[line[1]]
+        if (startPoint.x === endPoint.x) {
+          lineMap.sort((a, b) => a.point.y - b.point.y)
+        } else if (startPoint.x < endPoint.x) {
+          lineMap.sort((a, b) => a.point.x - b.point.x)
+        } else {
+          lineMap.sort((a, b) => -(a.point.x - b.point.x))
+        }
+        let newLine: any = [line]
+        lineMap.map(v => {
+          let lastLine = newLine[newLine.length - 1]
+          newLine.pop()
+          newLine = newLine.concat([[lastLine[0], v.index], [v.index, lastLine[1]]])
+        })
+        newPaths = newPaths.concat(newLine)
+      } else {
+        newPaths.push(line)
+      }
+    })
+
+
+    // console.log('lineMaps', lineMaps)
+    // console.log('newPaths', newPaths)
+    // console.log('newNodes', newNodes)
     let cu = CanvasUtil2.getInstance()
     let {ctx} = cu
-    ctx.save()
-    ctx.strokeStyle = 'gray'
-    ctx.fillStyle = 'gray'
+    newNodes.map(point => {
+      draw.drawRound(ctx, point)
+    })
 
-    const test = (lineIndex: number, list: any[]) => {
-      let rIndex = list.findIndex(v => {
-        return v.is.includes(lineIndex)
-      })
-      if (rIndex !== -1) {
-        let item = list[rIndex]
-        ctx.lineTo2(item.p)
-        console.log('uite.p', item.p)
-        list.splice(rIndex, 1)
-        let i = 0
-        if (item.is[0] === lineIndex) {
-          i = 1
-        }
-        test(item.is[i], list)
-      }
-    }
-
-    ctx.moveTo2(ps[0].p)
-    // ps.shift()
-    test(ps[0].is[0], ps)
+    ctx.strokeStyle = 'red'
+    newPaths.map(line => {
+      let startPoint = newNodes[line[0]]
+      let endPoint = newNodes[line[1]]
+      ctx.moveTo2(startPoint)
+      ctx.lineTo2(endPoint)
+    })
 
     ctx.stroke()
-    ctx.fill()
-    ctx.restore()
+
+
+    // let ps = []
+    // for (let i = 0; i < paths.length - 1; i++) {
+    //   for (let j = i; j < paths.length; j++) {
+    //     let currentLine = paths[i]
+    //     let nextLine = paths[j]
+    //     let t = Math2.isIntersection2(currentLine, nextLine, nodes, ctrlNodes)
+    //     if (t) {
+    //       console.log('t', t)
+    //       ps.push({
+    //         p: t.intersectsPoint,
+    //         is: [i, j]
+    //       })
+    //     }
+    //   }
+    // }
+    //
+    // console.log('ps', JSON.stringify(ps, null, 2))
+    // let cu = CanvasUtil2.getInstance()
+    // let {ctx} = cu
+    // ctx.save()
+    // ctx.strokeStyle = 'gray'
+    // ctx.fillStyle = 'gray'
+    //
+    // const test = (lineIndex: number, list: any[]) => {
+    //   let rIndex = list.findIndex(v => {
+    //     return v.is.includes(lineIndex)
+    //   })
+    //   if (rIndex !== -1) {
+    //     let item = list[rIndex]
+    //     ctx.lineTo2(item.p)
+    //     console.log('uite.p', item.p)
+    //     list.splice(rIndex, 1)
+    //     let i = 0
+    //     if (item.is[0] === lineIndex) {
+    //       i = 1
+    //     }
+    //     test(item.is[i], list)
+    //   }
+    // }
+    //
+    // ctx.moveTo2(ps[0].p)
+    // // ps.shift()
+    // test(ps[0].is[0], ps)
+    //
+    // ctx.stroke()
+    // ctx.fill()
+    // ctx.restore()
     // for (let i = 0; i < paths.length - 1; i++) {
     for (let i = 0; i < 0; i++) {
       let ip, a = 0, b = 0
@@ -308,6 +386,7 @@ export class Pen extends ParentShape {
         fillPathList.push({close: true, path: fillPath})
       }
     }
+
 
     paths.map(line => {
       let strokePath = new Path2D()

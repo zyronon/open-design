@@ -258,15 +258,14 @@ export class Pen extends ParentShape {
       draw.drawRound(ctx, point)
     })
 
-    ctx.strokeStyle = 'red'
-    newPaths.map(line => {
-      let startPoint = newNodes[line[0]]
-      let endPoint = newNodes[line[1]]
-      ctx.moveTo2(startPoint)
-      ctx.lineTo2(endPoint)
-    })
-
-    ctx.stroke()
+    // ctx.strokeStyle = 'red'
+    // newPaths.map(line => {
+    //   let startPoint = newNodes[line[0]]
+    //   let endPoint = newNodes[line[1]]
+    //   ctx.moveTo2(startPoint)
+    //   ctx.lineTo2(endPoint)
+    // })
+    // ctx.stroke()
 
 
     // let ps = []

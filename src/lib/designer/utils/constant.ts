@@ -1619,7 +1619,7 @@ export const rectsc: any[] = [
     "commonPoints": []
   }
 ]
-export const rectsd: any[] = [
+export const rects: any[] = [
   {
     "name": "矩形",
     "layout": {
@@ -1777,7 +1777,7 @@ export const rectsd: any[] = [
     "commonPoints": []
   }
 ]
-export const rects: any[] = [
+export const rectse: any[] = [
   {
     "name": "矩形",
     "layout": {

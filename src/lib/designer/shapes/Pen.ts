@@ -8,7 +8,7 @@ import {BaseEvent2, EditType, LinePath, LineShape, LineType, P, ShapeStatus} fro
 import {BaseShape} from "./core/BaseShape"
 import {PenConfig, PenNetworkLine} from "../config/PenConfig"
 import {Math2} from "../utils/math"
-import {cloneDeep, eq} from "lodash"
+import {cloneDeep, eq, uniqueId} from "lodash"
 import {convexHull} from "../utils/test";
 
 export class Pen extends ParentShape {
@@ -190,13 +190,13 @@ export class Pen extends ParentShape {
     return []
   }
 
-  getCustomShapePath3(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
+  getCustomShapePath3(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     const {nodes, paths, ctrlNodes} = this._conf.penNetwork
 
     let newNodes = cloneDeep(nodes)
-    let lineMaps = new Map<number, { index: number, point: P }[]>()
+    let lineMaps = new Map<number, {index: number, point: P}[]>()
 
     for (let i = 0; i < paths.length - 1; i++) {
       for (let j = i; j < paths.length; j++) {
@@ -256,10 +256,81 @@ export class Pen extends ParentShape {
     let closeLines = newPaths.filter(v => newPaths.find(w => v[1] === w[0]))
     //筛选出起点没人连的
     closeLines = closeLines.filter(v => closeLines.find(w => v[0] === w[1]))
-    console.log('closeLines', closeLines)
+    let closeLinesWithId = closeLines.map(v => ({id: uniqueId(), line: v}))
+    // console.log('closeLines', closeLines)
+    // console.log('closeLinesWithId', closeLinesWithId)
     // console.log('lineMaps', lineMaps)
     // console.log('newPaths', newPaths)
     // console.log('newNodes', newNodes)
+    let closeAreas: any[][] = []
+
+    // @ts-ignore
+    const ff = (start: number, end: number, line: any, list: any[]) => {
+      if (closeAreas.find(v => v.find(w => w.id === line.id))) {
+        return []
+      }
+      let arrsEnd = list.filter(w => [w.line[0], w.line[1]].includes(end))
+      let ps = [line]
+      let pss: any[] = []
+      while (arrsEnd.length !== 0) {
+        if (arrsEnd.length === 1) {
+          let a = arrsEnd[0]
+          let line = a.line
+          let rIndex = list.findIndex(b => b.id === a.id)
+          if (rIndex > -1) list.splice(rIndex, 1)
+          if (line[0] === end) {
+            end = line[1]
+          } else {
+            end = line[0]
+          }
+          ps.push(a)
+          if (end === start) {
+            return [ps]
+          }
+          arrsEnd = list.filter(w => [w.line[0], w.line[1]].includes(end))
+        } else {
+          for (let i = 0; i < arrsEnd.length; i++) {
+            let a = arrsEnd[i]
+            let rIndex = closeLinesWithId.findIndex(b => b.id === a.id)
+            // if (rIndex > -1) list.splice(rIndex, 1)
+            // @ts-ignore
+            let newList = closeLinesWithId.toSpliced(rIndex, 1)
+            if (a.line[0] === end) {
+              let start = a.line[0]
+              let end = a.line[1]
+              let r = ff(start, end, a, newList)
+              if (r.length) {
+                // pss = pss.concat(r)
+                closeAreas = closeAreas.concat(r)
+              }
+            } else {
+              let start = a.line[1]
+              let end = a.line[0]
+              let r = ff(start, end, a, newList)
+              if (r.length) {
+                // pss = pss.concat(r)
+                closeAreas = closeAreas.concat(r)
+              }
+            }
+          }
+          return []
+        }
+      }
+      return []
+    }
+
+    closeLinesWithId.map((v, i) => {
+      let start = v.line[0]
+      let end = v.line[1]
+      // @ts-ignore
+      let a = ff(start, end, v, closeLinesWithId.toSpliced(i, 1))
+      if (a.length) {
+        closeAreas = closeAreas.concat(a)
+        console.log('a', a)
+      }
+    })
+
+    console.log('closeAreas', closeAreas)
 
 
     let b = closeLines.map(value => value[0])
@@ -277,27 +348,27 @@ export class Pen extends ParentShape {
     })
 
 
-    let {center, realRotation, flipHorizontal, flipVertical} = this.conf
+    let {center} = this.conf
     cu.waitRenderOtherStatusFunc.push(() => {
       ctx.save()
       ctx.strokeStyle = 'red'
       ctx.fillStyle = 'red'
-      closeLines.map(line => {
-        let startPoint = newNodes[line[0]]
+      closeLinesWithId.map(line => {
+        let startPoint = newNodes[line.line[0]]
         let fixStartPoint = {
           x: center.x + startPoint.x,
           y: center.y + startPoint.y,
         }
-        let endPoint = newNodes[line[1]]
+        let endPoint = newNodes[line.line[1]]
         let fixEndPoint = {
           x: center.x + endPoint.x,
           y: center.y + endPoint.y,
         }
         ctx.moveTo2(fixStartPoint)
         ctx.lineTo2(fixEndPoint)
-        cu.ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
+        cu.ctx.font = `400 16rem "SourceHanSansCN", sans-serif`
         let a = helper.getStraightLineCenterPoint(fixStartPoint, fixEndPoint)
-        ctx.fillText(`${line[0]}-${line[1]}`, a.x - 20, a.y)
+        ctx.fillText(`${line.line[0]}-${line.line[1]}:${line.id}`, a.x - 20, a.y)
       })
       ctx.stroke()
 

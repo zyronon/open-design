@@ -190,13 +190,13 @@ export class Pen extends ParentShape {
     return []
   }
 
-  getCustomShapePath3(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
+  getCustomShapePath3(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     const {nodes, paths, ctrlNodes} = this._conf.penNetwork
 
     let newNodes = cloneDeep(nodes)
-    let lineMaps = new Map<number, {index: number, point: P}[]>()
+    let lineMaps = new Map<number, { index: number, point: P }[]>()
 
     for (let i = 0; i < paths.length - 1; i++) {
       for (let j = i; j < paths.length; j++) {
@@ -265,13 +265,11 @@ export class Pen extends ParentShape {
     let closeAreas: any[][] = []
 
     // @ts-ignore
-    const ff = (start: number, end: number, line: any, list: any[]) => {
+    const ff = (start: number, end: number, line: any, list: any[], save: any[]) => {
       if (closeAreas.find(v => v.find(w => w.id === line.id))) {
         return []
       }
       let arrsEnd = list.filter(w => [w.line[0], w.line[1]].includes(end))
-      let ps = [line]
-      let pss: any[] = []
       while (arrsEnd.length !== 0) {
         if (arrsEnd.length === 1) {
           let a = arrsEnd[0]
@@ -282,31 +280,36 @@ export class Pen extends ParentShape {
             end = line[1]
           } else {
             end = line[0]
+            //交换顺序
+            a.line = [line[1], end]
           }
-          ps.push(a)
+          save.push(a)
           if (end === start) {
-            return [ps]
+            return [save]
           }
           arrsEnd = list.filter(w => [w.line[0], w.line[1]].includes(end))
         } else {
           for (let i = 0; i < arrsEnd.length; i++) {
+            let newSave = save.slice()
             let a = arrsEnd[i]
-            let rIndex = closeLinesWithId.findIndex(b => b.id === a.id)
+            let rIndex = list.findIndex(b => b.id === a.id)
             // if (rIndex > -1) list.splice(rIndex, 1)
             // @ts-ignore
-            let newList = closeLinesWithId.toSpliced(rIndex, 1)
+            let newList = list.toSpliced(rIndex, 1)
+            newSave.push(a)
             if (a.line[0] === end) {
-              let start = a.line[0]
+              // let start = a.line[0]
               let end = a.line[1]
-              let r = ff(start, end, a, newList)
+              let r = ff(start, end, a, newList, newSave)
               if (r.length) {
                 // pss = pss.concat(r)
                 closeAreas = closeAreas.concat(r)
               }
             } else {
-              let start = a.line[1]
+              // let start = a.line[1]
               let end = a.line[0]
-              let r = ff(start, end, a, newList)
+              a.line = [a.line[1], end]
+              let r = ff(start, end, a, newList, newSave)
               if (r.length) {
                 // pss = pss.concat(r)
                 closeAreas = closeAreas.concat(r)
@@ -322,11 +325,14 @@ export class Pen extends ParentShape {
     closeLinesWithId.map((v, i) => {
       let start = v.line[0]
       let end = v.line[1]
-      // @ts-ignore
-      let a = ff(start, end, v, closeLinesWithId.toSpliced(i, 1))
-      if (a.length) {
-        closeAreas = closeAreas.concat(a)
-        console.log('a', a)
+      let aa = true
+      if (aa) {
+        // @ts-ignore
+        let a = ff(start, end, v, closeLinesWithId.toSpliced(i, 1), [v])
+        if (a.length) {
+          closeAreas = closeAreas.concat(a)
+          console.log('a', a)
+        }
       }
     })
 
@@ -372,10 +378,34 @@ export class Pen extends ParentShape {
       })
       ctx.stroke()
 
-      // let start = {
-      //   x: g[0].x + center.x,
-      //   y: g[0].y + center.y,
-      // }
+      ctx.fillStyle = 'white'
+      closeAreas.map(v => {
+        let startPoint = newNodes[v[0].line[0]]
+        let fixStartPoint = {
+          x: center.x + startPoint.x,
+          y: center.y + startPoint.y,
+        }
+        let endPoint = newNodes[v[0].line[1]]
+        let fixEndPoint = {
+          x: center.x + endPoint.x,
+          y: center.y + endPoint.y,
+        }
+        ctx.beginPath()
+        ctx.moveTo2(fixStartPoint)
+        ctx.lineTo2(fixEndPoint)
+        v.slice(1).map(w => {
+          endPoint = newNodes[w.line[1]]
+          fixEndPoint = {
+            x: center.x + endPoint.x,
+            y: center.y + endPoint.y,
+          }
+          ctx.lineTo2(fixEndPoint)
+        })
+        ctx.closePath()
+        ctx.fill()
+      })
+
+
       // ctx.moveTo2(start)
       // g.map(v => {
       //   start = {

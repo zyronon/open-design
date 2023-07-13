@@ -1646,7 +1646,7 @@ export const rects: any[] = [
       "nodes": [
         {
           "x": -150,
-          "y": -50,
+          "y": -30,
           "cornerRadius": 0,
           "realCornerRadius": 0,
           "handleMirroring": "RightAngle",
@@ -1655,7 +1655,7 @@ export const rects: any[] = [
         },
         {
           "x": 150,
-          "y": -50,
+          "y": -30,
           "cornerRadius": 0,
           "realCornerRadius": 0,
           "handleMirroring": "NoMirror",
@@ -1699,7 +1699,7 @@ export const rects: any[] = [
           "cps": [-1, -1]
         },
         {
-          "x": 100,
+          "x": 130,
           "y": 150,
           "cornerRadius": 0,
           "realCornerRadius": 0,
@@ -1708,7 +1708,7 @@ export const rects: any[] = [
           "cps": [-1, -1]
         },
         {
-          "x": -100,
+          "x": -130,
           "y": 150,
           "cornerRadius": 0,
           "realCornerRadius": 0,

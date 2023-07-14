@@ -341,8 +341,48 @@ export class Pen extends ParentShape {
           console.log('a', a)
         }
 
+        console.log('closeAreas----', cloneDeep(closeAreas))
+
+        let a1 = -1, a2 = -1
+        const fff = () => {
+          for (let j = 0; j < closeAreas.length; j++) {
+            let c = closeAreas[j]
+            // @ts-ignore
+            for (let f = 0; f < closeAreas.toSpliced(j, 1).length; f++) {
+              // @ts-ignore
+              let d = closeAreas.toSpliced(j, 1)[f]
+              let count = 0
+              c.map(e => {
+                if (d.find((d1: any) => d1.id === e.id)) {
+                  count++
+                }
+              })
+              if (count >= 2) {
+                a1 = j
+                if (f < j) {
+                  a2 = f
+                } else {
+                  a2 = f + j
+                }
+                console.log('count', count, j, f)
+                return
+              }
+            }
+          }
+        }
+        fff()
+        if (a1 !== -1 && a2 !== -1) {
+          if (closeAreas[a1].length > closeAreas[a2].length) {
+            closeAreas.splice(a1, 1)
+          } else {
+            closeAreas.splice(a2, 1)
+          }
+          console.log('a1,a2', a1, a2)
+        }
       }
     })
+
+
     console.log('closeAreas', closeAreas)
 
     // console.log(b, c, d, e, g)

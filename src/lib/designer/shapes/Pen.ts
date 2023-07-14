@@ -190,13 +190,13 @@ export class Pen extends ParentShape {
     return []
   }
 
-  getCustomShapePath3(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
+  getCustomShapePath3(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     const {nodes, paths, ctrlNodes} = this._conf.penNetwork
 
     let newNodes = cloneDeep(nodes)
-    let lineMaps = new Map<number, { index: number, point: P }[]>()
+    let lineMaps = new Map<number, {index: number, point: P}[]>()
 
     for (let i = 0; i < paths.length - 1; i++) {
       for (let j = i; j < paths.length; j++) {
@@ -256,13 +256,14 @@ export class Pen extends ParentShape {
     let closeLines = newPaths.filter(v => newPaths.find(w => v[1] === w[0]))
     //筛选出起点没人连的
     closeLines = closeLines.filter(v => closeLines.find(w => v[0] === w[1]))
-    let closeLinesWithId = closeLines.map(v => ({id: uniqueId(), line: v}))
+    let closeLinesWithId = closeLines.map((v, i) => ({id: i, line: v}))
     // console.log('closeLines', closeLines)
-    // console.log('closeLinesWithId', closeLinesWithId)
+    console.log('closeLinesWithId', cloneDeep(closeLinesWithId))
     // console.log('lineMaps', lineMaps)
     // console.log('newPaths', newPaths)
     // console.log('newNodes', newNodes)
     let closeAreas: any[][] = []
+    let showFill = false
 
     // @ts-ignore
     const ff = (start: number, end: number, line: any, list: any[], save: any[]) => {
@@ -272,7 +273,8 @@ export class Pen extends ParentShape {
       let arrsEnd = list.filter(w => [w.line[0], w.line[1]].includes(end))
       while (arrsEnd.length !== 0) {
         if (arrsEnd.length === 1) {
-          let a = arrsEnd[0]
+          //这里用复制一遍。因为后续的其他遍历，可能也会碰到这条线，然后方向是相反的，又去改变头和尾
+          let a = cloneDeep(arrsEnd[0])
           let line = a.line
           let rIndex = list.findIndex(b => b.id === a.id)
           if (rIndex > -1) list.splice(rIndex, 1)
@@ -287,31 +289,35 @@ export class Pen extends ParentShape {
           if (end === start) {
             return [save]
           }
+          //如果当前线段与线段们中的任一组成了回路，那么就是一个新的封闭图
+          let isCloseIndex = save.findIndex(b => b.line[0] === end)
+          if (isCloseIndex > -1) {
+            return [save.slice(isCloseIndex)]
+          }
           arrsEnd = list.filter(w => [w.line[0], w.line[1]].includes(end))
         } else {
           for (let i = 0; i < arrsEnd.length; i++) {
             let newSave = save.slice()
-            let a = arrsEnd[i]
+            let a = cloneDeep(arrsEnd[i])
             let rIndex = list.findIndex(b => b.id === a.id)
-            // if (rIndex > -1) list.splice(rIndex, 1)
-            // @ts-ignore
-            let newList = list.toSpliced(rIndex, 1)
-            newSave.push(a)
+            if (rIndex > -1) list.splice(rIndex, 1)
+            let newEnd = -1
             if (a.line[0] === end) {
-              // let start = a.line[0]
-              let end = a.line[1]
-              let r = ff(start, end, a, newList, newSave)
-              if (r.length) {
-                // pss = pss.concat(r)
-                closeAreas = closeAreas.concat(r)
-              }
+              newEnd = a.line[1]
             } else {
-              // let start = a.line[1]
-              let end = a.line[0]
-              a.line = [a.line[1], end]
-              let r = ff(start, end, a, newList, newSave)
+              newEnd = a.line[0]
+              a.line = [a.line[1], newEnd]
+            }
+            newSave.push(a)
+            let isCloseIndex = newSave.findIndex(b => b.line[0] === newEnd)
+            if (isCloseIndex > -1) {
+              let closeArea = newSave.slice(isCloseIndex)
+              closeAreas = closeAreas.concat([closeArea])
+            } else if (newEnd === start) {
+              closeAreas = closeAreas.concat([newSave])
+            } else {
+              let r = ff(start, newEnd, a, list, newSave)
               if (r.length) {
-                // pss = pss.concat(r)
                 closeAreas = closeAreas.concat(r)
               }
             }
@@ -322,6 +328,7 @@ export class Pen extends ParentShape {
       return []
     }
 
+    //TODO 想想，如果只有两条直线，那么根本无需检测，肯定没有封闭图。如果是曲线呢？
     closeLinesWithId.map((v, i) => {
       let start = v.line[0]
       let end = v.line[1]
@@ -333,17 +340,11 @@ export class Pen extends ParentShape {
           closeAreas = closeAreas.concat(a)
           console.log('a', a)
         }
+
       }
     })
-
     console.log('closeAreas', closeAreas)
 
-
-    let b = closeLines.map(value => value[0])
-    let c = closeLines.map(value => value[1])
-    let d = Array.from(new Set(b.concat(c)))
-    let e = d.map(v => newNodes[v])
-    let g = convexHull(e)
     // console.log(b, c, d, e, g)
     let cu = CanvasUtil2.getInstance()
     let {ctx} = cu
@@ -374,37 +375,39 @@ export class Pen extends ParentShape {
         ctx.lineTo2(fixEndPoint)
         cu.ctx.font = `400 16rem "SourceHanSansCN", sans-serif`
         let a = helper.getStraightLineCenterPoint(fixStartPoint, fixEndPoint)
-        ctx.fillText(`${line.line[0]}-${line.line[1]}:${line.id}`, a.x - 20, a.y)
+        // ctx.fillText(`${line.line[0]}-${line.line[1]}:${line.id}`, a.x - 20, a.y)
+        ctx.fillText(`${line.id}`, a.x - 20, a.y)
       })
       ctx.stroke()
 
-      ctx.fillStyle = 'white'
-      closeAreas.map(v => {
-        let startPoint = newNodes[v[0].line[0]]
-        let fixStartPoint = {
-          x: center.x + startPoint.x,
-          y: center.y + startPoint.y,
-        }
-        let endPoint = newNodes[v[0].line[1]]
-        let fixEndPoint = {
-          x: center.x + endPoint.x,
-          y: center.y + endPoint.y,
-        }
-        ctx.beginPath()
-        ctx.moveTo2(fixStartPoint)
-        ctx.lineTo2(fixEndPoint)
-        v.slice(1).map(w => {
-          endPoint = newNodes[w.line[1]]
-          fixEndPoint = {
+      if (showFill) {
+        ctx.fillStyle = 'gray'
+        closeAreas.slice().map(v => {
+          let startPoint = newNodes[v[0].line[0]]
+          let fixStartPoint = {
+            x: center.x + startPoint.x,
+            y: center.y + startPoint.y,
+          }
+          let endPoint = newNodes[v[0].line[1]]
+          let fixEndPoint = {
             x: center.x + endPoint.x,
             y: center.y + endPoint.y,
           }
+          ctx.beginPath()
+          ctx.moveTo2(fixStartPoint)
           ctx.lineTo2(fixEndPoint)
+          v.slice(1).map(w => {
+            endPoint = newNodes[w.line[1]]
+            fixEndPoint = {
+              x: center.x + endPoint.x,
+              y: center.y + endPoint.y,
+            }
+            ctx.lineTo2(fixEndPoint)
+          })
+          ctx.closePath()
+          ctx.fill()
         })
-        ctx.closePath()
-        ctx.fill()
-      })
-
+      }
 
       // ctx.moveTo2(start)
       // g.map(v => {

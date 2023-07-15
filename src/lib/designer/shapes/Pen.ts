@@ -190,13 +190,13 @@ export class Pen extends ParentShape {
     return []
   }
 
-  getCustomShapePath3(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
+  getCustomShapePath3(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     const {nodes, paths, ctrlNodes} = this._conf.penNetwork
 
     let newNodes = cloneDeep(nodes)
-    let lineMaps = new Map<number, {index: number, point: P}[]>()
+    let lineMaps = new Map<number, { index: number, point: P }[]>()
 
     for (let i = 0; i < paths.length - 1; i++) {
       for (let j = i; j < paths.length; j++) {
@@ -265,19 +265,18 @@ export class Pen extends ParentShape {
     let closeAreas: any[][] = []
     let showFill = false
 
-    // @ts-ignore
-    const ff = (start: number, end: number, line: any, list: any[], save: any[]) => {
-      if (closeAreas.find(v => v.find(w => w.id === line.id))) {
-        return []
-      }
-      let arrsEnd = list.filter(w => [w.line[0], w.line[1]].includes(end))
+    const check = (lises: any[]) => {
+      let listIndexStr = lises.map(v => v.id).sort((a, b) => a - b).join('')
+      return closeAreas.find(w => w.map(w => w.id).sort((a, b) => a - b).join('') === listIndexStr)
+    }
+
+    const gg = (start: number, end: number, line: any, list: any[], save: any[]) => {
+      let arrsEnd = list.filter(w => [w.line[0], w.line[1]].includes(end) && w.id !== line.id)
       while (arrsEnd.length !== 0) {
         if (arrsEnd.length === 1) {
           //这里用复制一遍。因为后续的其他遍历，可能也会碰到这条线，然后方向是相反的，又去改变头和尾
           let a = cloneDeep(arrsEnd[0])
           let line = a.line
-          let rIndex = list.findIndex(b => b.id === a.id)
-          if (rIndex > -1) list.splice(rIndex, 1)
           if (line[0] === end) {
             end = line[1]
           } else {
@@ -294,13 +293,11 @@ export class Pen extends ParentShape {
           if (isCloseIndex > -1) {
             return [save.slice(isCloseIndex)]
           }
-          arrsEnd = list.filter(w => [w.line[0], w.line[1]].includes(end))
+          arrsEnd = list.filter(w => [w.line[0], w.line[1]].includes(end) && w.id !== a.id)
         } else {
           for (let i = 0; i < arrsEnd.length; i++) {
             let newSave = save.slice()
             let a = cloneDeep(arrsEnd[i])
-            let rIndex = list.findIndex(b => b.id === a.id)
-            if (rIndex > -1) list.splice(rIndex, 1)
             let newEnd = -1
             if (a.line[0] === end) {
               newEnd = a.line[1]
@@ -312,13 +309,19 @@ export class Pen extends ParentShape {
             let isCloseIndex = newSave.findIndex(b => b.line[0] === newEnd)
             if (isCloseIndex > -1) {
               let closeArea = newSave.slice(isCloseIndex)
-              closeAreas = closeAreas.concat([closeArea])
+              if (!check(closeArea)) {
+                closeAreas = closeAreas.concat([closeArea])
+              }
             } else if (newEnd === start) {
-              closeAreas = closeAreas.concat([newSave])
+              if (!check(newSave)) {
+                closeAreas = closeAreas.concat([newSave])
+              }
             } else {
-              let r = ff(start, newEnd, a, list, newSave)
+              let r = gg(start, newEnd, a, list, newSave)
               if (r.length) {
-                closeAreas = closeAreas.concat(r)
+                if (!check(r[0])) {
+                  closeAreas = closeAreas.concat(r)
+                }
               }
             }
           }
@@ -328,59 +331,61 @@ export class Pen extends ParentShape {
       return []
     }
 
+    console.time()
     //TODO 想想，如果只有两条直线，那么根本无需检测，肯定没有封闭图。如果是曲线呢？
-    closeLinesWithId.map((v, i) => {
+    closeLinesWithId.slice(0, 1).map((v, i) => {
       let start = v.line[0]
       let end = v.line[1]
       let aa = true
       if (aa) {
         // @ts-ignore
-        let a = ff(start, end, v, closeLinesWithId.toSpliced(i, 1), [v])
+        let a = gg(start, end, v, closeLinesWithId.slice(), [v])
         if (a.length) {
           closeAreas = closeAreas.concat(a)
           console.log('a', a)
         }
 
-        console.log('closeAreas----', cloneDeep(closeAreas))
+        // console.log('closeAreas----', cloneDeep(closeAreas))
 
-        let a1 = -1, a2 = -1
-        const fff = () => {
-          for (let j = 0; j < closeAreas.length; j++) {
-            let c = closeAreas[j]
-            // @ts-ignore
-            for (let f = 0; f < closeAreas.toSpliced(j, 1).length; f++) {
-              // @ts-ignore
-              let d = closeAreas.toSpliced(j, 1)[f]
-              let count = 0
-              c.map(e => {
-                if (d.find((d1: any) => d1.id === e.id)) {
-                  count++
-                }
-              })
-              if (count >= 2) {
-                a1 = j
-                if (f < j) {
-                  a2 = f
-                } else {
-                  a2 = f + j
-                }
-                console.log('count', count, j, f)
-                return
-              }
-            }
-          }
-        }
-        fff()
-        if (a1 !== -1 && a2 !== -1) {
-          if (closeAreas[a1].length > closeAreas[a2].length) {
-            closeAreas.splice(a1, 1)
-          } else {
-            closeAreas.splice(a2, 1)
-          }
-          console.log('a1,a2', a1, a2)
-        }
+        // let a1 = -1, a2 = -1
+        // const fff = () => {
+        //   for (let j = 0; j < closeAreas.length; j++) {
+        //     let c = closeAreas[j]
+        //     // @ts-ignore
+        //     for (let f = 0; f < closeAreas.toSpliced(j, 1).length; f++) {
+        //       // @ts-ignore
+        //       let d = closeAreas.toSpliced(j, 1)[f]
+        //       let count = 0
+        //       c.map(e => {
+        //         if (d.find((d1: any) => d1.id === e.id)) {
+        //           count++
+        //         }
+        //       })
+        //       if (count >= 2) {
+        //         a1 = j
+        //         if (f < j) {
+        //           a2 = f
+        //         } else {
+        //           a2 = f + j
+        //         }
+        //         console.log('count', count, j, f)
+        //         return
+        //       }
+        //     }
+        //   }
+        // }
+        // fff()
+        // if (a1 !== -1 && a2 !== -1) {
+        //   if (closeAreas[a1].length > closeAreas[a2].length) {
+        //     closeAreas.splice(a1, 1)
+        //   } else {
+        //     closeAreas.splice(a2, 1)
+        //   }
+        //   console.log('a1,a2', a1, a2)
+        // }
       }
     })
+    console.timeEnd()
 
 
     console.log('closeAreas', closeAreas)

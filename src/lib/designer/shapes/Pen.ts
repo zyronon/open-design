@@ -333,64 +333,43 @@ export class Pen extends ParentShape {
 
     console.time()
     //TODO 想想，如果只有两条直线，那么根本无需检测，肯定没有封闭图。如果是曲线呢？
-    closeLinesWithId.slice(0, 1).map((v, i) => {
+    closeLinesWithId.slice(0, 1).map((v) => {
       let start = v.line[0]
       let end = v.line[1]
       let aa = true
       if (aa) {
         // @ts-ignore
-        let a = gg(start, end, v, closeLinesWithId.slice(), [v])
-        if (a.length) {
-          closeAreas = closeAreas.concat(a)
-          console.log('a', a)
+        let r = gg(start, end, v, closeLinesWithId.slice(), [v])
+        if (r.length) {
+          if (!check(r[0])) {
+            closeAreas = closeAreas.concat(r)
+          }
         }
 
-        // console.log('closeAreas----', cloneDeep(closeAreas))
+        let closeAreasId = closeAreas.map((v, i) => ({id: i, area: v}))
+        console.log('closeAreas----', cloneDeep(closeAreasId))
 
-        // let a1 = -1, a2 = -1
-        // const fff = () => {
-        //   for (let j = 0; j < closeAreas.length; j++) {
-        //     let c = closeAreas[j]
-        //     // @ts-ignore
-        //     for (let f = 0; f < closeAreas.toSpliced(j, 1).length; f++) {
-        //       // @ts-ignore
-        //       let d = closeAreas.toSpliced(j, 1)[f]
-        //       let count = 0
-        //       c.map(e => {
-        //         if (d.find((d1: any) => d1.id === e.id)) {
-        //           count++
-        //         }
-        //       })
-        //       if (count >= 2) {
-        //         a1 = j
-        //         if (f < j) {
-        //           a2 = f
-        //         } else {
-        //           a2 = f + j
-        //         }
-        //         console.log('count', count, j, f)
-        //         return
-        //       }
-        //     }
-        //   }
-        // }
-        // fff()
-        // if (a1 !== -1 && a2 !== -1) {
-        //   if (closeAreas[a1].length > closeAreas[a2].length) {
-        //     closeAreas.splice(a1, 1)
-        //   } else {
-        //     closeAreas.splice(a2, 1)
-        //   }
-        //   console.log('a1,a2', a1, a2)
-        // }
+        let s = closeAreas.filter((a: any, i: number) => {
+          let count = 0
+          let ids = a.map((l: any) => l.id)
+          closeAreas.map((b: any, j: number) => {
+            if (i !== j) {
+              b.map((c: any) => {
+                if (ids.find((id: any) => id === c.id)) {
+                  count++
+                }
+              })
+            }
+          })
+          return count < 2
+        })
+
+        console.log('s', s)
+
       }
     })
     console.timeEnd()
-
-
-    console.log('closeAreas', closeAreas)
-
-    // console.log(b, c, d, e, g)
+    console.log('closeAreas----', cloneDeep(closeAreas))
     let cu = CanvasUtil2.getInstance()
     let {ctx} = cu
     ctx.font = `400 18rem "SourceHanSansCN", sans-serif`

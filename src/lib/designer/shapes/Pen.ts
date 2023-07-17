@@ -191,6 +191,11 @@ export class Pen extends ParentShape {
   }
 
   getCustomShapePath3(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
+    let showTime = false
+    if (showTime) {
+      console.time()
+    }
+
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     const {nodes, paths, ctrlNodes} = this._conf.penNetwork
@@ -335,7 +340,6 @@ export class Pen extends ParentShape {
 
     //TODO 想想，如果只有两条直线，那么根本无需检测，肯定没有封闭图。如果是曲线呢？
     if (closeLinesWithId.length > 2) {
-      // console.time()
       let currentLine = closeLinesWithId[0]
       let start = currentLine.line[0]
       let end = currentLine.line[1]
@@ -383,7 +387,6 @@ export class Pen extends ParentShape {
           closeAreasId.splice(r, 1)
         }
       })
-      // console.timeEnd()
       console.log('closeAreasRepeat----', cloneDeep(closeAreas))
       console.log('closeAreas----', cloneDeep(closeAreasId.map(v => v.area)))
 
@@ -603,6 +606,11 @@ export class Pen extends ParentShape {
       }
       strokePathList.push({close: true, path: strokePath})
     })
+
+    if (showTime) {
+      console.timeEnd()
+    }
+
     return {strokePathList, fillPathList}
   }
 }

@@ -190,14 +190,15 @@ export class Pen extends ParentShape {
     return []
   }
 
-  getCustomShapePath3(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
+  getCustomShapePath3(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     const {nodes, paths, ctrlNodes} = this._conf.penNetwork
 
     let newNodes = cloneDeep(nodes)
-    let lineMaps = new Map<number, { index: number, point: P }[]>()
+    let lineMaps = new Map<number, {index: number, point: P}[]>()
 
+    //查找交点，并将交点记录到对应的线段上
     for (let i = 0; i < paths.length - 1; i++) {
       for (let j = i; j < paths.length; j++) {
         let currentLine = paths[i]
@@ -227,6 +228,7 @@ export class Pen extends ParentShape {
       }
     }
 
+    //然后将有交点的线段分割
     let newPaths: any[] = []
     paths.map((line, index) => {
       let lineMap = lineMaps.get(index)
@@ -252,21 +254,21 @@ export class Pen extends ParentShape {
       }
     })
 
-//筛选出终点没人连的
+    //筛选出终点没人连的
     let closeLines = newPaths.filter(v => newPaths.find(w => v[1] === w[0]))
     //筛选出起点没人连的
     closeLines = closeLines.filter(v => closeLines.find(w => v[0] === w[1]))
     let closeLinesWithId = closeLines.map((v, i) => ({id: i, line: v}))
-    // console.log('closeLines', closeLines)
-    console.log('closeLinesWithId', cloneDeep(closeLinesWithId))
+    console.log('closeLines', closeLines)
+    // console.log('closeLinesWithId', cloneDeep(closeLinesWithId))
     // console.log('lineMaps', lineMaps)
     // console.log('newPaths', newPaths)
     // console.log('newNodes', newNodes)
     let closeAreas: any[][] = []
     let showFill = false
 
-    const check = (lises: any[]) => {
-      let listIndexStr = lises.map(v => v.id).sort((a, b) => a - b).join('')
+    const check = (lines: any[]) => {
+      let listIndexStr = lines.map(v => v.id).sort((a, b) => a - b).join('')
       return closeAreas.find(w => w.map(w => w.id).sort((a, b) => a - b).join('') === listIndexStr)
     }
 
@@ -331,119 +333,135 @@ export class Pen extends ParentShape {
       return []
     }
 
-    console.time()
     //TODO 想想，如果只有两条直线，那么根本无需检测，肯定没有封闭图。如果是曲线呢？
-    closeLinesWithId.slice(0, 1).map((v) => {
-      let start = v.line[0]
-      let end = v.line[1]
-      let aa = true
-      if (aa) {
-        // @ts-ignore
-        let r = gg(start, end, v, closeLinesWithId.slice(), [v])
-        if (r.length) {
-          if (!check(r[0])) {
-            closeAreas = closeAreas.concat(r)
-          }
+    if (closeLinesWithId.length > 2) {
+      // console.time()
+      let currentLine = closeLinesWithId[0]
+      let start = currentLine.line[0]
+      let end = currentLine.line[1]
+      let r = gg(start, end, currentLine, closeLinesWithId.slice(), [currentLine])
+      if (r.length) {
+        if (!check(r[0])) {
+          closeAreas = closeAreas.concat(r)
         }
+      }
 
-        let closeAreasId = closeAreas.map((v, i) => ({id: i, area: v}))
-        console.log('closeAreas----', cloneDeep(closeAreasId))
-
-        let s = closeAreas.filter((a: any, i: number) => {
+      let closeAreasId = closeAreas.map((v, i) => ({id: i, area: v}))
+      let closeAreasIdCopy = cloneDeep(closeAreasId)
+      let waitDelId: any[] = []
+      closeAreasId.map((a: any, i: number) => {
+        if (waitDelId.includes(a.id)) return
+        let ids = a.area.map((l: any) => l.id)
+        let q: any[] = closeAreasIdCopy.filter((b: any, j: number) => {
           let count = 0
-          let ids = a.map((l: any) => l.id)
-          closeAreas.map((b: any, j: number) => {
-            if (i !== j) {
-              b.map((c: any) => {
-                if (ids.find((id: any) => id === c.id)) {
-                  count++
-                }
-              })
-            }
-          })
-          return count < 2
+          if (i !== j) {
+            b.area.map((c: any) => {
+              if (ids.find((id: any) => id === c.id)) {
+                count++
+              }
+            })
+          }
+          return count >= 2
         })
 
-        console.log('s', s)
-
-      }
-    })
-    console.timeEnd()
-    console.log('closeAreas----', cloneDeep(closeAreas))
-    let cu = CanvasUtil2.getInstance()
-    let {ctx} = cu
-    ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
-    newNodes.map((point, i) => {
-      ctx.fillText(i + '', point.x, point.y)
-      // draw.drawRound(ctx, point)
-    })
-
-
-    let {center} = this.conf
-    cu.waitRenderOtherStatusFunc.push(() => {
-      ctx.save()
-      ctx.strokeStyle = 'red'
-      ctx.fillStyle = 'red'
-      closeLinesWithId.map(line => {
-        let startPoint = newNodes[line.line[0]]
-        let fixStartPoint = {
-          x: center.x + startPoint.x,
-          y: center.y + startPoint.y,
+        if (q.length) {
+          let n = q.concat([a])
+          let s = n.sort((a: any, b: any) => a.area.length - b.area.length).map(s => s.id)
+          if (a.id !== s[0]) {
+            let r = closeAreasIdCopy.findIndex(b => b.id === a.id)
+            if (r) {
+              closeAreasIdCopy.splice(r, 1)
+            }
+            waitDelId = waitDelId.concat([a.id])
+          }
         }
-        let endPoint = newNodes[line.line[1]]
-        let fixEndPoint = {
-          x: center.x + endPoint.x,
-          y: center.y + endPoint.y,
-        }
-        ctx.moveTo2(fixStartPoint)
-        ctx.lineTo2(fixEndPoint)
-        cu.ctx.font = `400 16rem "SourceHanSansCN", sans-serif`
-        let a = helper.getStraightLineCenterPoint(fixStartPoint, fixEndPoint)
-        // ctx.fillText(`${line.line[0]}-${line.line[1]}:${line.id}`, a.x - 20, a.y)
-        ctx.fillText(`${line.id}`, a.x - 20, a.y)
       })
-      ctx.stroke()
 
-      if (showFill) {
-        ctx.fillStyle = 'gray'
-        closeAreas.slice().map(v => {
-          let startPoint = newNodes[v[0].line[0]]
+      waitDelId.map(v1 => {
+        let r = closeAreasId.findIndex(b => b.id === v1)
+        if (r) {
+          closeAreasId.splice(r, 1)
+        }
+      })
+      // console.timeEnd()
+      console.log('closeAreasRepeat----', cloneDeep(closeAreas))
+      console.log('closeAreas----', cloneDeep(closeAreasId.map(v => v.area)))
+
+      let cu = CanvasUtil2.getInstance()
+      let {ctx} = cu
+      ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
+      newNodes.map((point, i) => {
+        ctx.fillText(i + '', point.x, point.y)
+        // draw.drawRound(ctx, point)
+      })
+
+      let {center} = this.conf
+      cu.waitRenderOtherStatusFunc.push(() => {
+        ctx.save()
+        ctx.strokeStyle = 'red'
+        ctx.fillStyle = 'red'
+        closeLinesWithId.map(line => {
+          let startPoint = newNodes[line.line[0]]
           let fixStartPoint = {
             x: center.x + startPoint.x,
             y: center.y + startPoint.y,
           }
-          let endPoint = newNodes[v[0].line[1]]
+          let endPoint = newNodes[line.line[1]]
           let fixEndPoint = {
             x: center.x + endPoint.x,
             y: center.y + endPoint.y,
           }
-          ctx.beginPath()
           ctx.moveTo2(fixStartPoint)
           ctx.lineTo2(fixEndPoint)
-          v.slice(1).map(w => {
-            endPoint = newNodes[w.line[1]]
-            fixEndPoint = {
+          cu.ctx.font = `400 16rem "SourceHanSansCN", sans-serif`
+          let a = helper.getStraightLineCenterPoint(fixStartPoint, fixEndPoint)
+          // ctx.fillText(`${line.line[0]}-${line.line[1]}:${line.id}`, a.x - 20, a.y)
+          ctx.fillText(`${line.id}`, a.x - 20, a.y)
+        })
+        ctx.stroke()
+
+        if (showFill) {
+          ctx.fillStyle = 'gray'
+          closeAreas.slice().map(v => {
+            let startPoint = newNodes[v[0].line[0]]
+            let fixStartPoint = {
+              x: center.x + startPoint.x,
+              y: center.y + startPoint.y,
+            }
+            let endPoint = newNodes[v[0].line[1]]
+            let fixEndPoint = {
               x: center.x + endPoint.x,
               y: center.y + endPoint.y,
             }
+            ctx.beginPath()
+            ctx.moveTo2(fixStartPoint)
             ctx.lineTo2(fixEndPoint)
+            v.slice(1).map(w => {
+              endPoint = newNodes[w.line[1]]
+              fixEndPoint = {
+                x: center.x + endPoint.x,
+                y: center.y + endPoint.y,
+              }
+              ctx.lineTo2(fixEndPoint)
+            })
+            ctx.closePath()
+            ctx.fill()
           })
-          ctx.closePath()
-          ctx.fill()
-        })
-      }
+        }
 
-      // ctx.moveTo2(start)
-      // g.map(v => {
-      //   start = {
-      //     x: v.x + center.x,
-      //     y: v.y + center.y,
-      //   }
-      //   ctx.lineTo2(start)
-      // })
-      // ctx.fill()
-      ctx.restore()
-    })
+        // ctx.moveTo2(start)
+        // g.map(v => {
+        //   start = {
+        //     x: v.x + center.x,
+        //     y: v.y + center.y,
+        //   }
+        //   ctx.lineTo2(start)
+        // })
+        // ctx.fill()
+        ctx.restore()
+      })
+
+    }
 
     // let ps = []
     // for (let i = 0; i < paths.length - 1; i++) {

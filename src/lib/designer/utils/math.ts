@@ -216,7 +216,7 @@ const Math2 = {
         if (lastIntersects === 0) return null
         let a = b.split(lastIntersects)
         let p = b.get(lastIntersects as number)
-        console.log('Bezier2', a)
+        // console.log('Bezier2', a)
         return {
           intersectsPoint: p,
           startLine: {
@@ -241,7 +241,7 @@ const Math2 = {
         if (lastIntersects === 0) return null
         let a = b.split(lastIntersects)
         let p = b.get(lastIntersects as number)
-        console.log('Bezier3', a)
+        // console.log('Bezier3', a)
         return {
           intersectsPoint: p,
           startLine: {

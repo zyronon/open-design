@@ -1,6 +1,6 @@
 import {BaseShape} from "../shapes/core/BaseShape"
 import EventBus from "../event/eventBus"
-import {BaseEvent2, EditModeType, EventTypes, P, ShapeStatus, ShapeType} from "../types/type"
+import {BaseEvent2, EditModeType, EditType, EventTypes, P, ShapeStatus, ShapeType} from "../types/type"
 import {cloneDeep} from "lodash"
 import {Colors, defaultConfig} from "../utils/constant"
 import {mat4} from "gl-matrix"
@@ -83,7 +83,7 @@ export default class CanvasUtil2 {
 
   set mode(val) {
     if (val !== this._mode) {
-      this.editModeType = EditModeType.Select
+      // this.editModeType = EditModeType.Select
       this._mode = val
       EventBus.emit(EventTypes.onModeChange, val)
     }
@@ -308,6 +308,14 @@ export default class CanvasUtil2 {
     if (e.keyCode === 27) {
       if (this.editShape) {
         if (this.editShape.status === ShapeStatus.Edit) {
+          if (this.editShape.editStartPointInfo.type) {
+            this.editShape.editStartPointInfo = cloneDeep(this.editShape.defaultCurrentOperationInfo)
+            return this.render()
+          }
+          if (this.editShape.tempPoint){
+            this.editShape.tempPoint = undefined
+            return this.render()
+          }
           this.editShape.status = ShapeStatus.Select
           this.selectedShape = this.editShape
           this.editShape = undefined
@@ -322,6 +330,26 @@ export default class CanvasUtil2 {
     //Del
     if (e.keyCode === 46) {
       if (this.editShape) {
+        if (this.editShape.status === ShapeStatus.Edit) {
+          let {pointIndex, lineIndex, type} = this.editShape.editStartPointInfo
+          const {nodes, paths, ctrlNodes} = this.editShape.conf.penNetwork
+          if (type === EditType.Line) {
+            // let line = paths[lineIndex]
+            // let startIndex = line[0]
+            // let endIndex = line[1]
+            paths.splice(lineIndex, 1)
+            // paths.map(v => {
+            //   if (v[0] > startIndex) v[0] -= 1
+            //   if (v[0] > endIndex) v[0] -= 1
+            //
+            //   if (v[1] > startIndex) v[1] -= 1
+            //   if (v[1] > endIndex) v[1] -= 1
+            // })
+            // nodes.splice(startIndex, 1)
+            // nodes.splice(endIndex, 1)
+            return this.render()
+          }
+        }
         return
       }
       if (this.selectedShape) {

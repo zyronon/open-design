@@ -1005,8 +1005,8 @@ export const rectsb: any[] = [{
         "cornerRadius": 0,
         "realCornerRadius": 0,
         "handleMirroring": "RightAngle",
-        "cornerCps": [-1,-1],
-        "cps": [-1,-1]
+        "cornerCps": [-1, -1],
+        "cps": [-1, -1]
       },
       {
         "x": 89,
@@ -1014,8 +1014,8 @@ export const rectsb: any[] = [{
         "cornerRadius": 0,
         "realCornerRadius": 0,
         "handleMirroring": "RightAngle",
-        "cornerCps": [-1,-1],
-        "cps": [-1,-1]
+        "cornerCps": [-1, -1],
+        "cps": [-1, -1]
       },
       {
         "x": 342,
@@ -1023,7 +1023,7 @@ export const rectsb: any[] = [{
         "cornerRadius": 0,
         "realCornerRadius": 0,
         "handleMirroring": "MirrorAngleAndLength",
-        "cornerCps": [-1,-1],
+        "cornerCps": [-1, -1],
         "cps": [
           3,
           4
@@ -1035,8 +1035,8 @@ export const rectsb: any[] = [{
         "cornerRadius": 0,
         "realCornerRadius": 0,
         "handleMirroring": "NoMirror",
-        "cornerCps": [-1,-1],
-        "cps": [0,-1]
+        "cornerCps": [-1, -1],
+        "cps": [0, -1]
       },
       {
         "x": 100,
@@ -1044,8 +1044,8 @@ export const rectsb: any[] = [{
         "cornerRadius": 0,
         "realCornerRadius": 0,
         "handleMirroring": "RightAngle",
-        "cornerCps": [-1,-1],
-        "cps": [-1,-1]
+        "cornerCps": [-1, -1],
+        "cps": [-1, -1]
       },
       {
         "x": 200,
@@ -1053,8 +1053,8 @@ export const rectsb: any[] = [{
         "cornerRadius": 0,
         "realCornerRadius": 0,
         "handleMirroring": "RightAngle",
-        "cornerCps": [-1,-1],
-        "cps": [-1,-1]
+        "cornerCps": [-1, -1],
+        "cps": [-1, -1]
       },
       {
         "x": 150,
@@ -1062,8 +1062,8 @@ export const rectsb: any[] = [{
         "cornerRadius": 0,
         "realCornerRadius": 0,
         "handleMirroring": "RightAngle",
-        "cornerCps": [-1,-1],
-        "cps": [-1,-1]
+        "cornerCps": [-1, -1],
+        "cps": [-1, -1]
       },
       {
         "x": 46,
@@ -1071,8 +1071,8 @@ export const rectsb: any[] = [{
         "cornerRadius": 0,
         "realCornerRadius": 0,
         "handleMirroring": "RightAngle",
-        "cornerCps": [-1,-1],
-        "cps": [-1,-1]
+        "cornerCps": [-1, -1],
+        "cps": [-1, -1]
       },
       {
         "x": -43,
@@ -1080,7 +1080,7 @@ export const rectsb: any[] = [{
         "cornerRadius": 0,
         "realCornerRadius": 0,
         "handleMirroring": "MirrorAngleAndLength",
-        "cornerCps": [-1,-1],
+        "cornerCps": [-1, -1],
         "cps": [
           5,
           6
@@ -1607,10 +1607,10 @@ export const rectsd: any[] = [
         }
       ],
       "paths": [
-        [0,1,-1,-1,-1,-1,1],
-        [2,3,-1,-1,-1,-1,1],
-        [4,7,-1,-1,-1,-1,1],
-        [5,6,-1,-1,-1,-1,1],
+        [0, 1, -1, -1, -1, -1, 1],
+        [2, 3, -1, -1, -1, -1, 1],
+        [4, 7, -1, -1, -1, -1, 1],
+        [5, 6, -1, -1, -1, -1, 1],
       ],
       "regions": []
     },
@@ -1666,7 +1666,7 @@ export const rectsd: any[] = [
     "commonPoints": []
   }
 ]
-export const rects: any[] = [
+export const rectsf: any[] = [
   {
     "name": "矩形",
     "layout": {
@@ -2220,6 +2220,410 @@ export const rectsg: any[] = [
     "lineShapes": [],
     "commonPoints": [],
     "id": "19fbc200-c966-4f54-8939-08bb9fb7b361"
+  }
+]
+export const rects: any[] = [
+  {
+    "name": "矩形",
+    "layout": {
+      "x": 700,
+      "y": 100,
+      "w": 300,
+      "h": 300
+    },
+    "rotation": 0,
+    "lineWidth": 2,
+    "type": "PEN",
+    "radius": 0,
+    "children": [],
+    "borderColor": "rgb(0,0,0)",
+    "fillColor": "#4C4C4C",
+    "flipHorizontal": false,
+    "flipVertical": false,
+    "isComplete": true,
+    "isCustom": true,
+    "cornerRadius": 0,
+    "realCornerRadius": 0,
+    "penNetwork": {
+      "ctrlNodes": [
+        {
+          "x": -354,
+          "y": -56
+        },
+        {
+          "x": -354,
+          "y": -56
+        }
+      ],
+      "nodes": [
+        {
+          "x": -150,
+          "y": -30,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": 150,
+          "y": -30,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "NoMirror",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": 150,
+          "y": 50,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "MirrorAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -150,
+          "y": 50,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "NoMirror",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": 10,
+          "y": -150,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "NoMirror",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -10,
+          "y": -150,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "NoMirror",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": 130,
+          "y": 150,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "NoMirror",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -130,
+          "y": 150,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "NoMirror",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -556,
+          "y": -56,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -354,
+          "y": -56,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "MirrorAngleAndLength",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            1,
+            0
+          ]
+        },
+        {
+          "x": -564,
+          "y": 40,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -318,
+          "y": 42,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -492,
+          "y": -117,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -511,
+          "y": 151,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -402,
+          "y": -101,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -398,
+          "y": 174,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        }
+      ],
+      "paths": [
+        [
+          0,
+          1,
+          -1,
+          -1,
+          -1,
+          -1,
+          1
+        ],
+        [
+          2,
+          3,
+          -1,
+          -1,
+          -1,
+          -1,
+          1
+        ],
+        [
+          4,
+          7,
+          -1,
+          -1,
+          -1,
+          -1,
+          1
+        ],
+        [
+          5,
+          6,
+          -1,
+          -1,
+          -1,
+          -1,
+          1
+        ],
+        [
+          8,
+          9,
+          -1,
+          1,
+          -1,
+          -1,
+          2
+        ],
+        [
+          10,
+          11,
+          -1,
+          -1,
+          -1,
+          -1,
+          1
+        ],
+        [
+          12,
+          13,
+          -1,
+          -1,
+          -1,
+          -1,
+          1
+        ],
+        [
+          14,
+          15,
+          -1,
+          -1,
+          -1,
+          -1,
+          1
+        ]
+      ],
+      "regions": []
+    },
+    "percent": {
+      "x": 0,
+      "y": 0
+    },
+    "relativeCenter": {
+      "x": 0,
+      "y": 0
+    },
+    "realRotation": 0,
+    "start": {
+      "x": 700,
+      "y": 100
+    },
+    "absolute": {
+      "x": 700,
+      "y": 100
+    },
+    "original": {
+      "x": 700,
+      "y": 100
+    },
+    "center": {
+      "x": 850,
+      "y": 250
+    },
+    "box": {
+      "leftX": 700,
+      "rightX": 1000,
+      "topY": 100,
+      "bottomY": 400,
+      "topLeft": {
+        "x": 700,
+        "y": 100
+      },
+      "topRight": {
+        "x": 1000,
+        "y": 100
+      },
+      "bottomLeft": {
+        "x": 700,
+        "y": 400
+      },
+      "bottomRight": {
+        "x": 1000,
+        "y": 400
+      }
+    },
+    "strokeAlign": "INSIDE",
+    "lineShapes": [],
+    "commonPoints": [],
+    "id": "f871a279-e566-4fbe-822d-70fee0235f7a"
   }
 ]
 

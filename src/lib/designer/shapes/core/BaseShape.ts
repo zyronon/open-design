@@ -872,6 +872,7 @@ export class BaseShape {
           let lastPoint = nodes[pointIndex]
           nodes.push(endPoint)
           if (lastPoint.cps[1] !== -1) {
+            debugger
             paths.push([pointIndex, nodes.length - 1, lastPoint.cps[1], -1, -1, -1, LineType.Bezier2])
           } else {
             paths.push([pointIndex, nodes.length - 1, -1, -1, -1, -1, LineType.Line])

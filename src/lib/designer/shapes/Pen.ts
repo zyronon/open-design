@@ -416,7 +416,7 @@ export class Pen extends ParentShape {
           cu.ctx.font = `400 16rem "SourceHanSansCN", sans-serif`
           let a = helper.getStraightLineCenterPoint(fixStartPoint, fixEndPoint)
           // ctx.fillText(`${line.line[0]}-${line.line[1]}:${line.id}`, a.x - 20, a.y)
-          ctx.fillText(`${line.id}`, a.x - 20, a.y)
+          ctx.fillText(`${line.id}`, a.x - 10, a.y)
         })
         ctx.stroke()
 

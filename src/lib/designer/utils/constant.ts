@@ -2245,16 +2245,7 @@ export const rects: any[] = [
     "cornerRadius": 0,
     "realCornerRadius": 0,
     "penNetwork": {
-      "ctrlNodes": [
-        {
-          "x": -354,
-          "y": -56
-        },
-        {
-          "x": -354,
-          "y": -56
-        }
-      ],
+      "ctrlNodes": [],
       "nodes": [
         {
           "x": -150,
@@ -2317,8 +2308,8 @@ export const rects: any[] = [
           ]
         },
         {
-          "x": 10,
-          "y": -150,
+          "x": -113,
+          "y": -155,
           "cornerRadius": 0,
           "realCornerRadius": 0,
           "handleMirroring": "NoMirror",
@@ -2362,8 +2353,8 @@ export const rects: any[] = [
           ]
         },
         {
-          "x": -130,
-          "y": 150,
+          "x": -253,
+          "y": 145,
           "cornerRadius": 0,
           "realCornerRadius": 0,
           "handleMirroring": "NoMirror",
@@ -2377,8 +2368,8 @@ export const rects: any[] = [
           ]
         },
         {
-          "x": -556,
-          "y": -56,
+          "x": -572,
+          "y": -132,
           "cornerRadius": 0,
           "realCornerRadius": 0,
           "handleMirroring": "RightAngle",
@@ -2392,23 +2383,8 @@ export const rects: any[] = [
           ]
         },
         {
-          "x": -354,
-          "y": -56,
-          "cornerRadius": 0,
-          "realCornerRadius": 0,
-          "handleMirroring": "MirrorAngleAndLength",
-          "cornerCps": [
-            -1,
-            -1
-          ],
-          "cps": [
-            1,
-            0
-          ]
-        },
-        {
-          "x": -564,
-          "y": 40,
+          "x": -389,
+          "y": -141,
           "cornerRadius": 0,
           "realCornerRadius": 0,
           "handleMirroring": "RightAngle",
@@ -2422,8 +2398,8 @@ export const rects: any[] = [
           ]
         },
         {
-          "x": -318,
-          "y": 42,
+          "x": -561,
+          "y": -39,
           "cornerRadius": 0,
           "realCornerRadius": 0,
           "handleMirroring": "RightAngle",
@@ -2437,8 +2413,8 @@ export const rects: any[] = [
           ]
         },
         {
-          "x": -492,
-          "y": -117,
+          "x": -319,
+          "y": -44,
           "cornerRadius": 0,
           "realCornerRadius": 0,
           "handleMirroring": "RightAngle",
@@ -2452,8 +2428,8 @@ export const rects: any[] = [
           ]
         },
         {
-          "x": -511,
-          "y": 151,
+          "x": -498,
+          "y": -200,
           "cornerRadius": 0,
           "realCornerRadius": 0,
           "handleMirroring": "RightAngle",
@@ -2467,8 +2443,8 @@ export const rects: any[] = [
           ]
         },
         {
-          "x": -402,
-          "y": -101,
+          "x": -514,
+          "y": 49,
           "cornerRadius": 0,
           "realCornerRadius": 0,
           "handleMirroring": "RightAngle",
@@ -2482,8 +2458,23 @@ export const rects: any[] = [
           ]
         },
         {
-          "x": -398,
-          "y": 174,
+          "x": -427,
+          "y": -194,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -413,
+          "y": 59,
           "cornerRadius": 0,
           "realCornerRadius": 0,
           "handleMirroring": "RightAngle",
@@ -2538,10 +2529,10 @@ export const rects: any[] = [
           8,
           9,
           -1,
-          1,
           -1,
           -1,
-          2
+          -1,
+          1
         ],
         [
           10,
@@ -2623,7 +2614,7 @@ export const rects: any[] = [
     "strokeAlign": "INSIDE",
     "lineShapes": [],
     "commonPoints": [],
-    "id": "f871a279-e566-4fbe-822d-70fee0235f7a"
+    "id": "3327ff0a-41d9-4af5-aed6-0d8045e782cf"
   }
 ]
 

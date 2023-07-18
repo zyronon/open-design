@@ -223,8 +223,8 @@ export class Pen extends ParentShape {
         singLines.push(paths.slice(startIndex, endIndex))
       }
 
-      console.log('singLines', singLines)
-      console.log('anyLines', anyLines)
+      // console.log('singLines', singLines)
+      // console.log('anyLines', anyLines)
 
 
       if (anyLines.length) {

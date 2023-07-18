@@ -204,27 +204,27 @@ export class Pen extends ParentShape {
       let preLine = paths[0]
       let startIndex = 0
       let endIndex = 0
-      // paths.slice(1).map((line, i) => {
-      //   if (line[0] !== preLine[1]) {
-      //     if (i == 0) {
-      //       anyLines.push(preLine)
-      //     }
-      //     if (i + 1 - startIndex > 1) {
-      //       singLines.push(paths.slice(startIndex, i + 1))
-      //     }
-      //     startIndex = i + 1
-      //     anyLines.push(line)
-      //   } else {
-      //     endIndex = i + 1
-      //   }
-      //   preLine = line
-      // })
-      // if (endIndex - startIndex > 1) {
-      //   singLines.push(paths.slice(startIndex, endIndex))
-      // }
+      paths.slice(1).map((line, i) => {
+        if (line[0] !== preLine[1]) {
+          if (i == 0) {
+            anyLines.push(preLine)
+          }
+          if (i + 1 - startIndex > 1) {
+            singLines.push(paths.slice(startIndex, i + 1))
+          }
+          startIndex = i + 1
+          anyLines.push(line)
+        } else {
+          endIndex = i + 1
+        }
+        preLine = line
+      })
+      if (endIndex - startIndex > 1) {
+        singLines.push(paths.slice(startIndex, endIndex))
+      }
 
-      // console.log('singLines', singLines)
-      // console.log('anyLines', anyLines)
+      console.log('singLines', singLines)
+      console.log('anyLines', anyLines)
 
 
       if (anyLines.length) {

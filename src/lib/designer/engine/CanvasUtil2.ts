@@ -312,7 +312,7 @@ export default class CanvasUtil2 {
             this.editShape.editStartPointInfo = cloneDeep(this.editShape.defaultCurrentOperationInfo)
             return this.render()
           }
-          if (this.editShape.tempPoint){
+          if (this.editShape.tempPoint) {
             this.editShape.tempPoint = undefined
             return this.render()
           }
@@ -334,19 +334,28 @@ export default class CanvasUtil2 {
           let {pointIndex, lineIndex, type} = this.editShape.editStartPointInfo
           const {nodes, paths, ctrlNodes} = this.editShape.conf.penNetwork
           if (type === EditType.Line) {
-            // let line = paths[lineIndex]
-            // let startIndex = line[0]
-            // let endIndex = line[1]
+            let line = paths[lineIndex]
+            let startIndex = line[0]
+            let endIndex = line[1]
             paths.splice(lineIndex, 1)
-            // paths.map(v => {
-            //   if (v[0] > startIndex) v[0] -= 1
-            //   if (v[0] > endIndex) v[0] -= 1
-            //
-            //   if (v[1] > startIndex) v[1] -= 1
-            //   if (v[1] > endIndex) v[1] -= 1
-            // })
-            // nodes.splice(startIndex, 1)
-            // nodes.splice(endIndex, 1)
+            paths.map(v => {
+              let d = 0
+              if (v[0] > startIndex) d++
+              if (v[0] > endIndex) d++
+              v[0] -= d
+              d = 0
+              if (v[1] > startIndex) d++
+              if (v[1] > endIndex) d++
+              v[1] -= d
+            })
+            if (startIndex > endIndex) {
+              nodes.splice(startIndex, 1)
+              nodes.splice(endIndex, 1)
+            } else {
+              nodes.splice(endIndex, 1)
+              nodes.splice(startIndex, 1)
+            }
+            //TODO　可以考虑把控制点也删除了，虽然不删除也无关紧要
             return this.render()
           }
         }

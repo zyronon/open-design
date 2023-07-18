@@ -1058,7 +1058,7 @@ export class BaseShape {
       }
 
       if (cu.editModeType === EditModeType.Edit) {
-        if (this.tempPoint){
+        if (this.tempPoint) {
           let lastPoint = this.tempPoint
           let ctx = cu.ctx
           cu.waitRenderOtherStatusFunc.push(() => {
@@ -1249,72 +1249,61 @@ export class BaseShape {
   }
 
   calcNewCenterAndWidthAndHeight() {
-    // console.log('重新计算中心点和宽高')
-    return
     if (!this.conf.isCustom) return
     let {center, realRotation, flipHorizontal, flipVertical} = this.conf
+    const {nodes, paths, ctrlNodes} = this.conf.penNetwork
 
-    let temp: any = this.conf.lineShapes.reduce((previousValue: any[], currentValue) => {
-      let maxX: number, minX: number, maxY: number, minY: number
-      maxX = maxY = 0
-      minX = minY = Infinity
-      let checkLine = (startPoint: BezierPoint) => {
-        let x = center.x + startPoint.center.x
-        let y = center.y + startPoint.center.y
-        if (x > maxX) maxX = x
-        if (x < minX) minX = x
-        if (y > maxY) maxY = y
-        if (y < minY) minY = y
-      }
-      let checkBezier = (info: BBox) => {
-        let _maxX = center.x + info.x.max
-        let _minX = center.x + info.x.min
-        let _maxY = center.y + info.y.max
-        let _minY = center.y + info.y.min
-        if (_maxX > maxX) maxX = _maxX
-        if (_minX < minX) minX = _minX
-        if (_maxY > maxY) maxY = _maxY
-        if (_minY < minY) minY = _minY
-      }
-      currentValue.points.map((pointInfo, index, array) => {
-        let startPoint = this.getPoint(pointInfo)
-        //未闭合的情况下，只需绘制一个终点即可
-        if (index === array.length - 1 && !currentValue.close) {
+    let maxX: number, minX: number, maxY: number, minY: number
+    maxX = maxY = 0
+    minX = minY = Infinity
+
+    let checkLine = (startPoint: PenNetworkNode) => {
+      let x = center.x + startPoint.x
+      let y = center.y + startPoint.y
+      if (x > maxX) maxX = x
+      if (x < minX) minX = x
+      if (y > maxY) maxY = y
+      if (y < minY) minY = y
+    }
+    let checkBezier = (info: BBox) => {
+      let _maxX = center.x + info.x.max
+      let _minX = center.x + info.x.min
+      let _maxY = center.y + info.y.max
+      let _minY = center.y + info.y.min
+      if (_maxX > maxX) maxX = _maxX
+      if (_minX < minX) minX = _minX
+      if (_maxY > maxY) maxY = _maxY
+      if (_minY < minY) minY = _minY
+    }
+
+    paths.map((line) => {
+      let startPoint = nodes[line[0]]
+      let endPoint = nodes[line[1]]
+      switch (line[6]) {
+        case LineType.Line:
           checkLine(startPoint)
-        } else {
-          let endPoint: BezierPoint
-          if (index === array.length - 1) {
-            endPoint = this.getPoint(array[0])
-          } else {
-            endPoint = this.getPoint(array[index + 1])
-          }
-          let lineType = helper.judgeLineType({startPoint, endPoint})
-          switch (lineType) {
-            case LineType.Line:
-              checkLine(startPoint)
-              break
-            case LineType.Bezier3:
-              let b3 = new BezierJs(startPoint.center, startPoint.cp2, endPoint.cp1, endPoint.center)
-              checkBezier(b3.bbox())
-              break
-            case LineType.Bezier2:
-              let cp: P2
-              if (startPoint.cp2.use) cp = startPoint.cp2
-              if (endPoint.cp1.use) cp = endPoint.cp1
-              let b2 = new BezierJs(startPoint.center, cp!, endPoint.center)
-              checkBezier(b2.bbox())
-              break
-          }
-        }
-      })
-      previousValue.push({maxX, minX, maxY, minY})
-      return previousValue
-    }, [])
-    // console.log('temp', temp)
-    let maxX = Math.max(...temp.map((a: any) => a.maxX))
-    let minX = Math.min(...temp.map((a: any) => a.minX))
-    let maxY = Math.max(...temp.map((a: any) => a.maxY))
-    let minY = Math.min(...temp.map((a: any) => a.minY))
+          checkLine(endPoint)
+          break
+        case LineType.Bezier2:
+          let cp: number = 0
+          if (line[2] !== -1) cp = line[2]
+          if (line[3] !== -1) cp = line[3]
+          let b2 = new BezierJs(startPoint, ctrlNodes[cp], endPoint)
+          checkBezier(b2.bbox())
+          break
+        case LineType.Bezier3:
+          let b3 = new BezierJs(startPoint, ctrlNodes[line[2]], ctrlNodes[line[3]], endPoint)
+          checkBezier(b3.bbox())
+          break
+      }
+    })
+
+    // console.log(
+    //   'maxX', maxX,
+    //   'minX', minX,
+    //   'maxY', maxY,
+    //   'minY', minY,
+    // )
 
     let newWidth = maxX - minX
     let newHeight = maxY - minY
@@ -1327,20 +1316,13 @@ export class BaseShape {
     //点的值再减去偏移值，就是以新center为相对值的点值
     let dx = newCenter.x - center.x
     let dy = newCenter.y - center.y
-    this.conf.lineShapes.map(line => {
-      line.points.map(pointInfo => {
-        let p = this.getPoint(pointInfo)
-        p.center.x -= dx
-        p.center.y -= dy
-        if (p.cp1.use) {
-          p.cp1.x -= dx
-          p.cp1.y -= dy
-        }
-        if (p.cp2.use) {
-          p.cp2.x -= dx
-          p.cp2.y -= dy
-        }
-      })
+    nodes.map(p => {
+      p.x -= dx
+      p.y -= dy
+    })
+    ctrlNodes.map(p => {
+      p.x -= dx
+      p.y -= dy
     })
     if (flipHorizontal) newCenter.x = helper._reversePoint(newCenter.x, center.x)
     if (flipVertical) newCenter.y = helper._reversePoint(newCenter.y, center.y)
@@ -1423,7 +1405,7 @@ export class BaseShape {
     return pathList
   }
 
-  getCustomShapePath2(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
+  getCustomShapePath2(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     this.conf.lineShapes.map((line) => {

@@ -195,418 +195,445 @@ export class Pen extends ParentShape {
     if (showTime) {
       console.time()
     }
-
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     const {nodes, paths, ctrlNodes} = this._conf.penNetwork
+    if (paths.length) {
+      let singLines: PenNetworkLine[][] = []
+      let anyLines: PenNetworkLine[] = []
+      let preLine = paths[0]
+      let startIndex = 0
+      let endIndex = 0
+      // paths.slice(1).map((line, i) => {
+      //   if (line[0] !== preLine[1]) {
+      //     if (i == 0) {
+      //       anyLines.push(preLine)
+      //     }
+      //     if (i + 1 - startIndex > 1) {
+      //       singLines.push(paths.slice(startIndex, i + 1))
+      //     }
+      //     startIndex = i + 1
+      //     anyLines.push(line)
+      //   } else {
+      //     endIndex = i + 1
+      //   }
+      //   preLine = line
+      // })
+      // if (endIndex - startIndex > 1) {
+      //   singLines.push(paths.slice(startIndex, endIndex))
+      // }
 
-    let newNodes = cloneDeep(nodes)
-    let lineMaps = new Map<number, {index: number, point: P}[]>()
+      // console.log('singLines', singLines)
+      // console.log('anyLines', anyLines)
 
-    //查找交点，并将交点记录到对应的线段上
-    for (let i = 0; i < paths.length - 1; i++) {
-      for (let j = i; j < paths.length; j++) {
-        let currentLine = paths[i]
-        let nextLine = paths[j]
-        let t = Math2.isIntersection2(currentLine, nextLine, nodes, ctrlNodes)
-        if (t) {
-          newNodes.push(t.intersectsPoint)
-          let data = {
-            index: newNodes.length - 1,
-            point: t.intersectsPoint
-          }
-          let lineMap = lineMaps.get(i)
-          if (lineMap) {
-            lineMap.push(data)
-            lineMaps.set(i, lineMap)
-          } else {
-            lineMaps.set(i, [data])
-          }
-          lineMap = lineMaps.get(j)
-          if (lineMap) {
-            lineMap.push(data)
-            lineMaps.set(j, lineMap)
-          } else {
-            lineMaps.set(j, [data])
-          }
-        }
-      }
-    }
 
-    //然后将有交点的线段分割
-    let newPaths: any[] = []
-    paths.map((line, index) => {
-      let lineMap = lineMaps.get(index)
-      if (lineMap) {
-        let startPoint = newNodes[line[0]]
-        let endPoint = newNodes[line[1]]
-        if (startPoint.x === endPoint.x) {
-          lineMap.sort((a, b) => a.point.y - b.point.y)
-        } else if (startPoint.x < endPoint.x) {
-          lineMap.sort((a, b) => a.point.x - b.point.x)
-        } else {
-          lineMap.sort((a, b) => -(a.point.x - b.point.x))
-        }
-        let newLine: any = [line]
-        lineMap.map(v => {
-          let lastLine = newLine[newLine.length - 1]
-          newLine.pop()
-          newLine = newLine.concat([[lastLine[0], v.index], [v.index, lastLine[1]]])
-        })
-        newPaths = newPaths.concat(newLine)
-      } else {
-        newPaths.push(line)
-      }
-    })
+      if (anyLines.length) {
+        let newNodes = cloneDeep(nodes)
+        let lineMaps = new Map<number, {index: number, point: P}[]>()
 
-    //筛选出终点没人连的
-    let closeLines = newPaths.filter(v => newPaths.find(w => v[1] === w[0]))
-    //筛选出起点没人连的
-    closeLines = closeLines.filter(v => closeLines.find(w => v[0] === w[1]))
-    let closeLinesWithId = closeLines.map((v, i) => ({id: i, line: v}))
-    console.log('closeLines', closeLines)
-    // console.log('closeLinesWithId', cloneDeep(closeLinesWithId))
-    // console.log('lineMaps', lineMaps)
-    // console.log('newPaths', newPaths)
-    // console.log('newNodes', newNodes)
-    let closeAreas: any[][] = []
-    let showFill = false
-
-    const check = (lines: any[]) => {
-      let listIndexStr = lines.map(v => v.id).sort((a, b) => a - b).join('')
-      return closeAreas.find(w => w.map(w => w.id).sort((a, b) => a - b).join('') === listIndexStr)
-    }
-
-    const gg = (start: number, end: number, line: any, list: any[], save: any[]) => {
-      let arrsEnd = list.filter(w => [w.line[0], w.line[1]].includes(end) && w.id !== line.id)
-      while (arrsEnd.length !== 0) {
-        if (arrsEnd.length === 1) {
-          //这里用复制一遍。因为后续的其他遍历，可能也会碰到这条线，然后方向是相反的，又去改变头和尾
-          let a = cloneDeep(arrsEnd[0])
-          let line = a.line
-          if (line[0] === end) {
-            end = line[1]
-          } else {
-            end = line[0]
-            //交换顺序
-            a.line = [line[1], end]
-          }
-          save.push(a)
-          if (end === start) {
-            return [save]
-          }
-          //如果当前线段与线段们中的任一组成了回路，那么就是一个新的封闭图
-          let isCloseIndex = save.findIndex(b => b.line[0] === end)
-          if (isCloseIndex > -1) {
-            return [save.slice(isCloseIndex)]
-          }
-          arrsEnd = list.filter(w => [w.line[0], w.line[1]].includes(end) && w.id !== a.id)
-        } else {
-          for (let i = 0; i < arrsEnd.length; i++) {
-            let newSave = save.slice()
-            let a = cloneDeep(arrsEnd[i])
-            let newEnd = -1
-            if (a.line[0] === end) {
-              newEnd = a.line[1]
-            } else {
-              newEnd = a.line[0]
-              a.line = [a.line[1], newEnd]
+        //查找交点，并将交点记录到对应的线段上
+        for (let i = 0; i < paths.length - 1; i++) {
+          for (let j = i; j < paths.length; j++) {
+            let currentLine = paths[i]
+            let nextLine = paths[j]
+            let t = Math2.isIntersection2(currentLine, nextLine, nodes, ctrlNodes)
+            if (t) {
+              newNodes.push(t.intersectsPoint)
+              let data = {
+                index: newNodes.length - 1,
+                point: t.intersectsPoint
+              }
+              let lineMap = lineMaps.get(i)
+              if (lineMap) {
+                lineMap.push(data)
+                lineMaps.set(i, lineMap)
+              } else {
+                lineMaps.set(i, [data])
+              }
+              lineMap = lineMaps.get(j)
+              if (lineMap) {
+                lineMap.push(data)
+                lineMaps.set(j, lineMap)
+              } else {
+                lineMaps.set(j, [data])
+              }
             }
-            newSave.push(a)
-            let isCloseIndex = newSave.findIndex(b => b.line[0] === newEnd)
-            if (isCloseIndex > -1) {
-              let closeArea = newSave.slice(isCloseIndex)
-              if (!check(closeArea)) {
-                closeAreas = closeAreas.concat([closeArea])
-              }
-            } else if (newEnd === start) {
-              if (!check(newSave)) {
-                closeAreas = closeAreas.concat([newSave])
-              }
+          }
+        }
+
+        //然后将有交点的线段分割
+        let newPaths: any[] = []
+        paths.map((line, index) => {
+          let lineMap = lineMaps.get(index)
+          if (lineMap) {
+            let startPoint = newNodes[line[0]]
+            let endPoint = newNodes[line[1]]
+            if (startPoint.x === endPoint.x) {
+              lineMap.sort((a, b) => a.point.y - b.point.y)
+            } else if (startPoint.x < endPoint.x) {
+              lineMap.sort((a, b) => a.point.x - b.point.x)
             } else {
-              let r = gg(start, newEnd, a, list, newSave)
-              if (r.length) {
-                if (!check(r[0])) {
-                  closeAreas = closeAreas.concat(r)
+              lineMap.sort((a, b) => -(a.point.x - b.point.x))
+            }
+            let newLine: any = [line]
+            lineMap.map(v => {
+              let lastLine = newLine[newLine.length - 1]
+              newLine.pop()
+              newLine = newLine.concat([[lastLine[0], v.index], [v.index, lastLine[1]]])
+            })
+            newPaths = newPaths.concat(newLine)
+          } else {
+            newPaths.push(line)
+          }
+        })
+
+        //筛选出终点没人连的
+        let closeLines = newPaths.filter((v, i) => newPaths.find((w, j) => ((v[0] === w[1] || v[0] === w[0]) && i !== j)))
+        closeLines = closeLines.filter((v, i) => closeLines.find((w, j) => ((v[1] === w[1] || v[1] === w[0]) && i !== j)))
+        closeLines = closeLines.filter((v, i) => closeLines.find((w, j) => ((v[0] === w[1] || v[0] === w[0]) && i !== j)))
+        closeLines = closeLines.filter((v, i) => closeLines.find((w, j) => ((v[1] === w[1] || v[1] === w[0]) && i !== j)))
+        // closeLines = closeLines.filter(v => {
+        //   return closeLines.find(w => {
+        //     return (v[0] === w[1] || v[0] === w[0])
+        //   })
+        // })
+        // closeLines = closeLines.filter(v => closeLines.find(w => (v[1] === w[1] || v[0] === w[0])))
+        console.log('closeLines', closeLines)
+        let closeLinesWithId = closeLines.map((v, i) => ({id: i, line: v}))
+        // console.log('closeLinesWithId', cloneDeep(closeLinesWithId))
+        // console.log('lineMaps', lineMaps)
+        // console.log('newPaths', newPaths)
+        // console.log('newNodes', newNodes)
+        let closeAreas: any[][] = []
+        let showFill = false
+
+        const check = (lines: any[]) => {
+          let listIndexStr = lines.map(v => v.id).sort((a, b) => a - b).join('')
+          return closeAreas.find(w => w.map(w => w.id).sort((a, b) => a - b).join('') === listIndexStr)
+        }
+
+        const gg = (start: number, end: number, line: any, list: any[], save: any[]) => {
+          let arrsEnd = list.filter(w => [w.line[0], w.line[1]].includes(end) && w.id !== line.id)
+          while (arrsEnd.length !== 0) {
+            if (arrsEnd.length === 1) {
+              //这里用复制一遍。因为后续的其他遍历，可能也会碰到这条线，然后方向是相反的，又去改变头和尾
+              let a = cloneDeep(arrsEnd[0])
+              let line = a.line
+              if (line[0] === end) {
+                end = line[1]
+              } else {
+                end = line[0]
+                //交换顺序
+                a.line = [line[1], end]
+              }
+              save.push(a)
+              if (end === start) {
+                return [save]
+              }
+              //如果当前线段与线段们中的任一组成了回路，那么就是一个新的封闭图
+              let isCloseIndex = save.findIndex(b => b.line[0] === end)
+              if (isCloseIndex > -1) {
+                return [save.slice(isCloseIndex)]
+              }
+              arrsEnd = list.filter(w => [w.line[0], w.line[1]].includes(end) && w.id !== a.id)
+            } else {
+              for (let i = 0; i < arrsEnd.length; i++) {
+                let newSave = save.slice()
+                let a = cloneDeep(arrsEnd[i])
+                let newEnd = -1
+                if (a.line[0] === end) {
+                  newEnd = a.line[1]
+                } else {
+                  newEnd = a.line[0]
+                  a.line = [a.line[1], newEnd]
+                }
+                newSave.push(a)
+                let isCloseIndex = newSave.findIndex(b => b.line[0] === newEnd)
+                if (isCloseIndex > -1) {
+                  let closeArea = newSave.slice(isCloseIndex)
+                  if (!check(closeArea)) {
+                    closeAreas = closeAreas.concat([closeArea])
+                  }
+                } else if (newEnd === start) {
+                  if (!check(newSave)) {
+                    closeAreas = closeAreas.concat([newSave])
+                  }
+                } else {
+                  let r = gg(start, newEnd, a, list, newSave)
+                  if (r.length) {
+                    if (!check(r[0])) {
+                      closeAreas = closeAreas.concat(r)
+                    }
+                  }
                 }
               }
+              return []
             }
           }
           return []
         }
-      }
-      return []
-    }
 
-    //TODO 想想，如果只有两条直线，那么根本无需检测，肯定没有封闭图。如果是曲线呢？
-    if (closeLinesWithId.length > 2) {
-      let currentLine = closeLinesWithId[0]
-      let start = currentLine.line[0]
-      let end = currentLine.line[1]
-      let r = gg(start, end, currentLine, closeLinesWithId.slice(), [currentLine])
-      if (r.length) {
-        if (!check(r[0])) {
-          closeAreas = closeAreas.concat(r)
-        }
-      }
+        //TODO 想想，如果只有两条直线，那么根本无需检测，肯定没有封闭图。如果是曲线呢？
+        if (closeLinesWithId.length > 2) {
+          let currentLine = closeLinesWithId[0]
+          let start = currentLine.line[0]
+          let end = currentLine.line[1]
+          let r = gg(start, end, currentLine, closeLinesWithId.slice(), [currentLine])
+          if (r.length) {
+            if (!check(r[0])) {
+              closeAreas = closeAreas.concat(r)
+            }
+          }
 
-      let closeAreasId = closeAreas.map((v, i) => ({id: i, area: v}))
-      let closeAreasIdCopy = cloneDeep(closeAreasId)
-      let waitDelId: any[] = []
-      closeAreasId.map((a: any, i: number) => {
-        if (waitDelId.includes(a.id)) return
-        let ids = a.area.map((l: any) => l.id)
-        let q: any[] = closeAreasIdCopy.filter((b: any, j: number) => {
-          let count = 0
-          if (i !== j) {
-            b.area.map((c: any) => {
-              if (ids.find((id: any) => id === c.id)) {
-                count++
+          let closeAreasId = closeAreas.map((v, i) => ({id: i, area: v}))
+          let closeAreasIdCopy = cloneDeep(closeAreasId)
+          let waitDelId: any[] = []
+          closeAreasId.map((a: any, i: number) => {
+            if (waitDelId.includes(a.id)) return
+            let ids = a.area.map((l: any) => l.id)
+            let q: any[] = closeAreasIdCopy.filter((b: any, j: number) => {
+              let count = 0
+              if (i !== j) {
+                b.area.map((c: any) => {
+                  if (ids.find((id: any) => id === c.id)) {
+                    count++
+                  }
+                })
               }
+              return count >= 2
             })
-          }
-          return count >= 2
-        })
 
-        if (q.length) {
-          let n = q.concat([a])
-          let s = n.sort((a: any, b: any) => a.area.length - b.area.length).map(s => s.id)
-          if (a.id !== s[0]) {
-            let r = closeAreasIdCopy.findIndex(b => b.id === a.id)
+            if (q.length) {
+              let n = q.concat([a])
+              let s = n.sort((a: any, b: any) => a.area.length - b.area.length).map(s => s.id)
+              if (a.id !== s[0]) {
+                let r = closeAreasIdCopy.findIndex(b => b.id === a.id)
+                if (r) {
+                  closeAreasIdCopy.splice(r, 1)
+                }
+                waitDelId = waitDelId.concat([a.id])
+              }
+            }
+          })
+
+          waitDelId.map(v1 => {
+            let r = closeAreasId.findIndex(b => b.id === v1)
             if (r) {
-              closeAreasIdCopy.splice(r, 1)
+              closeAreasId.splice(r, 1)
             }
-            waitDelId = waitDelId.concat([a.id])
-          }
-        }
-      })
+          })
+          console.log('closeAreasRepeat----', cloneDeep(closeAreas))
+          console.log('closeAreas----', cloneDeep(closeAreasId.map(v => v.area)))
 
-      waitDelId.map(v1 => {
-        let r = closeAreasId.findIndex(b => b.id === v1)
-        if (r) {
-          closeAreasId.splice(r, 1)
-        }
-      })
-      console.log('closeAreasRepeat----', cloneDeep(closeAreas))
-      console.log('closeAreas----', cloneDeep(closeAreasId.map(v => v.area)))
+          let cu = CanvasUtil2.getInstance()
+          let {ctx} = cu
+          ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
+          newNodes.map((point, i) => {
+            ctx.fillText(i + '', point.x, point.y)
+            // draw.drawRound(ctx, point)
+          })
 
-      let cu = CanvasUtil2.getInstance()
-      let {ctx} = cu
-      ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
-      newNodes.map((point, i) => {
-        ctx.fillText(i + '', point.x, point.y)
-        // draw.drawRound(ctx, point)
-      })
-
-      let {center} = this.conf
-      cu.waitRenderOtherStatusFunc.push(() => {
-        ctx.save()
-        ctx.strokeStyle = 'red'
-        ctx.fillStyle = 'red'
-        closeLinesWithId.map(line => {
-          let startPoint = newNodes[line.line[0]]
-          let fixStartPoint = {
-            x: center.x + startPoint.x,
-            y: center.y + startPoint.y,
-          }
-          let endPoint = newNodes[line.line[1]]
-          let fixEndPoint = {
-            x: center.x + endPoint.x,
-            y: center.y + endPoint.y,
-          }
-          ctx.moveTo2(fixStartPoint)
-          ctx.lineTo2(fixEndPoint)
-          cu.ctx.font = `400 16rem "SourceHanSansCN", sans-serif`
-          let a = helper.getStraightLineCenterPoint(fixStartPoint, fixEndPoint)
-          // ctx.fillText(`${line.line[0]}-${line.line[1]}:${line.id}`, a.x - 20, a.y)
-          ctx.fillText(`${line.id}`, a.x - 10, a.y)
-        })
-        ctx.stroke()
-
-        if (showFill) {
-          ctx.fillStyle = 'gray'
-          closeAreas.slice().map(v => {
-            let startPoint = newNodes[v[0].line[0]]
-            let fixStartPoint = {
-              x: center.x + startPoint.x,
-              y: center.y + startPoint.y,
-            }
-            let endPoint = newNodes[v[0].line[1]]
-            let fixEndPoint = {
-              x: center.x + endPoint.x,
-              y: center.y + endPoint.y,
-            }
-            ctx.beginPath()
-            ctx.moveTo2(fixStartPoint)
-            ctx.lineTo2(fixEndPoint)
-            v.slice(1).map(w => {
-              endPoint = newNodes[w.line[1]]
-              fixEndPoint = {
+          let {center} = this.conf
+          cu.waitRenderOtherStatusFunc.push(() => {
+            ctx.save()
+            ctx.strokeStyle = 'red'
+            ctx.fillStyle = 'red'
+            closeLinesWithId.map(line => {
+              let startPoint = newNodes[line.line[0]]
+              let fixStartPoint = {
+                x: center.x + startPoint.x,
+                y: center.y + startPoint.y,
+              }
+              let endPoint = newNodes[line.line[1]]
+              let fixEndPoint = {
                 x: center.x + endPoint.x,
                 y: center.y + endPoint.y,
               }
+              ctx.moveTo2(fixStartPoint)
               ctx.lineTo2(fixEndPoint)
+              cu.ctx.font = `400 16rem "SourceHanSansCN", sans-serif`
+              let a = helper.getStraightLineCenterPoint(fixStartPoint, fixEndPoint)
+              // ctx.fillText(`${line.line[0]}-${line.line[1]}:${line.id}`, a.x - 20, a.y)
+              ctx.fillText(`${line.id}`, a.x - 10, a.y)
             })
-            ctx.closePath()
-            ctx.fill()
+            ctx.stroke()
+
+            if (showFill) {
+              ctx.fillStyle = 'gray'
+              closeAreas.slice().map(v => {
+                let startPoint = newNodes[v[0].line[0]]
+                let fixStartPoint = {
+                  x: center.x + startPoint.x,
+                  y: center.y + startPoint.y,
+                }
+                let endPoint = newNodes[v[0].line[1]]
+                let fixEndPoint = {
+                  x: center.x + endPoint.x,
+                  y: center.y + endPoint.y,
+                }
+                ctx.beginPath()
+                ctx.moveTo2(fixStartPoint)
+                ctx.lineTo2(fixEndPoint)
+                v.slice(1).map(w => {
+                  endPoint = newNodes[w.line[1]]
+                  fixEndPoint = {
+                    x: center.x + endPoint.x,
+                    y: center.y + endPoint.y,
+                  }
+                  ctx.lineTo2(fixEndPoint)
+                })
+                ctx.closePath()
+                ctx.fill()
+              })
+            }
+            ctx.restore()
           })
         }
+      }
 
-        // ctx.moveTo2(start)
-        // g.map(v => {
-        //   start = {
-        //     x: v.x + center.x,
-        //     y: v.y + center.y,
-        //   }
-        //   ctx.lineTo2(start)
-        // })
-        // ctx.fill()
-        ctx.restore()
-      })
+      if (singLines.length){
+        for (let i = 0; i < paths.length - 1; i++) {
+          let ip, a = 0, b = 0
+          for (let j = i + 1; j < paths.length; j++) {
+            let currentLine = paths[i]
+            let nextLine = paths[j]
+            let t = Math2.isIntersection2(currentLine, nextLine, nodes, ctrlNodes)
+            // let lastPoint = (j === path.length - 1 ? nodes[path[j][1]] : nodes[path[j + 1][0]])
+            // let t = Math2.isIntersection(nodes[path[i][0]], nodes[path[i + 1][0]], nodes[path[j][0]], lastPoint)
+            if (t) {
+              ip = t
+              a = i
+              b = j
+            }
+          }
+          if (ip) {
+            console.log('ip', ip, a, b)
+            let fillPath = new Path2D()
+            fillPath.moveTo2(ip.intersectsPoint);
 
-    }
-
-    // let ps = []
-    // for (let i = 0; i < paths.length - 1; i++) {
-    //   for (let j = i; j < paths.length; j++) {
-    //     let currentLine = paths[i]
-    //     let nextLine = paths[j]
-    //     let t = Math2.isIntersection2(currentLine, nextLine, nodes, ctrlNodes)
-    //     if (t) {
-    //       console.log('t', t)
-    //       ps.push({
-    //         p: t.intersectsPoint,
-    //         is: [i, j]
-    //       })
-    //     }
-    //   }
-    // }
-    //
-    // console.log('ps', JSON.stringify(ps, null, 2))
-    // let cu = CanvasUtil2.getInstance()
-    // let {ctx} = cu
-    // ctx.save()
-    // ctx.strokeStyle = 'gray'
-    // ctx.fillStyle = 'gray'
-    //
-    // const test = (lineIndex: number, list: any[]) => {
-    //   let rIndex = list.findIndex(v => {
-    //     return v.is.includes(lineIndex)
-    //   })
-    //   if (rIndex !== -1) {
-    //     let item = list[rIndex]
-    //     ctx.lineTo2(item.p)
-    //     console.log('uite.p', item.p)
-    //     list.splice(rIndex, 1)
-    //     let i = 0
-    //     if (item.is[0] === lineIndex) {
-    //       i = 1
-    //     }
-    //     test(item.is[i], list)
-    //   }
-    // }
-    //
-    // ctx.moveTo2(ps[0].p)
-    // // ps.shift()
-    // test(ps[0].is[0], ps)
-    //
-    // ctx.stroke()
-    // ctx.fill()
-    // ctx.restore()
-    // for (let i = 0; i < paths.length - 1; i++) {
-    for (let i = 0; i < 0; i++) {
-      let ip, a = 0, b = 0
-      for (let j = i + 1; j < paths.length; j++) {
-        let currentLine = paths[i]
-        let nextLine = paths[j]
-        let t = Math2.isIntersection2(currentLine, nextLine, nodes, ctrlNodes)
-        // let lastPoint = (j === path.length - 1 ? nodes[path[j][1]] : nodes[path[j + 1][0]])
-        // let t = Math2.isIntersection(nodes[path[i][0]], nodes[path[i + 1][0]], nodes[path[j][0]], lastPoint)
-        if (t) {
-          ip = t
-          a = i
-          b = j
+            if (ip.startLine.type === LineType.Line) {
+              // @ts-ignore
+              fillPath.lineTo2(...ip.startLine.lines[0].slice(1));
+            }
+            if (ip.startLine.type === LineType.Bezier2) {
+              // @ts-ignore
+              fillPath.quadraticCurveTo2(...ip.startLine.lines[0].slice(1))
+            }
+            if (ip.startLine.type === LineType.Bezier3) {
+              // @ts-ignore
+              fillPath.bezierCurveTo2(...ip.startLine.lines[0].slice(1))
+            }
+            for (let t = a + 1; t <= b; t++) {
+              let line = paths[t]
+              let lineType = line[6]
+              let startPoint = nodes[line[0]]
+              let endPoint = nodes[line[1]]
+              // console.log('t', t, lineType)
+              if (t === b) {
+                if (ip.endLine.type === LineType.Line) {
+                  // @ts-ignore
+                  fillPath.lineTo2(...ip.endLine.lines[0].slice(1));
+                }
+                if (ip.endLine.type === LineType.Bezier2) {
+                  fillPath.quadraticCurveTo2(ip.endLine.lines[0][1], ip.endLine.lines[0][2])
+                }
+                if (ip.endLine.type === LineType.Bezier3) {
+                  // @ts-ignore
+                  fillPath.bezierCurveTo2(...ip.endLine.lines[0].slice(1))
+                }
+                break
+              }
+              switch (lineType) {
+                case LineType.Line:
+                  fillPath.lineTo2(endPoint)
+                  break
+                case LineType.Bezier3:
+                  fillPath.bezierCurveTo2(ctrlNodes[line[2]], ctrlNodes[line[3]], endPoint)
+                  break
+                case LineType.Bezier2:
+                  let cp: number = 0
+                  if (line[2] !== -1) cp = line[2]
+                  if (line[3] !== -1) cp = line[3]
+                  fillPath.quadraticCurveTo2(ctrlNodes[cp], endPoint)
+                  break
+              }
+            }
+            fillPathList.push({close: true, path: fillPath})
+          }
         }
       }
-      if (ip) {
-        console.log('ip', ip, a, b)
-        let fillPath = new Path2D()
-        fillPath.moveTo2(ip.intersectsPoint);
 
-        if (ip.startLine.type === LineType.Line) {
-          // @ts-ignore
-          fillPath.lineTo2(...ip.startLine.lines[0].slice(1));
-        }
-        if (ip.startLine.type === LineType.Bezier2) {
-          // @ts-ignore
-          fillPath.quadraticCurveTo2(...ip.startLine.lines[0].slice(1))
-        }
-        if (ip.startLine.type === LineType.Bezier3) {
-          // @ts-ignore
-          fillPath.bezierCurveTo2(...ip.startLine.lines[0].slice(1))
-        }
-        for (let t = a + 1; t <= b; t++) {
-          let line = paths[t]
-          let lineType = line[6]
-          let startPoint = nodes[line[0]]
-          let endPoint = nodes[line[1]]
-          // console.log('t', t, lineType)
-          if (t === b) {
-            if (ip.endLine.type === LineType.Line) {
-              // @ts-ignore
-              fillPath.lineTo2(...ip.endLine.lines[0].slice(1));
-            }
-            if (ip.endLine.type === LineType.Bezier2) {
-              fillPath.quadraticCurveTo2(ip.endLine.lines[0][1], ip.endLine.lines[0][2])
-            }
-            if (ip.endLine.type === LineType.Bezier3) {
-              // @ts-ignore
-              fillPath.bezierCurveTo2(...ip.endLine.lines[0].slice(1))
-            }
+      // let ps = []
+      // for (let i = 0; i < paths.length - 1; i++) {
+      //   for (let j = i; j < paths.length; j++) {
+      //     let currentLine = paths[i]
+      //     let nextLine = paths[j]
+      //     let t = Math2.isIntersection2(currentLine, nextLine, nodes, ctrlNodes)
+      //     if (t) {
+      //       console.log('t', t)
+      //       ps.push({
+      //         p: t.intersectsPoint,
+      //         is: [i, j]
+      //       })
+      //     }
+      //   }
+      // }
+      //
+      // console.log('ps', JSON.stringify(ps, null, 2))
+      // let cu = CanvasUtil2.getInstance()
+      // let {ctx} = cu
+      // ctx.save()
+      // ctx.strokeStyle = 'gray'
+      // ctx.fillStyle = 'gray'
+      //
+      // const test = (lineIndex: number, list: any[]) => {
+      //   let rIndex = list.findIndex(v => {
+      //     return v.is.includes(lineIndex)
+      //   })
+      //   if (rIndex !== -1) {
+      //     let item = list[rIndex]
+      //     ctx.lineTo2(item.p)
+      //     console.log('uite.p', item.p)
+      //     list.splice(rIndex, 1)
+      //     let i = 0
+      //     if (item.is[0] === lineIndex) {
+      //       i = 1
+      //     }
+      //     test(item.is[i], list)
+      //   }
+      // }
+      //
+      // ctx.moveTo2(ps[0].p)
+      // // ps.shift()
+      // test(ps[0].is[0], ps)
+      //
+      // ctx.stroke()
+      // ctx.fill()
+      // ctx.restore()
+
+      paths.map(line => {
+        let strokePath = new Path2D()
+        let lineType = line[6]
+        let startPoint = nodes[line[0]]
+        let endPoint = nodes[line[1]]
+        strokePath.moveTo2(startPoint)
+        switch (lineType) {
+          case LineType.Line:
+            strokePath.lineTo2(endPoint)
             break
-          }
-          switch (lineType) {
-            case LineType.Line:
-              fillPath.lineTo2(endPoint)
-              break
-            case LineType.Bezier3:
-              fillPath.bezierCurveTo2(ctrlNodes[line[2]], ctrlNodes[line[3]], endPoint)
-              break
-            case LineType.Bezier2:
-              let cp: number = 0
-              if (line[2] !== -1) cp = line[2]
-              if (line[3] !== -1) cp = line[3]
-              fillPath.quadraticCurveTo2(ctrlNodes[cp], endPoint)
-              break
-          }
+          case LineType.Bezier3:
+            strokePath.bezierCurveTo2(ctrlNodes[line[2]], ctrlNodes[line[3]], endPoint)
+            break
+          case LineType.Bezier2:
+            let cp: number = 0
+            if (line[2] !== -1) cp = line[2]
+            if (line[3] !== -1) cp = line[3]
+            strokePath.quadraticCurveTo2(ctrlNodes[cp], endPoint)
+            break
         }
-        fillPathList.push({close: true, path: fillPath})
-      }
+        strokePathList.push({close: true, path: strokePath})
+      })
     }
-
-    paths.map(line => {
-      let strokePath = new Path2D()
-      let lineType = line[6]
-      let startPoint = nodes[line[0]]
-      let endPoint = nodes[line[1]]
-      strokePath.moveTo2(startPoint)
-      switch (lineType) {
-        case LineType.Line:
-          strokePath.lineTo2(endPoint)
-          break
-        case LineType.Bezier3:
-          strokePath.bezierCurveTo2(ctrlNodes[line[2]], ctrlNodes[line[3]], endPoint)
-          break
-        case LineType.Bezier2:
-          let cp: number = 0
-          if (line[2] !== -1) cp = line[2]
-          if (line[3] !== -1) cp = line[3]
-          strokePath.quadraticCurveTo2(ctrlNodes[cp], endPoint)
-          break
-      }
-      strokePathList.push({close: true, path: strokePath})
-    })
-
     if (showTime) {
       console.timeEnd()
     }

@@ -204,30 +204,30 @@ export class Pen extends ParentShape {
       let preLine = paths[0]
       let startIndex = 0
       let endIndex = 0
-      paths.slice(1).map((line, i) => {
-        if (line[0] !== preLine[1]) {
-          if (i == 0) {
-            anyLines.push(preLine)
-          }
-          if (i + 1 - startIndex > 1) {
-            singLines.push(paths.slice(startIndex, i + 1))
-          }
-          startIndex = i + 1
-          anyLines.push(line)
-        } else {
-          endIndex = i + 1
-        }
-        preLine = line
-      })
-      if (endIndex - startIndex > 1) {
-        singLines.push(paths.slice(startIndex, endIndex))
-      }
+      // paths.slice(1).map((line, i) => {
+      //   if (line[0] !== preLine[1]) {
+      //     if (i == 0) {
+      //       anyLines.push(preLine)
+      //     }
+      //     if (i + 1 - startIndex > 1) {
+      //       singLines.push(paths.slice(startIndex, i + 1))
+      //     }
+      //     startIndex = i + 1
+      //     anyLines.push(line)
+      //   } else {
+      //     endIndex = i + 1
+      //   }
+      //   preLine = line
+      // })
+      // if (endIndex - startIndex > 1) {
+      //   singLines.push(paths.slice(startIndex, endIndex))
+      // }
 
       // console.log('singLines', singLines)
       // console.log('anyLines', anyLines)
 
 
-      if (anyLines.length) {
+      if (anyLines.length || true) {
         let newNodes = cloneDeep(nodes)
         let lineMaps = new Map<number, {index: number, point: P}[]>()
 
@@ -287,6 +287,9 @@ export class Pen extends ParentShape {
           }
         })
 
+        console.log('newPaths', newPaths)
+
+
         //筛选出终点没人连的
         let closeLines = newPaths.filter((v, i) => newPaths.find((w, j) => ((v[0] === w[1] || v[0] === w[0]) && i !== j)))
         closeLines = closeLines.filter((v, i) => closeLines.find((w, j) => ((v[1] === w[1] || v[1] === w[0]) && i !== j)))
@@ -302,7 +305,6 @@ export class Pen extends ParentShape {
         let closeLinesWithId = closeLines.map((v, i) => ({id: i, line: v}))
         // console.log('closeLinesWithId', cloneDeep(closeLinesWithId))
         // console.log('lineMaps', lineMaps)
-        // console.log('newPaths', newPaths)
         // console.log('newNodes', newNodes)
         let closeAreas: any[][] = []
         let showFill = false
@@ -422,7 +424,7 @@ export class Pen extends ParentShape {
               closeAreasId.splice(r, 1)
             }
           })
-          console.log('closeAreasRepeat----', cloneDeep(closeAreas))
+          // console.log('closeAreasRepeat----', cloneDeep(closeAreas))
           console.log('closeAreas----', cloneDeep(closeAreasId.map(v => v.area)))
 
           let cu = CanvasUtil2.getInstance()
@@ -491,7 +493,7 @@ export class Pen extends ParentShape {
         }
       }
 
-      if (singLines.length){
+      if (singLines.length) {
         for (let i = 0; i < paths.length - 1; i++) {
           let ip, a = 0, b = 0
           for (let j = i + 1; j < paths.length; j++) {

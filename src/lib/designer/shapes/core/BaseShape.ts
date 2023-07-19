@@ -636,7 +636,7 @@ export class BaseShape {
   }
 
   _mousedown(event: BaseEvent2, parents: BaseShape[] = []) {
-    this.log('core-mousedown')
+    // this.log('core-mousedown')
     // console.log('mousedown', this.conf.name, this.enterType, this.hoverType)
     EventBus.emit(EventKeys.SELECT_SHAPE, this)
     if (this.onMouseDown(event, parents)) return
@@ -872,7 +872,6 @@ export class BaseShape {
           let lastPoint = nodes[pointIndex]
           nodes.push(endPoint)
           if (lastPoint.cps[1] !== -1) {
-            debugger
             paths.push([pointIndex, nodes.length - 1, lastPoint.cps[1], -1, -1, -1, LineType.Bezier2])
           } else {
             paths.push([pointIndex, nodes.length - 1, -1, -1, -1, -1, LineType.Line])

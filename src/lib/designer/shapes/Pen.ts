@@ -10,6 +10,7 @@ import {PenConfig, PenNetworkLine} from "../config/PenConfig"
 import {Math2} from "../utils/math"
 import {cloneDeep, eq, uniqueId} from "lodash"
 import {convexHull} from "../utils/test";
+import {Bezier} from "bezier-js"
 
 export class Pen extends ParentShape {
   mouseDown: boolean = false
@@ -69,7 +70,7 @@ export class Pen extends ParentShape {
       // draw.drawRound(ctx, point)
     })
 
-    draw.drawRound(ctx, {x: 0, y: 0})
+    // draw.drawRound(ctx, {x: 0, y: 0})
   }
 
   drawHover(ctx: CanvasRenderingContext2D, newLayout: Rect): any {
@@ -225,18 +226,44 @@ export class Pen extends ParentShape {
 
       // console.log('singLines', singLines)
       // console.log('anyLines', anyLines)
-
-
       if (anyLines.length || true) {
         let newNodes = cloneDeep(nodes)
+        let newCtrlNodes = cloneDeep(ctrlNodes)
         let lineMaps = new Map<number, {index: number, point: P}[]>()
 
         //查找交点，并将交点记录到对应的线段上
         for (let i = 0; i < paths.length - 1; i++) {
-          for (let j = i; j < paths.length; j++) {
-            let currentLine = paths[i]
+          let currentLine = paths[i]
+          let p1 = nodes[currentLine[0]],
+            p2 = nodes[currentLine[1]],
+            line1Type = currentLine[6]
+          //如果是三次曲线，可能会自相交
+          if (line1Type === LineType.Bezier3) {
+            let curve = new Bezier(p1, ctrlNodes[currentLine[2]], ctrlNodes[currentLine[3]], p2)
+            let pair = curve.selfintersects()
+            // console.log('t', pair, 'i', i,)
+            if (pair.length) {
+              let t = pair[0].split("/").map(v => parseFloat(v));
+              let p: P = curve.get(t[0])
+              newNodes.push(p as any)
+              let data = {
+                index: newNodes.length - 1,
+                point: p,
+                t
+              }
+              let lineMap = lineMaps.get(i)
+              if (lineMap) {
+                lineMap.push(data)
+                lineMaps.set(i, lineMap)
+              } else {
+                lineMaps.set(i, [data])
+              }
+            }
+          }
+          for (let j = i + 1; j < paths.length; j++) {
             let nextLine = paths[j]
-            let t = Math2.isIntersection2(currentLine, nextLine, nodes, ctrlNodes)
+            let t = Math2.isIntersection3(currentLine, nextLine, newNodes, newCtrlNodes)
+            // console.log('t', t, 'i', i, 'j', j)
             if (t) {
               newNodes.push(t.intersectsPoint)
               let data = {
@@ -288,7 +315,6 @@ export class Pen extends ParentShape {
         })
 
         console.log('newPaths', newPaths)
-
 
         //筛选出终点没人连的
         let closeLines = newPaths.filter((v, i) => newPaths.find((w, j) => ((v[0] === w[1] || v[0] === w[0]) && i !== j)))
@@ -376,7 +402,7 @@ export class Pen extends ParentShape {
         }
 
         //TODO 想想，如果只有两条直线，那么根本无需检测，肯定没有封闭图。如果是曲线呢？
-        if (closeLinesWithId.length > 2) {
+        if (closeLinesWithId.length >= 2) {
           let currentLine = closeLinesWithId[0]
           let start = currentLine.line[0]
           let end = currentLine.line[1]
@@ -424,16 +450,16 @@ export class Pen extends ParentShape {
               closeAreasId.splice(r, 1)
             }
           })
-          // console.log('closeAreasRepeat----', cloneDeep(closeAreas))
+          console.log('closeAreasRepeat----', cloneDeep(closeAreas))
           console.log('closeAreas----', cloneDeep(closeAreasId.map(v => v.area)))
 
           let cu = CanvasUtil2.getInstance()
           let {ctx} = cu
           ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
-          newNodes.map((point, i) => {
-            ctx.fillText(i + '', point.x, point.y)
-            // draw.drawRound(ctx, point)
-          })
+          // newNodes.map((point, i) => {
+          //   ctx.fillText(i + '', point.x, point.y)
+          //   // draw.drawRound(ctx, point)
+          // })
 
           let {center} = this.conf
           cu.waitRenderOtherStatusFunc.push(() => {
@@ -456,7 +482,7 @@ export class Pen extends ParentShape {
               cu.ctx.font = `400 16rem "SourceHanSansCN", sans-serif`
               let a = helper.getStraightLineCenterPoint(fixStartPoint, fixEndPoint)
               // ctx.fillText(`${line.line[0]}-${line.line[1]}:${line.id}`, a.x - 20, a.y)
-              ctx.fillText(`${line.id}`, a.x - 10, a.y)
+              // ctx.fillText(`${line.id}`, a.x - 10, a.y)
             })
             ctx.stroke()
 
@@ -493,7 +519,7 @@ export class Pen extends ParentShape {
         }
       }
 
-      if (singLines.length) {
+      if (singLines.length && false) {
         for (let i = 0; i < paths.length - 1; i++) {
           let ip, a = 0, b = 0
           for (let j = i + 1; j < paths.length; j++) {

@@ -334,6 +334,8 @@ export default class CanvasUtil2 {
           let {pointIndex, lineIndex, type} = this.editShape.editStartPointInfo
           const {nodes, paths, ctrlNodes} = this.editShape.conf.penNetwork
           if (type === EditType.Line) {
+            //TODO 这里删除nodes，要考虑有无其他线条再使用。。。。
+            this.editShape.editStartPointInfo = cloneDeep(this.editShape.defaultCurrentOperationInfo)
             let line = paths[lineIndex]
             let startIndex = line[0]
             let endIndex = line[1]
@@ -386,7 +388,7 @@ export default class CanvasUtil2 {
 
   onDbClick(e: any) {
     if (e.capture) return
-    console.log('cu-onDbClick', e)
+    // console.log('cu-onDbClick', e)
     if (this.editShape) {
       this.editShape.status = ShapeStatus.Select
       this.editShape = undefined

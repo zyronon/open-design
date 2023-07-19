@@ -668,846 +668,6 @@ let temp = {
   flipHorizontal: false,
   flipVertical: false
 }
-export const rects222 = [
-  {
-    "name": "多边形",
-    layout: {
-      "x": 550,
-      "y": 50,
-      "w": 200,
-      "h": 200,
-    },
-    "rotation": 0,
-    "lineWidth": 2,
-    "type": ShapeType.POLYGON,
-    "color": "gray",
-    "radius": 10,
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "rgb(241,238,238)",
-    flipHorizontal: false,
-    flipVertical: false,
-  },
-  {
-    "name": "圆",
-    layout: {
-      "x": 100,
-      "y": 100,
-      "w": 300,
-      "h": 400,
-    },
-    innerLayout: {
-      "x": 0,
-      "y": 0,
-      "w": 150,
-      "h": 200,
-    },
-    "rotation": 0,
-    "lineWidth": 2,
-    "type": ShapeType.ELLIPSE,
-    "color": "gray",
-    "radius": 0,
-    "borderColor": Colors.Border,
-    "fillColor": "rgb(241,238,238)",
-    strokeAlign: StrokeAlign.OUTSIDE,
-    totalLength: 2.9,
-    startT: 3.5,
-    isComplete: false,
-    flipHorizontal: false,
-    flipVertical: false
-  },
-  {
-    "name": "文字",
-    layout: {
-      "x": 1050,
-      "y": 50,
-      "w": 100,
-      "h": 50,
-    },
-    "rotation": 0,
-    "lineWidth": 2,
-    "type": ShapeType.TEXT,
-    "fontFamily": "SourceHanSansCN",
-    "textAlign": TextAlign.LEFT,
-    "textBaseline": 1,
-    "fontSize": 20,
-    "fontWeight": 500,
-    "letterSpacing": 0,
-    "textLineHeight": 20,
-    "textMode": TextMode.AUTO_W,
-    "texts": [
-      "输入文本"
-    ],
-    "brokenTexts": [
-      "输入文本",
-      "输入文本",
-      "输入文本"
-    ],
-    "color": "gray",
-    "radius": 0,
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "rgb(241,238,238)",
-    flipHorizontal: false,
-    flipVertical: false
-  },
-  {
-    "name": "容器",
-    layout: {
-      "x": 1248,
-      "y": 50,
-      "w": 280,
-      "h": 580,
-    },
-    "rotation": 0,
-    "lineWidth": 2,
-    "type": ShapeType.FRAME,
-    "color": "gray",
-    "radius": 40,
-    children: [
-      {
-        "name": "父组件",
-        layout: {
-          "x": -58,
-          "y": 7,
-          "w": 200,
-          "h": 400,
-        },
-        "rotation": 0,
-        "lineWidth": 2,
-        "type": ShapeType.FRAME,
-        "color": "gray",
-        "radius": 40,
-        children: [
-          {
-            "name": "子组件111111111",
-            layout: {
-              "x": 20,
-              "y": 30,
-              "w": 100,
-              "h": 200,
-            },
-            "rotation": 0,
-            "lineWidth": 2,
-            "type": ShapeType.FRAME,
-            "color": "gray",
-            "radius": 0,
-            children: [
-              {
-                "name": "孙矩形111111",
-                layout: {
-                  "x": 20,
-                  "y": 30,
-                  "w": 50,
-                  "h": 100,
-                },
-                "rotation": 0,
-                "lineWidth": 2,
-                "type": ShapeType.RECTANGLE,
-                "color": "gray",
-                "radius": 0,
-                children: [],
-                "borderColor": "rgb(216,216,216)",
-                "fillColor": "red",
-                flipHorizontal: false,
-                flipVertical: false
-              }
-            ],
-            "borderColor": "rgb(216,216,216)",
-            "fillColor": "red",
-            flipHorizontal: false,
-            flipVertical: false
-          },
-          {
-            "name": "子组件222222",
-            layout: {
-              "x": 20,
-              "y": 250,
-              "w": 100,
-              "h": 200,
-            },
-            "rotation": 0,
-            "lineWidth": 2,
-            "type": ShapeType.FRAME,
-            "color": "gray",
-            "radius": 0,
-            children: [
-              {
-                "name": "孙矩形111111",
-                layout: {
-                  "x": 20,
-                  "y": 30,
-                  "w": 50,
-                  "h": 100,
-                },
-                "rotation": 0,
-                "lineWidth": 2,
-                "type": ShapeType.RECTANGLE,
-                "color": "gray",
-                "radius": 0,
-                children: [],
-                "borderColor": "rgb(216,216,216)",
-                "fillColor": "red",
-                flipHorizontal: false,
-                flipVertical: false
-              }
-            ],
-            "borderColor": "rgb(216,216,216)",
-            "fillColor": "red",
-            flipHorizontal: false,
-            flipVertical: false
-          }
-        ],
-        "borderColor": "rgb(216,216,216)",
-        "fillColor": "rgb(216,216,216)",
-        flipHorizontal: false,
-        flipVertical: false
-      }
-    ],
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "rgb(241,238,238)",
-    flipHorizontal: false,
-    flipVertical: false
-  },
-  {
-    "name": "星星",
-    layout: {
-      "x": 50,
-      "y": 50,
-      "w": 200,
-      "h": 200,
-    },
-    "rotation": 0,
-    "lineWidth": 2,
-    "type": ShapeType.STAR,
-    "color": "gray",
-    "radius": 0,
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "rgb(241,238,238)",
-    flipHorizontal: false,
-    flipVertical: false
-  },
-  {
-    "name": "圆",
-    layout: {
-      "x": 300,
-      "y": 300,
-      "w": 200,
-      "h": 200,
-    },
-    "rotation": 0,
-    "lineWidth": 2,
-    totalLength: 2.5,
-    startLength: 0,
-    "type": ShapeType.ELLIPSE,
-    "color": "gray",
-    "radius": 0,
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "rgb(241,238,238)",
-    flipHorizontal: false,
-    flipVertical: false
-  },
-  {
-    "name": "图片",
-    layout: {
-      "x": 800,
-      "y": 50,
-      "w": 200,
-      "h": 200,
-    },
-    "rotation": 0,
-    "lineWidth": 2,
-    "type": ShapeType.IMAGE,
-    src: 'a.jpg',
-    "color": "gray",
-    "radius": 0,
-    "borderColor": "rgb(216,216,216)",
-    "fillColor": "rgb(241,238,238)",
-    flipHorizontal: false,
-    flipVertical: false
-  },
-  {
-    "name": "矩形",
-    layout: {
-      "x": 50,
-      "y": 50,
-      "w": 350,
-      "h": 400,
-    },
-    "rotation": 0,
-    "lineWidth": 2,
-    "type": ShapeType.RECTANGLE,
-    "color": "gray",
-    "radius": 0,
-    children: [],
-    "borderColor": "rgb(0,0,0)",
-    "fillColor": "#4C4C4C",
-    flipHorizontal: false,
-    flipVertical: false,
-    isComplete: true,
-    isCustom: false
-  },
-]
-export const rectsb: any[] = [{
-  "name": "矩形",
-  "layout": {
-    "x": 100,
-    "y": 100,
-    "w": 100,
-    "h": 300
-  },
-  "rotation": 0,
-  "lineWidth": 2,
-  "type": "PEN",
-  "radius": 0,
-  "children": [],
-  "borderColor": "rgb(0,0,0)",
-  "fillColor": "#4C4C4C",
-  "flipHorizontal": false,
-  "flipVertical": false,
-  "isComplete": true,
-  "isCustom": true,
-  "cornerRadius": 0,
-  "realCornerRadius": 0,
-  "penNetwork": {
-    "ctrlNodes": [
-      {
-        "x": -50,
-        "y": 150
-      },
-      {
-        "x": 24.99999999999999,
-        "y": -225
-      },
-      {
-        "x": 75,
-        "y": -75
-      },
-      {
-        "x": 206,
-        "y": -212.5
-      },
-      {
-        "x": 478,
-        "y": 152.49999999999997
-      },
-      {
-        "x": -58,
-        "y": -17.624999999999996
-      },
-      {
-        "x": -28,
-        "y": -68.875
-      }
-    ],
-    "nodes": [
-      {
-        "x": 143,
-        "y": -40,
-        "cornerRadius": 0,
-        "realCornerRadius": 0,
-        "handleMirroring": "RightAngle",
-        "cornerCps": [-1, -1],
-        "cps": [-1, -1]
-      },
-      {
-        "x": 89,
-        "y": 13,
-        "cornerRadius": 0,
-        "realCornerRadius": 0,
-        "handleMirroring": "RightAngle",
-        "cornerCps": [-1, -1],
-        "cps": [-1, -1]
-      },
-      {
-        "x": 342,
-        "y": -30,
-        "cornerRadius": 0,
-        "realCornerRadius": 0,
-        "handleMirroring": "MirrorAngleAndLength",
-        "cornerCps": [-1, -1],
-        "cps": [
-          3,
-          4
-        ]
-      },
-      {
-        "x": -50,
-        "y": 100,
-        "cornerRadius": 0,
-        "realCornerRadius": 0,
-        "handleMirroring": "NoMirror",
-        "cornerCps": [-1, -1],
-        "cps": [0, -1]
-      },
-      {
-        "x": 100,
-        "y": -150,
-        "cornerRadius": 0,
-        "realCornerRadius": 0,
-        "handleMirroring": "RightAngle",
-        "cornerCps": [-1, -1],
-        "cps": [-1, -1]
-      },
-      {
-        "x": 200,
-        "y": -150,
-        "cornerRadius": 0,
-        "realCornerRadius": 0,
-        "handleMirroring": "RightAngle",
-        "cornerCps": [-1, -1],
-        "cps": [-1, -1]
-      },
-      {
-        "x": 150,
-        "y": 0,
-        "cornerRadius": 0,
-        "realCornerRadius": 0,
-        "handleMirroring": "RightAngle",
-        "cornerCps": [-1, -1],
-        "cps": [-1, -1]
-      },
-      {
-        "x": 46,
-        "y": -90.5,
-        "cornerRadius": 0,
-        "realCornerRadius": 0,
-        "handleMirroring": "RightAngle",
-        "cornerCps": [-1, -1],
-        "cps": [-1, -1]
-      },
-      {
-        "x": -43,
-        "y": -43.25,
-        "cornerRadius": 0,
-        "realCornerRadius": 0,
-        "handleMirroring": "MirrorAngleAndLength",
-        "cornerCps": [-1, -1],
-        "cps": [
-          5,
-          6
-        ]
-      }
-    ],
-    "paths": [
-      [
-        0,
-        8,
-        -1,
-        5,
-        -1,
-        -1,
-        2
-      ],
-      [
-        8,
-        7,
-        6,
-        -1,
-        -1,
-        -1,
-        2
-      ],
-      [
-        7,
-        1,
-        -1,
-        -1,
-        -1,
-        -1,
-        1
-      ],
-      [
-        1,
-        2,
-        -1,
-        3,
-        -1,
-        -1,
-        2
-      ],
-      [
-        2,
-        3,
-        4,
-        0,
-        -1,
-        -1,
-        3
-      ]
-    ],
-    "regions": []
-  },
-  "id": "64db8215-fa78-4480-961a-40bc69d7daa9",
-  "percent": {
-    "x": 0,
-    "y": 0
-  },
-  "relativeCenter": {
-    "x": 0,
-    "y": 0
-  },
-  "realRotation": 0,
-  "start": {
-    "x": 100,
-    "y": 100
-  },
-  "absolute": {
-    "x": 100,
-    "y": 100
-  },
-  "original": {
-    "x": 100,
-    "y": 100
-  },
-  "center": {
-    "x": 150,
-    "y": 250
-  },
-  "box": {
-    "leftX": 100,
-    "rightX": 200,
-    "topY": 100,
-    "bottomY": 400,
-    "topLeft": {
-      "x": 100,
-      "y": 100
-    },
-    "topRight": {
-      "x": 200,
-      "y": 100
-    },
-    "bottomLeft": {
-      "x": 100,
-      "y": 400
-    },
-    "bottomRight": {
-      "x": 200,
-      "y": 400
-    }
-  },
-  "strokeAlign": "INSIDE",
-  "lineShapes": [],
-  "commonPoints": []
-}]
-export const rectsc: any[] = [
-  {
-    "name": "矩形",
-    "layout": {
-      "x": 100,
-      "y": 100,
-      "w": 100,
-      "h": 300
-    },
-    "rotation": 0,
-    "lineWidth": 2,
-    "type": "PEN",
-    "radius": 0,
-    "children": [],
-    "borderColor": "rgb(0,0,0)",
-    "fillColor": "#4C4C4C",
-    "flipHorizontal": false,
-    "flipVertical": false,
-    "isComplete": true,
-    "isCustom": true,
-    "cornerRadius": 0,
-    "realCornerRadius": 0,
-    "penNetwork": {
-      "ctrlNodes": [
-        {
-          "x": -50,
-          "y": 150
-        },
-        {
-          "x": 24.99999999999999,
-          "y": -225
-        },
-        {
-          "x": 75,
-          "y": -75
-        },
-        {
-          "x": 274,
-          "y": -121.25
-        },
-        {
-          "x": 478,
-          "y": 152.49999999999997
-        },
-        {
-          "x": -58,
-          "y": -17.624999999999996
-        },
-        {
-          "x": -28,
-          "y": -68.875
-        },
-        {
-          "x": 147.5,
-          "y": -99.75
-        }
-      ],
-      "nodes": [
-        {
-          "x": 143,
-          "y": -40,
-          "cornerRadius": 0,
-          "realCornerRadius": 0,
-          "handleMirroring": "RightAngle",
-          "cornerCps": [
-            -1,
-            -1
-          ],
-          "cps": [
-            -1,
-            -1
-          ]
-        },
-        {
-          "x": 89,
-          "y": 13,
-          "cornerRadius": 0,
-          "realCornerRadius": 0,
-          "handleMirroring": "NoMirror",
-          "cornerCps": [
-            -1,
-            -1
-          ],
-          "cps": [
-            -1,
-            7
-          ]
-        },
-        {
-          "x": 342,
-          "y": -30,
-          "cornerRadius": 0,
-          "realCornerRadius": 0,
-          "handleMirroring": "MirrorAngle",
-          "cornerCps": [
-            -1,
-            -1
-          ],
-          "cps": [
-            3,
-            4
-          ]
-        },
-        {
-          "x": -50,
-          "y": 100,
-          "cornerRadius": 0,
-          "realCornerRadius": 0,
-          "handleMirroring": "NoMirror",
-          "cornerCps": [
-            -1,
-            -1
-          ],
-          "cps": [
-            0,
-            -1
-          ]
-        },
-        {
-          "x": 100,
-          "y": -150,
-          "cornerRadius": 0,
-          "realCornerRadius": 0,
-          "handleMirroring": "RightAngle",
-          "cornerCps": [
-            -1,
-            -1
-          ],
-          "cps": [
-            -1,
-            -1
-          ]
-        },
-        {
-          "x": 200,
-          "y": -150,
-          "cornerRadius": 0,
-          "realCornerRadius": 0,
-          "handleMirroring": "RightAngle",
-          "cornerCps": [
-            -1,
-            -1
-          ],
-          "cps": [
-            -1,
-            -1
-          ]
-        },
-        {
-          "x": 150,
-          "y": 0,
-          "cornerRadius": 0,
-          "realCornerRadius": 0,
-          "handleMirroring": "RightAngle",
-          "cornerCps": [
-            -1,
-            -1
-          ],
-          "cps": [
-            -1,
-            -1
-          ]
-        },
-        {
-          "x": 46,
-          "y": -90.5,
-          "cornerRadius": 0,
-          "realCornerRadius": 0,
-          "handleMirroring": "RightAngle",
-          "cornerCps": [
-            -1,
-            -1
-          ],
-          "cps": [
-            -1,
-            -1
-          ]
-        },
-        {
-          "x": -43,
-          "y": -43.25,
-          "cornerRadius": 0,
-          "realCornerRadius": 0,
-          "handleMirroring": "MirrorAngleAndLength",
-          "cornerCps": [
-            -1,
-            -1
-          ],
-          "cps": [
-            5,
-            6
-          ]
-        },
-        {
-          "x": 210.75,
-          "y": -110.5,
-          "cornerRadius": 0,
-          "realCornerRadius": 0,
-          "handleMirroring": "RightAngle",
-          "cornerCps": [
-            -1,
-            -1
-          ],
-          "cps": [
-            -1,
-            -1
-          ]
-        }
-      ],
-      "paths": [
-        [
-          0,
-          8,
-          -1,
-          5,
-          -1,
-          -1,
-          2
-        ],
-        [
-          8,
-          7,
-          6,
-          -1,
-          -1,
-          -1,
-          2
-        ],
-        [
-          7,
-          1,
-          -1,
-          -1,
-          -1,
-          -1,
-          1
-        ],
-        [
-          1,
-          9,
-          7,
-          -1,
-          -1,
-          -1,
-          2
-        ],
-        [
-          9,
-          2,
-          -1,
-          3,
-          -1,
-          -1,
-          2
-        ],
-        [
-          2,
-          3,
-          4,
-          0,
-          -1,
-          -1,
-          3
-        ]
-      ],
-      "regions": []
-    },
-    "id": "64db8215-fa78-4480-961a-40bc69d7daa9",
-    "percent": {
-      "x": 0,
-      "y": 0
-    },
-    "relativeCenter": {
-      "x": 0,
-      "y": 0
-    },
-    "realRotation": 0,
-    "start": {
-      "x": 100,
-      "y": 100
-    },
-    "absolute": {
-      "x": 100,
-      "y": 100
-    },
-    "original": {
-      "x": 100,
-      "y": 100
-    },
-    "center": {
-      "x": 150,
-      "y": 250
-    },
-    "box": {
-      "leftX": 100,
-      "rightX": 200,
-      "topY": 100,
-      "bottomY": 400,
-      "topLeft": {
-        "x": 100,
-        "y": 100
-      },
-      "topRight": {
-        "x": 200,
-        "y": 100
-      },
-      "bottomLeft": {
-        "x": 100,
-        "y": 400
-      },
-      "bottomRight": {
-        "x": 200,
-        "y": 400
-      }
-    },
-    "strokeAlign": "INSIDE",
-    "lineShapes": [],
-    "commonPoints": []
-  }
-]
 export const rectsd: any[] = [
   {
     "name": "矩形",
@@ -2222,7 +1382,7 @@ export const rectsg: any[] = [
     "id": "19fbc200-c966-4f54-8939-08bb9fb7b361"
   }
 ]
-export const rects: any[] = [
+export const rectsh: any[] = [
   {
     "name": "矩形",
     "layout": {
@@ -2594,6 +1754,678 @@ export const rects: any[] = [
     "lineShapes": [],
     "commonPoints": [],
     "id": "3327ff0a-41d9-4af5-aed6-0d8045e782cf"
+  }
+]
+export const rectsj1: any[] = [
+  {
+    "name": "矩形",
+    "layout": {
+      "x": 250.05088174397093,
+      "y": 187.15896142420058,
+      "w": 421.949118256029,
+      "h": 189.84103857579942
+    },
+    "rotation": 0,
+    "lineWidth": 2,
+    "type": "PEN",
+    "radius": 0,
+    "children": [],
+    "borderColor": "rgb(0,0,0)",
+    "fillColor": "#4C4C4C",
+    "flipHorizontal": false,
+    "flipVertical": false,
+    "isComplete": true,
+    "isCustom": true,
+    "cornerRadius": 0,
+    "realCornerRadius": 0,
+    "penNetwork": {
+      "ctrlNodes": [
+        {
+          "x": -357.02544087198544,
+          "y": -31.079480712100228
+        },
+        {
+          "x": 230.97455912801456,
+          "y": -35.07948071210032
+        },
+        {
+          "x": -107.2754408719855,
+          "y": -192.8294807121003
+        },
+        {
+          "x": -102.77544087198541,
+          "y": 184.6705192878997
+        }
+      ],
+      "nodes": [
+        {
+          "x": 10.974559128014562,
+          "y": 13.920519287899708,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -63.02544087198544,
+          "y": -33.07948071210029,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "MirrorAngleAndLength",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            1,
+            0
+          ]
+        },
+        {
+          "x": -105.02544087198544,
+          "y": -4.079480712100292,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "MirrorAngleAndLength",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            2,
+            3
+          ]
+        },
+        {
+          "x": 210.97455912801456,
+          "y": -68.07948071210029,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": 159.97455912801456,
+          "y": 94.92051928789971,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        }
+      ],
+      "paths": [
+        [
+          0,
+          1,
+          -1,
+          1,
+          -1,
+          -1,
+          2
+        ],
+        [
+          1,
+          2,
+          0,
+          2,
+          -1,
+          -1,
+          3
+        ],
+        [
+          2,
+          3,
+          3,
+          -1,
+          -1,
+          -1,
+          2
+        ],
+        [
+          3,
+          4,
+          -1,
+          -1,
+          -1,
+          -1,
+          1
+        ]
+      ],
+      "regions": []
+    },
+    "percent": {
+      "x": 0,
+      "y": 0
+    },
+    "relativeCenter": {
+      "x": 0,
+      "y": 0
+    },
+    "realRotation": 0,
+    "start": {
+      "x": 700,
+      "y": 100
+    },
+    "absolute": {
+      "x": 250.05088174397093,
+      "y": 187.15896142420058
+    },
+    "original": {
+      "x": 250.05088174397093,
+      "y": 187.15896142420058
+    },
+    "center": {
+      "x": 461.02544087198544,
+      "y": 282.0794807121003
+    },
+    "box": {
+      "leftX": 250.05088174397093,
+      "rightX": 672,
+      "topY": 187.15896142420058,
+      "bottomY": 377,
+      "topLeft": {
+        "x": 250.05088174397093,
+        "y": 187.15896142420058
+      },
+      "topRight": {
+        "x": 672,
+        "y": 187.15896142420058
+      },
+      "bottomLeft": {
+        "x": 250.05088174397093,
+        "y": 377
+      },
+      "bottomRight": {
+        "x": 672,
+        "y": 377
+      }
+    },
+    "strokeAlign": "INSIDE",
+    "lineShapes": [],
+    "commonPoints": [],
+    "id": "9476d326-889c-4195-8ceb-0be61ff5bdcb"
+  }
+]
+export const rectsj2: any[] = [
+  {
+    "name": "矩形",
+    "layout": {
+      "x": 275.61653852530026,
+      "y": 202.26146540571634,
+      "w": 396.3834614746998,
+      "h": 174.73853459428364
+    },
+    "rotation": 0,
+    "lineWidth": 2,
+    "type": "PEN",
+    "radius": 0,
+    "children": [],
+    "borderColor": "rgb(0,0,0)",
+    "fillColor": "#4C4C4C",
+    "flipHorizontal": false,
+    "flipVertical": false,
+    "isComplete": true,
+    "isCustom": true,
+    "cornerRadius": 0,
+    "realCornerRadius": 0,
+    "penNetwork": {
+      "ctrlNodes": [
+        {
+          "x": -264.80826926265013,
+          "y": 54.3692672971419
+        },
+        {
+          "x": 185.19173073734987,
+          "y": 50.36926729714182
+        },
+        {
+          "x": -120.05826926265019,
+          "y": -200.38073270285815
+        },
+        {
+          "x": -115.5582692626501,
+          "y": 177.11926729714185
+        }
+      ],
+      "nodes": [
+        {
+          "x": 271.19173073734987,
+          "y": -203.63073270285815,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -39.80826926265013,
+          "y": 52.369267297141846,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "MirrorAngleAndLength",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            1,
+            0
+          ]
+        },
+        {
+          "x": -117.80826926265013,
+          "y": -11.630732702858154,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "MirrorAngleAndLength",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            2,
+            3
+          ]
+        },
+        {
+          "x": 261.19173073734987,
+          "y": 112.36926729714185,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": 604.1917307373499,
+          "y": 114.36926729714185,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        }
+      ],
+      "paths": [
+        [
+          0,
+          1,
+          -1,
+          1,
+          -1,
+          -1,
+          2
+        ],
+        [
+          1,
+          2,
+          0,
+          2,
+          -1,
+          -1,
+          3
+        ],
+        [
+          2,
+          3,
+          3,
+          -1,
+          -1,
+          -1,
+          2
+        ],
+        [
+          3,
+          4,
+          -1,
+          -1,
+          -1,
+          -1,
+          1
+        ]
+      ],
+      "regions": []
+    },
+    "percent": {
+      "x": 0,
+      "y": 0
+    },
+    "relativeCenter": {
+      "x": 0,
+      "y": 0
+    },
+    "realRotation": 0,
+    "start": {
+      "x": 700,
+      "y": 100
+    },
+    "absolute": {
+      "x": 275.61653852530026,
+      "y": 202.26146540571634
+    },
+    "original": {
+      "x": 275.61653852530026,
+      "y": 202.26146540571634
+    },
+    "center": {
+      "x": 473.80826926265013,
+      "y": 289.63073270285815
+    },
+    "box": {
+      "leftX": 275.61653852530026,
+      "rightX": 672,
+      "topY": 202.26146540571634,
+      "bottomY": 377,
+      "topLeft": {
+        "x": 275.61653852530026,
+        "y": 202.26146540571634
+      },
+      "topRight": {
+        "x": 672,
+        "y": 202.26146540571634
+      },
+      "bottomLeft": {
+        "x": 275.61653852530026,
+        "y": 377
+      },
+      "bottomRight": {
+        "x": 672,
+        "y": 377
+      }
+    },
+    "strokeAlign": "INSIDE",
+    "lineShapes": [],
+    "commonPoints": [],
+    "id": "9476d326-889c-4195-8ceb-0be61ff5bdcb"
+  }
+]
+export const rects: any[] = [
+  {
+    "name": "矩形",
+    "layout": {
+      "x": 308.10774674264724,
+      "y": 86,
+      "w": 769.8922532573526,
+      "h": 332.53870808678505
+    },
+    "rotation": 0,
+    "lineWidth": 2,
+    "type": "PEN",
+    "radius": 0,
+    "children": [],
+    "borderColor": "rgb(0,0,0)",
+    "fillColor": "#4C4C4C",
+    "flipHorizontal": false,
+    "flipVertical": false,
+    "isComplete": true,
+    "isCustom": true,
+    "cornerRadius": 0,
+    "realCornerRadius": 0,
+    "penNetwork": {
+      "ctrlNodes": [
+        {
+          "x": -635.0538733713236,
+          "y": 72.73064595660753
+        },
+        {
+          "x": -185.05387337132356,
+          "y": 68.73064595660745
+        },
+        {
+          "x": -339.3038733713236,
+          "y": -163.01935404339252
+        },
+        {
+          "x": -334.80387337132356,
+          "y": 214.48064595660748
+        }
+      ],
+      "nodes": [
+        {
+          "x": 51.94612662867644,
+          "y": -166.26935404339252,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -410.05387337132356,
+          "y": 70.73064595660748,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "MirrorAngleAndLength",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            1,
+            0
+          ]
+        },
+        {
+          "x": -337.05387337132356,
+          "y": 25.730645956607475,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "MirrorAngleAndLength",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            2,
+            3
+          ]
+        },
+        {
+          "x": 41.94612662867644,
+          "y": 149.73064595660748,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": 384.94612662867644,
+          "y": 151.73064595660748,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -245.05387337132356,
+          "y": -87.26935404339252,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -541.0538733713236,
+          "y": 100.73064595660748,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        }
+      ],
+      "paths": [
+        [
+          0,
+          1,
+          -1,
+          1,
+          -1,
+          -1,
+          2
+        ],
+        [
+          1,
+          2,
+          0,
+          2,
+          -1,
+          -1,
+          3
+        ],
+        [
+          2,
+          3,
+          3,
+          -1,
+          -1,
+          -1,
+          2
+        ],
+        [
+          3,
+          4,
+          -1,
+          -1,
+          -1,
+          -1,
+          1
+        ],
+        [
+          5,
+          6,
+          -1,
+          -1,
+          -1,
+          -1,
+          1
+        ]
+      ],
+      "regions": []
+    },
+    "percent": {
+      "x": 0,
+      "y": 0
+    },
+    "relativeCenter": {
+      "x": 0,
+      "y": 0
+    },
+    "realRotation": 0,
+    "start": {
+      "x": 700,
+      "y": 100
+    },
+    "absolute": {
+      "x": 308.10774674264724,
+      "y": 86
+    },
+    "original": {
+      "x": 308.10774674264724,
+      "y": 86
+    },
+    "center": {
+      "x": 693.0538733713236,
+      "y": 252.26935404339252
+    },
+    "box": {
+      "leftX": 308.10774674264724,
+      "rightX": 1078,
+      "topY": 86,
+      "bottomY": 418.53870808678505,
+      "topLeft": {
+        "x": 308.10774674264724,
+        "y": 86
+      },
+      "topRight": {
+        "x": 1078,
+        "y": 86
+      },
+      "bottomLeft": {
+        "x": 308.10774674264724,
+        "y": 418.53870808678505
+      },
+      "bottomRight": {
+        "x": 1078,
+        "y": 418.53870808678505
+      }
+    },
+    "strokeAlign": "INSIDE",
+    "lineShapes": [],
+    "commonPoints": [],
+    "id": "9476d326-889c-4195-8ceb-0be61ff5bdcb"
   }
 ]
 

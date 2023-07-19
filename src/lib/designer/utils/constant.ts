@@ -2428,6 +2428,256 @@ export const rects: any[] = [
     "id": "9476d326-889c-4195-8ceb-0be61ff5bdcb"
   }
 ]
+export const rectsj4: any[] = [
+  {
+    "name": "矩形",
+    "layout": {
+      "x": 152,
+      "y": 86,
+      "w": 926,
+      "h": 332.538708086785
+    },
+    "rotation": 0,
+    "lineWidth": 2,
+    "type": "PEN",
+    "radius": 0,
+    "children": [],
+    "borderColor": "rgb(0,0,0)",
+    "fillColor": "#4C4C4C",
+    "flipHorizontal": false,
+    "flipVertical": false,
+    "isComplete": true,
+    "isCustom": true,
+    "cornerRadius": 0,
+    "realCornerRadius": 0,
+    "penNetwork": {
+      "ctrlNodes": [
+        {
+          "x": -265,
+          "y": -182.26935404339247
+        },
+        {
+          "x": -117,
+          "y": 231.73064595660748
+        },
+        {
+          "x": -341.25,
+          "y": 308.98064595660753
+        },
+        {
+          "x": -62.75,
+          "y": -71.5193540433925
+        }
+      ],
+      "nodes": [
+        {
+          "x": 50,
+          "y": 45.7306459566075,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -191,
+          "y": 24.730645956607503,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "MirrorAngleAndLength",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            1,
+            0
+          ]
+        },
+        {
+          "x": -202,
+          "y": 118.7306459566075,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "MirrorAngleAndLength",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            2,
+            3
+          ]
+        },
+        {
+          "x": 56,
+          "y": 137.7306459566075,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": 463,
+          "y": 151.7306459566075,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -167,
+          "y": -87.2693540433925,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -463,
+          "y": 100.7306459566075,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        }
+      ],
+      "paths": [
+        [
+          0,
+          1,
+          -1,
+          1,
+          -1,
+          -1,
+          2
+        ],
+        [
+          1,
+          2,
+          0,
+          2,
+          -1,
+          -1,
+          3
+        ],
+        [
+          2,
+          3,
+          3,
+          -1,
+          -1,
+          -1,
+          2
+        ],
+        [
+          3,
+          4,
+          -1,
+          -1,
+          -1,
+          -1,
+          1
+        ],
+        [
+          5,
+          6,
+          -1,
+          -1,
+          -1,
+          -1,
+          1
+        ]
+      ],
+      "regions": []
+    },
+    "percent": {
+      "x": 0,
+      "y": 0
+    },
+    "relativeCenter": {
+      "x": 0,
+      "y": 0
+    },
+    "realRotation": 0,
+    "start": {
+      "x": 700,
+      "y": 100
+    },
+    "absolute": {
+      "x": 152,
+      "y": 86
+    },
+    "original": {
+      "x": 152,
+      "y": 86
+    },
+    "center": {
+      "x": 615,
+      "y": 252.2693540433925
+    },
+    "box": {
+      "leftX": 152,
+      "rightX": 1078,
+      "topY": 86,
+      "bottomY": 418.538708086785,
+      "topLeft": {
+        "x": 152,
+        "y": 86
+      },
+      "topRight": {
+        "x": 1078,
+        "y": 86
+      },
+      "bottomLeft": {
+        "x": 152,
+        "y": 418.538708086785
+      },
+      "bottomRight": {
+        "x": 1078,
+        "y": 418.538708086785
+      }
+    },
+    "strokeAlign": "INSIDE",
+    "lineShapes": [],
+    "commonPoints": [],
+    "id": "9476d326-889c-4195-8ceb-0be61ff5bdcb"
+  }
+]
 
 const defaultCurrentMat = [
   1, 0, 0, 0,

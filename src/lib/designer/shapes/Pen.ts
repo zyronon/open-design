@@ -193,6 +193,7 @@ export class Pen extends ParentShape {
 
   getCustomShapePath3(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
     let showTime = true
+    let showFill = false
     if (showTime) {
       console.time()
     }
@@ -293,27 +294,23 @@ export class Pen extends ParentShape {
 
         let closeLines: any[] = []
         //筛选出终点没人连的
-        closeLines = newPaths.filter((v, i) => newPaths.find((w, j) => ((v[0] === w[1] || v[0] === w[0]) && i !== j)))
-        closeLines = closeLines.filter((v, i) => closeLines.find((w, j) => ((v[1] === w[1] || v[1] === w[0]) && i !== j)))
-        closeLines = closeLines.filter((v, i) => closeLines.find((w, j) => ((v[0] === w[1] || v[0] === w[0]) && i !== j)))
-        closeLines = closeLines.filter((v, i) => closeLines.find((w, j) => ((v[1] === w[1] || v[1] === w[0]) && i !== j)))
-        // closeLines = closeLines.filter(v => {
-        //   return closeLines.find(w => {
-        //     return (v[0] === w[1] || v[0] === w[0])
-        //   })
-        // })
+        closeLines = newPaths.filter((v, i) => {
+          let r = newPaths.find((w, j) => ((v[0] === w[1] || v[0] === w[0]) && i !== j))
+          let r2 = newPaths.find((w, j) => ((v[1] === w[1] || v[1] === w[0]) && i !== j))
+          return r2 && r
+        })
         let closeLinesWithId = closeLines.map((v, i) => ({id: i, line: v}))
-        // console.log('lineMaps', lineMaps)
-        // console.log('newNodes', newNodes)
+
         let closeAreas: any[][] = []
-        let showFill = false
 
         const check = (lines: any[]) => {
           let listIndexStr = lines.map(v => v.id).sort((a, b) => a - b).join('')
           return closeAreas.find(w => w.map(w => w.id).sort((a, b) => a - b).join('') === listIndexStr)
         }
 
+        let visited: number[] = []
         const gg = (start: number, end: number, line: any, list: any[], save: any[]) => {
+          visited.push(line.id)
           let arrsEnd = list.filter(w => [w.line[0], w.line[1]].includes(end) && w.id !== line.id)
           while (arrsEnd.length !== 0) {
             if (arrsEnd.length === 1) {
@@ -327,6 +324,7 @@ export class Pen extends ParentShape {
                 //交换顺序
                 a.line = [line[1], end]
               }
+              visited.push(a.id)
               save.push(a)
               if (end === start) {
                 return [save]
@@ -376,15 +374,18 @@ export class Pen extends ParentShape {
 
         //TODO 想想，如果只有两条直线，那么根本无需检测，肯定没有封闭图。如果是曲线呢？
         if (closeLinesWithId.length >= 2 && true) {
-          let currentLine = closeLinesWithId[0]
-          let start = currentLine.line[0]
-          let end = currentLine.line[1]
-          let r = gg(start, end, currentLine, closeLinesWithId.slice(), [currentLine])
-          if (r.length) {
-            if (!check(r[0])) {
-              closeAreas = closeAreas.concat(r)
+          closeLinesWithId.map(currentLine => {
+            if (!visited.includes(currentLine.id)){
+              let start = currentLine.line[0]
+              let end = currentLine.line[1]
+              let r = gg(start, end, currentLine, closeLinesWithId.slice(), [currentLine])
+              if (r.length) {
+                if (!check(r[0])) {
+                  closeAreas = closeAreas.concat(r)
+                }
+              }
             }
-          }
+          })
 
           let closeAreasId = closeAreas.map((v, i) => ({id: i, area: v}))
           let closeAreasIdCopy = cloneDeep(closeAreasId)
@@ -424,6 +425,7 @@ export class Pen extends ParentShape {
             }
           })
 
+          // console.log('visited', cloneDeep(Array.from(new Set(visited))))
           console.log('lineMaps', cloneDeep(lineMaps))
           console.log('newPaths', cloneDeep(newPaths))
           console.log('closeLines', cloneDeep(closeLines))

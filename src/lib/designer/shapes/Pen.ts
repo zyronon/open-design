@@ -243,7 +243,7 @@ export class Pen extends ParentShape {
         }
       }
 
-      //然后将有交点的线段分割
+      //将有交点的线段分割
       let newPaths: any[] = []
       paths.map((line, index) => {
         let lineMap = lineMaps.get(index)

@@ -1493,15 +1493,6 @@ export class BaseShape {
     return {strokePathList, fillPathList}
   }
 
-  getPoint(pointInfo: PointInfo, conf: BaseConfig = this.conf): BezierPoint {
-    if (!pointInfo) return null as any
-    if (pointInfo.type === PointType.Single) {
-      return pointInfo.point!
-    } else {
-      return conf.commonPoints[this.conf.commonPoints.findIndex(v => v.id === pointInfo.targetId)!]
-    }
-  }
-
   protected notifyConfUpdate() {
     EventBus.emit(EventKeys.ON_CONF_CHANGE)
   }
@@ -1874,6 +1865,15 @@ export class BaseShape {
     point.cps.map(v => {
       if (v !== -1) helper.movePoint2(ctrlNodes[v], move)
     })
+  }
+
+  getPoint(pointInfo: PointInfo, conf: BaseConfig = this.conf): BezierPoint {
+    if (!pointInfo) return null as any
+    if (pointInfo.type === PointType.Single) {
+      return pointInfo.point!
+    } else {
+      return conf.commonPoints[this.conf.commonPoints.findIndex(v => v.id === pointInfo.targetId)!]
+    }
   }
 
   getPoint2({type, pointIndex, cpIndex}: CurrentOperationInfo) {

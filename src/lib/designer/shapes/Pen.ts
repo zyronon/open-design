@@ -189,7 +189,7 @@ export class Pen extends ParentShape {
   }
 
   getCustomShapePath3(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
-    let showTime = true
+    let showTime = false
     let showFill = true
     if (showTime) {
       console.time()
@@ -456,13 +456,13 @@ export class Pen extends ParentShape {
 
         // console.log('visited', cloneDeep(Array.from(new Set(visited))))
 
-        console.log('newNodes', cloneDeep(newNodes))
-        console.log('lineMaps', cloneDeep(lineMaps))
-        console.log('newPaths', cloneDeep(newPaths))
-        console.log('closeLines', cloneDeep(closeLines))
+        // console.log('newNodes', cloneDeep(newNodes))
+        // console.log('lineMaps', cloneDeep(lineMaps))
+        // console.log('newPaths', cloneDeep(newPaths))
+        // console.log('closeLines', cloneDeep(closeLines))
         // console.log('closeLinesWithId', cloneDeep(closeLinesWithId))
         // console.log('closeAreasRepeat----', cloneDeep(closeAreasRepeat))
-        console.log('closeAreas----', cloneDeep(closeAreasId.map(v => v.area)))
+        // console.log('closeAreas----', cloneDeep(closeAreasId.map(v => v.area)))
 
         let cu = CanvasUtil2.getInstance()
         let {ctx} = cu

@@ -1340,6 +1340,7 @@ export class BaseShape {
   }
 
   pointRadiusChange(e: any, val: any) {
+    return console.log(e, val)
     this.originalLineShapes = cloneDeep(this.conf.lineShapes)
 
     let point = this.getPoint(this.conf.lineShapes[val.lineIndex].points[val.pointIndex])
@@ -1404,7 +1405,7 @@ export class BaseShape {
     return pathList
   }
 
-  getCustomShapePath2(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
+  getCustomShapePath2(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     this.conf.lineShapes.map((line) => {

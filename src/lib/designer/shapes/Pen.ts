@@ -55,11 +55,10 @@ export class Pen extends ParentShape {
       ctx.stroke(line.path)
     })
 
-    ctx.strokeStyle = 'white'
-    fillPathList.map(({close, path}) => {
-      // ctx.fill(path,'evenodd')
-      ctx.stroke(path)
-    })
+    // ctx.strokeStyle = 'white'
+    // fillPathList.map(({close, path}) => {
+    //   ctx.stroke(path)
+    // })
 
     //绘制所有点
     ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
@@ -199,7 +198,7 @@ export class Pen extends ParentShape {
     let fillPathList: LinePath[] = []
     const {nodes, paths, ctrlNodes} = this._conf.penNetwork
     if (paths.length) {
-      let singLines: PenNetworkLine[][] = []
+      //TODO 有空了记得渲染三次自相交的图
       let selfIntersectionLines: PenNetworkLine[] = []
 
       let newNodes = cloneDeep(nodes)
@@ -317,9 +316,6 @@ export class Pen extends ParentShape {
         }
       })
 
-      // console.log('newNodes', cloneDeep(newNodes))
-      console.log('lineMaps', cloneDeep(lineMaps))
-      console.log('newPaths', cloneDeep(newPaths))
 
       let closeLines: any[] = []
       //筛选出终点没人连的
@@ -422,6 +418,7 @@ export class Pen extends ParentShape {
         let closeAreasId = closeAreasRepeat.map((v, i) => ({id: i, area: v}))
         let closeAreasIdCopy = cloneDeep(closeAreasId)
         let waitDelId: any[] = []
+        //筛选重叠的图形：有两条边以上相同的即为重叠的图形
         closeAreasId.map((a: any, i: number) => {
           if (waitDelId.includes(a.id)) return
           let ids = a.area.map((l: any) => l.id)
@@ -459,10 +456,13 @@ export class Pen extends ParentShape {
 
         // console.log('visited', cloneDeep(Array.from(new Set(visited))))
 
-        console.log('closeLines', cloneDeep(closeLines))
-        console.log('closeLinesWithId', cloneDeep(closeLinesWithId))
-        console.log('closeAreasRepeat----', cloneDeep(closeAreasRepeat))
-        console.log('closeAreas----', cloneDeep(closeAreasId.map(v => v.area)))
+        // console.log('newNodes', cloneDeep(newNodes))
+        // console.log('lineMaps', cloneDeep(lineMaps))
+        // console.log('newPaths', cloneDeep(newPaths))
+        // console.log('closeLines', cloneDeep(closeLines))
+        // console.log('closeLinesWithId', cloneDeep(closeLinesWithId))
+        // console.log('closeAreasRepeat----', cloneDeep(closeAreasRepeat))
+        // console.log('closeAreas----', cloneDeep(closeAreasId.map(v => v.area)))
 
         let cu = CanvasUtil2.getInstance()
         let {ctx} = cu
@@ -558,78 +558,6 @@ export class Pen extends ParentShape {
             })
             fillPathList.push({close: true, path: fillPath})
           })
-        }
-      }
-
-      if (singLines.length && false) {
-        for (let i = 0; i < paths.length - 1; i++) {
-          let ip, a = 0, b = 0
-          for (let j = i + 1; j < paths.length; j++) {
-            let currentLine = paths[i]
-            let nextLine = paths[j]
-            let t = Math2.isIntersection2(currentLine, nextLine, nodes, ctrlNodes)
-            // let lastPoint = (j === path.length - 1 ? nodes[path[j][1]] : nodes[path[j + 1][0]])
-            // let t = Math2.isIntersection(nodes[path[i][0]], nodes[path[i + 1][0]], nodes[path[j][0]], lastPoint)
-            if (t) {
-              ip = t
-              a = i
-              b = j
-            }
-          }
-          if (ip) {
-            console.log('ip', ip, a, b)
-            let fillPath = new Path2D()
-            fillPath.moveTo2(ip.intersectsPoint);
-
-            if (ip.startLine.type === LineType.Line) {
-              // @ts-ignore
-              fillPath.lineTo2(...ip.startLine.lines[0].slice(1));
-            }
-            if (ip.startLine.type === LineType.Bezier2) {
-              // @ts-ignore
-              fillPath.quadraticCurveTo2(...ip.startLine.lines[0].slice(1))
-            }
-            if (ip.startLine.type === LineType.Bezier3) {
-              // @ts-ignore
-              fillPath.bezierCurveTo2(...ip.startLine.lines[0].slice(1))
-            }
-            for (let t = a + 1; t <= b; t++) {
-              let line = paths[t]
-              let lineType = line[6]
-              let startPoint = nodes[line[0]]
-              let endPoint = nodes[line[1]]
-              // console.log('t', t, lineType)
-              if (t === b) {
-                if (ip.endLine.type === LineType.Line) {
-                  // @ts-ignore
-                  fillPath.lineTo2(...ip.endLine.lines[0].slice(1));
-                }
-                if (ip.endLine.type === LineType.Bezier2) {
-                  fillPath.quadraticCurveTo2(ip.endLine.lines[0][1], ip.endLine.lines[0][2])
-                }
-                if (ip.endLine.type === LineType.Bezier3) {
-                  // @ts-ignore
-                  fillPath.bezierCurveTo2(...ip.endLine.lines[0].slice(1))
-                }
-                break
-              }
-              switch (lineType) {
-                case LineType.Line:
-                  fillPath.lineTo2(endPoint)
-                  break
-                case LineType.Bezier3:
-                  fillPath.bezierCurveTo2(ctrlNodes[line[2]], ctrlNodes[line[3]], endPoint)
-                  break
-                case LineType.Bezier2:
-                  let cp: number = 0
-                  if (line[2] !== -1) cp = line[2]
-                  if (line[3] !== -1) cp = line[3]
-                  fillPath.quadraticCurveTo2(ctrlNodes[cp], endPoint)
-                  break
-              }
-            }
-            fillPathList.push({close: true, path: fillPath})
-          }
         }
       }
 

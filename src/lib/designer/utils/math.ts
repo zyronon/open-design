@@ -326,10 +326,6 @@ const Math2 = {
         intersects.map((t, i, arr) => {
           if (t === 0 || t === 1) return
 
-          // start.push({
-          //   t,
-          //   point: curve.get(t)
-          // })
           // let split = splitCurve.split(t)
           // let points = split.left.points
           // splitCurve = split.right

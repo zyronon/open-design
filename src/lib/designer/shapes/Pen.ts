@@ -8,8 +8,7 @@ import {BaseEvent2, EditType, LinePath, LineShape, LineType, P, ShapeStatus} fro
 import {BaseShape} from "./core/BaseShape"
 import {PenConfig, PenNetworkLine} from "../config/PenConfig"
 import {Math2} from "../utils/math"
-import {cloneDeep, eq, uniqueId} from "lodash"
-import {convexHull} from "../utils/test";
+import {cloneDeep, eq} from "lodash"
 import {Bezier} from "bezier-js"
 
 export class Pen extends ParentShape {
@@ -148,7 +147,6 @@ export class Pen extends ParentShape {
           draw.drawRound(ctx, point)
         }
       })
-
       // draw.currentPoint(ctx, point)
     }
 
@@ -193,7 +191,7 @@ export class Pen extends ParentShape {
 
   getCustomShapePath3(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
     let showTime = true
-    let showFill = false
+    let showFill = true
     if (showTime) {
       console.time()
     }
@@ -254,14 +252,56 @@ export class Pen extends ParentShape {
           lineMap.sort((a, b) => {
             return a.t - b.t
           })
-          let newLine: any = [line]
-          lineMap.map(v => {
-            // console.log('v',v)
-            let lastLine = newLine[newLine.length - 1]
-            newLine.pop()
-            newLine = newLine.concat([[lastLine[0], v.index], [v.index, lastLine[1]]])
-          })
-          newPaths = newPaths.concat(newLine)
+          let lineType = line[6]
+          if (lineType === LineType.Line) {
+            let newLines: any = [line]
+            lineMap.map(v => {
+              // console.log('v',v)
+              let lastLine = newLines[newLines.length - 1]
+              newLines.pop()
+              newLines = newLines.concat([
+                [lastLine[0], v.index, -1, -1, -1, -1, lineType],
+                [v.index, lastLine[1], -1, -1, -1, -1, lineType]
+              ])
+            })
+            newPaths = newPaths.concat(newLines)
+          } else {
+            let p1 = nodes[line[0]],
+              p2 = nodes[line[1]],
+              splitCurve: Bezier
+            if (lineType === LineType.Bezier2) {
+              let cp: P
+              if (line[2] !== -1) cp = ctrlNodes[line[2]]
+              if (line[3] !== -1) cp = ctrlNodes[line[3]]
+              splitCurve = new Bezier(p1, cp!, p2)
+            } else {
+              splitCurve = new Bezier(p1, ctrlNodes[line[2]], ctrlNodes[line[3]], p2)
+            }
+            let newLines: any = [line]
+            lineMap.map(v => {
+              // console.log('v',v)
+              let lastLine = newLines[newLines.length - 1]
+              newLines.pop()
+              let split = splitCurve!.split(v.t)
+              let points = split.left.points
+              let newLine = []
+              if (points.length === 3) {
+                newCtrlNodes.push(points[1])
+                newLine = [lastLine[0], v.index, newCtrlNodes.length - 1, -1, -1, -1, lineType]
+              } else {
+                newCtrlNodes.push(points[1])
+                newCtrlNodes.push(points[2])
+                newLine = [lastLine[0], v.index, newCtrlNodes.length - 2, newCtrlNodes.length - 1, -1, -1, lineType]
+              }
+
+              splitCurve = split.right
+              newLines = newLines.concat([
+                newLine,
+                [v.index, lastLine[1], -1, -1, -1, -1, lineType]
+              ])
+            })
+            newPaths = newPaths.concat(newLines)
+          }
         } else {
           newPaths.push(line)
         }
@@ -351,7 +391,7 @@ export class Pen extends ParentShape {
       }
 
       //TODO 想想，如果只有两条直线，那么根本无需检测，肯定没有封闭图。如果是曲线呢？
-      if (closeLinesWithId.length >= 2 && false) {
+      if (closeLinesWithId.length >= 2 && true) {
         closeLinesWithId.map(currentLine => {
           if (!visited.includes(currentLine.id)) {
             let start = currentLine.line[0]
@@ -442,37 +482,68 @@ export class Pen extends ParentShape {
             ctx.fillText(`${line.id}`, a.x, a.y)
           })
           ctx.stroke()
-
-          if (showFill) {
-            ctx.fillStyle = 'gray'
-            closeAreasId.map(v => v.area).slice().map(v => {
-              let startPoint = newNodes[v[0].line[0]]
-              let fixStartPoint = {
-                x: center.x + startPoint.x,
-                y: center.y + startPoint.y,
-              }
-              let endPoint = newNodes[v[0].line[1]]
-              let fixEndPoint = {
-                x: center.x + endPoint.x,
-                y: center.y + endPoint.y,
-              }
-              ctx.beginPath()
-              ctx.moveTo2(fixStartPoint)
-              ctx.lineTo2(fixEndPoint)
-              v.slice(1).map(w => {
-                endPoint = newNodes[w.line[1]]
-                fixEndPoint = {
-                  x: center.x + endPoint.x,
-                  y: center.y + endPoint.y,
-                }
-                ctx.lineTo2(fixEndPoint)
-              })
-              ctx.closePath()
-              ctx.fill()
-            })
-          }
           ctx.restore()
         })
+
+        if (showFill) {
+          ctx.fillStyle = 'gray'
+          closeAreasId.map(s => s.area).map(v => {
+            let fillPath = new Path2D()
+            let startPoint = newNodes[v[0].line[0]]
+            let endPoint = newNodes[v[0].line[1]]
+            fillPath.moveTo2(startPoint)
+            v.map(line => {
+              let lineType = line[6]
+              endPoint = newNodes[line[1]]
+              switch (lineType) {
+                case LineType.Line:
+                  fillPath.lineTo2(endPoint)
+                  break
+                case LineType.Bezier3:
+                  fillPath.bezierCurveTo2(newCtrlNodes[line[2]], newCtrlNodes[line[3]], endPoint)
+                  break
+                case LineType.Bezier2:
+                  let cp: number = 0
+                  if (line[2] !== -1) cp = line[2]
+                  if (line[3] !== -1) cp = line[3]
+                  fillPath.quadraticCurveTo2(newCtrlNodes[cp], endPoint)
+                  break
+              }
+            })
+            fillPathList.push({close: true, path: fillPath})
+          })
+        }
+
+        //   if (showFill) {
+        //     ctx.fillStyle = 'gray'
+        //     closeAreasId.map(v => v.area).slice().map(v => {
+        //       let startPoint = newNodes[v[0].line[0]]
+        //       let fixStartPoint = {
+        //         x: center.x + startPoint.x,
+        //         y: center.y + startPoint.y,
+        //       }
+        //       let endPoint = newNodes[v[0].line[1]]
+        //       let fixEndPoint = {
+        //         x: center.x + endPoint.x,
+        //         y: center.y + endPoint.y,
+        //       }
+        //       ctx.beginPath()
+        //       ctx.moveTo2(fixStartPoint)
+        //       ctx.lineTo2(fixEndPoint)
+        //       v.slice(1).map(w => {
+        //         endPoint = newNodes[w.line[1]]
+        //         fixEndPoint = {
+        //           x: center.x + endPoint.x,
+        //           y: center.y + endPoint.y,
+        //         }
+        //         ctx.lineTo2(fixEndPoint)
+        //       })
+        //       ctx.closePath()
+        //       ctx.fill()
+        //     })
+        //   }
+        //   ctx.restore()
+        // })
       }
 
       if (singLines.length && false) {
@@ -547,54 +618,6 @@ export class Pen extends ParentShape {
         }
       }
 
-      // let ps = []
-      // for (let i = 0; i < paths.length - 1; i++) {
-      //   for (let j = i; j < paths.length; j++) {
-      //     let currentLine = paths[i]
-      //     let nextLine = paths[j]
-      //     let t = Math2.isIntersection2(currentLine, nextLine, nodes, ctrlNodes)
-      //     if (t) {
-      //       console.log('t', t)
-      //       ps.push({
-      //         p: t.intersectsPoint,
-      //         is: [i, j]
-      //       })
-      //     }
-      //   }
-      // }
-      //
-      // console.log('ps', JSON.stringify(ps, null, 2))
-      // let cu = CanvasUtil2.getInstance()
-      // let {ctx} = cu
-      // ctx.save()
-      // ctx.strokeStyle = 'gray'
-      // ctx.fillStyle = 'gray'
-      //
-      // const test = (lineIndex: number, list: any[]) => {
-      //   let rIndex = list.findIndex(v => {
-      //     return v.is.includes(lineIndex)
-      //   })
-      //   if (rIndex !== -1) {
-      //     let item = list[rIndex]
-      //     ctx.lineTo2(item.p)
-      //     console.log('uite.p', item.p)
-      //     list.splice(rIndex, 1)
-      //     let i = 0
-      //     if (item.is[0] === lineIndex) {
-      //       i = 1
-      //     }
-      //     test(item.is[i], list)
-      //   }
-      // }
-      //
-      // ctx.moveTo2(ps[0].p)
-      // // ps.shift()
-      // test(ps[0].is[0], ps)
-      //
-      // ctx.stroke()
-      // ctx.fill()
-      // ctx.restore()
-
       paths.map(line => {
         let strokePath = new Path2D()
         let lineType = line[6]
@@ -618,6 +641,8 @@ export class Pen extends ParentShape {
         strokePathList.push({close: true, path: strokePath})
       })
     }
+    
+    console.log('fillPathList',fillPathList)
     if (showTime) {
       console.timeEnd()
     }

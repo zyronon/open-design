@@ -174,9 +174,9 @@ const Math2 = {
       px = p0.x - p2.x;
       py = p0.y - p2.y;
       u = (d1x * py - d1y * px) / d;
-      if (u >= 0 && u <= 1) {
+      if (u > 0 && u < 1) {
         t = (d2x * py - d2y * px) / d;
-        if (t >= 0 && t <= 1) {
+        if (t > 0 && t < 1) {
           //TODO 这里返回的t和u，不准确。待优化
           return {
             point: {x: p0.x + (t * d1x), y: p0.y + (t * d1y)},
@@ -203,10 +203,14 @@ const Math2 = {
       let result = this.isIntersection(p1, p2, p3, p4)
       if (result) {
         let intersectPoint = result.point
+        let s = this.getLineT(startLine, intersectPoint);
+        let e = this.getLineT(endLine, intersectPoint);
+        if (s === 0 || s === 1) return
+        if (e === 0 || e === 1) return
         nodes.push(intersectPoint)
-        let temp = {...intersectPoint, t: this.getLineT(startLine, intersectPoint), index: nodes.length - 1}
+        let temp = {...intersectPoint, t: s, index: nodes.length - 1}
         start.push(temp)
-        end.push({...temp, t: this.getLineT(endLine, intersectPoint)})
+        end.push({...temp, t: e})
       }
     } else if (line1Type === LineType.Line && line2Type === LineType.Bezier2) {
       let cp: P

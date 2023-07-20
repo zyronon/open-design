@@ -2237,9 +2237,9 @@ export const rects: any[] = [
   {
     "name": "矩形",
     "layout": {
-      "x": 700,
+      "x": 200,
       "y": 100,
-      "w": 300,
+      "w": 200,
       "h": 300
     },
     "rotation": 0,
@@ -2257,129 +2257,51 @@ export const rects: any[] = [
     "realCornerRadius": 0,
     "penNetwork": {
       "ctrlNodes": [
-        {
-          "x": -262,
-          "y": 115
-        },
-        {
-          "x": -54,
-          "y": 93
-        }
+
       ],
       "nodes": [
         {
-          "x": -162,
-          "y": -130,
+          "x": -100,
+          "y": -150,
           "cornerRadius": 0,
           "realCornerRadius": 0,
           "handleMirroring": "RightAngle",
-          "cornerCps": [
-            -1,
-            -1
-          ],
-          "cps": [
-            -1,
-            -1
-          ]
+          "cornerCps": [-1, -1],
+          "cps": [-1, -1]
         },
         {
-          "x": -158,
-          "y": 104,
-          "cornerRadius": 0,
-          "realCornerRadius": 0,
-          "handleMirroring": "MirrorAngleAndLength",
-          "cornerCps": [
-            -1,
-            -1
-          ],
-          "cps": [
-            1,
-            0
-          ]
-        },
-        {
-          "x": -317,
-          "y": 39,
+          "x": 100,
+          "y": -150,
           "cornerRadius": 0,
           "realCornerRadius": 0,
           "handleMirroring": "RightAngle",
-          "cornerCps": [
-            -1,
-            -1
-          ],
-          "cps": [
-            -1,
-            -1
-          ]
+          "cornerCps": [-1, -1],
+          "cps": [-1, -1]
         },
         {
-          "x": -322,
-          "y": -149,
+          "x": 100,
+          "y": 150,
           "cornerRadius": 0,
           "realCornerRadius": 0,
           "handleMirroring": "RightAngle",
-          "cornerCps": [
-            -1,
-            -1
-          ],
-          "cps": [
-            -1,
-            -1
-          ]
+          "cornerCps": [-1, -1],
+          "cps": [-1, -1]
         },
         {
-          "x": -110,
-          "y": -105,
+          "x": -100,
+          "y": 150,
           "cornerRadius": 0,
           "realCornerRadius": 0,
           "handleMirroring": "RightAngle",
-          "cornerCps": [
-            -1,
-            -1
-          ],
-          "cps": [
-            -1,
-            -1
-          ]
-        }
+          "cornerCps": [-1, -1],
+          "cps": [-1, -1]
+        },
       ],
       "paths": [
-        [
-          0,
-          1,
-          -1,
-          1,
-          -1,
-          -1,
-          2
-        ],
-        [
-          1,
-          2,
-          0,
-          -1,
-          -1,
-          -1,
-          2
-        ],
-        [
-          2,
-          3,
-          -1,
-          -1,
-          -1,
-          -1,
-          1
-        ],
-        [
-          3,
-          4,
-          -1,
-          -1,
-          -1,
-          -1,
-          1
-        ]
+        [0, 1, -1, -1, -1, -1, 1],
+        [1, 2, -1, -1, -1, -1, 1],
+        [2, 3, -1, -1, -1, -1, 1],
+        [3, 0, -1, -1, -1, -1, 1],
       ],
       "regions": []
     },
@@ -2397,43 +2319,42 @@ export const rects: any[] = [
       "y": 100
     },
     "absolute": {
-      "x": 700,
-      "y": 100
+      "x": 528,
+      "y": 101
     },
     "original": {
-      "x": 700,
-      "y": 100
+      "x": 528,
+      "y": 101
     },
     "center": {
-      "x": 850,
-      "y": 250
+      "x": 635.5094339622642,
+      "y": 228.19540229885058
     },
     "box": {
-      "leftX": 700,
-      "rightX": 1000,
-      "topY": 100,
-      "bottomY": 400,
+      "leftX": 528,
+      "rightX": 743.0188679245284,
+      "topY": 101,
+      "bottomY": 355.39080459770116,
       "topLeft": {
-        "x": 700,
-        "y": 100
+        "x": 528,
+        "y": 101
       },
       "topRight": {
-        "x": 1000,
-        "y": 100
+        "x": 743.0188679245284,
+        "y": 101
       },
       "bottomLeft": {
-        "x": 700,
-        "y": 400
+        "x": 528,
+        "y": 355.39080459770116
       },
       "bottomRight": {
-        "x": 1000,
-        "y": 400
+        "x": 743.0188679245284,
+        "y": 355.39080459770116
       }
     },
     "strokeAlign": "INSIDE",
     "lineShapes": [],
     "commonPoints": [],
-    "id": "32b12fa2-ed34-441a-9b8e-ce9f91f29243"
   }
 ]
 

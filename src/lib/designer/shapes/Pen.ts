@@ -456,13 +456,13 @@ export class Pen extends ParentShape {
 
         // console.log('visited', cloneDeep(Array.from(new Set(visited))))
 
-        // console.log('newNodes', cloneDeep(newNodes))
-        // console.log('lineMaps', cloneDeep(lineMaps))
-        // console.log('newPaths', cloneDeep(newPaths))
-        // console.log('closeLines', cloneDeep(closeLines))
+        console.log('newNodes', cloneDeep(newNodes))
+        console.log('lineMaps', cloneDeep(lineMaps))
+        console.log('newPaths', cloneDeep(newPaths))
+        console.log('closeLines', cloneDeep(closeLines))
         // console.log('closeLinesWithId', cloneDeep(closeLinesWithId))
         // console.log('closeAreasRepeat----', cloneDeep(closeAreasRepeat))
-        // console.log('closeAreas----', cloneDeep(closeAreasId.map(v => v.area)))
+        console.log('closeAreas----', cloneDeep(closeAreasId.map(v => v.area)))
 
         let cu = CanvasUtil2.getInstance()
         let {ctx} = cu
@@ -493,41 +493,9 @@ export class Pen extends ParentShape {
             cu.ctx.font = `400 16rem "SourceHanSansCN", sans-serif`
             let a = helper.getStraightLineCenterPoint(fixStartPoint, fixEndPoint)
             // ctx.fillText(`${line.line[0]}-${line.line[1]}:${line.id}`, a.x - 20, a.y)
-            ctx.fillText(`${line.id}`, a.x, a.y)
+            // ctx.fillText(`${line.id}`, a.x, a.y)
           })
-          ctx.stroke()
-
-          //   if (showFill) {
-          //     ctx.fillStyle = 'gray'
-          //     closeAreasId.map(v => v.area).slice().map(v => {
-          //       let startPoint = newNodes[v[0].line[0]]
-          //       let fixStartPoint = {
-          //         x: center.x + startPoint.x,
-          //         y: center.y + startPoint.y,
-          //       }
-          //       let endPoint = newNodes[v[0].line[1]]
-          //       let fixEndPoint = {
-          //         x: center.x + endPoint.x,
-          //         y: center.y + endPoint.y,
-          //       }
-          //       ctx.beginPath()
-          //       ctx.moveTo2(fixStartPoint)
-          //       ctx.lineTo2(fixEndPoint)
-          //       v.slice(1).map(w => {
-          //         endPoint = newNodes[w.line[1]]
-          //         fixEndPoint = {
-          //           x: center.x + endPoint.x,
-          //           y: center.y + endPoint.y,
-          //         }
-          //         ctx.lineTo2(fixEndPoint)
-          //       })
-          //       ctx.closePath()
-          //       ctx.fill()
-          //     })
-          //   }
-          //   ctx.restore()
-          // })
-
+          // ctx.stroke()
           ctx.restore()
         })
 

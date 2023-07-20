@@ -177,6 +177,7 @@ const Math2 = {
       if (u >= 0 && u <= 1) {
         t = (d2x * py - d2y * px) / d;
         if (t >= 0 && t <= 1) {
+          //TODO 这里返回的t和u，不准确。待优化
           return {
             point: {x: p0.x + (t * d1x), y: p0.y + (t * d1y)},
             t,
@@ -188,7 +189,6 @@ const Math2 = {
     return null as any
   },
   isIntersection3(line: PenNetworkLine, line2: PenNetworkLine, nodes: PenNetworkNode[], ctrlNodes: P[]) {
-    // if (line[1] === line2[0]) return null as any
     let p1 = nodes[line[0]],
       p2 = nodes[line[1]],
       p3 = nodes[line2[0]],
@@ -197,40 +197,27 @@ const Math2 = {
     let line2Type = line2[6]
     let start: any[] = []
     let end: any[] = []
+    let startLine = {p1, p2}
+    let endLine = {p1: p3, p2: p4};
     if (line1Type === LineType.Line && line2Type === LineType.Line) {
       let result = this.isIntersection(p1, p2, p3, p4)
       if (result) {
         let intersectPoint = result.point
         nodes.push(intersectPoint)
-        let temp = {...intersectPoint, t: result.u, index: nodes.length - 1}
+        let temp = {...intersectPoint, t: this.getLineT(startLine, intersectPoint), index: nodes.length - 1}
         start.push(temp)
-        end.push({...temp, t: result.t})
-        return {start, end}
+        end.push({...temp, t: this.getLineT(endLine, intersectPoint)})
       }
     } else if (line1Type === LineType.Line && line2Type === LineType.Bezier2) {
       let cp: P
       if (line2[2] !== -1) cp = ctrlNodes[line2[2]]
       if (line2[3] !== -1) cp = ctrlNodes[line2[3]]
       let curve = new Bezier(p3, cp!, p4)
-      let startLine = {p1, p2}
       let intersects = curve.lineIntersects(startLine)
       if (intersects.length) {
         intersects.sort((a, b) => a - b)
         intersects.map((t, i, arr) => {
-          // start.push({
-          //   t,
-          //   point: curve.get(t)
-          // })
-          // let split = splitCurve.split(t)
-          // let points = split.left.points
-          // splitCurve = split.right
-          // let intersectPoint = points[points.length - 1];
-          // ps.push(intersectPoint)
-          // startLines.push(points)
-          // if (i === arr.length - 1) {
-          //   startLines.push(split.right.points)
-          // }
-          // console.log('Split', split)
+          if (t === 0 || t === 1) return
           let intersectPoint = curve.get(t) as any;
           nodes.push(intersectPoint)
           let temp = {...intersectPoint, index: nodes.length - 1}
@@ -238,29 +225,14 @@ const Math2 = {
           let lineT = this.getLineT(startLine, intersectPoint)
           start.push({...temp, t: lineT})
         })
-        return {start, end}
       }
     } else if (line1Type === LineType.Line && line2Type === LineType.Bezier3) {
       let curve = new Bezier(p3, ctrlNodes[line2[2]], ctrlNodes[line2[3]], p4)
-      let startLine = {p1, p2}
       let intersects = curve.lineIntersects(startLine)
       if (intersects.length) {
         intersects.sort((a, b) => a - b)
         intersects.map((t, i, arr) => {
-          // start.push({
-          //   t,
-          //   point: curve.get(t)
-          // })
-          // let split = splitCurve.split(t)
-          // let points = split.left.points
-          // splitCurve = split.right
-          // let intersectPoint = points[points.length - 1];
-          // ps.push(intersectPoint)
-          // startLines.push(points)
-          // if (i === arr.length - 1) {
-          //   startLines.push(split.right.points)
-          // }
-          // console.log('Split', split)
+          if (t === 0 || t === 1) return
           let intersectPoint = curve.get(t) as any;
           nodes.push(intersectPoint)
           let temp = {...intersectPoint, index: nodes.length - 1}
@@ -268,34 +240,17 @@ const Math2 = {
           let lineT = this.getLineT(startLine, intersectPoint)
           start.push({...temp, t: lineT})
         })
-        return {start, end}
       }
     } else if (line1Type === LineType.Bezier2 && line2Type === LineType.Line) {
       let cp: P
       if (line[2] !== -1) cp = ctrlNodes[line[2]]
       if (line[3] !== -1) cp = ctrlNodes[line[3]]
       let curve = new Bezier(p1, cp!, p2)
-      let endLine = {p1: p3, p2: p4};
       let intersects = curve.lineIntersects(endLine)
       if (intersects.length) {
         intersects.sort((a, b) => a - b)
-        let start: any[] = []
-        let end: any[] = []
         intersects.map((t, i, arr) => {
-          // start.push({
-          //   t,
-          //   point: curve.get(t)
-          // })
-          // let split = splitCurve.split(t)
-          // let points = split.left.points
-          // splitCurve = split.right
-          // let intersectPoint = points[points.length - 1];
-          // ps.push(intersectPoint)
-          // startLines.push(points)
-          // if (i === arr.length - 1) {
-          //   startLines.push(split.right.points)
-          // }
-          // console.log('Split', split)
+          if (t === 0 || t === 1) return
           let intersectPoint = curve.get(t) as any;
           nodes.push(intersectPoint)
           let temp = {...intersectPoint, index: nodes.length - 1}
@@ -303,9 +258,6 @@ const Math2 = {
           let lineT = this.getLineT(endLine, intersectPoint)
           end.push({...temp, t: lineT})
         })
-        // console.log('start', start)
-        // console.log('end', end)
-        return {start, end}
       }
     } else if (line1Type === LineType.Bezier2 && line2Type === LineType.Bezier2) {
       let cp: P
@@ -329,18 +281,14 @@ const Math2 = {
           }
           return pre
         }, [])
-        let start: any[] = []
-        let end: any[] = []
         newTs.map(t => {
+          if (t === 0 || t === 1) return
           let intersectPoint = startCurve.get(t[0]) as any;
           nodes.push(intersectPoint)
           let temp = {...intersectPoint, index: nodes.length - 1}
           start.push(temp)
           end.push({...temp, t: t[1]})
         })
-        // console.log('start', start)
-        // console.log('end', end)
-        return {start, end}
       }
     } else if (line1Type === LineType.Bezier2 && line2Type === LineType.Bezier3) {
       let cp: P
@@ -361,28 +309,23 @@ const Math2 = {
           }
           return pre
         }, [])
-        let start: any[] = []
-        let end: any[] = []
         newTs.map(t => {
+          if (t === 0 || t === 1) return
           let intersectPoint = startCurve.get(t[0]) as any;
           nodes.push(intersectPoint)
           let temp = {...intersectPoint, index: nodes.length - 1}
           start.push(temp)
           end.push({...temp, t: t[1]})
         })
-        // console.log('start', start)
-        // console.log('end', end)
-        return {start, end}
       }
     } else if (line1Type === LineType.Bezier3 && line2Type === LineType.Line) {
       let curve = new Bezier(p1, ctrlNodes[line[2]], ctrlNodes[line[3]], p2)
-      let endLine = {p1: p3, p2: p4};
       let intersects = curve.lineIntersects(endLine)
       if (intersects.length) {
         intersects.sort((a, b) => a - b)
-        let start: any[] = []
-        let end: any[] = []
         intersects.map((t, i, arr) => {
+          if (t === 0 || t === 1) return
+
           // start.push({
           //   t,
           //   point: curve.get(t)
@@ -404,9 +347,6 @@ const Math2 = {
           let lineT = this.getLineT(endLine, intersectPoint)
           end.push({...temp, t: lineT})
         })
-        // console.log('start', start)
-        // console.log('end', end)
-        return {start, end}
       }
     } else if (line1Type === LineType.Bezier3 && line2Type === LineType.Bezier2) {
       let startCurve = new Bezier(p1, ctrlNodes[line[2]], ctrlNodes[line[3]], p2)
@@ -428,19 +368,21 @@ const Math2 = {
           }
           return pre
         }, [])
-        let start: any[] = []
-        let end: any[] = []
         newTs.map(t => {
+          if (t === 0 || t === 1) return
+
           let intersectPoint = startCurve.get(t[0]) as any;
           nodes.push(intersectPoint)
           let temp = {...intersectPoint, index: nodes.length - 1}
           start.push(temp)
           end.push({...temp, t: t[1]})
         })
-        // console.log('start', start)
-        // console.log('end', end)
-        return {start, end}
       }
+    }
+    if (start.length && end.length) {
+      // console.log('start', start)
+      // console.log('end', end)
+      return {start, end}
     }
     return null as any
   },

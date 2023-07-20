@@ -340,22 +340,25 @@ export default class CanvasUtil2 {
             let startIndex = line[0]
             let endIndex = line[1]
             paths.splice(lineIndex, 1)
+            let isUseStartIndex = paths.some(v => (v[0] === startIndex || v[1] === startIndex))
+            let isUseEndIndex = paths.some(v => (v[0] === endIndex || v[1] === endIndex))
+
             paths.map(v => {
               let d = 0
-              if (v[0] > startIndex) d++
-              if (v[0] > endIndex) d++
+              if (v[0] > startIndex && !isUseStartIndex) d++
+              if (v[0] > endIndex && !isUseEndIndex) d++
               v[0] -= d
               d = 0
-              if (v[1] > startIndex) d++
-              if (v[1] > endIndex) d++
+              if (v[1] > startIndex && !isUseStartIndex) d++
+              if (v[1] > endIndex && !isUseEndIndex) d++
               v[1] -= d
             })
             if (startIndex > endIndex) {
-              nodes.splice(startIndex, 1)
-              nodes.splice(endIndex, 1)
+              if (!isUseStartIndex) nodes.splice(startIndex, 1)
+              if (!isUseEndIndex) nodes.splice(endIndex, 1)
             } else {
-              nodes.splice(endIndex, 1)
-              nodes.splice(startIndex, 1)
+              if (!isUseEndIndex) nodes.splice(endIndex, 1)
+              if (!isUseStartIndex) nodes.splice(startIndex, 1)
             }
             //TODO　可以考虑把控制点也删除了，虽然不删除也无关紧要
             return this.render()

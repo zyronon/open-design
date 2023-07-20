@@ -192,7 +192,7 @@ export class Pen extends ParentShape {
   }
 
   getCustomShapePath3(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
-    let showTime = false
+    let showTime = true
     if (showTime) {
       console.time()
     }
@@ -202,6 +202,7 @@ export class Pen extends ParentShape {
     if (paths.length) {
       let singLines: PenNetworkLine[][] = []
       let anyLines: PenNetworkLine[] = []
+      let selfIntersectionLines: PenNetworkLine[] = []
       let preLine = paths[0]
       let startIndex = 0
       let endIndex = 0
@@ -241,29 +242,15 @@ export class Pen extends ParentShape {
           if (line1Type === LineType.Bezier3) {
             let curve = new Bezier(p1, ctrlNodes[currentLine[2]], ctrlNodes[currentLine[3]], p2)
             let pair = curve.selfintersects()
-            // console.log('t', pair, 'i', i,)
             if (pair.length) {
-              let t = pair[0].split("/").map(v => parseFloat(v));
-              let p: P = curve.get(t[0])
-              newNodes.push(p as any)
-              let data = {
-                index: newNodes.length - 1,
-                point: p,
-                t
-              }
-              let lineMap = lineMaps.get(i)
-              if (lineMap) {
-                lineMap.push(data)
-                lineMaps.set(i, lineMap)
-              } else {
-                lineMaps.set(i, [data])
-              }
+              // console.log('t', pair, 'i', i,)
+              selfIntersectionLines.push(currentLine)
             }
           }
           for (let j = i + 1; j < paths.length; j++) {
             let nextLine = paths[j]
             let result = Math2.isIntersection3(currentLine, nextLine, newNodes, newCtrlNodes)
-            // console.log('i', i, 'j', j, 'result', result,)
+            // console.log('i', i, 'j', j, 'result', result)
             if (result) {
               let lineMap = lineMaps.get(i)
               if (lineMap) {
@@ -316,7 +303,6 @@ export class Pen extends ParentShape {
         //   })
         // })
         let closeLinesWithId = closeLines.map((v, i) => ({id: i, line: v}))
-        // console.log('closeLinesWithId', cloneDeep(closeLinesWithId))
         // console.log('lineMaps', lineMaps)
         // console.log('newNodes', newNodes)
         let closeAreas: any[][] = []
@@ -441,16 +427,17 @@ export class Pen extends ParentShape {
           console.log('lineMaps', cloneDeep(lineMaps))
           console.log('newPaths', cloneDeep(newPaths))
           console.log('closeLines', cloneDeep(closeLines))
-          // console.log('closeAreasRepeat----', cloneDeep(closeAreas))
-          // console.log('closeAreas----', cloneDeep(closeAreasId.map(v => v.area)))
+          // console.log('closeLinesWithId', cloneDeep(closeLinesWithId))
+          console.log('closeAreasRepeat----', cloneDeep(closeAreas))
+          console.log('closeAreas----', cloneDeep(closeAreasId.map(v => v.area)))
 
           let cu = CanvasUtil2.getInstance()
           let {ctx} = cu
           ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
-          // newNodes.map((point, i) => {
-          //   ctx.fillText(i + '', point.x, point.y)
-          //   // draw.drawRound(ctx, point)
-          // })
+          newNodes.map((point, i) => {
+            ctx.fillText(i + '', point.x, point.y)
+            // draw.drawRound(ctx, point)
+          })
 
           let {center} = this.conf
           cu.waitRenderOtherStatusFunc.push(() => {
@@ -473,7 +460,7 @@ export class Pen extends ParentShape {
               cu.ctx.font = `400 16rem "SourceHanSansCN", sans-serif`
               let a = helper.getStraightLineCenterPoint(fixStartPoint, fixEndPoint)
               // ctx.fillText(`${line.line[0]}-${line.line[1]}:${line.id}`, a.x - 20, a.y)
-              // ctx.fillText(`${line.id}`, a.x - 10, a.y)
+              ctx.fillText(`${line.id}`, a.x, a.y)
             })
             ctx.stroke()
 

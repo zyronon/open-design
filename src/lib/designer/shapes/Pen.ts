@@ -189,7 +189,7 @@ export class Pen extends ParentShape {
     return []
   }
 
-  getCustomShapePath3(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
+  getCustomShapePath3(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
     let showTime = true
     let showFill = true
     if (showTime) {
@@ -283,21 +283,31 @@ export class Pen extends ParentShape {
               let lastLine = newLines[newLines.length - 1]
               newLines.pop()
               let split = splitCurve!.split(v.t)
-              let points = split.left.points
+              let leftPoints = split.left.points
               let newLine = []
-              if (points.length === 3) {
-                newCtrlNodes.push(points[1])
+              if (leftPoints.length === 3) {
+                newCtrlNodes.push(leftPoints[1])
                 newLine = [lastLine[0], v.index, newCtrlNodes.length - 1, -1, -1, -1, lineType]
               } else {
-                newCtrlNodes.push(points[1])
-                newCtrlNodes.push(points[2])
+                newCtrlNodes.push(leftPoints[1])
+                newCtrlNodes.push(leftPoints[2])
                 newLine = [lastLine[0], v.index, newCtrlNodes.length - 2, newCtrlNodes.length - 1, -1, -1, lineType]
               }
 
               splitCurve = split.right
+              let rightPoints = split.right.points
+              let rightNewLine = []
+              if (rightPoints.length === 3) {
+                newCtrlNodes.push(rightPoints[1])
+                rightNewLine = [v.index, lastLine[1], newCtrlNodes.length - 1, -1, -1, -1, lineType]
+              } else {
+                newCtrlNodes.push(rightPoints[1])
+                newCtrlNodes.push(rightPoints[2])
+                rightNewLine = [v.index, lastLine[1], newCtrlNodes.length - 2, newCtrlNodes.length - 1, -1, -1, lineType]
+              }
               newLines = newLines.concat([
                 newLine,
-                [v.index, lastLine[1], -1, -1, -1, -1, lineType]
+                rightNewLine
               ])
             })
             newPaths = newPaths.concat(newLines)
@@ -307,6 +317,7 @@ export class Pen extends ParentShape {
         }
       })
 
+      // console.log('newNodes', cloneDeep(newNodes))
       console.log('lineMaps', cloneDeep(lineMaps))
       console.log('newPaths', cloneDeep(newPaths))
 
@@ -327,9 +338,10 @@ export class Pen extends ParentShape {
       }
 
       let visited: number[] = []
-      const gg = (start: number, end: number, line: any, list: any[], save: any[]) => {
+      //寻找封闭图
+      const findCloseArea = (start: number, end: number, line: any, list: any[], save: any[]) => {
         visited.push(line.id)
-        let arrsEnd = list.filter(w => [w.line[0], w.line[1]].includes(end) && w.id !== line.id)
+        let arrsEnd = list.filter(w => w.line.slice(0,2).includes(end) && w.id !== line.id)
         while (arrsEnd.length !== 0) {
           if (arrsEnd.length === 1) {
             //这里用复制一遍。因为后续的其他遍历，可能也会碰到这条线，然后方向是相反的，又去改变头和尾
@@ -340,7 +352,8 @@ export class Pen extends ParentShape {
             } else {
               end = line[0]
               //交换顺序
-              a.line = [line[1], end]
+              a.line[0] = a.line[1]
+              a.line[1] = end
             }
             visited.push(a.id)
             save.push(a)
@@ -352,7 +365,7 @@ export class Pen extends ParentShape {
             if (isCloseIndex > -1) {
               return [save.slice(isCloseIndex)]
             }
-            arrsEnd = list.filter(w => [w.line[0], w.line[1]].includes(end) && w.id !== a.id)
+            arrsEnd = list.filter(w => w.line.slice(0,2).includes(end) && w.id !== a.id)
           } else {
             for (let i = 0; i < arrsEnd.length; i++) {
               let newSave = save.slice()
@@ -362,7 +375,8 @@ export class Pen extends ParentShape {
                 newEnd = a.line[1]
               } else {
                 newEnd = a.line[0]
-                a.line = [a.line[1], newEnd]
+                a.line[0] = a.line[1]
+                a.line[1] = newEnd
               }
               newSave.push(a)
               let isCloseIndex = newSave.findIndex(b => b.line[0] === newEnd)
@@ -376,7 +390,7 @@ export class Pen extends ParentShape {
                   closeAreasRepeat = closeAreasRepeat.concat([newSave])
                 }
               } else {
-                let r = gg(start, newEnd, a, list, newSave)
+                let r = findCloseArea(start, newEnd, a, list, newSave)
                 if (r.length) {
                   if (!check(r[0])) {
                     closeAreasRepeat = closeAreasRepeat.concat(r)
@@ -396,7 +410,7 @@ export class Pen extends ParentShape {
           if (!visited.includes(currentLine.id)) {
             let start = currentLine.line[0]
             let end = currentLine.line[1]
-            let r = gg(start, end, currentLine, closeLinesWithId.slice(), [currentLine])
+            let r = findCloseArea(start, end, currentLine, closeLinesWithId.slice(), [currentLine])
             if (r.length) {
               if (!check(r[0])) {
                 closeAreasRepeat = closeAreasRepeat.concat(r)
@@ -446,7 +460,7 @@ export class Pen extends ParentShape {
         // console.log('visited', cloneDeep(Array.from(new Set(visited))))
 
         console.log('closeLines', cloneDeep(closeLines))
-        // console.log('closeLinesWithId', cloneDeep(closeLinesWithId))
+        console.log('closeLinesWithId', cloneDeep(closeLinesWithId))
         console.log('closeAreasRepeat----', cloneDeep(closeAreasRepeat))
         console.log('closeAreas----', cloneDeep(closeAreasId.map(v => v.area)))
 
@@ -482,17 +496,49 @@ export class Pen extends ParentShape {
             ctx.fillText(`${line.id}`, a.x, a.y)
           })
           ctx.stroke()
+
+          //   if (showFill) {
+          //     ctx.fillStyle = 'gray'
+          //     closeAreasId.map(v => v.area).slice().map(v => {
+          //       let startPoint = newNodes[v[0].line[0]]
+          //       let fixStartPoint = {
+          //         x: center.x + startPoint.x,
+          //         y: center.y + startPoint.y,
+          //       }
+          //       let endPoint = newNodes[v[0].line[1]]
+          //       let fixEndPoint = {
+          //         x: center.x + endPoint.x,
+          //         y: center.y + endPoint.y,
+          //       }
+          //       ctx.beginPath()
+          //       ctx.moveTo2(fixStartPoint)
+          //       ctx.lineTo2(fixEndPoint)
+          //       v.slice(1).map(w => {
+          //         endPoint = newNodes[w.line[1]]
+          //         fixEndPoint = {
+          //           x: center.x + endPoint.x,
+          //           y: center.y + endPoint.y,
+          //         }
+          //         ctx.lineTo2(fixEndPoint)
+          //       })
+          //       ctx.closePath()
+          //       ctx.fill()
+          //     })
+          //   }
+          //   ctx.restore()
+          // })
+
           ctx.restore()
         })
 
         if (showFill) {
-          ctx.fillStyle = 'gray'
           closeAreasId.map(s => s.area).map(v => {
             let fillPath = new Path2D()
             let startPoint = newNodes[v[0].line[0]]
             let endPoint = newNodes[v[0].line[1]]
             fillPath.moveTo2(startPoint)
-            v.map(line => {
+            v.map(w => {
+              let line = w.line
               let lineType = line[6]
               endPoint = newNodes[line[1]]
               switch (lineType) {
@@ -513,37 +559,6 @@ export class Pen extends ParentShape {
             fillPathList.push({close: true, path: fillPath})
           })
         }
-
-        //   if (showFill) {
-        //     ctx.fillStyle = 'gray'
-        //     closeAreasId.map(v => v.area).slice().map(v => {
-        //       let startPoint = newNodes[v[0].line[0]]
-        //       let fixStartPoint = {
-        //         x: center.x + startPoint.x,
-        //         y: center.y + startPoint.y,
-        //       }
-        //       let endPoint = newNodes[v[0].line[1]]
-        //       let fixEndPoint = {
-        //         x: center.x + endPoint.x,
-        //         y: center.y + endPoint.y,
-        //       }
-        //       ctx.beginPath()
-        //       ctx.moveTo2(fixStartPoint)
-        //       ctx.lineTo2(fixEndPoint)
-        //       v.slice(1).map(w => {
-        //         endPoint = newNodes[w.line[1]]
-        //         fixEndPoint = {
-        //           x: center.x + endPoint.x,
-        //           y: center.y + endPoint.y,
-        //         }
-        //         ctx.lineTo2(fixEndPoint)
-        //       })
-        //       ctx.closePath()
-        //       ctx.fill()
-        //     })
-        //   }
-        //   ctx.restore()
-        // })
       }
 
       if (singLines.length && false) {
@@ -641,8 +656,8 @@ export class Pen extends ParentShape {
         strokePathList.push({close: true, path: strokePath})
       })
     }
-    
-    console.log('fillPathList',fillPathList)
+
+    // console.log('fillPathList',fillPathList)
     if (showTime) {
       console.timeEnd()
     }

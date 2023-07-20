@@ -1795,7 +1795,7 @@ export const rects: any[] = [
     "radius": 0,
     "children": [],
     "borderColor": "rgb(0,0,0)",
-    "fillColor": "#4C4C4C",
+    "fillColor": "#989898",
     "flipHorizontal": false,
     "flipVertical": false,
     "isComplete": true,
@@ -2145,10 +2145,10 @@ export const rects: any[] = [
           9,
           10,
           -1,
-          5,
           -1,
           -1,
-          2
+          -1,
+          1
         ],
         [
           11,

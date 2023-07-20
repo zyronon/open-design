@@ -191,7 +191,7 @@ export class Pen extends ParentShape {
     return []
   }
 
-  getCustomShapePath3(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
+  getCustomShapePath3(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
     let showTime = false
     if (showTime) {
       console.time()
@@ -267,50 +267,42 @@ export class Pen extends ParentShape {
             if (result) {
               let lineMap = lineMaps.get(i)
               if (lineMap) {
-                lineMap.push(result.start)
+                lineMap = lineMap.concat(result.start)
                 lineMaps.set(i, lineMap)
               } else {
-                lineMaps.set(i, [result.start])
+                lineMaps.set(i, result.start)
               }
               lineMap = lineMaps.get(j)
               if (lineMap) {
-                lineMap.push(result.end)
+                lineMap = lineMap.concat(result.end)
                 lineMaps.set(j, lineMap)
               } else {
-                lineMaps.set(j, [result.end])
+                lineMaps.set(j, result.end)
               }
             }
           }
         }
 
-        console.log('lineMaps', lineMaps)
         //然后将有交点的线段分割
         let newPaths: any[] = []
-        // paths.map((line, index) => {
-        //   let lineMap = lineMaps.get(index)
-        //   if (lineMap) {
-        //     let startPoint = newNodes[line[0]]
-        //     let endPoint = newNodes[line[1]]
-        //     if (startPoint.x === endPoint.x) {
-        //       lineMap.sort((a, b) => a.point.y - b.point.y)
-        //     } else if (startPoint.x < endPoint.x) {
-        //       lineMap.sort((a, b) => a.point.x - b.point.x)
-        //     } else {
-        //       lineMap.sort((a, b) => -(a.point.x - b.point.x))
-        //     }
-        //     let newLine: any = [line]
-        //     lineMap.map(v => {
-        //       let lastLine = newLine[newLine.length - 1]
-        //       newLine.pop()
-        //       newLine = newLine.concat([[lastLine[0], v.index], [v.index, lastLine[1]]])
-        //     })
-        //     newPaths = newPaths.concat(newLine)
-        //   } else {
-        //     newPaths.push(line)
-        //   }
-        // })
-
-        // console.log('newPaths', newPaths)
+        paths.map((line, index) => {
+          let lineMap = lineMaps.get(index)
+          if (lineMap) {
+            lineMap.sort((a, b) => {
+              return a.t - b.t
+            })
+            let newLine: any = [line]
+            lineMap.map(v => {
+              // console.log('v',v)
+              let lastLine = newLine[newLine.length - 1]
+              newLine.pop()
+              newLine = newLine.concat([[lastLine[0], v.index], [v.index, lastLine[1]]])
+            })
+            newPaths = newPaths.concat(newLine)
+          } else {
+            newPaths.push(line)
+          }
+        })
 
         let closeLines: any[] = []
         //筛选出终点没人连的
@@ -323,8 +315,6 @@ export class Pen extends ParentShape {
         //     return (v[0] === w[1] || v[0] === w[0])
         //   })
         // })
-        // closeLines = closeLines.filter(v => closeLines.find(w => (v[1] === w[1] || v[0] === w[0])))
-        // console.log('closeLines', closeLines)
         let closeLinesWithId = closeLines.map((v, i) => ({id: i, line: v}))
         // console.log('closeLinesWithId', cloneDeep(closeLinesWithId))
         // console.log('lineMaps', lineMaps)
@@ -399,7 +389,7 @@ export class Pen extends ParentShape {
         }
 
         //TODO 想想，如果只有两条直线，那么根本无需检测，肯定没有封闭图。如果是曲线呢？
-        if (closeLinesWithId.length >= 2 && false) {
+        if (closeLinesWithId.length >= 2 && true) {
           let currentLine = closeLinesWithId[0]
           let start = currentLine.line[0]
           let end = currentLine.line[1]
@@ -447,6 +437,10 @@ export class Pen extends ParentShape {
               closeAreasId.splice(r, 1)
             }
           })
+
+          console.log('lineMaps', cloneDeep(lineMaps))
+          console.log('newPaths', cloneDeep(newPaths))
+          console.log('closeLines', cloneDeep(closeLines))
           // console.log('closeAreasRepeat----', cloneDeep(closeAreas))
           // console.log('closeAreas----', cloneDeep(closeAreasId.map(v => v.area)))
 

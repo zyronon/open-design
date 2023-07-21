@@ -1339,20 +1339,6 @@ export class BaseShape {
     this.notifyConfUpdate()
   }
 
-  pointRadiusChange(e: any, val: any) {
-    return console.log(e, val)
-    this.originalLineShapes = cloneDeep(this.conf.lineShapes)
-
-    let point = this.getPoint(this.conf.lineShapes[val.lineIndex].points[val.pointIndex])
-    point.radius = e
-    if (e === 0) {
-      point.realRadius = 0
-    } else {
-      this.checkAcr()
-    }
-    CanvasUtil2.getInstance().render()
-    EventBus.emit(EventKeys.POINT_INFO, Object.assign({}, val, {point}))
-  }
 
   getCustomShapePath(): LinePath[] {
     let pathList: LinePath[] = []
@@ -1405,7 +1391,7 @@ export class BaseShape {
     return pathList
   }
 
-  getCustomShapePath2(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
+  getCustomShapePath2(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     this.conf.lineShapes.map((line) => {
@@ -1498,6 +1484,31 @@ export class BaseShape {
   }
 
   originalLineShapes: LineShape[] = []
+
+  pointRadiusChange(e: any, val: any) {
+    return console.log(e, val)
+    this.originalLineShapes = cloneDeep(this.conf.lineShapes)
+
+    let point = this.getPoint(this.conf.lineShapes[val.lineIndex].points[val.pointIndex])
+    point.radius = e
+    if (e === 0) {
+      point.realRadius = 0
+    } else {
+      this.checkAcr()
+    }
+    CanvasUtil2.getInstance().render()
+    EventBus.emit(EventKeys.POINT_INFO, Object.assign({}, val, {point}))
+  }
+
+  checkAcr2() {
+    const {nodes, paths} = this.conf.penNetwork
+    nodes.map((node, pointIndex) => {
+      let lines = paths.filter(p => p.slice(0, 2).includes(pointIndex))
+      if (lines.length === 2) {
+
+      }
+    })
+  }
 
   //检查圆弧，很耗时，需要手动调用
   checkAcr(isInit = false) {

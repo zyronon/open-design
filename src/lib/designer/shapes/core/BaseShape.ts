@@ -59,6 +59,7 @@ export class BaseShape {
     }) ?? []
 
     this.checkAcr(true)
+    this.checkAcr2()
     // @ts-ignore
     window.t = () => this.checkAcr(true)
   }
@@ -1505,7 +1506,25 @@ export class BaseShape {
     nodes.map((node, pointIndex) => {
       let lines = paths.filter(p => p.slice(0, 2).includes(pointIndex))
       if (lines.length === 2) {
+        let startPoint
+        let startLine = lines[0]
+        let startLineType = startLine[6]
+        let endLine = lines[1]
+        let endLineType = endLine[6]
+        if (startLine[0] === pointIndex) {
+          startPoint = nodes[startLine[1]]
+        } else {
+          startPoint = nodes[startLine[0]]
+        }
+        let endPoint
+        if (endLine[0] === pointIndex) {
+          endPoint = nodes[endLine[1]]
+        } else {
+          endPoint = nodes[endLine[0]]
+        }
+        if (startLineType === LineType.Line && endLineType === LineType.Line) {
 
+        }
       }
     })
   }

@@ -2256,9 +2256,7 @@ export const rects: any[] = [
     "cornerRadius": 0,
     "realCornerRadius": 0,
     "penNetwork": {
-      "ctrlNodes": [
-
-      ],
+      "ctrlNodes": [],
       "nodes": [
         {
           "x": -100,
@@ -2281,7 +2279,7 @@ export const rects: any[] = [
         {
           "x": 100,
           "y": 150,
-          "cornerRadius": 0,
+          "cornerRadius": 50,
           "realCornerRadius": 0,
           "handleMirroring": "RightAngle",
           "cornerCps": [-1, -1],

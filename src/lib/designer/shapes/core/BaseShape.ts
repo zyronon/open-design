@@ -1487,15 +1487,18 @@ export class BaseShape {
   originalLineShapes: LineShape[] = []
 
   pointRadiusChange(e: any, val: any) {
-    return console.log(e, val)
-    this.originalLineShapes = cloneDeep(this.conf.lineShapes)
-
-    let point = this.getPoint(this.conf.lineShapes[val.lineIndex].points[val.pointIndex])
-    point.radius = e
+    // this.originalLineShapes = cloneDeep(this.conf.lineShapes)
+    let point = this.getPoint2({
+      type: EditType.Point,
+      pointIndex: val.pointIndex,
+      cpIndex: -1,
+      lineIndex: -1,
+    })
+    point.cornerRadius = e
     if (e === 0) {
-      point.realRadius = 0
+      point.realCornerRadius = 0
     } else {
-      this.checkAcr()
+      this.checkAcr2()
     }
     CanvasUtil2.getInstance().render()
     EventBus.emit(EventKeys.POINT_INFO, Object.assign({}, val, {point}))
@@ -1503,30 +1506,93 @@ export class BaseShape {
 
   checkAcr2() {
     const {nodes, paths} = this.conf.penNetwork
-    nodes.map((node, pointIndex) => {
-      let lines = paths.filter(p => p.slice(0, 2).includes(pointIndex))
-      if (lines.length === 2) {
-        let startPoint
-        let startLine = lines[0]
-        let startLineType = startLine[6]
-        let endLine = lines[1]
-        let endLineType = endLine[6]
-        if (startLine[0] === pointIndex) {
-          startPoint = nodes[startLine[1]]
-        } else {
-          startPoint = nodes[startLine[0]]
-        }
-        let endPoint
-        if (endLine[0] === pointIndex) {
-          endPoint = nodes[endLine[1]]
-        } else {
-          endPoint = nodes[endLine[0]]
-        }
-        if (startLineType === LineType.Line && endLineType === LineType.Line) {
+    let pointIndex = 3
+    let node = nodes[pointIndex]
+    let lines = paths.filter(p => p.slice(0, 2).includes(pointIndex))
+    console.log('lines', lines)
+    if (lines.length === 2) {
+      let startPoint
+      let startLine = lines[0]
+      let startLineType = startLine[6]
+      let endLine = lines[1]
+      let endLineType = endLine[6]
+      if (startLine[0] === pointIndex) {
+        startPoint = nodes[startLine[1]]
+      } else {
+        startPoint = nodes[startLine[0]]
+      }
+      let endPoint
+      if (endLine[0] === pointIndex) {
+        endPoint = nodes[endLine[1]]
+      } else {
+        endPoint = nodes[endLine[0]]
+      }
+      console.log('startPoint', startPoint, 'endPoint', endPoint, 'node', node)
 
+      if (startLineType === LineType.Line && endLineType === LineType.Line) {
+        let {
+          adjacentSide,
+          tan
+        } = this.getAdjacentSide(node, startPoint, endPoint, node.cornerRadius)
+
+        let front = Math2.getHypotenuse2(node, startPoint)
+        let back = Math2.getHypotenuse2(node, endPoint)
+        console.log('当前radius（对边）对应的邻边长', adjacentSide)
+        console.log('front', front)
+        console.log('back', back)
+        if (front === back) {
+          if (adjacentSide >= front) {
+            let s = Bezier.arcToBezier3_2(startPoint, endPoint, node)
+            // console.log('s', s)
+          } else {
+
+          }
+        } else {
+          let maxRadius = node.cornerRadius
+          if (Math.min(front, back) > adjacentSide) {
+            let k = adjacentSide / front
+            let newStartPoint = {
+              x: node.x + (startPoint.x - node.x) * k,
+              y: node.y + (startPoint.y - node.y) * k,
+            }
+            let k2 = adjacentSide / back
+            let newEndPoint = {
+              x: node.x + (endPoint.x - node.x) * k2,
+              y: node.y + (endPoint.y - node.y) * k2,
+            }
+
+            console.log('newStartPoint', newStartPoint, 'newEndPoint', newEndPoint)
+
+            setTimeout(() => {
+              let cu = CanvasUtil2.getInstance()
+              let ctx = cu.ctx
+              ctx.save()
+              draw.calcPosition(ctx, this.conf)
+              draw.round2(ctx, newStartPoint, 4)
+              draw.round2(ctx, newEndPoint, 4)
+              ctx.stroke()
+              ctx.restore()
+            })
+
+          } else {
+            if (front < adjacentSide) {
+              adjacentSide = front
+            }
+            //只大于back，小于front。干掉back那条边
+            if (back < adjacentSide) {
+              adjacentSide = back
+
+            } else {
+              //只大于front，小于back。干掉front那条边
+            }
+          }
+
+          maxRadius = adjacentSide * tan
+
+          node.cornerRadius = maxRadius
         }
       }
-    })
+    }
   }
 
   //检查圆弧，很耗时，需要手动调用
@@ -1726,7 +1792,6 @@ export class BaseShape {
               // ctx.bezierCurveTo2(s[0], s[1], endPoint)
               ctx.bezierCurveTo2(s[0], a, endPoint)
               ctx.stroke()
-
               ctx.restore()
             })
             break
@@ -1846,10 +1911,10 @@ export class BaseShape {
   getAdjacentSide(center: P, start: P, end: P, r: number) {
     let degree = Math2.getDegree(center, end, start)
     let d2 = degree / 2
-    // console.log('角度', degree, d2)
+    console.log('角度', degree, d2)
     //得到已知角度tan值
-    let tan = Math.tan(Math2.jiaodu2hudu(d2))
-    // console.log('tan值', tan)
+    let tan = Math.abs(Math.tan(Math2.jiaodu2hudu(d2)))
+    console.log('tan值', tan)
     //tanA = a/b。可知b = a/ tanA。所以领边的长就是lines2.point?.radius! / tan
     // console.log('当前radius（对边）对应的邻边长', r / tan)
     return {tan, adjacentSide: r / tan, degree, d2}

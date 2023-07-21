@@ -134,7 +134,8 @@ export interface BaseConfig extends Layout, Geometry, Text {
   isMask: boolean//图层是否是蒙版。
   effects: any[]//返回一个特效数组，具体数据结构可以查看 Effect。
   penNetwork: PenNetwork
-
+  cache: PenNetwork
+  isCache: boolean
 }
 
 export enum FontFamily {

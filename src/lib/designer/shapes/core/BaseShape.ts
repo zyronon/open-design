@@ -1392,7 +1392,7 @@ export class BaseShape {
     return pathList
   }
 
-  getCustomShapePath2(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
+  getCustomShapePath2(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     this.conf.lineShapes.map((line) => {
@@ -1509,16 +1509,22 @@ export class BaseShape {
     let newPaths = paths.map((v, i) => ({id: i, line: v}))
     let newNodes = cloneDeep(nodes)
     let newCtrlNodes = cloneDeep(ctrlNodes)
-    let pointIndex = 3
+    let pointIndex = 1
     let node = nodes[pointIndex]
     let lines = newPaths.filter(p => p.line.slice(0, 2).includes(pointIndex))
     console.log('lines', lines)
     if (lines.length === 2) {
       let r = node.cornerRadius
+      let isNear = Math.abs(lines[0].id - lines[1].id) === 1
       let startPoint
       let startLine = lines[0]
-      let startLineType = startLine.line[6]
       let endLine = lines[1]
+      //如果不是挨着，起点和终点就是反着来
+      if (!isNear) {
+        startLine = lines[1]
+        endLine = lines[0]
+      }
+      let startLineType = startLine.line[6]
       let endLineType = endLine.line[6]
       if (startLine.line[0] === pointIndex) {
         startPoint = nodes[startLine.line[1]]
@@ -1569,14 +1575,31 @@ export class BaseShape {
             let newEndLine: PenNetworkLine = [newNodes.length - 1, endLine.line[1], -1, -1, -1, -1, LineType.Line]
 
             let arc = Bezier.arcToBezier3_2(newStartPoint, newEndPoint, node)
+            console.log('arc',arc)
             newCtrlNodes.push(...arc)
-            let centerLine: PenNetworkLine = [newNodes.length - 2, newNodes.length - 1, newCtrlNodes.length - 1, newCtrlNodes.length - 2, -1, -1, LineType.Bezier3]
+            let centerLine: PenNetworkLine = [
+              newNodes.length - 2,
+              newNodes.length - 1,
+              newCtrlNodes.length - 2,
+              newCtrlNodes.length - 1, -1, -1, LineType.Bezier3]
 
             let r1 = newPaths.findIndex(v => v.id === startLine.id)
-            let r2 = newPaths.findIndex(v => v.id === endLine.id)
-            newPaths.splice(r1, 1, {id: newPaths.length + 1, line: newStartLine})
-            newPaths.splice(r2, 1, {id: newPaths.length + 1, line: newEndLine})
-            newPaths.push({id: newPaths.length + 1, line: centerLine})
+            newPaths.splice(r1, 1, {id: startLine.id, line: newStartLine})
+            console.log('startLine.id - endLine.id', startLine.id - endLine.id)
+            if (isNear) {
+              newPaths.splice(r1 + 1, 0, {id: newPaths.length + 1, line: centerLine})
+              let r2 = newPaths.findIndex(v => v.id === endLine.id)
+              newPaths.splice(r2, 1, {id: newPaths.length + 2, line: newEndLine})
+            } else {
+              let r2 = newPaths.findIndex(v => v.id === endLine.id)
+              newPaths.splice(r2, 1, {id: newPaths.length + 1, line: newEndLine})
+              newPaths.push({id: newPaths.length + 2, line: centerLine})
+            }
+
+            this.conf.cache.nodes = newNodes
+            this.conf.cache.paths = newPaths.map(v => v.line)
+            this.conf.cache.ctrlNodes = newCtrlNodes
+            this.conf.isCache = true
 
             console.log(
               'startPoint', startPoint,
@@ -1587,7 +1610,7 @@ export class BaseShape {
               'newStartLine', newStartLine,
               'centerLine', centerLine,
               'newEndLine', newEndLine,
-              'newPaths', newPaths
+              'newPaths', newPaths.map(v => v.line)
             )
 
             setTimeout(() => {
@@ -1597,6 +1620,7 @@ export class BaseShape {
               draw.calcPosition(ctx, this.conf)
               draw.round2(ctx, newStartPoint, 4)
               draw.round2(ctx, newEndPoint, 4)
+              draw.round2(ctx, node, 4)
 
               ctx.moveTo2(newStartPoint)
               ctx.arcTo2(node, newEndPoint, r)

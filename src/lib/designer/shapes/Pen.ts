@@ -63,9 +63,11 @@ export class Pen extends ParentShape {
     //绘制所有点
     ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
     this._conf.penNetwork.nodes.map((point, i) => {
-      // let a = helper.getStraightLineCenterPoint(fixStartPoint, fixEndPoint)
       ctx.fillText(i + '', point.x, point.y)
       // draw.drawRound(ctx, point)
+    })
+    this._conf.cache.ctrlNodes.map((point, i) => {
+      draw.drawRound(ctx, point)
     })
 
     // draw.drawRound(ctx, {x: 0, y: 0})
@@ -196,7 +198,12 @@ export class Pen extends ParentShape {
     }
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
-    const {nodes, paths, ctrlNodes} = this._conf.penNetwork
+    let penNetwork = this._conf.penNetwork
+    if (this._conf.isCache) {
+      penNetwork = this._conf.cache
+    }
+    const {nodes, paths, ctrlNodes} = penNetwork
+
     if (paths.length) {
       //TODO 有空了记得渲染三次自相交的图
       let selfIntersectionLines: PenNetworkLine[] = []
@@ -337,7 +344,7 @@ export class Pen extends ParentShape {
       //寻找封闭图
       const findCloseArea = (start: number, end: number, line: any, list: any[], save: any[]) => {
         visited.push(line.id)
-        let arrsEnd = list.filter(w => w.line.slice(0,2).includes(end) && w.id !== line.id)
+        let arrsEnd = list.filter(w => w.line.slice(0, 2).includes(end) && w.id !== line.id)
         while (arrsEnd.length !== 0) {
           if (arrsEnd.length === 1) {
             //这里用复制一遍。因为后续的其他遍历，可能也会碰到这条线，然后方向是相反的，又去改变头和尾
@@ -361,7 +368,7 @@ export class Pen extends ParentShape {
             if (isCloseIndex > -1) {
               return [save.slice(isCloseIndex)]
             }
-            arrsEnd = list.filter(w => w.line.slice(0,2).includes(end) && w.id !== a.id)
+            arrsEnd = list.filter(w => w.line.slice(0, 2).includes(end) && w.id !== a.id)
           } else {
             for (let i = 0; i < arrsEnd.length; i++) {
               let newSave = save.slice()
@@ -456,13 +463,13 @@ export class Pen extends ParentShape {
 
         // console.log('visited', cloneDeep(Array.from(new Set(visited))))
 
-        // console.log('newNodes', cloneDeep(newNodes))
-        // console.log('lineMaps', cloneDeep(lineMaps))
-        // console.log('newPaths', cloneDeep(newPaths))
-        // console.log('closeLines', cloneDeep(closeLines))
-        // console.log('closeLinesWithId', cloneDeep(closeLinesWithId))
-        // console.log('closeAreasRepeat----', cloneDeep(closeAreasRepeat))
-        // console.log('closeAreas----', cloneDeep(closeAreasId.map(v => v.area)))
+        console.log('newNodes', cloneDeep(newNodes))
+        console.log('lineMaps', cloneDeep(lineMaps))
+        console.log('newPaths', cloneDeep(newPaths))
+        console.log('closeLines', cloneDeep(closeLines))
+        console.log('closeLinesWithId', cloneDeep(closeLinesWithId))
+        console.log('closeAreasRepeat----', cloneDeep(closeAreasRepeat))
+        console.log('closeAreas----', cloneDeep(closeAreasId.map(v => v.area)))
 
         let cu = CanvasUtil2.getInstance()
         let {ctx} = cu

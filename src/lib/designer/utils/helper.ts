@@ -70,6 +70,7 @@ export default {
   },
   initConf(conf: BaseConfig, pConf?: BaseConfig) {
     if (conf.id) return conf
+    conf = this.getDefaultShapeConfig(conf)
     let {
       layout: {x, y, w, h}, flipHorizontal, flipVertical
     } = conf
@@ -451,6 +452,19 @@ export default {
       blendMode: 0,
       isMask: false,
       effects: [],
+      isCache: false,
+      penNetwork: {
+        ctrlNodes: [],
+        paths: [],
+        nodes: [],
+        regions: []
+      },
+      cache: {
+        ctrlNodes: [],
+        paths: [],
+        nodes: [],
+        regions: []
+      }
     } as any, newConfig)
   },
   //TODO 废弃

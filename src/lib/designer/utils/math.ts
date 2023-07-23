@@ -328,7 +328,7 @@ const Math2 = {
       if (intersects.length) {
         intersects.sort((a, b) => a - b)
         intersects.map((t, i, arr) => {
-          if (t === 0 || t === 1) return
+          if (!(t.toFixed2() > 0 && t.toFixed2() < 1)) return
 
           // let split = splitCurve.split(t)
           // let points = split.left.points
@@ -568,7 +568,7 @@ const Math2 = {
     }
     return null as any
   },
-  getLineT({p1, p2}: {p1: P, p2: P}, target: P): number {
+  getLineT({p1, p2}: { p1: P, p2: P }, target: P): number {
     let h = this.getHypotenuse2(p1, p2)
     let h2 = this.getHypotenuse2(p1, target)
     return h2 / h

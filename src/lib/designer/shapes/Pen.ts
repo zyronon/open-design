@@ -51,9 +51,9 @@ export class Pen extends ParentShape {
       // ctx.fill(path,'evenodd')
       ctx.fill(path, 'nonzero')
     })
-    strokePathList.map(line => {
-      ctx.stroke(line.path)
-    })
+    // strokePathList.map(line => {
+    //   ctx.stroke(line.path)
+    // })
 
     // ctx.strokeStyle = 'white'
     // fillPathList.map(({close, path}) => {
@@ -467,8 +467,8 @@ export class Pen extends ParentShape {
         console.log('lineMaps', cloneDeep(lineMaps))
         console.log('newPaths', cloneDeep(newPaths))
         console.log('closeLines', cloneDeep(closeLines))
-        console.log('closeLinesWithId', cloneDeep(closeLinesWithId))
-        console.log('closeAreasRepeat----', cloneDeep(closeAreasRepeat))
+        // console.log('closeLinesWithId', cloneDeep(closeLinesWithId))
+        // console.log('closeAreasRepeat----', cloneDeep(closeAreasRepeat))
         console.log('closeAreas----', cloneDeep(closeAreasId.map(v => v.area)))
 
         let cu = CanvasUtil2.getInstance()
@@ -535,29 +535,6 @@ export class Pen extends ParentShape {
           })
         }
       }
-
-      paths.map(line => {
-        let strokePath = new Path2D()
-        let lineType = line[6]
-        let startPoint = nodes[line[0]]
-        let endPoint = nodes[line[1]]
-        strokePath.moveTo2(startPoint)
-        switch (lineType) {
-          case LineType.Line:
-            strokePath.lineTo2(endPoint)
-            break
-          case LineType.Bezier3:
-            strokePath.bezierCurveTo2(ctrlNodes[line[2]], ctrlNodes[line[3]], endPoint)
-            break
-          case LineType.Bezier2:
-            let cp: number = 0
-            if (line[2] !== -1) cp = line[2]
-            if (line[3] !== -1) cp = line[3]
-            strokePath.quadraticCurveTo2(ctrlNodes[cp], endPoint)
-            break
-        }
-        strokePathList.push({close: true, path: strokePath})
-      })
     }
 
     // console.log('fillPathList',fillPathList)
@@ -565,6 +542,35 @@ export class Pen extends ParentShape {
       console.timeEnd()
     }
 
-    return {strokePathList, fillPathList}
+    return {strokePathList: this.getStrokePathList(), fillPathList}
+  }
+
+  getStrokePathList() {
+    const {nodes, paths, ctrlNodes} = this.conf.penNetwork
+    let strokePathList: LinePath[] = []
+
+    paths.map(line => {
+      let strokePath = new Path2D()
+      let lineType = line[6]
+      let startPoint = nodes[line[0]]
+      let endPoint = nodes[line[1]]
+      strokePath.moveTo2(startPoint)
+      switch (lineType) {
+        case LineType.Line:
+          strokePath.lineTo2(endPoint)
+          break
+        case LineType.Bezier3:
+          strokePath.bezierCurveTo2(ctrlNodes[line[2]], ctrlNodes[line[3]], endPoint)
+          break
+        case LineType.Bezier2:
+          let cp: number = 0
+          if (line[2] !== -1) cp = line[2]
+          if (line[3] !== -1) cp = line[3]
+          strokePath.quadraticCurveTo2(ctrlNodes[cp], endPoint)
+          break
+      }
+      strokePathList.push({close: true, path: strokePath})
+    })
+    return strokePathList
   }
 }

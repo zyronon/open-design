@@ -1515,6 +1515,7 @@ export class BaseShape {
     console.log('lines', lines)
     if (lines.length === 2) {
       let r = node.cornerRadius
+      console.log('r', r)
       let isNear = Math.abs(lines[0].id - lines[1].id) === 1
       let startPoint
       let startLine = lines[0]
@@ -1541,7 +1542,8 @@ export class BaseShape {
       if (startLineType === LineType.Line && endLineType === LineType.Line) {
         let {
           adjacentSide,
-          tan
+          tan,
+          d2
         } = this.getAdjacentSide(node, startPoint, endPoint, r)
 
         let front = Math2.getHypotenuse2(node, startPoint)
@@ -1569,14 +1571,21 @@ export class BaseShape {
               x: node.x + (endPoint.x - node.x) * k2,
               y: node.y + (endPoint.y - node.y) * k2,
             })
+            let k3 = r / front
+            let newCenter = generateNode({
+              x: node.x + (startPoint.x - node.x) * k3,
+              y: node.y + (startPoint.y - node.y) * k3,
+            })
+            newCenter =   Math2.getRotatedPoint(newCenter, node, -d2)
+            console.log('newCenter',newCenter)
             newNodes.push(newStartPoint)
             let newStartLine: PenNetworkLine = [startLine.line[0], newNodes.length - 1, -1, -1, -1, -1, LineType.Line]
             newNodes.push(newEndPoint)
             let newEndLine: PenNetworkLine = [newNodes.length - 1, endLine.line[1], -1, -1, -1, -1, LineType.Line]
 
-            let arc2 = Bezier.arcToBezier3(50, 0, 0, 10, 90)
-            console.log('arc2', arc2)
-            let arc = Bezier.arcToBezier3_2(newStartPoint, newEndPoint, node)
+            // let arc2 = Bezier.arcToBezier3(50, 0, 0, 10, 90)
+            // console.log('arc2', arc2)
+            let arc = Bezier.arcToBezier3_2(newStartPoint, newEndPoint, newCenter)
             console.log('arc', arc)
             newCtrlNodes.push(...arc)
             let centerLine: PenNetworkLine = [
@@ -1587,7 +1596,6 @@ export class BaseShape {
 
             let r1 = newPaths.findIndex(v => v.id === startLine.id)
             newPaths.splice(r1, 1, {id: startLine.id, line: newStartLine})
-            console.log('startLine.id - endLine.id', startLine.id - endLine.id)
             if (isNear) {
               newPaths.splice(r1 + 1, 0, {id: newPaths.length + 1, line: centerLine})
               let r2 = newPaths.findIndex(v => v.id === endLine.id)

@@ -2238,7 +2238,7 @@ export const rects: any[] = [
     "name": "矩形",
     "layout": {
       "x": 200,
-      "y": 100,
+      "y": 50,
       "w": 200,
       "h": 300
     },
@@ -2268,7 +2268,7 @@ export const rects: any[] = [
           "cps": [-1, -1]
         },
         {
-          "x": 100,
+          "x": 150,
           "y": -150,
           "cornerRadius": 50,
           "realCornerRadius": 0,

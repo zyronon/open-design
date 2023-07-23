@@ -1509,7 +1509,7 @@ export class BaseShape {
     let newPaths = paths.map((v, i) => ({id: i, line: v}))
     let newNodes = cloneDeep(nodes)
     let newCtrlNodes = cloneDeep(ctrlNodes)
-    let pointIndex = 1
+    let pointIndex = 2
     let node = nodes[pointIndex]
     let lines = newPaths.filter(p => p.line.slice(0, 2).includes(pointIndex))
     console.log('lines', lines)
@@ -1574,8 +1574,10 @@ export class BaseShape {
             newNodes.push(newEndPoint)
             let newEndLine: PenNetworkLine = [newNodes.length - 1, endLine.line[1], -1, -1, -1, -1, LineType.Line]
 
+            let arc2 = Bezier.arcToBezier3(50, 0, 0, 10, 90)
+            console.log('arc2', arc2)
             let arc = Bezier.arcToBezier3_2(newStartPoint, newEndPoint, node)
-            console.log('arc',arc)
+            console.log('arc', arc)
             newCtrlNodes.push(...arc)
             let centerLine: PenNetworkLine = [
               newNodes.length - 2,

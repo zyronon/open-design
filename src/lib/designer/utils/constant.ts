@@ -1777,7 +1777,6 @@ export const rectsj2: any[] = [
     "strokeAlign": "INSIDE",
     "lineShapes": [],
     "commonPoints": [],
-    "id": "9476d326-889c-4195-8ceb-0be61ff5bdcb"
   }
 ]
 export const rectsj3: any[] = [
@@ -2230,7 +2229,6 @@ export const rectsj3: any[] = [
     "strokeAlign": "INSIDE",
     "lineShapes": [],
     "commonPoints": [],
-    "id": "9476d326-889c-4195-8ceb-0be61ff5bdcb"
   }
 ]
 export const rects: any[] = [

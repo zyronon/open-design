@@ -31,7 +31,7 @@ import {EventKeys} from "../../../../lib/designer/event/eventKeys";
 import {clone, cloneDeep} from "lodash";
 import {fontFamilies, fontSize, fontWeight} from "../../../../lib/designer/utils/constant";
 import CanvasUtil2 from "../../../../lib/designer/engine/CanvasUtil2"
-import {PenNetworkNode} from "../../../../lib/designer/config/PenConfig";
+import {HandleMirroring, PenNetworkNode} from "../../../../lib/designer/config/PenConfig";
 
 enum ChangeColorType {
   Border = 'Border',
@@ -156,8 +156,8 @@ const ShapeInfo = (props: any) => {
                 </div>
               </div>
               <div className="row">
-                <BaseRadioGroup value={conf?.flipHorizontal}>
-                  <BaseRadio key={0} value={TextAlign.LEFT} label={'左对齐'}>
+                <BaseRadioGroup value={pointInfo.point.handleMirroring}>
+                  <BaseRadio key={0} value={HandleMirroring.RightAngle} label={'直角'}>
                     <svg width="1em" height="1em" viewBox="0 0 14 14" fill="none"
                          xmlns="http://www.w3.org/2000/svg">
                       <path opacity="0.5"
@@ -166,7 +166,7 @@ const ShapeInfo = (props: any) => {
                       <circle cx="7.00195" cy="4" r="2.5" fill="currentcolor"></circle>
                     </svg>
                   </BaseRadio>
-                  <BaseRadio key={1} value={TextAlign.CENTER} label={'居中对齐'}>
+                  <BaseRadio key={1} value={HandleMirroring.MirrorAngleAndLength} label={'完全对称'}>
                     <svg width="1em" height="1em" viewBox="0 0 14 14" fill="none"
                          opacity="0.7">
                       <path opacity="0.5"
@@ -177,7 +177,7 @@ const ShapeInfo = (props: any) => {
                         fill="currentcolor"></path>
                     </svg>
                   </BaseRadio>
-                  <BaseRadio key={2} value={TextAlign.RIGHT} label={'右对齐'}>
+                  <BaseRadio key={2} value={HandleMirroring.MirrorAngle} label={'角度对称'}>
                     <svg width="1em" height="1em" viewBox="0 0 14 14" fill="none"
                          opacity="0.7">
                       <path opacity="0.5"
@@ -188,7 +188,7 @@ const ShapeInfo = (props: any) => {
                         fill="currentcolor"></path>
                     </svg>
                   </BaseRadio>
-                  <BaseRadio key={3} value={TextAlign.RIGHT} label={'右对齐'}>
+                  <BaseRadio key={3} value={HandleMirroring.NoMirror} label={'不对称'}>
                     <svg width="1em" height="1em" viewBox="0 0 14 14" fill="none"
                          opacity="0.7">
                       <path opacity="0.5"

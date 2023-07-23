@@ -45,20 +45,17 @@ export class Pen extends ParentShape {
     ctx.lineCap = "round"
     ctx.strokeStyle = borderColor
     ctx.fillStyle = fillColor
-    let {strokePathList, fillPathList} = this.getCustomShapePath3()
 
-    fillPathList.map(({close, path}) => {
-      // ctx.fill(path,'evenodd')
-      ctx.fill(path, 'nonzero')
-    })
-    // strokePathList.map(line => {
-    //   ctx.stroke(line.path)
-    // })
+    let fillPath = this.getFillPath()
+    ctx.fill(fillPath)
+    // ctx.fill(fillPath, 'nonzero')
+    // ctx.fill(fillPath, 'evenodd')
+
+    let strokePath = this.getStrokePath()
+    ctx.stroke(strokePath)
 
     // ctx.strokeStyle = 'white'
-    // fillPathList.map(({close, path}) => {
-    //   ctx.stroke(path)
-    // })
+    // ctx.stroke(fillPath)
 
     //绘制所有点
     ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
@@ -76,19 +73,15 @@ export class Pen extends ParentShape {
   drawHover(ctx: CanvasRenderingContext2D, newLayout: Rect): any {
     ctx.strokeStyle = defaultConfig.strokeStyle
     //容器hover时只需要描边矩形就行了
-    let {strokePathList, fillPathList} = this.getCustomShapePath3()
-    strokePathList.map(({close, path}) => {
-      ctx.stroke(path)
-    })
+    let path = this.getStrokePath()
+    ctx.stroke(path)
   }
 
   drawSelected(ctx: CanvasRenderingContext2D, newLayout: Rect): any {
     ctx.strokeStyle = defaultConfig.strokeStyle
     //容器hover时只需要描边矩形就行了
-    let {strokePathList, fillPathList} = this.getCustomShapePath3()
-    strokePathList.map(({close, path}) => {
-      ctx.stroke(path)
-    })
+    let strokePath = this.getStrokePath()
+    ctx.stroke(strokePath)
     draw.selected(ctx, newLayout)
   }
 
@@ -103,14 +96,11 @@ export class Pen extends ParentShape {
     ctx.strokeStyle = Colors.Line2
     ctx.fillStyle = fillColor
 
-    let {strokePathList, fillPathList} = this.getCustomShapePath3()
-    fillPathList.map(({close, path}) => {
-      // ctx.fill(path, 'evenodd')
-      ctx.fill(path)
-    })
-    strokePathList.map(({close, path}) => {
-      ctx.stroke(path)
-    })
+    let fillPath = this.getFillPath()
+    ctx.fill(fillPath)
+
+    let strokePath = this.getStrokePath()
+    ctx.stroke(strokePath)
 
     //渲染hover在线上时，线段的中心点
     if ((this.editHover.type === EditType.Line
@@ -190,19 +180,18 @@ export class Pen extends ParentShape {
     return []
   }
 
-  getCustomShapePath3(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
+  getFillPath() {
     let showTime = false
     let showFill = true
     if (showTime) {
       console.time()
     }
-    let strokePathList: LinePath[] = []
-    let fillPathList: LinePath[] = []
     let penNetwork = this._conf.penNetwork
     if (this._conf.isCache) {
       penNetwork = this._conf.cache
     }
     const {nodes, paths, ctrlNodes} = penNetwork
+    let fillPath = new Path2D()
 
     if (paths.length) {
       //TODO 有空了记得渲染三次自相交的图
@@ -508,7 +497,6 @@ export class Pen extends ParentShape {
 
         if (showFill) {
           closeAreasId.map(s => s.area).map(v => {
-            let fillPath = new Path2D()
             let startPoint = newNodes[v[0].line[0]]
             let endPoint = newNodes[v[0].line[1]]
             fillPath.moveTo2(startPoint)
@@ -531,7 +519,6 @@ export class Pen extends ParentShape {
                   break
               }
             })
-            fillPathList.push({close: true, path: fillPath})
           })
         }
       }
@@ -541,16 +528,13 @@ export class Pen extends ParentShape {
     if (showTime) {
       console.timeEnd()
     }
-
-    return {strokePathList: this.getStrokePathList(), fillPathList}
+    return fillPath
   }
 
-  getStrokePathList() {
+  getStrokePath() {
     const {nodes, paths, ctrlNodes} = this.conf.penNetwork
-    let strokePathList: LinePath[] = []
-
+    let strokePath = new Path2D()
     paths.map(line => {
-      let strokePath = new Path2D()
       let lineType = line[6]
       let startPoint = nodes[line[0]]
       let endPoint = nodes[line[1]]
@@ -569,8 +553,7 @@ export class Pen extends ParentShape {
           strokePath.quadraticCurveTo2(ctrlNodes[cp], endPoint)
           break
       }
-      strokePathList.push({close: true, path: strokePath})
     })
-    return strokePathList
+    return strokePath
   }
 }

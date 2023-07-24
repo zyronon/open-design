@@ -1498,7 +1498,7 @@ export class BaseShape {
     if (e === 0) {
       point.realCornerRadius = 0
     } else {
-      this.checkAcr2()
+      this.conf.isCache = false
     }
     CanvasUtil2.getInstance().render()
     EventBus.emit(EventKeys.POINT_INFO, Object.assign({}, val, {point}))
@@ -2016,6 +2016,40 @@ export class BaseShape {
         }
       }
     }
+  }
+
+  getT(node: P, startPoint: P, endPoint: P, r: number, curve: BezierJs) {
+    // let startLine =
+    let frontSide = Math2.getHypotenuse2(node, startPoint)
+    let t = 0
+    for (let index = 1, i = 0.1; index <= 10; index++, i = i + 0.1) {
+      let endPoint_T = curve.get(i)
+      let backSide = Math2.getHypotenuse2(node, endPoint_T)
+
+      let temp = this.getAdjacentSide(node, startPoint, endPoint_T, r)
+      let adjacentSide = temp.adjacentSide
+      console.log('i', i, 'frontSide', frontSide, 'back', backSide, 'adjacent', adjacentSide, 'radius', r)
+
+      let min = Math.min(frontSide, backSide)
+      if (min > adjacentSide) {
+        //这里j<=i+0.1是因为如果i等于0.2时刚好合适,那么j加到0.19000000000000006时，j再加0.01就会大于0.2。。。。
+        for (let j = i - 0.1; j <= i + 0.1; j = j + 0.01) {
+          endPoint_T = curve.get(i)
+          backSide = Math2.getHypotenuse2(node, endPoint_T)
+
+          temp = this.getAdjacentSide(node, startPoint, endPoint_T, r)
+          adjacentSide = temp.adjacentSide
+          console.log('j', j, 'frontSide', frontSide, 'back', backSide, 'adjacent', adjacentSide, 'radius', r)
+
+          min = Math.min(frontSide, backSide)
+          if (min > adjacentSide) {
+            t = j
+          }
+        }
+        break
+      }
+    }
+    return
   }
 
   //判断两个都是贝塞尔曲线时的圆弧

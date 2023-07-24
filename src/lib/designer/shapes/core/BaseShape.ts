@@ -59,10 +59,8 @@ export class BaseShape {
       return getShapeFromConfig({conf, parent: this})
     }) ?? []
 
-    this.checkAcr(true)
-    this.checkAcr2()
     // @ts-ignore
-    window.t = () => this.checkAcr(true)
+    window.t = () => this.checkAcr2()
   }
 
   get status() {
@@ -1022,12 +1020,14 @@ export class BaseShape {
 
           if (type === EditType.Point || type === EditType.CenterPoint) {
             this.movePoint2(pointIndex, event.movement)
+            this.conf.isCache = false
             cu.render()
           }
 
           if (type === EditType.Line) {
             this.movePoint2(paths[lineIndex][0], event.movement)
             this.movePoint2(paths[lineIndex][1], event.movement)
+            this.conf.isCache = false
             cu.render()
           }
           // this.checkAcr()
@@ -1392,7 +1392,7 @@ export class BaseShape {
     return pathList
   }
 
-  getCustomShapePath2(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
+  getCustomShapePath2(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     this.conf.lineShapes.map((line) => {
@@ -1515,7 +1515,6 @@ export class BaseShape {
     console.log('lines', lines)
     if (lines.length === 2) {
       let r = node.cornerRadius
-      console.log('r', r)
       let isNear = Math.abs(lines[0].id - lines[1].id) === 1
       let startPoint
       let startLine = lines[0]
@@ -1546,113 +1545,154 @@ export class BaseShape {
           d2
         } = this.getAdjacentSide(node, startPoint, endPoint, r)
 
-        let front = Math2.getHypotenuse2(node, startPoint)
-        let back = Math2.getHypotenuse2(node, endPoint)
+        let frontSide = Math2.getHypotenuse2(node, startPoint)
+        let backSide = Math2.getHypotenuse2(node, endPoint)
         console.log('当前radius（对边）对应的邻边长', adjacentSide)
-        console.log('front', front)
-        console.log('back', back)
-        if (front === back) {
-          if (adjacentSide >= front) {
-            let s = Bezier.arcToBezier3_2(startPoint, endPoint, node)
-            // console.log('s', s)
-          } else {
+        console.log('frontSide', frontSide)
+        console.log('back', backSide)
 
-          }
+        let min = Math.min(frontSide, backSide)
+        let maxR = tan * min
+        if (maxR < r) r = maxR
+        //因为r变了，这里重新算一下邻边
+        adjacentSide = r / tan
+
+        //如果邻边比最小的边还长，那么设置为最小边长
+        if (adjacentSide > min) adjacentSide = min
+
+        let k = adjacentSide / frontSide
+        let newStartPoint = generateNode({
+          x: node.x + (startPoint.x - node.x) * k,
+          y: node.y + (startPoint.y - node.y) * k,
+        })
+        let k2 = adjacentSide / backSide
+        let newEndPoint = generateNode({
+          x: node.x + (endPoint.x - node.x) * k2,
+          y: node.y + (endPoint.y - node.y) * k2,
+        })
+
+        newNodes.push(newStartPoint)
+        let newStartLine: PenNetworkLine = [startLine.line[0], newNodes.length - 1, -1, -1, -1, -1, LineType.Line]
+        newNodes.push(newEndPoint)
+        let newEndLine: PenNetworkLine = [newNodes.length - 1, endLine.line[1], -1, -1, -1, -1, LineType.Line]
+
+        //中心点，因为r是半径，求斜边用sin可以算
+        let sin = Math.abs(Math.sin(Math2.jiaodu2hudu(d2)))
+        let k3 = (r / sin) / backSide
+        let newCenter = generateNode({
+          x: node.x + (endPoint.x - node.x) * k3,
+          y: node.y + (endPoint.y - node.y) * k3,
+        })
+        newCenter = Math2.getRotatedPoint(newCenter, node, d2)
+
+        let arc = Bezier.arcToBezier3_2(newStartPoint, newEndPoint, newCenter)
+        newCtrlNodes.push(...arc)
+        let centerLine: PenNetworkLine = [
+          newNodes.length - 2,
+          newNodes.length - 1,
+          newCtrlNodes.length - 2,
+          newCtrlNodes.length - 1, -1, -1, LineType.Bezier3]
+
+        let r1 = newPaths.findIndex(v => v.id === startLine.id)
+        newPaths.splice(r1, 1, {id: startLine.id, line: newStartLine})
+        if (isNear) {
+          newPaths.splice(r1 + 1, 0, {id: newPaths.length + 1, line: centerLine})
+          let r2 = newPaths.findIndex(v => v.id === endLine.id)
+          newPaths.splice(r2, 1, {id: newPaths.length + 2, line: newEndLine})
         } else {
-          let maxRadius = node.cornerRadius
-          if (Math.min(front, back) > adjacentSide) {
-            let k = adjacentSide / front
-            let newStartPoint = generateNode({
-              x: node.x + (startPoint.x - node.x) * k,
-              y: node.y + (startPoint.y - node.y) * k,
-            })
-            let k2 = adjacentSide / back
-            let newEndPoint = generateNode({
-              x: node.x + (endPoint.x - node.x) * k2,
-              y: node.y + (endPoint.y - node.y) * k2,
-            })
-            let k3 = r / front
-            let newCenter = generateNode({
-              x: node.x + (startPoint.x - node.x) * k3,
-              y: node.y + (startPoint.y - node.y) * k3,
-            })
-            newCenter =   Math2.getRotatedPoint(newCenter, node, -d2)
-            console.log('newCenter',newCenter)
-            newNodes.push(newStartPoint)
-            let newStartLine: PenNetworkLine = [startLine.line[0], newNodes.length - 1, -1, -1, -1, -1, LineType.Line]
-            newNodes.push(newEndPoint)
-            let newEndLine: PenNetworkLine = [newNodes.length - 1, endLine.line[1], -1, -1, -1, -1, LineType.Line]
+          let r2 = newPaths.findIndex(v => v.id === endLine.id)
+          newPaths.splice(r2, 1, {id: newPaths.length + 1, line: newEndLine})
+          newPaths.push({id: newPaths.length + 2, line: centerLine})
+        }
 
-            // let arc2 = Bezier.arcToBezier3(50, 0, 0, 10, 90)
-            // console.log('arc2', arc2)
-            let arc = Bezier.arcToBezier3_2(newStartPoint, newEndPoint, newCenter)
-            console.log('arc', arc)
-            newCtrlNodes.push(...arc)
-            let centerLine: PenNetworkLine = [
-              newNodes.length - 2,
-              newNodes.length - 1,
-              newCtrlNodes.length - 2,
-              newCtrlNodes.length - 1, -1, -1, LineType.Bezier3]
+        this.conf.cache.nodes = newNodes
+        this.conf.cache.paths = newPaths.map(v => v.line)
+        this.conf.cache.ctrlNodes = newCtrlNodes
+        // this.conf.isCache = true
 
-            let r1 = newPaths.findIndex(v => v.id === startLine.id)
-            newPaths.splice(r1, 1, {id: startLine.id, line: newStartLine})
-            if (isNear) {
-              newPaths.splice(r1 + 1, 0, {id: newPaths.length + 1, line: centerLine})
-              let r2 = newPaths.findIndex(v => v.id === endLine.id)
-              newPaths.splice(r2, 1, {id: newPaths.length + 2, line: newEndLine})
-            } else {
-              let r2 = newPaths.findIndex(v => v.id === endLine.id)
-              newPaths.splice(r2, 1, {id: newPaths.length + 1, line: newEndLine})
-              newPaths.push({id: newPaths.length + 2, line: centerLine})
+        console.log(
+          'startPoint', startPoint,
+          'endPoint', endPoint,
+          'node', node,
+          'newStartPoint', newStartPoint,
+          'newEndPoint', newEndPoint,
+          'newStartLine', newStartLine,
+          'centerLine', centerLine,
+          'newEndLine', newEndLine,
+          'newPaths', newPaths.map(v => v.line)
+        )
+
+        let cu = CanvasUtil2.getInstance()
+        cu.waitRenderOtherStatusFunc.push(() => {
+          let ctx = cu.ctx
+          ctx.save()
+          draw.calcPosition(ctx, this.conf)
+          draw.round2(ctx, newStartPoint, 4)
+          draw.round2(ctx, newEndPoint, 4)
+          // draw.round2(ctx, node, 4)
+          draw.round2(ctx, newCenter, 4)
+
+          // ctx.strokeStyle = 'black'
+          ctx.moveTo2(newStartPoint)
+          ctx.arcTo2(node, newEndPoint, r)
+          ctx.stroke()
+          ctx.restore()
+        })
+      } else {
+        // let backSide = Math2.getHypotenuse2(node, endPoint)
+        // for (let index = 1, i = 0.1; index <= 10; index++, i = i + 0.1) {
+        //   let startPoint_T = Bezier.getPointByT_2(-i, [startPoint, ctrlNodes[startLine.line[3]], node])
+        //   let frontSide = Math2.getHypotenuse2(node, startPoint_T)
+        //
+        //   let temp = this.getAdjacentSide(node, startPoint_T, endPoint, r)
+        //   let adjacentSide = temp.adjacentSide
+        //   console.log('i', i, 'frontSide', frontSide, 'back', backSide, 'adjacent', adjacentSide, 'radius', r)
+        //
+        //   let min = Math.min(frontSide, backSide)
+        //   if (min > adjacentSide) {
+        //     for (let j = i - 0.1; j <= i; j = j + 0.01) {
+        //       startPoint_T = Bezier.getPointByT_2(-j, [startPoint, ctrlNodes[startLine.line[3]], node])
+        //       frontSide = Math2.getHypotenuse2(node, startPoint_T)
+        //
+        //       temp = this.getAdjacentSide(node, startPoint_T, endPoint, r)
+        //       adjacentSide = temp.adjacentSide
+        //       console.log('j', j, 'frontSide', frontSide, 'back', backSide, 'adjacent', adjacentSide, 'radius', r)
+        //
+        //       min = Math.min(frontSide, backSide)
+        //       if (min > adjacentSide) {
+        //         break
+        //       }
+        //     }
+        //     break
+        //   }
+        // }
+
+        let frontSide = Math2.getHypotenuse2(node, startPoint)
+        for (let index = 1, i = 0.1; index <= 10; index++, i = i + 0.1) {
+          let endPoint_T = Bezier.getPointByT_2(i, [node, ctrlNodes[endLine.line[3]], endPoint])
+          let backSide = Math2.getHypotenuse2(node, endPoint_T)
+
+          let temp = this.getAdjacentSide(node, startPoint, endPoint_T, r)
+          let adjacentSide = temp.adjacentSide
+          console.log('i', i, 'frontSide', frontSide, 'back', backSide, 'adjacent', adjacentSide, 'radius', r)
+
+          let min = Math.min(frontSide, backSide)
+          if (min > adjacentSide) {
+            for (let j = i - 0.1; j <= i; j = j + 0.01) {
+              endPoint_T = Bezier.getPointByT_2(j, [node, ctrlNodes[endLine.line[3]], endPoint])
+              backSide = Math2.getHypotenuse2(node, endPoint_T)
+
+              temp = this.getAdjacentSide(node, startPoint, endPoint_T, r)
+              adjacentSide = temp.adjacentSide
+              console.log('j', j, 'frontSide', frontSide, 'back', backSide, 'adjacent', adjacentSide, 'radius', r)
+
+              min = Math.min(frontSide, backSide)
+              if (min > adjacentSide) {
+                break
+              }
             }
-
-            this.conf.cache.nodes = newNodes
-            this.conf.cache.paths = newPaths.map(v => v.line)
-            this.conf.cache.ctrlNodes = newCtrlNodes
-            this.conf.isCache = true
-
-            console.log(
-              'startPoint', startPoint,
-              'endPoint', endPoint,
-              'node', node,
-              'newStartPoint', newStartPoint,
-              'newEndPoint', newEndPoint,
-              'newStartLine', newStartLine,
-              'centerLine', centerLine,
-              'newEndLine', newEndLine,
-              'newPaths', newPaths.map(v => v.line)
-            )
-
-            setTimeout(() => {
-              let cu = CanvasUtil2.getInstance()
-              let ctx = cu.ctx
-              ctx.save()
-              draw.calcPosition(ctx, this.conf)
-              draw.round2(ctx, newStartPoint, 4)
-              draw.round2(ctx, newEndPoint, 4)
-              draw.round2(ctx, node, 4)
-
-              ctx.moveTo2(newStartPoint)
-              ctx.arcTo2(node, newEndPoint, r)
-              ctx.stroke()
-              ctx.restore()
-            })
-
-          } else {
-            if (front < adjacentSide) {
-              adjacentSide = front
-            }
-            //只大于back，小于front。干掉back那条边
-            if (back < adjacentSide) {
-              adjacentSide = back
-
-            } else {
-              //只大于front，小于back。干掉front那条边
-            }
+            break
           }
-
-          maxRadius = adjacentSide * tan
-          node.cornerRadius = maxRadius
         }
       }
     }
@@ -1974,12 +2014,11 @@ export class BaseShape {
   getAdjacentSide(center: P, start: P, end: P, r: number) {
     let degree = Math2.getDegree(center, end, start)
     let d2 = degree / 2
-    console.log('角度', degree, d2)
+    // console.log('角度', degree, d2)
     //得到已知角度tan值
     let tan = Math.abs(Math.tan(Math2.jiaodu2hudu(d2)))
-    console.log('tan值', tan)
+    // console.log('tan值', tan)
     //tanA = a/b。可知b = a/ tanA。所以领边的长就是lines2.point?.radius! / tan
-    // console.log('当前radius（对边）对应的邻边长', r / tan)
     return {tan, adjacentSide: r / tan, degree, d2}
   }
 

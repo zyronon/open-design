@@ -156,7 +156,7 @@ const ShapeInfo = (props: any) => {
                 </div>
               </div>
               <div className="row">
-                <BaseRadioGroup value={pointInfo.point.handleMirroring}>
+                <BaseRadioGroup value={pointInfo?.point?.handleMirroring}>
                   <BaseRadio key={0} value={HandleMirroring.RightAngle} label={'直角'}>
                     <svg width="1em" height="1em" viewBox="0 0 14 14" fill="none"
                          xmlns="http://www.w3.org/2000/svg">

@@ -2238,7 +2238,7 @@ export const rects: any[] = [
       "x": 200,
       "y": 50,
       "w": 200,
-      "h": 300
+      "h": 400
     },
     "rotation": 0,
     "lineWidth": 2,
@@ -2254,20 +2254,16 @@ export const rects: any[] = [
     "cornerRadius": 0,
     "realCornerRadius": 0,
     "penNetwork": {
-      "ctrlNodes": [],
+      "ctrlNodes": [
+        {
+          x: -100,
+          y: 200
+        }
+      ],
       "nodes": [
         {
           "x": -100,
-          "y": -150,
-          "cornerRadius": 50,
-          "realCornerRadius": 0,
-          "handleMirroring": "RightAngle",
-          "cornerCps": [-1, -1],
-          "cps": [-1, -1]
-        },
-        {
-          "x": 250,
-          "y": -150,
+          "y": -200,
           "cornerRadius": 50,
           "realCornerRadius": 0,
           "handleMirroring": "RightAngle",
@@ -2276,7 +2272,16 @@ export const rects: any[] = [
         },
         {
           "x": 100,
-          "y": 150,
+          "y": -200,
+          "cornerRadius": 50,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [-1, -1],
+          "cps": [-1, -1]
+        },
+        {
+          "x": 100,
+          "y": 200,
           "cornerRadius": 150,
           "realCornerRadius": 0,
           "handleMirroring": "RightAngle",
@@ -2286,17 +2291,17 @@ export const rects: any[] = [
         {
           "x": -100,
           "y": 150,
-          "cornerRadius": 50,
+          "cornerRadius": 100,
           "realCornerRadius": 0,
           "handleMirroring": "RightAngle",
           "cornerCps": [-1, -1],
-          "cps": [-1, -1]
+          "cps": [0, -1]
         },
       ],
       "paths": [
         [0, 1, -1, -1, -1, -1, 1],
         [1, 2, -1, -1, -1, -1, 1],
-        [2, 3, -1, -1, -1, -1, 1],
+        [2, 3, -1, 0, -1, -1, 2],
         [3, 0, -1, -1, -1, -1, 1],
       ],
       "regions": []

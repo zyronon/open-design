@@ -1579,13 +1579,13 @@ export class BaseShape {
         //中心点，因为r是半径，求斜边用sin可以算
         let sin = Math.abs(Math.sin(Math2.jiaodu2hudu(d2)))
         let k3 = (r / sin) / backSide
-        let newCenter = generateNode({
+        let arcCenter = generateNode({
           x: node.x + (endPoint.x - node.x) * k3,
           y: node.y + (endPoint.y - node.y) * k3,
         })
-        newCenter = Math2.getRotatedPoint(newCenter, node, d2)
+        arcCenter = Math2.getRotatedPoint(arcCenter, node, d2)
 
-        let arc = Bezier.arcToBezier3_2(newStartPoint, newEndPoint, newCenter)
+        let arc = Bezier.arcToBezier3_2(newStartPoint, newEndPoint, arcCenter)
         newCtrlNodes.push(...arc)
         let centerLine: PenNetworkLine = [
           newNodes.length - 2,
@@ -1630,7 +1630,7 @@ export class BaseShape {
           draw.round2(ctx, newStartPoint, 4)
           draw.round2(ctx, newEndPoint, 4)
           // draw.round2(ctx, node, 4)
-          draw.round2(ctx, newCenter, 4)
+          draw.round2(ctx, arcCenter, 4)
 
           // ctx.strokeStyle = 'black'
           ctx.moveTo2(newStartPoint)
@@ -1678,7 +1678,8 @@ export class BaseShape {
 
           let min = Math.min(frontSide, backSide)
           if (min > adjacentSide) {
-            for (let j = i - 0.1; j <= i; j = j + 0.01) {
+            //这里j<=i+0.1是因为如果i等于0.2时刚好合适,那么j加到0.19000000000000006时，j再加0.01就会大于0.2。。。。
+            for (let j = i - 0.1; j <= i + 0.1; j = j + 0.01) {
               endPoint_T = Bezier.getPointByT_2(j, [node, ctrlNodes[endLine.line[3]], endPoint])
               backSide = Math2.getHypotenuse2(node, endPoint_T)
 
@@ -1688,6 +1689,102 @@ export class BaseShape {
 
               min = Math.min(frontSide, backSide)
               if (min > adjacentSide) {
+                let bjs2 = new BezierJs([node, ctrlNodes[endLine.line[3]], endPoint])
+                let c = bjs2.split(j)
+
+                let degree = temp.degree
+                let d2 = temp.d2
+
+                let k = adjacentSide / frontSide
+                let newStartPoint = generateNode({
+                  x: node.x + (startPoint.x - node.x) * k,
+                  y: node.y + (startPoint.y - node.y) * k,
+                })
+                let k2 = adjacentSide / backSide
+                let newEndPoint = generateNode({
+                  x: node.x + (endPoint_T.x - node.x) * k2,
+                  y: node.y + (endPoint_T.y - node.y) * k2,
+                })
+
+                newNodes.push(newStartPoint)
+                let newStartLine: PenNetworkLine = [startLine.line[0], newNodes.length - 1, -1, -1, -1, -1, LineType.Line]
+                newNodes.push(newEndPoint)
+                newCtrlNodes.push(c.right.points[1])
+                let newEndLine: PenNetworkLine = [
+                  newNodes.length - 1,
+                  endLine.line[1],
+                  newCtrlNodes.length - 1,
+                  -1,
+                  -1, -1,
+                  LineType.Bezier2
+                ]
+
+                //中心点，因为r是半径，求斜边用sin可以算
+                let sin = Math.abs(Math.sin(Math2.jiaodu2hudu(d2)))
+                let k3 = (r / sin) / backSide
+                let arcCenter = generateNode({
+                  x: node.x + (endPoint_T.x - node.x) * k3,
+                  y: node.y + (endPoint_T.y - node.y) * k3,
+                })
+                arcCenter = Math2.getRotatedPoint(arcCenter, node, d2)
+
+                let arc = Bezier.arcToBezier3_2(newStartPoint, newEndPoint, arcCenter)
+                // console.log('=', c.left.points[1], arc[1])
+                newCtrlNodes.push(arc[0])
+                newCtrlNodes.push(c.left.points[1])
+                // newCtrlNodes.push(...arc)
+
+                let centerLine: PenNetworkLine = [
+                  newNodes.length - 2,
+                  newNodes.length - 1,
+                  newCtrlNodes.length - 2,
+                  newCtrlNodes.length - 1,
+                  -1, -1, LineType.Bezier3]
+
+                let r1 = newPaths.findIndex(v => v.id === startLine.id)
+                newPaths.splice(r1, 1, {id: startLine.id, line: newStartLine})
+                if (isNear) {
+                  newPaths.splice(r1 + 1, 0, {id: newPaths.length + 1, line: centerLine})
+                  let r2 = newPaths.findIndex(v => v.id === endLine.id)
+                  newPaths.splice(r2, 1, {id: newPaths.length + 2, line: newEndLine})
+                } else {
+                  let r2 = newPaths.findIndex(v => v.id === endLine.id)
+                  newPaths.splice(r2, 1, {id: newPaths.length + 1, line: newEndLine})
+                  newPaths.push({id: newPaths.length + 2, line: centerLine})
+                }
+
+                this.conf.cache.nodes = newNodes
+                this.conf.cache.paths = newPaths.map(v => v.line)
+                this.conf.cache.ctrlNodes = newCtrlNodes
+                // this.conf.isCache = true
+
+                console.log(
+                  'startPoint', startPoint,
+                  'endPoint_T', endPoint_T,
+                  'centerLine', centerLine,
+                  'newEndLine', newEndLine,
+                  'cache', cloneDeep(this.conf.cache)
+                )
+
+                let cu = CanvasUtil2.getInstance()
+                cu.waitRenderOtherStatusFunc.push(() => {
+                  let ctx = cu.ctx
+                  ctx.save()
+                  draw.calcPosition(ctx, this.conf)
+                  // draw.round2(ctx, newStartPoint, 4)
+                  // draw.round2(ctx, newEndPoint, 4)
+                  // draw.round2(ctx, node, 4)
+                  draw.round2(ctx, arcCenter, 4)
+                  // draw.round2(ctx, arc[0], 4)
+                  // draw.round2(ctx, c.left.points[1], 4)
+
+                  ctx.moveTo2(newStartPoint)
+                  // ctx.arcTo2(node, newEndPoint, r)
+                  let a = c.left.points[1]
+                  ctx.bezierCurveTo2(arc[0], a, endPoint_T)
+                  ctx.stroke()
+                  ctx.restore()
+                })
                 break
               }
             }

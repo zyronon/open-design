@@ -51,8 +51,8 @@ export class Pen extends ParentShape {
     // ctx.fill(fillPath, 'nonzero')
     // ctx.fill(fillPath, 'evenodd')
 
-    let strokePath = this.getStrokePath()
-    ctx.stroke(strokePath)
+    // let strokePath = this.getStrokePath()
+    // ctx.stroke(strokePath)
 
     // ctx.strokeStyle = 'white'
     // ctx.stroke(fillPath)

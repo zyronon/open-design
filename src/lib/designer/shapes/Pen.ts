@@ -65,7 +65,7 @@ export class Pen extends ParentShape {
       // draw.drawRound(ctx, point)
     })
     this._conf.cache.ctrlNodes.map((point, i) => {
-      draw.drawRound(ctx, point)
+      // draw.drawRound(ctx, point)
     })
 
     // draw.drawRound(ctx, {x: 0, y: 0})
@@ -192,7 +192,7 @@ export class Pen extends ParentShape {
   }
 
   getFillPath() {
-    let showTime = false
+    let showTime = true
     let showFill = true
     if (showTime) {
       console.time()
@@ -494,13 +494,13 @@ export class Pen extends ParentShape {
 
           // console.log('visited', cloneDeep(Array.from(new Set(visited))))
 
-          console.log('newNodes', cloneDeep(newNodes))
-          console.log('lineMaps', cloneDeep(lineMaps))
+          // console.log('newNodes', cloneDeep(newNodes))
+          // console.log('lineMaps', cloneDeep(lineMaps))
           console.log('newPaths', cloneDeep(newPaths))
-          console.log('closeLines', cloneDeep(closeLines))
+          // console.log('closeLines', cloneDeep(closeLines))
           // console.log('closeLinesWithId', cloneDeep(closeLinesWithId))
           // console.log('closeAreasRepeat----', cloneDeep(closeAreasRepeat))
-          console.log('closeAreas----', cloneDeep(closeAreasId.map(v => v.area)))
+          // console.log('closeAreas----', cloneDeep(closeAreasId.map(v => v.area)))
 
           let cu = CanvasUtil2.getInstance()
           let {ctx} = cu
@@ -540,7 +540,7 @@ export class Pen extends ParentShape {
           drawFillArea(newNodes, newCtrlNodes, closeAreasId)
 
           this.conf.cache.nodes = newNodes
-          this.conf.cache.paths = newPaths.map(v => v.line)
+          this.conf.cache.paths = newPaths
           this.conf.cache.ctrlNodes = newCtrlNodes
           this.conf.cache.areas = closeAreasId
           this.conf.isCache = true

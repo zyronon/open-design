@@ -192,7 +192,7 @@ export class Pen extends ParentShape {
   }
 
   getFillPath() {
-    let showTime = true
+    let showTime = false
     let showFill = true
     if (showTime) {
       console.time()
@@ -216,6 +216,9 @@ export class Pen extends ParentShape {
                 fillPath.lineTo2(endPoint)
                 break
               case LineType.Bezier3:
+                // console.log('newCtrlNodes[line[2]]',newCtrlNodes[line[2]])
+                // console.log('newCtrlNodes[line[3]]',newCtrlNodes[line[3]])
+                // console.log('endPoint',endPoint)
                 fillPath.bezierCurveTo2(newCtrlNodes[line[2]], newCtrlNodes[line[3]], endPoint)
                 break
               case LineType.Bezier2:
@@ -388,6 +391,11 @@ export class Pen extends ParentShape {
                 //交换顺序
                 a.line[0] = a.line[1]
                 a.line[1] = end
+                if (a.line[6] !== LineType.Line) {
+                  let temp = a.line[2]
+                  a.line[2] = a.line[3]
+                  a.line[3] = temp
+                }
               }
               visited.push(a.id)
               save.push(a)
@@ -411,6 +419,11 @@ export class Pen extends ParentShape {
                   newEnd = a.line[0]
                   a.line[0] = a.line[1]
                   a.line[1] = newEnd
+                  if (a.line[6] !== LineType.Line) {
+                    let temp = a.line[2]
+                    a.line[2] = a.line[3]
+                    a.line[3] = temp
+                  }
                 }
                 newSave.push(a)
                 let isCloseIndex = newSave.findIndex(b => b.line[0] === newEnd)

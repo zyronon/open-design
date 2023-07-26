@@ -125,8 +125,7 @@ export class Pen extends ParentShape {
       // if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
       // if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
       draw.drawRound(ctx, point)
-      // ctx.fillText(i + '', point.x, point.y)
-
+      ctx.fillText(i + '', point.x, point.y)
     })
 
     let {pointIndex, type} = this.editStartPointInfo

@@ -1578,7 +1578,7 @@ export class BaseShape {
         let curve = new BezierJs([node, newCtrlNodes[wanLine.line[3]], wanP])
         let result = this.getT(node, zhiP, curve, r)
         let {degree, d2, side1, side2, adjacentSide, point_T, t, maxR} = result
-        console.log('degree', degree, curve, t)
+        console.log('degree', degree, t)
 
         if (t > 0.02 && t <= 1) {
           let c = curve.split(t)
@@ -1670,16 +1670,15 @@ export class BaseShape {
             // ctx.stroke()
             ctx.restore()
           })
-
-          this.conf.cache.nodes = newNodes
-          this.conf.cache.paths = newPaths.map(v => v.line)
-          this.conf.cache.ctrlNodes = newCtrlNodes
-          // console.log('cache', cloneDeep(this.conf.cache))
         }
       }
 
-      return
+      this.conf.cache.nodes = newNodes
+      this.conf.cache.paths = newPaths.map(v => v.line)
+      this.conf.cache.ctrlNodes = newCtrlNodes
+      console.log('cache', cloneDeep(this.conf.cache))
 
+      return
 
       if (startLineType === LineType.Line && endLineType === LineType.Line) {
         let {
@@ -1786,8 +1785,7 @@ export class BaseShape {
     }
   }
 
-  getT(center: P, point: P, curve: BezierJs, r: number, reverse?: boolean) {
-    // let startLine =
+  getT(center: P, point: P, curve: BezierJs, r: number) {
     let side1 = Math2.getHypotenuse2(center, point)
 
     const check = (t: number) => {
@@ -1810,8 +1808,7 @@ export class BaseShape {
         }
       }
     }
-    let extrema = curve.extrema()
-    console.log('extrema', extrema)
+    // let extrema = curve.extrema()
     // if (extrema.values.length) {
     //   for (let i = 0; i < extrema.x.length; i++) {
     //     let t = extrema.x[i]
@@ -1830,7 +1827,7 @@ export class BaseShape {
     let adjacentSide
     let min = 0
     let result = {
-      t: 1,
+      t: -1,
       adjacentSide: 0,
       d2: 0,
       degree: 0,
@@ -1845,10 +1842,10 @@ export class BaseShape {
       side2 = Math2.getHypotenuse2(center, point_T)
       temp = this.getAdjacentSide(center, point, point_T, r)
       adjacentSide = temp.adjacentSide
-      // console.log('i', i, 'side1', side1, 'side2', side2, 'adjacent', adjacentSide, 'd2', temp.d2)
-
       min = Math.min(side1, side2)
-      if (min > adjacentSide) {
+
+      // console.log('i', i, 'side1', side1, 'side2', side2, 'min', min, 'adjacent', adjacentSide, 'd2', temp.d2)
+      if (min.toFixed2(0) >= adjacentSide.toFixed2(0)) {
         //这里j<=i+0.1是因为如果i等于0.2时刚好合适,那么j加到0.19000000000000006时，j再加0.01就会大于0.2。。。。
         for (let indexJ = 1, j = i - 0.1; indexJ <= 11; indexJ++, j = j + 0.01) {
           point_T = curve.get(j)
@@ -1857,8 +1854,8 @@ export class BaseShape {
           adjacentSide = temp.adjacentSide
 
           min = Math.min(side1, side2)
-          if (min > adjacentSide) {
-            // console.log('j', j, 'side1', side1, 'side2', side2, 'adjacent', adjacentSide, 'd2', temp.d2)
+          if (min.toFixed2(0) >= adjacentSide.toFixed2(0)) {
+            // console.log('j', j, 'side1', side1, 'side2', side2, 'min', min, 'adjacent', adjacentSide, 'd2', temp.d2)
             result.t = j
             result.adjacentSide = adjacentSide
             result.d2 = temp.d2
@@ -1870,6 +1867,24 @@ export class BaseShape {
           }
         }
         break
+      }
+    }
+
+    if (result.t === -1) {
+      let point_T = curve.get(1)
+      let side2 = Math2.getHypotenuse2(center, point_T)
+      let temp = this.getAdjacentSide(center, point, point_T, r)
+      let min = Math.min(side1, side2)
+      let maxR = temp.tan * min
+      return {
+        t: 1,
+        adjacentSide: min,
+        d2: temp.d2,
+        degree: temp.degree,
+        side1: side1,
+        side2: side2,
+        point_T: point_T,
+        maxR
       }
     }
     return result

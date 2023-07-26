@@ -356,7 +356,6 @@ export class Pen extends ParentShape {
           }
         })
 
-
         let closeLines: any[] = []
         //筛选出终点没人连的
         closeLines = newPaths.filter((v, i) => {
@@ -507,7 +506,7 @@ export class Pen extends ParentShape {
           // console.log('visited', cloneDeep(Array.from(new Set(visited))))
 
           // console.log('newNodes', cloneDeep(newNodes))
-          // console.log('lineMaps', cloneDeep(lineMaps))
+          console.log('lineMaps', cloneDeep(lineMaps))
           console.log('newPaths', cloneDeep(newPaths))
           // console.log('closeLines', cloneDeep(closeLines))
           // console.log('closeLinesWithId', cloneDeep(closeLinesWithId))

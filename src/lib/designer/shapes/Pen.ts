@@ -231,7 +231,7 @@ export class Pen extends ParentShape {
         })
       }
     }
-    if (this.conf.isCache) {
+    if (this.conf.isCache && false) {
       const {nodes, paths, ctrlNodes, areas: closeAreasId = []} = this._conf.cache
       drawFillArea(nodes, ctrlNodes, closeAreasId)
     } else {

@@ -250,7 +250,7 @@ const Bezier = {
   },
   //正圆弧转到三次曲线
   //TODO　https://stackoverflow.com/questions/734076/how-to-best-approximate-a-geometrical-arc-with-a-bezier-curve
-    arcToBezier3_2(start: P, end: P, center: P) {
+  arcToBezier3_2(start: P, end: P, center: P) {
     const {x: x1, y: y1} = start
     const {x: x4, y: y4} = end
     const {x: xc, y: yc} = center

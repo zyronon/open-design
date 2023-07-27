@@ -1606,9 +1606,34 @@ export class BaseShape {
         let p0 = newNodes[line0.line[0] === pointIndex ? line0.line[1] : line0.line[0]]
         let p1 = newNodes[line1.line[0] === pointIndex ? line1.line[1] : line1.line[0]]
 
-        let curve1 = new BezierJs([node, newCtrlNodes[line0.line[3]], p0])
-        let curve2 = new BezierJs([node, newCtrlNodes[line1.line[3]], p1])
-        let result = this.getTT(node, curve1, curve2, r)
+        let curve0
+        if (line0.line[6] === LineType.Bezier2) {
+          let cp: number = 0
+          if (line0.line[2] !== -1) cp = line0.line[2]
+          if (line0.line[3] !== -1) cp = line0.line[3]
+          curve0 = new BezierJs([node, newCtrlNodes[cp], p0])
+        } else {
+          if (line0.line[0] === pointIndex) {
+            curve0 = new BezierJs([node, newCtrlNodes[line0.line[2]], newCtrlNodes[line0.line[3]], p0])
+          } else {
+            curve0 = new BezierJs([node, newCtrlNodes[line0.line[3]], newCtrlNodes[line0.line[2]], p0])
+          }
+        }
+
+        let curve1
+        if (line1.line[6] === LineType.Bezier2) {
+          let cp: number = 0
+          if (line1.line[2] !== -1) cp = line1.line[2]
+          if (line1.line[3] !== -1) cp = line1.line[3]
+          curve1 = new BezierJs([node, newCtrlNodes[cp], p1])
+        } else {
+          if (line1.line[0] === pointIndex) {
+            curve1 = new BezierJs([node, newCtrlNodes[line1.line[2]], newCtrlNodes[line1.line[3]], p1])
+          } else {
+            curve1 = new BezierJs([node, newCtrlNodes[line1.line[3]], newCtrlNodes[line1.line[2]], p1])
+          }
+        }
+        let result = this.getTT(node, curve0, curve1, r)
         let {degree, d2, side1, side2, adjacentSide, point_T, p0: p2, t, maxR} = result
 
         console.log('re', result)
@@ -1778,6 +1803,7 @@ export class BaseShape {
   }
 
   getTT(center: P, curve1: BezierJs, curve2: BezierJs, r: number) {
+    debugger
     let curve1Length = curve1.length()
     let curve2Length = curve2.length()
 

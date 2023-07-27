@@ -1513,10 +1513,10 @@ export class BaseShape {
     let newPaths = paths.map((v, i) => ({id: i, line: v}))
     let newNodes = cloneDeep(nodes)
     let newCtrlNodes = cloneDeep(ctrlNodes)
-    let pointIndex = 3
+    let pointIndex = 2
     let lines = newPaths.filter(p => p.line.slice(0, 2).includes(pointIndex))
     let node = nodes[pointIndex]
-    if (lines.length === 2 ) {
+    if (lines.length === 2) {
       let r = node.cornerRadius
       let line0 = lines[0]
       let line1 = lines[1]
@@ -1609,9 +1609,35 @@ export class BaseShape {
         let curve1 = new BezierJs([node, newCtrlNodes[line0.line[3]], p0])
         let curve2 = new BezierJs([node, newCtrlNodes[line1.line[3]], p1])
         let result = this.getTT(node, curve1, curve2, r)
-        // let {degree, d2, side1, side2, adjacentSide, point_T, t, maxR} = result
+        let {degree, d2, side1, side2, adjacentSide, point_T, p0: p2, t, maxR} = result
 
         console.log('re', result)
+
+        let cu = CanvasUtil2.getInstance()
+        cu.waitRenderOtherStatusFunc.push(() => {
+          let ctx = cu.ctx
+          ctx.save()
+          draw.calcPosition(ctx, this.conf)
+          draw.round2(ctx, point_T, 4)
+          draw.round2(ctx, p2, 4)
+          // draw.round2(ctx, newP0, 4)
+          // draw.round2(ctx, newP1, 4)
+          // draw.round2(ctx, node, 4)
+          // draw.round2(ctx, arcCenter, 4)
+          // draw.round2(ctx, arc[0], 4)
+          // draw.round2(ctx, arc[1], 4)
+          // draw.round2(ctx, c.left.points[1], 4)
+          // ctx.moveTo2(newP0)
+          // ctx.arcTo2(node, newP1, r)
+          // ctx.bezierCurveTo2(arc[0], c.left.points[1], newP1)
+          // ctx.stroke()
+
+          // node, newCtrlNodes[wanLine.line[2]], newCtrlNodes[wanLine.line[3]], wanP
+          // ctx.moveTo2(node)
+          // ctx.bezierCurveTo2(newCtrlNodes[wanLine!.line[2]], newCtrlNodes[wanLine!.line[3]], wanP!)
+          // ctx.stroke()
+          ctx.restore()
+        })
       } else {
         let zhiLine
         let wanLine: {line: any; id?: number}
@@ -1816,7 +1842,7 @@ export class BaseShape {
             result.side1 = side1_1
             result.side2 = side2
             result.point_T = point_T
-            result.p0 = point_T
+            result.p0 = p0
             break
           }
         }

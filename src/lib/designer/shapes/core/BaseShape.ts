@@ -597,6 +597,7 @@ export class BaseShape {
                 nextLine = curLine
               }
             }
+            console.log('nextLine', nextLine, 'preLine', preLine)
             if (!preLine && !nextLine) return console.error('没有前后线')
             let previousPointInfo = nodes[preLine[0]]
             let nextPointInfo = nodes[nextLine[1]]
@@ -605,7 +606,7 @@ export class BaseShape {
               previousPointInfo,
               point,
               nextPointInfo)
-            // console.log(l, r)
+            console.log(l, r)
             ctrlNodes.push(l)
             ctrlNodes.push(r)
             point.cps = [ctrlNodes.length - 2, ctrlNodes.length - 1]
@@ -1515,7 +1516,7 @@ export class BaseShape {
     let pointIndex = 3
     let lines = newPaths.filter(p => p.line.slice(0, 2).includes(pointIndex))
     let node = nodes[pointIndex]
-    if (lines.length === 2) {
+    if (lines.length === 2 ) {
       let r = node.cornerRadius
       let line0 = lines[0]
       let line1 = lines[1]
@@ -1602,13 +1603,21 @@ export class BaseShape {
           ctx.restore()
         })
       } else if (line0.line[6] !== LineType.Line && line1.line[6] !== LineType.Line) {
+        let p0 = newNodes[line0.line[0] === pointIndex ? line0.line[1] : line0.line[0]]
+        let p1 = newNodes[line1.line[0] === pointIndex ? line1.line[1] : line1.line[0]]
 
+        let curve1 = new BezierJs([node, newCtrlNodes[line0.line[3]], p0])
+        let curve2 = new BezierJs([node, newCtrlNodes[line1.line[3]], p1])
+        let result = this.getTT(node, curve1, curve2, r)
+        // let {degree, d2, side1, side2, adjacentSide, point_T, t, maxR} = result
+
+        console.log('re', result)
       } else {
         let zhiLine
-        let wanLine
+        let wanLine: {line: any; id?: number}
         let zhiP
         let zhiIndex
-        let wanP
+        let wanP: P
         let wanIndex
         if (line0.line[6] === LineType.Line) {
           zhiLine = line0
@@ -1631,7 +1640,19 @@ export class BaseShape {
         wanP = nodes[wanIndex]
         zhiP = nodes[zhiIndex]
 
-        let curve = new BezierJs([node, newCtrlNodes[wanLine.line[3]], wanP])
+        let curve
+        if (wanLine.line[6] === LineType.Bezier2) {
+          let cp: number = 0
+          if (wanLine.line[2] !== -1) cp = wanLine.line[2]
+          if (wanLine.line[3] !== -1) cp = wanLine.line[3]
+          curve = new BezierJs([node, newCtrlNodes[cp], wanP])
+        } else {
+          if (wanLine.line[0] === pointIndex) {
+            curve = new BezierJs([node, newCtrlNodes[wanLine.line[2]], newCtrlNodes[wanLine.line[3]], wanP])
+          } else {
+            curve = new BezierJs([node, newCtrlNodes[wanLine.line[3]], newCtrlNodes[wanLine.line[2]], wanP])
+          }
+        }
         let result = this.getT(node, zhiP, curve, r)
         let {degree, d2, side1, side2, adjacentSide, point_T, t, maxR} = result
 
@@ -1641,11 +1662,11 @@ export class BaseShape {
           let newP1: any
           let newStartLine: PenNetworkLine
           let newEndLine: PenNetworkLine
-          let cp0
-
-          cp0 = c.right.points[1]
+          let cp0 = c.right.points[1]
           newCtrlNodes.push(cp0)
-
+          if (wanLine.line[6] === LineType.Bezier3) {
+            newCtrlNodes.push(c.right.points[2])
+          }
           let k2 = adjacentSide / side1
           newP0 = generateNode({
             x: node.x + (zhiP.x - node.x) * k2,
@@ -1657,7 +1678,16 @@ export class BaseShape {
 
           newP1 = point_T as any
           newNodes.push(newP1)
-          newEndLine = [newNodes.length - 1, wanIndex, newCtrlNodes.length - 1, -1, -1, -1, wanLine.line[6]]
+          newEndLine = [
+            newNodes.length - 1, wanIndex,
+            newCtrlNodes.length - 1,
+            -1,
+            -1, -1, wanLine.line[6]]
+
+          if (wanLine.line[6] === LineType.Bezier3) {
+            newEndLine[2] = newCtrlNodes.length - 2
+            newEndLine[3] = newCtrlNodes.length - 1
+          }
 
           //中心点，因为r是半径，求斜边用sin可以算
           let sin = Math.abs(Math.sin(Math2.jiaodu2hudu(d2)))
@@ -1697,7 +1727,7 @@ export class BaseShape {
             // draw.round2(ctx, newP0, 4)
             // draw.round2(ctx, newP1, 4)
             // draw.round2(ctx, node, 4)
-            draw.round2(ctx, arcCenter, 4)
+            // draw.round2(ctx, arcCenter, 4)
             // draw.round2(ctx, arc[0], 4)
             // draw.round2(ctx, arc[1], 4)
             // draw.round2(ctx, c.left.points[1], 4)
@@ -1705,23 +1735,95 @@ export class BaseShape {
             // ctx.arcTo2(node, newP1, r)
             // ctx.bezierCurveTo2(arc[0], c.left.points[1], newP1)
             // ctx.stroke()
+
+            // node, newCtrlNodes[wanLine.line[2]], newCtrlNodes[wanLine.line[3]], wanP
+            // ctx.moveTo2(node)
+            // ctx.bezierCurveTo2(newCtrlNodes[wanLine!.line[2]], newCtrlNodes[wanLine!.line[3]], wanP!)
+            // ctx.stroke()
             ctx.restore()
           })
         }
       }
-      this.conf.cache.nodes = newNodes
-      this.conf.cache.paths = newPaths.map(v => v.line)
-      this.conf.cache.ctrlNodes = newCtrlNodes
-      console.log('cache', cloneDeep(this.conf.cache))
     }
+    this.conf.cache.nodes = newNodes
+    this.conf.cache.paths = newPaths.map(v => v.line)
+    this.conf.cache.ctrlNodes = newCtrlNodes
+    // console.log('cache', cloneDeep(this.conf.cache))
   }
 
   getTT(center: P, curve1: BezierJs, curve2: BezierJs, r: number) {
     let curve1Length = curve1.length()
     let curve2Length = curve2.length()
 
+    let k
+    let compareCurve
+    let forCurve
+    if (curve1Length > curve2Length) {
+      compareCurve = curve1
+      forCurve = curve2
+      k = curve1Length / curve2Length
+    } else {
+      compareCurve = curve2
+      forCurve = curve1
+      k = curve2Length / curve1Length
+    }
+    let point_T
+    let side2
+    let temp
+    let adjacentSide
+    let min = 0
+    let s = compareCurve.get(1)
+    let result = {
+      t0: -1,
+      t: -1,
+      adjacentSide: 0,
+      d2: 0,
+      degree: 0,
+      side1: 0,
+      side2: 0,
+      point_T: {x: 0, y: 0},
+      p0: {x: 0, y: 0},
+      maxR: r
+    }
+    let side1 = Math2.getHypotenuse2(center, s)
+    for (let index = 1, i = 0.1; index <= 10; index++, i = i + 0.1) {
+      point_T = forCurve.get(i)
+      side2 = Math2.getHypotenuse2(center, point_T)
+      let t0 = side2 / k / side1
+      let p0 = compareCurve.get(t0)
+      let side1_1 = Math2.getHypotenuse2(center, p0)
+      temp = this.getAdjacentSide(center, p0, point_T, r)
+      adjacentSide = temp.adjacentSide
+      min = Math.min(side1_1, side2)
+      if (min.toFixed2(0) >= adjacentSide.toFixed2(0)) {
+        for (let indexJ = 1, j = i - 0.1; indexJ <= 11; indexJ++, j = j + 0.01) {
+          point_T = forCurve.get(j)
+          side2 = Math2.getHypotenuse2(center, point_T)
+          t0 = side2 / k / side1
+          p0 = compareCurve.get(t0)
+          side1_1 = Math2.getHypotenuse2(center, p0)
+          temp = this.getAdjacentSide(center, p0, point_T, r)
+          adjacentSide = temp.adjacentSide
+          min = Math.min(side1_1, side2)
 
-
+          if (min.toFixed2(0) >= adjacentSide.toFixed2(0)) {
+            // console.log('j', j, 'side1', side1, 'side2', side2, 'min', min, 'adjacent', adjacentSide, 'd2', temp.d2)
+            result.t0 = t0
+            result.t = j
+            result.adjacentSide = adjacentSide
+            result.d2 = temp.d2
+            result.degree = temp.degree
+            result.side1 = side1_1
+            result.side2 = side2
+            result.point_T = point_T
+            result.p0 = point_T
+            break
+          }
+        }
+        break
+      }
+    }
+    return result
   }
 
   getT(center: P, point: P, curve: BezierJs, r: number) {
@@ -1877,14 +1979,6 @@ export class BaseShape {
   }
 
   judge(prePoint: BezierPoint, currentPoint: BezierPoint, nextPoint: BezierPoint) {
-    let lineType = helper.judgeLineType({startPoint: prePoint, endPoint: currentPoint})
-    let lineType2 = helper.judgeLineType({startPoint: currentPoint, endPoint: nextPoint})
-
-    if (lineType === LineType.Line && lineType2 === LineType.Line) {
-    } else if (lineType === LineType.Bezier2 && lineType2 === LineType.Bezier2) {
-      this.judgeBothBezier2Line(prePoint, currentPoint, nextPoint)
-    } else {
-    }
   }
 
 

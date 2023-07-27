@@ -506,8 +506,8 @@ export class Pen extends ParentShape {
           // console.log('visited', cloneDeep(Array.from(new Set(visited))))
 
           // console.log('newNodes', cloneDeep(newNodes))
-          console.log('lineMaps', cloneDeep(lineMaps))
-          console.log('newPaths', cloneDeep(newPaths))
+          // console.log('lineMaps', cloneDeep(lineMaps))
+          // console.log('newPaths', cloneDeep(newPaths))
           // console.log('closeLines', cloneDeep(closeLines))
           // console.log('closeLinesWithId', cloneDeep(closeLinesWithId))
           // console.log('closeAreasRepeat----', cloneDeep(closeAreasRepeat))

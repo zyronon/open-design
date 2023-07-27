@@ -286,7 +286,8 @@ const Math2 = {
           return pre
         }, [])
         newTs.map(t => {
-          if (!(t.toFixed2() > 0 && t.toFixed2() < 1)) return
+          if (!(t[0].toFixed2() > 0 && t[0].toFixed2() < 1)) return
+          if (!(t[1].toFixed2() > 0 && t[1].toFixed2() < 1)) return
           let intersectPoint = startCurve.get(t[0]) as any;
           nodes.push(intersectPoint)
           let temp = {...intersectPoint, index: nodes.length - 1}
@@ -314,7 +315,8 @@ const Math2 = {
           return pre
         }, [])
         newTs.map(t => {
-          if (!(t.toFixed2() > 0 && t.toFixed2() < 1)) return
+          if (!(t[0].toFixed2() > 0 && t[0].toFixed2() < 1)) return
+          if (!(t[1].toFixed2() > 0 && t[1].toFixed2() < 1)) return
           let intersectPoint = startCurve.get(t[0]) as any;
           nodes.push(intersectPoint)
           let temp = {...intersectPoint, index: nodes.length - 1}
@@ -368,7 +370,8 @@ const Math2 = {
           return pre
         }, [])
         newTs.map(t => {
-          if (!(t.toFixed2() > 0 && t.toFixed2() < 1)) return
+          if (!(t[0].toFixed2() > 0 && t[0].toFixed2() < 1)) return
+          if (!(t[1].toFixed2() > 0 && t[1].toFixed2() < 1)) return
 
           let intersectPoint = startCurve.get(t[0]) as any;
           nodes.push(intersectPoint)

@@ -50,8 +50,6 @@ const Bezier = {
    *
    * */
   getTargetPointControlPoints(previousPoint: P, targetPoint: P, nextPoint: P) {
-    // @ts-ignore
-    // console.log(...arguments)
     let {x: p1X, y: p1Y} = previousPoint
     let {x: p2X, y: p2Y} = nextPoint
     let m = (p2Y - p1Y) / (p2X - p1X)
@@ -63,10 +61,11 @@ const Bezier = {
     let ry = targetPoint.y + (m * (X / Math.sqrt(1 + Math.pow(m, 2))));
     let cpR = {x: rx, y: ry}
     let cpL = Math2.getRotatedPoint(cpR, targetPoint, 180)
-    //这里计算出的cpR，是固定的在当前点的右边。比较哪个控制点离previousPoint近，需要视情况调换两个值用于绘制曲线。
-    let cpAndPreviousPointLength1 = Math2.getHypotenuse2(cpL, previousPoint)
-    let cpAndPreviousPointLength2 = Math2.getHypotenuse2(cpR, previousPoint)
-    if (cpAndPreviousPointLength1 < cpAndPreviousPointLength2) {
+
+    //这里计算出的cpR，是固定的在当前点的右边。比较哪个点离cpR更近，需要视情况调换两个值用于绘制曲线。
+    let cpAndPreviousPointLength1 = Math2.getHypotenuse2(cpR, previousPoint)
+    let cpAndPreviousPointLength2 = Math2.getHypotenuse2(cpR, nextPoint)
+    if (cpAndPreviousPointLength1 > cpAndPreviousPointLength2) {
       return {l: cpL, r: cpR}
     }
     return {l: cpR, r: cpL}

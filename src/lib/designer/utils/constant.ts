@@ -2886,7 +2886,7 @@ export const rects: any[] = [
         {
           "x": 228.4149478805345,
           "y": 107.7628981573456,
-          "cornerRadius": 100,
+          "cornerRadius": 240,
           "realCornerRadius": 0,
           "handleMirroring": "MirrorAngleAndLength",
           "cornerCps": [

@@ -269,6 +269,41 @@ const Bezier = {
       {x: x2, y: y2},
       {x: x3, y: y3},
     ]
+  },
+  dist(x1: number, y1: number, x2: number, y2: number) {
+    return ((x1 - x2) ** 2 + (y2 - y1) ** 2) ** 0.5
+  },
+
+  //https://pomax.github.io/bezierinfo/zh-CN/index.html#circleintersection
+  //查寻曲线上与圆相交的点
+  findClosest(center: P, LUT: any[], pd2: number, pd1: number, radius: number, distanceEpsilon = 5) {
+    const {x, y} = center
+    let distance = Number.MAX_SAFE_INTEGER,
+      prevDistance2 = pd2 || distance,
+      prevDistance1 = pd1 || distance,
+      i = -1;
+
+    for (let index = 0, e = LUT.length; index < e; index++) {
+      let p = LUT[index];
+      p.distance = Math.abs(this.dist(x, y, p.x, p.y) - radius);
+
+      // Realistically, there's only going to be an intersection if
+      // the distance to the circle center is already approximately
+      // the circle's radius.
+      if (prevDistance1 < distanceEpsilon && prevDistance2 > prevDistance1 && prevDistance1 < p.distance) {
+        i = index - 1;
+        break;
+      }
+
+      if (p.distance < distance) {
+        distance = p.distance;
+      }
+
+      prevDistance2 = prevDistance1;
+      prevDistance1 = p.distance;
+    }
+
+    return i;
   }
 }
 export {Bezier}

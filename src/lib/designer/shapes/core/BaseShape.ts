@@ -1633,22 +1633,21 @@ export class BaseShape {
             curve1 = new BezierJs([node, newCtrlNodes[line1.line[3]], newCtrlNodes[line1.line[2]], p1])
           }
         }
-        let result = this.getTT2(node, curve0, curve1, r)
-        const {pa, pb} = result
+
+        let result = this.getTT2(node, curve0, curve1, p0, p1, r)
+        const {arcP0, arcP1, t0, t1, maxR} = result
         // let {degree, d2, side1, side2, adjacentSide, point_T, p0: p2, t, maxR} = result
 
-        let temp = this.getAdjacentSide(node, pa, pb, r)
-
-        console.log('re', result, 'temp', temp)
-
+        let temp = this.getAdjacentSide(node, arcP0, arcP1, maxR)
+        console.log('re', result,)
 
         let cu = CanvasUtil2.getInstance()
         cu.waitRenderOtherStatusFunc.push(() => {
           let ctx = cu.ctx
           ctx.save()
           draw.calcPosition(ctx, this.conf)
-          draw.round2(ctx, pa, 4)
-          draw.round2(ctx, pb, 4)
+          draw.round2(ctx, arcP0, 4)
+          draw.round2(ctx, arcP1, 4)
           // draw.round2(ctx, newP0, 4)
           // draw.round2(ctx, newP1, 4)
           // draw.round2(ctx, node, 4)
@@ -1662,12 +1661,13 @@ export class BaseShape {
           // ctx.stroke()
 
           // node, newCtrlNodes[wanLine.line[2]], newCtrlNodes[wanLine.line[3]], wanP
-          ctx.moveTo2(pa)
-          ctx.arcTo2(node, pb, temp.tan * r)
+          ctx.moveTo2(arcP0)
+          ctx.arcTo2(node, arcP1, temp.tan * maxR)
           // ctx.bezierCurveTo2(newCtrlNodes[wanLine!.line[2]], newCtrlNodes[wanLine!.line[3]], wanP!)
           ctx.stroke()
           ctx.restore()
         })
+
       } else {
         let zhiLine
         let wanLine: {line: any; id?: number}
@@ -1807,102 +1807,19 @@ export class BaseShape {
     // console.log('cache', cloneDeep(this.conf.cache))
   }
 
-  getTT2(center: P, curve1: BezierJs, curve2: BezierJs, r: number) {
-    let curve1Length = curve1.length()
-    let curve2Length = curve2.length()
-
-    let min = Math.min(curve1Length, curve2Length)
-    if (r > min) {
-      r = min
-    }
-    let LUT: any[] = curve1.getLUT(100);
-
-    let tempLUT = cloneDeep(LUT)
-    let start = 0, count = 0;
-    let values: any[] = [];
-    while (++count < 25) {
-      let i = start + Bezier.findClosest(
-        center,
-        tempLUT.slice(start),
-        tempLUT[start - 2]?.distance,
-        tempLUT[start - 1]?.distance,
-        r,
-      );
-      if (i < start) break;
-      if (i > 0 && i === start) break;
-      values.push(i);
-      start = i + 2;
-    }
-    if (values.length === 1) {
-      let pa = tempLUT[values![0]]
-      let side1 = Math2.getHypotenuse2(center, pa)
-
-      let LUT: any[] = curve2.getLUT(100);
-      let tempLUT2 = cloneDeep(LUT)
-      let start = 0, count = 0;
-      let values2: any[] = [];
-      while (++count < 25) {
-        let i = start + Bezier.findClosest(
-          center,
-          tempLUT2.slice(start),
-          tempLUT2[start - 2]?.distance,
-          tempLUT2[start - 1]?.distance,
-          r,
-        );
-        if (i < start) break;
-        if (i > 0 && i === start) break;
-        values2.push(i);
-        start = i + 2;
-      }
-      if (values2.length === 1) {
-        let pb = tempLUT2[values2![0]]
-        let side2 = Math2.getHypotenuse2(center, pb)
-
-        return {pa, pb, side1, side2}
-      }
-    }
-    return {pa: {x: 0, y: 0}, pb: {x: 0, y: 0}}
-  }
-
-  getTT(center: P, curve1: BezierJs, curve2: BezierJs, r: number) {
-    let curve1Length = curve1.length()
-    let curve2Length = curve2.length()
-
-    let compareCurve
-    let forCurve
-    if (curve1Length > curve2Length) {
-      compareCurve = curve1
-      forCurve = curve2
-    } else {
-      compareCurve = curve2
-      forCurve = curve1
-    }
-
-    let LUT: any[] = compareCurve.getLUT(100);
-    // console.log('LUT',LUT)
-
-    let point_T: P
-    let side2
-    let temp
-    let adjacentSide
-    let min = 0
-    let s = compareCurve.get(1)
+  getTT2(center: P, curve0: BezierJs, curve1: BezierJs, p0: P, p1: P, r: number) {
+    let side0 = Math2.getHypotenuse2(center, p0)
+    let side1 = Math2.getHypotenuse2(center, p1)
+    let min = Math.min(side0, side1)
     let result = {
       t0: -1,
-      t: -1,
-      adjacentSide: 0,
-      d2: 0,
-      degree: 0,
-      side1: 0,
-      side2: 0,
-      point_T: {x: 0, y: 0},
-      p0: {x: 0, y: 0},
+      t1: -1,
+      arcP0: {x: 0, y: 0},
+      arcP1: {x: 0, y: 0},
       maxR: r
     }
-    for (let index = 1, i = 0.1; index <= 10; index++, i = i + 0.1) {
-      point_T = forCurve.get(i)
-      side2 = Math2.getHypotenuse2(center, point_T)
-
+    if (r < min) {
+      let LUT: any[] = curve0.getLUT(100);
       let tempLUT = cloneDeep(LUT)
       let start = 0, count = 0;
       let values: any[] = [];
@@ -1912,77 +1829,76 @@ export class BaseShape {
           tempLUT.slice(start),
           tempLUT[start - 2]?.distance,
           tempLUT[start - 1]?.distance,
-          side2,
+          r,
         );
         if (i < start) break;
         if (i > 0 && i === start) break;
         values.push(i);
         start = i + 2;
       }
-
       if (values.length === 1) {
-        let p0 = tempLUT[values![0]]
-        let side1_1 = Math2.getHypotenuse2(center, p0)
-        temp = this.getAdjacentSide(center, p0, point_T, r)
-        adjacentSide = temp.adjacentSide
-        min = Math.min(side1_1, side2)
-
-        // let point_T1 = forCurve.get(i)
-        // let cu = CanvasUtil2.getInstance()
-        // setTimeout(() => {
-        //   let ctx = cu.ctx
-        //   ctx.save()
-        //   draw.calcPosition(ctx, this.conf)
-        //   draw.round2(ctx, point_T1, 4)
-        //   draw.round2(ctx, p0, 4)
-        //   ctx.stroke()
-        //   ctx.restore()
-        // })
-
-        if (min.toFixed2(0) >= adjacentSide.toFixed2(0)) {
-          for (let indexJ = 1, j = i - 0.1; indexJ <= 11; indexJ++, j = j + 0.01) {
-            point_T = forCurve.get(j)
-            side2 = Math2.getHypotenuse2(center, point_T)
-
-            let tempLUT = cloneDeep(LUT)
-            let start = 0, count = 0;
-            let values: any[] = [];
-            while (++count < 25) {
-              let i = start + Bezier.findClosest(
-                center,
-                tempLUT.slice(start),
-                tempLUT[start - 2]?.distance,
-                tempLUT[start - 1]?.distance,
-                side2,
-              );
-              if (i < start) break;
-              if (i > 0 && i === start) break;
-              values.push(i);
-              start = i + 2;
-            }
-
-            if (values.length === 1) {
-              let p0 = tempLUT[values![0]]
-              let side1_1 = Math2.getHypotenuse2(center, p0)
-              temp = this.getAdjacentSide(center, p0, point_T, r)
-              adjacentSide = temp.adjacentSide
-              min = Math.min(side1_1, side2)
-              if (min.toFixed2(0) >= adjacentSide.toFixed2(0)) {
-                // console.log('j', j, 'side1', side1, 'side2', side2, 'min', min, 'adjacent', adjacentSide, 'd2', temp.d2)
-                result.t0 = p0.t
-                result.t = j
-                result.adjacentSide = adjacentSide
-                result.d2 = temp.d2
-                result.degree = temp.degree
-                result.side1 = side1_1
-                result.side2 = side2
-                result.point_T = point_T
-                result.p0 = p0
-                break
-              }
-            }
-          }
-          break
+        let arcPoint0 = tempLUT[values![0]]
+        result.t0 = arcPoint0.t
+        result.arcP0 = arcPoint0
+        LUT = curve1.getLUT(100);
+        let tempLUT2 = cloneDeep(LUT)
+        let start = 0, count = 0;
+        let values2: any[] = [];
+        while (++count < 25) {
+          let i = start + Bezier.findClosest(
+            center,
+            tempLUT2.slice(start),
+            tempLUT2[start - 2]?.distance,
+            tempLUT2[start - 1]?.distance,
+            r,
+          );
+          if (i < start) break;
+          if (i > 0 && i === start) break;
+          values2.push(i);
+          start = i + 2;
+        }
+        if (values2.length === 1) {
+          let arcPoint1 = tempLUT2[values2![0]]
+          result.t1 = arcPoint1.t
+          result.arcP1 = arcPoint1
+        }
+      }
+    } else {
+      result.maxR = min
+      let LUT: any[]
+      if (side0 > side1) {
+        result.t1 = 1
+        result.arcP1 = p1
+        LUT = curve0.getLUT(100);
+      } else {
+        result.t0 = 1
+        result.arcP0 = p0
+        LUT = curve1.getLUT(100);
+      }
+      let tempLUT = cloneDeep(LUT)
+      let start = 0, count = 0;
+      let values: any[] = [];
+      while (++count < 25) {
+        let i = start + Bezier.findClosest(
+          center,
+          tempLUT.slice(start),
+          tempLUT[start - 2]?.distance,
+          tempLUT[start - 1]?.distance,
+          result.maxR,
+        );
+        if (i < start) break;
+        if (i > 0 && i === start) break;
+        values.push(i);
+        start = i + 2;
+      }
+      if (values.length === 1) {
+        let arcPoint = tempLUT[values![0]]
+        if (side0 > side1) {
+          result.t0 = arcPoint.t
+          result.arcP0 = arcPoint
+        } else {
+          result.t1 = arcPoint.t
+          result.arcP1 = arcPoint
         }
       }
     }

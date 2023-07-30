@@ -1394,7 +1394,7 @@ export class BaseShape {
     return pathList
   }
 
-  getCustomShapePath2(): {strokePathList: LinePath[], fillPathList: LinePath[]} {
+  getCustomShapePath2(): { strokePathList: LinePath[], fillPathList: LinePath[] } {
     let strokePathList: LinePath[] = []
     let fillPathList: LinePath[] = []
     this.conf.lineShapes.map((line) => {
@@ -1636,41 +1636,55 @@ export class BaseShape {
 
         let result = this.getTT2(node, curve0, curve1, p0, p1, r)
         const {arcP0, arcP1, t0, t1, maxR} = result
-        // let {degree, d2, side1, side2, adjacentSide, point_T, p0: p2, t, maxR} = result
 
-        let temp = this.getAdjacentSide(node, arcP0, arcP1, maxR)
+        let {tan, d2, degree} = this.getAdjacentSide(node, arcP0, arcP1, maxR)
         console.log('re', result,)
+
+        //中心点，因为r是半径，求斜边用sin可以算
+        let sin = Math.abs(Math.sin(Math2.jiaodu2hudu(d2)))
+        let newR = tan * maxR
+        // let line0Length = Math2.getHypotenuse2(node, arcP0)
+        //这里可以直接使用maxR，因为这里的arc曲线的实现方式不同与其他。这里arc曲线的起点和终点都是恒等于r
+        // r又经过限制，不能超出三（二）次曲线的最大长度（非起点和终点连一起的长度）
+        let line0Length = maxR
+        let k3 = (newR / sin) / line0Length
+        let arcCenter = generateNode({
+          x: node.x + (arcP0.x - node.x) * k3,
+          y: node.y + (arcP0.y - node.y) * k3,
+        })
+        arcCenter = Math2.getRotatedPoint(arcCenter, node, degree > 180 ? -d2 : d2)
+        let arc = Bezier.arcToBezier3_2(arcP0, arcP1, arcCenter)
+
+        let curve0Split = curve0.split(t0)
+        let curve1Split = curve1.split(t1)
+        let curve0LeftPoints = curve0Split.left.points
+        let curve1LeftPoints = curve1Split.left.points
 
         let cu = CanvasUtil2.getInstance()
         cu.waitRenderOtherStatusFunc.push(() => {
           let ctx = cu.ctx
           ctx.save()
           draw.calcPosition(ctx, this.conf)
-          draw.round2(ctx, arcP0, 4)
-          draw.round2(ctx, arcP1, 4)
-          // draw.round2(ctx, newP0, 4)
-          // draw.round2(ctx, newP1, 4)
+          // draw.round2(ctx, arcP0, 4)
+          // draw.round2(ctx, arcP1, 4)
           // draw.round2(ctx, node, 4)
           // draw.round2(ctx, arcCenter, 4)
           // draw.round2(ctx, arc[0], 4)
           // draw.round2(ctx, arc[1], 4)
-          // draw.round2(ctx, c.left.points[1], 4)
-          // ctx.moveTo2(newP0)
-          // ctx.arcTo2(node, newP1, r)
-          // ctx.bezierCurveTo2(arc[0], c.left.points[1], newP1)
-          // ctx.stroke()
+          draw.round2(ctx, curve0LeftPoints[curve0LeftPoints.length - 2], 4)
+          draw.round2(ctx, curve1LeftPoints[curve1LeftPoints.length - 2], 4)
 
-          // node, newCtrlNodes[wanLine.line[2]], newCtrlNodes[wanLine.line[3]], wanP
           ctx.moveTo2(arcP0)
-          ctx.arcTo2(node, arcP1, temp.tan * maxR)
-          // ctx.bezierCurveTo2(newCtrlNodes[wanLine!.line[2]], newCtrlNodes[wanLine!.line[3]], wanP!)
+          ctx.bezierCurveTo2(curve0LeftPoints[curve0LeftPoints.length - 2],
+            curve1LeftPoints[curve1LeftPoints.length - 2], arcP1)
+          ctx.moveTo2(arcP0)
+          ctx.arcTo2(node, arcP1, newR)
           ctx.stroke()
           ctx.restore()
         })
-
       } else {
         let zhiLine
-        let wanLine: {line: any; id?: number}
+        let wanLine: { line: any; id?: number }
         let zhiP
         let zhiIndex
         let wanP: P

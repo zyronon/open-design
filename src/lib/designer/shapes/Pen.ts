@@ -235,7 +235,7 @@ export class Pen extends ParentShape {
       const {nodes, paths, ctrlNodes, areas: closeAreasId = []} = this._conf.cache
       drawFillArea(nodes, ctrlNodes, closeAreasId)
     } else {
-      this.checkAcr2()
+      this.checkAcr()
       const {nodes, paths, ctrlNodes} = this._conf.cache
       if (paths.length) {
         //TODO 有空了记得渲染三次自相交的图
@@ -521,26 +521,18 @@ export class Pen extends ParentShape {
             // draw.drawRound(ctx, point)
           })
 
-          let {center} = this.conf
           cu.waitRenderOtherStatusFunc.push(() => {
             ctx.save()
+            draw.calcPosition(ctx, this.conf)
             ctx.strokeStyle = 'red'
             ctx.fillStyle = 'red'
             closeLinesWithId.map(line => {
-              let startPoint = newNodes[line.line[0]]
-              let fixStartPoint = {
-                x: center.x + startPoint.x,
-                y: center.y + startPoint.y,
-              }
-              let endPoint = newNodes[line.line[1]]
-              let fixEndPoint = {
-                x: center.x + endPoint.x,
-                y: center.y + endPoint.y,
-              }
-              ctx.moveTo2(fixStartPoint)
-              ctx.lineTo2(fixEndPoint)
-              cu.ctx.font = `400 16rem "SourceHanSansCN", sans-serif`
-              let a = helper.getStraightLineCenterPoint(fixStartPoint, fixEndPoint)
+              // let startPoint = newNodes[line.line[0]]
+              // let endPoint = newNodes[line.line[1]]
+              // ctx.moveTo2(startPoint)
+              // ctx.lineTo2(endPoint)
+              // cu.ctx.font = `400 16rem "SourceHanSansCN", sans-serif`
+              // let a = helper.getStraightLineCenterPoint(startPoint, endPoint)
               // ctx.fillText(`${line.line[0]}-${line.line[1]}:${line.id}`, a.x - 20, a.y)
               // ctx.fillText(`${line.id}`, a.x, a.y)
             })
@@ -567,6 +559,7 @@ export class Pen extends ParentShape {
 
   getStrokePath() {
     const {nodes, paths, ctrlNodes} = this.conf.penNetwork
+    // const {nodes, paths, ctrlNodes} = this.conf.cache
     let strokePath = new Path2D()
     paths.map(line => {
       let lineType = line[6]

@@ -154,6 +154,11 @@ const ShapeInfo = (props: any) => {
                              min={0}
                              prefix={<AngleIcon style={{fontSize: "16rem"}}/>}/>
                 </div>
+                <div className="col">
+                  <BaseInput value={pointInfo.point?.realCornerRadius}
+                             min={0}
+                             prefix={<AngleIcon style={{fontSize: "16rem"}}/>}/>
+                </div>
               </div>
               <div className="row">
                 <BaseRadioGroup value={pointInfo?.point?.handleMirroring}>

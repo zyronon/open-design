@@ -1362,34 +1362,33 @@ export class BaseShape {
     } else {
       this.conf.isCache = false
     }
-    this.checkAcr3(val.pointIndex)
+    this.checkAcr3(val.pointIndex, e)
     CanvasUtil2.getInstance().render()
     EventBus.emit(EventKeys.POINT_INFO, Object.assign({}, val, {point}))
   }
 
-  checkAcr3(currentNodeIndex?: number) {
+  checkAcr3(nodeIndex : number, e?:number) {
     const {nodes, paths, ctrlNodes} = this.conf.penNetwork
     let newPaths = cloneDeep(paths).map((v, i) => ({id: i, line: v}))
     let newNodes = cloneDeep(nodes)
-    let newCtrlNodes = cloneDeep(ctrlNodes)
-    nodes.map((currentNode, pointIndex) => {
-      let r = currentNode.cornerRadius
-      if (r) {
-        let lines = newPaths.filter(p => p.line.slice(0, 2).includes(pointIndex))
-        if (lines.length === 2) {
-          let line0 = lines[0]
-          let line1 = lines[1]
-          let line0NodeIndex = line0.line[0] === pointIndex ? line0.line[1] : line0.line[0]
-          let line1NodeIndex = line1.line[0] === pointIndex ? line1.line[1] : line1.line[0]
-          let node0 = newNodes[line0NodeIndex]
-          let node1 = newNodes[line1NodeIndex]
 
-        }
-      }
-    })
+    let currentNode = nodes[nodeIndex]
+    currentNode.cornerRadius = e!
+
+    let lines = newPaths.filter(p => p.line.slice(0, 2).includes(nodeIndex))
+    if (lines.length === 2) {
+      let line0 = lines[0]
+      let line1 = lines[1]
+      let line0NodeIndex = line0.line[0] === nodeIndex ? line0.line[1] : line0.line[0]
+      let line1NodeIndex = line1.line[0] === nodeIndex ? line1.line[1] : line1.line[0]
+      let node0 = newNodes[line0NodeIndex]
+      let node1 = newNodes[line1NodeIndex]
+
+      currentNode.realCornerRadius = e!
+    }
   }
 
-  checkAcr(){
+  checkAcr() {
 
   }
 

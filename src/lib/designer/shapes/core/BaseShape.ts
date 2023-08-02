@@ -1429,10 +1429,9 @@ export class BaseShape {
     let newNodes = cloneDeep(nodes)
     let newCtrlNodes = cloneDeep(ctrlNodes)
 
-    // nodes.map((currentNode, pointIndex) => {
-
-    let pointIndex = 0
-    let currentNode = nodes[pointIndex]
+    nodes.map((currentNode, pointIndex) => {
+    // let pointIndex = 0
+    // let currentNode = nodes[pointIndex]
     let r = currentNode.realCornerRadius
     if (r) {
       let lines = newPaths.filter(p => p.line.slice(0, 2).includes(pointIndex))
@@ -1749,7 +1748,7 @@ export class BaseShape {
         })
       }
     }
-    // })
+    })
 
     this.conf.cache.nodes = newNodes
     this.conf.cache.paths = newPaths.map(v => v.line)

@@ -1426,20 +1426,22 @@ export class BaseShape {
   checkAcr2() {
     const {nodes, paths, ctrlNodes} = this.conf.penNetwork
     let newPaths = cloneDeep(paths).map((v, i) => ({id: i, line: v}))
+    let newPaths3 = cloneDeep(paths).map((v, i) => ({id: i, line: v}))
+    let newPaths2 = paths.map((v, i) => ([...v,i]))
     let newNodes = cloneDeep(nodes)
     let newCtrlNodes = cloneDeep(ctrlNodes)
 
-    nodes.map((currentNode, pointIndex) => {
-    // let pointIndex = 0
-    // let currentNode = nodes[pointIndex]
+    nodes.map((currentNode, nodeIndex) => {
+    // let nodeIndex = 0
+    // let currentNode = nodes[nodeIndex]
     let r = currentNode.realCornerRadius
     if (r) {
-      let lines = newPaths.filter(p => p.line.slice(0, 2).includes(pointIndex))
+      let lines = newPaths.filter(p => p.line.slice(0, 2).includes(nodeIndex))
       if (lines.length === 2) {
         let line0 = lines[0]
         let line1 = lines[1]
-        let line0NodeIndex = line0.line[0] === pointIndex ? line0.line[1] : line0.line[0]
-        let line1NodeIndex = line1.line[0] === pointIndex ? line1.line[1] : line1.line[0]
+        let line0NodeIndex = line0.line[0] === nodeIndex ? line0.line[1] : line0.line[0]
+        let line1NodeIndex = line1.line[0] === nodeIndex ? line1.line[1] : line1.line[0]
         let node0 = newNodes[line0NodeIndex]
         let node1 = newNodes[line1NodeIndex]
         let arcP0
@@ -1485,6 +1487,9 @@ export class BaseShape {
           newNodes.push(arcP1)
           newLine1 = [newNodes.length - 1, line1NodeIndex, -1, -1, -1, -1, line0.line[6]]
 
+          // newPaths3[line0.id].line[4] = newNodes.length-2
+          // newPaths3[line1.id].line[4] = newNodes.length-1
+
           //中心点，因为r是半径，求斜边用sin可以算
           let sin = Math.abs(Math.sin(Math2.jiaodu2hudu(d2)))
           let k3 = (r / sin) / frontSide
@@ -1504,31 +1509,6 @@ export class BaseShape {
             -1, -1,
             LineType.Bezier3]
 
-          let r1 = newPaths.findIndex(v => v.id === line0.id)
-          newPaths.splice(r1, 1)
-          let r2 = newPaths.findIndex(v => v.id === line1.id)
-          newPaths.splice(r2, 1)
-
-          newPaths.push({id: newPaths.length + 1, line: newLine0})
-          newPaths.push({id: newPaths.length + 1, line: newLine1})
-          newPaths.push({id: newPaths.length + 1, line: centerLine})
-
-          let cu = CanvasUtil2.getInstance()
-          cu.waitRenderOtherStatusFunc.push(() => {
-            let ctx = cu.ctx
-            ctx.save()
-            draw.calcPosition(ctx, this.conf)
-            // draw.round2(ctx, arcP0, 4)
-            // draw.round2(ctx, arcP1, 4)
-            // draw.round2(ctx, currentNode, 4)
-            draw.round2(ctx, arcCenter, 4)
-
-            // ctx.strokeStyle = 'black'
-            // ctx.moveTo2(arcP0)
-            // ctx.arcTo2(currentNode, arcP1, r)
-            ctx.stroke()
-            ctx.restore()
-          })
         } else if (line0.line[6] !== LineType.Line && line1.line[6] !== LineType.Line) {
           let curve0
           if (line0.line[6] === LineType.Bezier2) {
@@ -1537,7 +1517,7 @@ export class BaseShape {
             if (line0.line[3] !== -1) cp = line0.line[3]
             curve0 = new BezierJs([currentNode, newCtrlNodes[cp], node0])
           } else {
-            if (line0.line[0] === pointIndex) {
+            if (line0.line[0] === nodeIndex) {
               curve0 = new BezierJs([currentNode, newCtrlNodes[line0.line[2]], newCtrlNodes[line0.line[3]], node0])
             } else {
               curve0 = new BezierJs([currentNode, newCtrlNodes[line0.line[3]], newCtrlNodes[line0.line[2]], node0])
@@ -1551,7 +1531,7 @@ export class BaseShape {
             if (line1.line[3] !== -1) cp = line1.line[3]
             curve1 = new BezierJs([currentNode, newCtrlNodes[cp], node1])
           } else {
-            if (line1.line[0] === pointIndex) {
+            if (line1.line[0] === nodeIndex) {
               curve1 = new BezierJs([currentNode, newCtrlNodes[line1.line[2]], newCtrlNodes[line1.line[3]], node1])
             } else {
               curve1 = new BezierJs([currentNode, newCtrlNodes[line1.line[3]], newCtrlNodes[line1.line[2]], node1])
@@ -1634,13 +1614,13 @@ export class BaseShape {
             zhiLine = line1
             wanLine = line0
           }
-          if (zhiLine.line[0] === pointIndex) {
+          if (zhiLine.line[0] === nodeIndex) {
             zhiIndex = zhiLine.line[1]
           } else {
             zhiIndex = zhiLine.line[0]
           }
 
-          if (wanLine.line[0] === pointIndex) {
+          if (wanLine.line[0] === nodeIndex) {
             wanIndex = wanLine.line[1]
           } else {
             wanIndex = wanLine.line[0]
@@ -1655,7 +1635,7 @@ export class BaseShape {
             if (wanLine.line[3] !== -1) cp = wanLine.line[3]
             curve = new BezierJs([currentNode, newCtrlNodes[cp], wanP])
           } else {
-            if (wanLine.line[0] === pointIndex) {
+            if (wanLine.line[0] === nodeIndex) {
               curve = new BezierJs([currentNode, newCtrlNodes[wanLine.line[2]], newCtrlNodes[wanLine.line[3]], wanP])
             } else {
               curve = new BezierJs([currentNode, newCtrlNodes[wanLine.line[3]], newCtrlNodes[wanLine.line[2]], wanP])
@@ -1754,6 +1734,7 @@ export class BaseShape {
     this.conf.cache.paths = newPaths.map(v => v.line)
     this.conf.cache.ctrlNodes = newCtrlNodes
     console.log('cache', cloneDeep(this.conf.cache))
+    console.log('newPaths.map(v => v.line)',newPaths3.map(v => v.line))
   }
 
   //因为渲染时需要保持曲线的曲率，但曲线又被圆弧分割，所以要保持曲率就得计算出曲线被分割时的终点和起点以及控制点

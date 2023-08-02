@@ -1383,22 +1383,44 @@ export class BaseShape {
       let node1 = newNodes[line1[0] === nodeIndex ? line1[1] : line1[0]]
       let endRadius = e
 
-      if (line0[4] === nodeIndex) {
-        let secondMaxRadius = 80
+      if (line0[4] !== -1 || line1[4] !== -1) {
+        const {nodes: cacheNodes} = this.conf.cache
+        let _node0 = node0
+        let _node1 = node1
+        if (line0[4] !== -1) {
+          _node0 = cacheNodes[line0[5]]
+        }
+        if (line1[4] !== -1) {
+          _node1 = cacheNodes[line1[5]]
+        }
+
+        let {
+          adjacentSide,
+          tan,
+          d2,
+          degree
+        } = this.getAdjacentSide(currentNode, _node0, _node1, endRadius)
+
+        let frontSide = Math2.getHypotenuse2(currentNode, _node0)
+        let backSide = Math2.getHypotenuse2(currentNode, _node1)
+
+        let min = Math.min(frontSide, backSide)
+        let secondMaxRadius =  tan * min
         if (e > secondMaxRadius) {
           endRadius = secondMaxRadius + (e - secondMaxRadius) / 100
         }
       }
 
-      let maxR = 100
+      let maxR = 200
       if (endRadius > maxR) {
         endRadius = maxR
       }
-      currentNode.realCornerRadius = e!
+      currentNode.realCornerRadius = endRadius
     }
   }
 
   checkAcr() {
+    this.checkAcr2()
   }
 
   checkAcr2() {
@@ -1406,13 +1428,12 @@ export class BaseShape {
     let newPaths = cloneDeep(paths).map((v, i) => ({id: i, line: v}))
     let newNodes = cloneDeep(nodes)
     let newCtrlNodes = cloneDeep(ctrlNodes)
-    console.log('paths', cloneDeep(paths))
 
     // nodes.map((currentNode, pointIndex) => {
 
     let pointIndex = 0
     let currentNode = nodes[pointIndex]
-    let r = currentNode.cornerRadius
+    let r = currentNode.realCornerRadius
     if (r) {
       let lines = newPaths.filter(p => p.line.slice(0, 2).includes(pointIndex))
       if (lines.length === 2) {
@@ -1976,5 +1997,10 @@ export class BaseShape {
       point = nodes[pointIndex]
     }
     return point
+  }
+
+  lineGet(t: number, {p0, p1}: {p0: P, p1: P}) {
+
+
   }
 }

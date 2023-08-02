@@ -1367,7 +1367,7 @@ export class BaseShape {
     EventBus.emit(EventKeys.POINT_INFO, Object.assign({}, val, {point}))
   }
 
-  checkAcr3(nodeIndex : number, e?:number) {
+  checkAcr3(nodeIndex: number, e: number) {
     const {nodes, paths, ctrlNodes} = this.conf.penNetwork
     let newPaths = cloneDeep(paths)
     let newNodes = cloneDeep(nodes)
@@ -1381,14 +1381,24 @@ export class BaseShape {
       let line1 = lines[1]
       let node0 = newNodes[line0[0] === nodeIndex ? line0[1] : line0[0]]
       let node1 = newNodes[line1[0] === nodeIndex ? line1[1] : line1[0]]
+      let endRadius = e
 
+      if (line0[4] === nodeIndex) {
+        let secondMaxRadius = 80
+        if (e > secondMaxRadius) {
+          endRadius = secondMaxRadius + (e - secondMaxRadius) / 100
+        }
+      }
 
+      let maxR = 100
+      if (endRadius > maxR) {
+        endRadius = maxR
+      }
       currentNode.realCornerRadius = e!
     }
   }
 
   checkAcr() {
-
   }
 
   checkAcr2() {

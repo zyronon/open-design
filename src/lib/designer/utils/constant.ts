@@ -826,7 +826,7 @@ export const rectsd: any[] = [
     "commonPoints": []
   }
 ]
-export const rectse: any[] = [
+export const rectsg: any[] = [
   {
     "name": "矩形",
     "layout": {
@@ -1101,7 +1101,6 @@ export const rectse: any[] = [
     "strokeAlign": "INSIDE",
     "lineShapes": [],
     "commonPoints": [],
-    "id": "df2ab59f-ca6d-4a7b-872a-af359d8b627b"
   }
 ]
 export const rectsf: any[] = [
@@ -1379,7 +1378,6 @@ export const rectsf: any[] = [
     "strokeAlign": "INSIDE",
     "lineShapes": [],
     "commonPoints": [],
-    "id": "19fbc200-c966-4f54-8939-08bb9fb7b361"
   }
 ]
 export const rectsj: any[] = [
@@ -1590,7 +1588,6 @@ export const rectsj: any[] = [
     "strokeAlign": "INSIDE",
     "lineShapes": [],
     "commonPoints": [],
-    "id": "9476d326-889c-4195-8ceb-0be61ff5bdcb"
   }
 ]
 export const rectsj2: any[] = [
@@ -2750,7 +2747,7 @@ export const rectst1: any[] = [
     "strokeAlign": "INSIDE",
   }
 ]
-export const rects: any[] = [
+export const rectst2: any[] = [
   {
     "lineWidth": 2,
     "fillColor": "#4C4C4C",
@@ -3649,6 +3646,152 @@ export const rectsj7: any[] = [
     },
     "strokeAlign": "INSIDE",
     "id": "22b1f11e-aa50-42eb-8ed2-5960e64db78d"
+  }
+]
+export const rects: any[] = [
+  {
+    "name": "矩形",
+    "layout": {
+      "x": 250,
+      "y": 200,
+      "w": 400,
+      "h": 200
+    },
+    "rotation": 0,
+    "lineWidth": 2,
+    "type": "PEN",
+    "radius": 0,
+    "children": [],
+    "borderColor": "rgb(0,0,0)",
+    "fillColor": "#4C4C4C",
+    "flipHorizontal": false,
+    "flipVertical": false,
+    "isComplete": true,
+    "isCustom": true,
+    "cornerRadius": 0,
+    "realCornerRadius": 0,
+    "penNetwork": {
+      "ctrlNodes": [],
+      "nodes": [
+        {
+          "x": -200,
+          "y": -100,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": 200,
+          "y": -100,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": 200,
+          "y": 100,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -200,
+          "y": 100,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+      ],
+      "paths": [
+        [0, 1, -1, -1, -1, -1, 1],
+        [1, 2, -1, -1, -1, -1, 1],
+        [2, 3, -1, -1, -1, -1, 1],
+        [3, 0, -1, -1, -1, -1, 1],
+      ],
+      "regions": []
+    },
+    "percent": {
+      "x": 0,
+      "y": 0
+    },
+    "relativeCenter": {
+      "x": 0,
+      "y": 0
+    },
+    "realRotation": 0,
+    "start": {
+      "x": 700,
+      "y": 100
+    },
+    "absolute": {
+      "x": 250.05088174397093,
+      "y": 187.15896142420058
+    },
+    "original": {
+      "x": 250.05088174397093,
+      "y": 187.15896142420058
+    },
+    "center": {
+      "x": 461.02544087198544,
+      "y": 282.0794807121003
+    },
+    "box": {
+      "leftX": 250.05088174397093,
+      "rightX": 672,
+      "topY": 187.15896142420058,
+      "bottomY": 377,
+      "topLeft": {
+        "x": 250.05088174397093,
+        "y": 187.15896142420058
+      },
+      "topRight": {
+        "x": 672,
+        "y": 187.15896142420058
+      },
+      "bottomLeft": {
+        "x": 250.05088174397093,
+        "y": 377
+      },
+      "bottomRight": {
+        "x": 672,
+        "y": 377
+      }
+    },
+    "strokeAlign": "INSIDE",
+    "lineShapes": [],
+    "commonPoints": [],
   }
 ]
 

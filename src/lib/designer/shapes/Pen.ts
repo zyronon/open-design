@@ -208,7 +208,7 @@ export class Pen extends ParentShape {
           fillPath.moveTo2(startPoint)
           v.map((w: any) => {
             let line = w.line
-            let lineType = line[6]
+            let lineType = line[4]
             endPoint = newNodes[line[1]]
             switch (lineType) {
               case LineType.Line:
@@ -250,7 +250,7 @@ export class Pen extends ParentShape {
           let currentLine = paths[i]
           let p1 = nodes[currentLine[0]],
             p2 = nodes[currentLine[1]],
-            line1Type = currentLine[6]
+            line1Type = currentLine[4]
           //如果是三次曲线，可能会自相交
           if (line1Type === LineType.Bezier3) {
             let curve = new Bezier(p1, ctrlNodes[currentLine[2]], ctrlNodes[currentLine[3]], p2)
@@ -291,7 +291,7 @@ export class Pen extends ParentShape {
             lineMap.sort((a, b) => {
               return a.t - b.t
             })
-            let lineType = line[6]
+            let lineType = line[4]
             if (lineType === LineType.Line) {
               let newLines: any = [line]
               lineMap.map(v => {
@@ -389,7 +389,7 @@ export class Pen extends ParentShape {
                 //交换顺序
                 a.line[0] = a.line[1]
                 a.line[1] = end
-                if (a.line[6] !== LineType.Line) {
+                if (a.line[4] !== LineType.Line) {
                   let temp = a.line[2]
                   a.line[2] = a.line[3]
                   a.line[3] = temp
@@ -417,7 +417,7 @@ export class Pen extends ParentShape {
                   newEnd = a.line[0]
                   a.line[0] = a.line[1]
                   a.line[1] = newEnd
-                  if (a.line[6] !== LineType.Line) {
+                  if (a.line[4] !== LineType.Line) {
                     let temp = a.line[2]
                     a.line[2] = a.line[3]
                     a.line[3] = temp
@@ -562,7 +562,7 @@ export class Pen extends ParentShape {
     // const {nodes, paths, ctrlNodes} = this.conf.cache
     let strokePath = new Path2D()
     paths.map(line => {
-      let lineType = line[6]
+      let lineType = line[4]
       let startPoint = nodes[line[0]]
       let endPoint = nodes[line[1]]
       strokePath.moveTo2(startPoint)

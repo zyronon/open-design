@@ -38,7 +38,7 @@ export interface Region {
 }
 
 //起点下标、终点下标、控制点0下标、控制点1下标，arc控制点下标、arc终/起点下标，线段类型
-export  type PenNetworkLine = [number, number, number, number, number, number, LineType]
+export  type PenNetworkLine = [number, number, number, number, LineType]
 
 export interface PenNetwork {
   ctrlNodes: P[],

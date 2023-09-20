@@ -193,8 +193,8 @@ const Math2 = {
       p2 = nodes[line[1]],
       p3 = nodes[line2[0]],
       p4 = nodes[line2[1]]
-    let line1Type = line[6]
-    let line2Type = line2[6]
+    let line1Type = line[4]
+    let line2Type = line2[4]
     let start: any[] = []
     let end: any[] = []
     let startLine = {p1, p2}
@@ -393,26 +393,26 @@ const Math2 = {
       p2 = nodes[line[1]],
       p3 = nodes[line2[0]],
       p4 = nodes[line2[1]]
-    if (line[6] === LineType.Line && line2[6] === LineType.Line) {
+    if (line[4] === LineType.Line && line2[4] === LineType.Line) {
       let p = this.isIntersection(p1, p2, p3, p4)
       if (p) {
         return {
           intersectsPoint: p.point,
           startLine: {
-            type: line[6],
+            type: line[4],
             lines: [
               [p.point, nodes[line[1]]]
             ]
           },
           endLine: {
-            type: line2[6],
+            type: line2[4],
             lines: [
               [nodes[line2[0]], p.point]
             ]
           }
         }
       }
-    } else if (line[6] === LineType.Line && line2[6] === LineType.Bezier2) {
+    } else if (line[4] === LineType.Line && line2[4] === LineType.Bezier2) {
       let cp: P
       if (line2[2] !== -1) cp = ctrlNodes[line2[2]]
       if (line2[3] !== -1) cp = ctrlNodes[line2[3]]
@@ -427,20 +427,20 @@ const Math2 = {
         return {
           intersectsPoint: p,
           startLine: {
-            type: line[6],
+            type: line[4],
             lines: [
               [p, nodes[line[1]]]
             ]
           },
           endLine: {
-            type: line2[6],
+            type: line2[4],
             lines: [
               a.left.points
             ]
           }
         }
       }
-    } else if (line[6] === LineType.Line && line2[6] === LineType.Bezier3) {
+    } else if (line[4] === LineType.Line && line2[4] === LineType.Bezier3) {
       let b = new Bezier(p3, ctrlNodes[line2[2]], ctrlNodes[line2[3]], p4)
       let intersects = b.intersects({p1, p2})
       if (intersects.length) {
@@ -452,20 +452,20 @@ const Math2 = {
         return {
           intersectsPoint: p,
           startLine: {
-            type: line[6],
+            type: line[4],
             lines: [
               [p, nodes[line[1]]]
             ]
           },
           endLine: {
-            type: line2[6],
+            type: line2[4],
             lines: [
               a.left.points
             ]
           }
         }
       }
-    } else if (line[6] === LineType.Bezier2 && line2[6] === LineType.Line) {
+    } else if (line[4] === LineType.Bezier2 && line2[4] === LineType.Line) {
       let cp: P
       if (line[2] !== -1) cp = ctrlNodes[line[2]]
       if (line[3] !== -1) cp = ctrlNodes[line[3]]
@@ -480,20 +480,20 @@ const Math2 = {
         return {
           intersectsPoint: p,
           startLine: {
-            type: line[6],
+            type: line[4],
             lines: [
               a.right.points
             ]
           },
           endLine: {
-            type: line2[6],
+            type: line2[4],
             lines: [
               [nodes[line2[0]], p]
             ]
           }
         }
       }
-    } else if (line[6] === LineType.Bezier2 && line2[6] === LineType.Bezier2) {
+    } else if (line[4] === LineType.Bezier2 && line2[4] === LineType.Bezier2) {
       let cp: P
       if (line[2] !== -1) cp = ctrlNodes[line[2]]
       if (line[3] !== -1) cp = ctrlNodes[line[3]]
@@ -518,20 +518,20 @@ const Math2 = {
         return {
           intersectsPoint: p,
           startLine: {
-            type: line[6],
+            type: line[4],
             lines: [
               a.right.points
             ]
           },
           endLine: {
-            type: line2[6],
+            type: line2[4],
             lines: [
               a1.left.points
             ]
           }
         }
       }
-    } else if (line[6] === LineType.Bezier2 && line2[6] === LineType.Bezier3) {
+    } else if (line[4] === LineType.Bezier2 && line2[4] === LineType.Bezier3) {
       let cp: P
       if (line[2] !== -1) cp = ctrlNodes[line[2]]
       if (line[3] !== -1) cp = ctrlNodes[line[3]]
@@ -554,13 +554,13 @@ const Math2 = {
         return {
           intersectsPoint: p,
           startLine: {
-            type: line[6],
+            type: line[4],
             lines: [
               a.right.points
             ]
           },
           endLine: {
-            type: line2[6],
+            type: line2[4],
             lines: [
               a1.left.points
             ]

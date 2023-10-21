@@ -2,9 +2,9 @@
 
 ## Preview Demo
 
-[Stable version online demo](http://design-v2.ttentau.top)
+[Stable version online demo](https://open-designs-v2.netlify.app)
 
-[Development version online demo](http://design.ttentau.top)
+[Development version online demo](https://open-designs.netlify.app)
 
 
 ## Open-Design

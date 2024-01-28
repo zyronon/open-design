@@ -1428,17 +1428,15 @@ export class BaseShape {
   checkAcr2() {
     const {nodes, paths, ctrlNodes} = this.conf.penNetwork
     let newPaths = cloneDeep(paths).map((v, i) => ({id: i, line: v}))
-    let newPaths3 = cloneDeep(paths).map((v, i) => ({id: i, line: v}))
-    let newPaths2 = paths.map((v, i) => ([...v, i]))
     let newNodes = cloneDeep(nodes)
     let newCtrlNodes = cloneDeep(ctrlNodes)
-    const {linePoints} = this.conf.cache
 
     nodes.map((currentNode, nodeIndex) => {
       // let nodeIndex = 0
       // let currentNode = nodes[nodeIndex]
       let r = currentNode.realCornerRadius
       if (r) {
+        //找到包含这个点的所有边
         let lines = newPaths.filter(p => p.line.slice(0, 2).includes(nodeIndex))
         if (lines.length === 2) {
           let line0 = lines[0]
@@ -1732,8 +1730,7 @@ export class BaseShape {
     this.conf.cache.nodes = newNodes
     this.conf.cache.paths = newPaths.map(v => v.line)
     this.conf.cache.ctrlNodes = newCtrlNodes
-    console.log('cache', cloneDeep(this.conf.cache))
-    console.log('newPaths.map(v => v.line)', newPaths3.map(v => v.line))
+    // console.log('cache', cloneDeep(this.conf.cache))
   }
 
   //因为渲染时需要保持曲线的曲率，但曲线又被圆弧分割，所以要保持曲率就得计算出曲线被分割时的终点和起点以及控制点

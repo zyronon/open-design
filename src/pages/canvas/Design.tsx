@@ -88,7 +88,7 @@ class Design extends React.Component<any, IState> {
     //   } as any))
     // }
     // c.addChildren(r)
-    c.addChildren(rects.slice(0, 1))
+    c.addChildren(rects)
     c.render()
     this.setState({cu: c})
   }
@@ -123,7 +123,7 @@ class Design extends React.Component<any, IState> {
 
   copy2 = () => {
     console.log(this.state.cu.print2())
-    navigator.clipboard.writeText(JSON.stringify(this.state.cu.print2(), null, 2))
+    navigator.clipboard.writeText(JSON.stringify(this.state.cu.print2()[0], null, 2))
       .then(() => {
         message.success('复制成功,带id')
       })

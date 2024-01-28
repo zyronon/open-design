@@ -231,6 +231,7 @@ export class Pen extends ParentShape {
         })
       }
     }
+
     if (this.conf.isCache && false) {
       const {nodes, paths, ctrlNodes, areas: closeAreasId = []} = this._conf.cache
       drawFillArea(nodes, ctrlNodes, closeAreasId)
@@ -283,6 +284,8 @@ export class Pen extends ParentShape {
           }
         }
 
+        // console.log('lineMaps', lineMaps)
+
         //将有交点的线段分割
         let newPaths: any[] = []
         paths.map((line, index) => {
@@ -299,8 +302,8 @@ export class Pen extends ParentShape {
                 let lastLine = newLines[newLines.length - 1]
                 newLines.pop()
                 newLines = newLines.concat([
-                  [lastLine[0], v.index, -1, -1, -1, -1, lineType],
-                  [v.index, lastLine[1], -1, -1, -1, -1, lineType]
+                  [lastLine[0], v.index, -1, -1, lineType],
+                  [v.index, lastLine[1], -1, -1, lineType]
                 ])
               })
               newPaths = newPaths.concat(newLines)
@@ -326,11 +329,11 @@ export class Pen extends ParentShape {
                 let newLine = []
                 if (leftPoints.length === 3) {
                   newCtrlNodes.push(leftPoints[1])
-                  newLine = [lastLine[0], v.index, newCtrlNodes.length - 1, -1, -1, -1, lineType]
+                  newLine = [lastLine[0], v.index, newCtrlNodes.length - 1, -1, lineType]
                 } else {
                   newCtrlNodes.push(leftPoints[1])
                   newCtrlNodes.push(leftPoints[2])
-                  newLine = [lastLine[0], v.index, newCtrlNodes.length - 2, newCtrlNodes.length - 1, -1, -1, lineType]
+                  newLine = [lastLine[0], v.index, newCtrlNodes.length - 2, newCtrlNodes.length - 1, lineType]
                 }
 
                 splitCurve = split.right
@@ -338,11 +341,11 @@ export class Pen extends ParentShape {
                 let rightNewLine = []
                 if (rightPoints.length === 3) {
                   newCtrlNodes.push(rightPoints[1])
-                  rightNewLine = [v.index, lastLine[1], newCtrlNodes.length - 1, -1, -1, -1, lineType]
+                  rightNewLine = [v.index, lastLine[1], newCtrlNodes.length - 1, -1, lineType]
                 } else {
                   newCtrlNodes.push(rightPoints[1])
                   newCtrlNodes.push(rightPoints[2])
-                  rightNewLine = [v.index, lastLine[1], newCtrlNodes.length - 2, newCtrlNodes.length - 1, -1, -1, lineType]
+                  rightNewLine = [v.index, lastLine[1], newCtrlNodes.length - 2, newCtrlNodes.length - 1, lineType]
                 }
                 newLines = newLines.concat([
                   newLine,
@@ -355,6 +358,8 @@ export class Pen extends ParentShape {
             newPaths.push(line)
           }
         })
+
+        // console.log('newPaths', newPaths)
 
         let closeLines: any[] = []
         //筛选出终点没人连的

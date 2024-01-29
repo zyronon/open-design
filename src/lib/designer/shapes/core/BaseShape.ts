@@ -12,7 +12,7 @@ import {
   ShapeType
 } from "../../types/type"
 import CanvasUtil2 from "../../engine/CanvasUtil2"
-import {cloneDeep, merge} from "lodash"
+import {clone, cloneDeep, merge} from "lodash"
 import {getShapeFromConfig} from "../../utils/common"
 import EventBus from "../../event/eventBus"
 import {BaseConfig, Rect} from "../../config/BaseConfig"
@@ -45,11 +45,12 @@ export class BaseShape {
     // console.log('props', clone(props))
     this.conf = helper.initConf(props.conf, props.parent?.conf)
     if (this.conf.isCustom) {
+      //如果是一条线，或一个点，计算出来有问题
       this.calcNewCenterAndWidthAndHeight()
     }
     this.parent = props.parent
     this.original = cloneDeep(this.conf)
-    // console.log('config', clone(this.config))
+    console.log('config', clone(this.conf))
     this.children = this.conf.children?.map((conf: BaseConfig) => {
       return getShapeFromConfig({conf, parent: this})
     }) ?? []
@@ -245,7 +246,7 @@ export class BaseShape {
 
   checkMousePointOnEditStatus(point: P): CurrentOperationInfo {
     // console.log('------------------')
-    let {center, lineShapes, realRotation, flipVertical, flipHorizontal} = this.conf
+    let {center, realRotation, flipVertical, flipHorizontal} = this.conf
     //反转到0度，好判断
     if (realRotation) {
       point = Math2.getRotatedPoint(point, center, -realRotation)

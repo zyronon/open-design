@@ -32,6 +32,21 @@ export interface PenNetworkNode {
   cps: number[]
 }
 
+export function getPenPoint(val: P) {
+  return {
+    ...{
+      x: 0,
+      y: 0,
+      cornerRadius: 0,
+      realCornerRadius: 0,
+      handleMirroring: HandleMirroring.RightAngle,
+      cornerCps: [],
+      cps: [],
+    },
+    ...val
+  }
+}
+
 export interface Region {
   loops: number[][]
   windingRule: WindingRule

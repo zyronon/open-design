@@ -1,6 +1,8 @@
 import {FontWeight, P, ShapeType, StrokeAlign, TextMode} from "../types/type"
 import {FontFamily, TextAlign} from "../config/TextConfig"
-import {HandleMirroring, PenConfig} from "../config/PenConfig"
+import {getPenPoint, HandleMirroring, PenConfig} from "../config/PenConfig"
+import helper from "./helper";
+import {BaseConfig} from "../config/BaseConfig";
 
 export const fontFamilies = [
   {
@@ -49,6 +51,29 @@ export const Colors = {
   Border: 'rgb(140,140,140)',
   White: 'white',
   Transparent: 'transparent',
+}
+
+const defaultCurrentMat = [
+  1, 0, 0, 0,
+  0, 1, 0, 0,
+  0, 0, 1, 0,
+  0, 0, 0, 1,
+]
+const defaultHandMove = {x: 0, y: 0}
+export const defaultConfig = {
+  // handScale: 3.0517578125,
+  // handMove: {x: -1201.48828125, y: -872.4208984375},
+  // currentMat: [3.0517578125, 0, 0, 0, 0, 3.0517578125, 0, 0, 0, 0, 1, 0, -1201.48828125, -872.4208984375, 0, 1],
+  // handScale: 14.31452465057373,
+  // handMove: {x: -6445.2578125, y: -3923.02783203125},
+  // currentMat: [14.31452465057373, 0, 0, 0, 0, 14.31452465057373, 0, 0, 0, 0, 1, 0, -6445.2578125, -3923.02783203125, 0, 1],
+  handScale: 1,
+  currentMat: defaultCurrentMat,
+  handMove: defaultHandMove,
+  shapes: [],
+  lineWidth: 2,
+  strokeStyle: Colors.Primary,
+  fillStyle: Colors.FillColor
 }
 
 export const r = [
@@ -670,7 +695,7 @@ let temp = {
 }
 export const rects: any[] = [
   {
-    use:false,
+    use: false,
     "name": "矩形",
     "layout": {
       "x": 250,
@@ -815,7 +840,7 @@ export const rects: any[] = [
     "commonPoints": [],
   },
   {
-    use:false,
+    use: false,
     "lineWidth": 2,
     "fillColor": "#4C4C4C",
     "borderColor": "rgb(0,0,0)",
@@ -1369,28 +1394,35 @@ export const rects: any[] = [
     },
     "strokeAlign": "INSIDE",
     "id": "208812ae-8364-4b6a-b61b-26f3ae44e920"
-  }
+  },
+  helper.getDefaultShapeConfig({
+    "layout": {
+      "x": 174,
+      "y": 29,
+      "w": 359,
+      "h": 148
+    },
+    name: 'Pen',
+    type: ShapeType.PEN,
+    isCustom: true,
+    penNetwork: {
+      regions: [],
+      nodes: [
+        getPenPoint({x: 0, y: 0}),
+        getPenPoint({x: 0, y: 150}),
+        getPenPoint({x: 100, y: 50}),
+        getPenPoint({x: -150, y: 50}),
+        getPenPoint({x: 50, y: 250}),
+        getPenPoint({x: 50, y: -50}),
+      ],
+      ctrlNodes: [],
+      paths: [
+        [0, 1, -1, -1, 1],
+        [2, 1, -1, -1, 1],
+        [2, 3, -1, -1, 1],
+        [4, 3, -1, -1, 1],
+        [4, 5, -1, -1, 1],
+      ]
+    },
+  } as any)
 ]
-
-const defaultCurrentMat = [
-  1, 0, 0, 0,
-  0, 1, 0, 0,
-  0, 0, 1, 0,
-  0, 0, 0, 1,
-]
-const defaultHandMove = {x: 0, y: 0}
-export const defaultConfig = {
-  // handScale: 3.0517578125,
-  // handMove: {x: -1201.48828125, y: -872.4208984375},
-  // currentMat: [3.0517578125, 0, 0, 0, 0, 3.0517578125, 0, 0, 0, 0, 1, 0, -1201.48828125, -872.4208984375, 0, 1],
-  // handScale: 14.31452465057373,
-  // handMove: {x: -6445.2578125, y: -3923.02783203125},
-  // currentMat: [14.31452465057373, 0, 0, 0, 0, 14.31452465057373, 0, 0, 0, 0, 1, 0, -6445.2578125, -3923.02783203125, 0, 1],
-  handScale: 1,
-  currentMat: defaultCurrentMat,
-  handMove: defaultHandMove,
-  shapes: rects,
-  lineWidth: 2,
-  strokeStyle: Colors.Primary,
-  fillStyle: Colors.FillColor
-}

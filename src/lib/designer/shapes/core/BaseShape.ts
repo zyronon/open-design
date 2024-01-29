@@ -50,7 +50,7 @@ export class BaseShape {
     }
     this.parent = props.parent
     this.original = cloneDeep(this.conf)
-    console.log('config', clone(this.conf))
+    // console.log('config', clone(this.conf))
     this.children = this.conf.children?.map((conf: BaseConfig) => {
       return getShapeFromConfig({conf, parent: this})
     }) ?? []

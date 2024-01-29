@@ -157,7 +157,7 @@ export default {
     // @ts-ignore
     if (conf.isComplete === undefined) conf.isComplete = true
 
-    console.log('initConf', cloneDeep(conf))
+    // console.log('initConf', cloneDeep(conf))
     return conf
   },
   calcConf(conf: BaseConfig, pConf?: BaseConfig): BaseConfig {

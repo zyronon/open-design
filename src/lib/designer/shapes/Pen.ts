@@ -192,7 +192,7 @@ export class Pen extends ParentShape {
 
   getFillPath() {
     let showTime = false
-    let showFill = true
+    let showFill = false
     if (showTime) {
       console.time()
     }
@@ -284,7 +284,7 @@ export class Pen extends ParentShape {
           }
         }
 
-        console.log('lineMaps', lineMaps)
+        // console.log('lineMaps', lineMaps)
 
         //将有交点的线段分割
         let newPaths: any[] = []
@@ -362,13 +362,17 @@ export class Pen extends ParentShape {
         // console.log('newPaths', newPaths)
 
         let closeLines: any[] = []
-        //筛选出终点没人连的
+        //筛选掉终点没人连的
         closeLines = newPaths.filter((v, i) => {
           let r = newPaths.find((w, j) => ((v[0] === w[1] || v[0] === w[0]) && i !== j))
           let r2 = newPaths.find((w, j) => ((v[1] === w[1] || v[1] === w[0]) && i !== j))
           return r2 && r
         })
+
+        // console.log('closeLines', closeLines)
+
         let closeLinesWithId = closeLines.map((v, i) => ({id: i, line: v}))
+        console.log('closeLinesWithId', closeLinesWithId)
 
         let closeAreasRepeat: any[][] = []
 
@@ -378,10 +382,13 @@ export class Pen extends ParentShape {
         }
 
         let visited: number[] = []
+
         //寻找封闭图
         const findCloseArea = (start: number, end: number, line: any, list: any[], save: any[]) => {
           visited.push(line.id)
+          //找出列表中，包含了当前线条end点的的其他线条
           let arrsEnd = list.filter(w => w.line.slice(0, 2).includes(end) && w.id !== line.id)
+          console.log('arrsEnd', line.line, JSON.stringify(arrsEnd.map(v => v.line)))
           while (arrsEnd.length !== 0) {
             if (arrsEnd.length === 1) {
               //这里用复制一遍。因为后续的其他遍历，可能也会碰到这条线，然后方向是相反的，又去改变头和尾
@@ -411,6 +418,8 @@ export class Pen extends ParentShape {
                 return [save.slice(isCloseIndex)]
               }
               arrsEnd = list.filter(w => w.line.slice(0, 2).includes(end) && w.id !== a.id)
+              console.log('arrsEnd', line, JSON.stringify(arrsEnd.map(v => v.line)))
+              // console.log('---')
             } else {
               for (let i = 0; i < arrsEnd.length; i++) {
                 let newSave = save.slice()
@@ -456,11 +465,13 @@ export class Pen extends ParentShape {
 
         //TODO 想想，如果只有两条直线，那么根本无需检测，肯定没有封闭图。如果是曲线呢？
         if (closeLinesWithId.length >= 2 && true) {
-          closeLinesWithId.map(currentLine => {
+          closeLinesWithId.map((currentLine, index, array) => {
             if (!visited.includes(currentLine.id)) {
               let start = currentLine.line[0]
               let end = currentLine.line[1]
-              let r = findCloseArea(start, end, currentLine, closeLinesWithId.slice(), [currentLine])
+              let r = findCloseArea(start, end, currentLine, array.slice(), [currentLine])
+              // console.log('r',r)
+              console.log('-----', r)
               if (r.length) {
                 if (!check(r[0])) {
                   closeAreasRepeat = closeAreasRepeat.concat(r)
@@ -468,6 +479,8 @@ export class Pen extends ParentShape {
               }
             }
           })
+
+          console.log('closeAreasRepeat', closeAreasRepeat)
 
           let closeAreasId = closeAreasRepeat.map((v, i) => ({id: i, area: v}))
           let closeAreasIdCopy = cloneDeep(closeAreasId)
@@ -545,6 +558,7 @@ export class Pen extends ParentShape {
             ctx.restore()
           })
 
+          console.log('closeAreasId', closeAreasId)
           drawFillArea(newNodes, newCtrlNodes, closeAreasId)
 
           this.conf.cache.nodes = newNodes

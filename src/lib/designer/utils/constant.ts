@@ -815,6 +815,7 @@ export const rects: any[] = [
     "commonPoints": [],
   },
   {
+    use:false,
     "lineWidth": 2,
     "fillColor": "#4C4C4C",
     "borderColor": "rgb(0,0,0)",

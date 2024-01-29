@@ -284,7 +284,7 @@ export class Pen extends ParentShape {
           }
         }
 
-        // console.log('lineMaps', lineMaps)
+        console.log('lineMaps', lineMaps)
 
         //将有交点的线段分割
         let newPaths: any[] = []

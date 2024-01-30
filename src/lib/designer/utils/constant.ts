@@ -1414,6 +1414,10 @@ export const rects: any[] = [
         getPenPoint({x: -150, y: 50}),
         getPenPoint({x: 50, y: 250}),
         getPenPoint({x: 50, y: -50}),
+        getPenPoint({x: 250, y: 50}),
+        getPenPoint({x: 250, y: 200}),
+        getPenPoint({x: 350, y: 200}),
+        getPenPoint({x: 150, y: 100}),
       ],
       ctrlNodes: [],
       paths: [
@@ -1422,6 +1426,9 @@ export const rects: any[] = [
         [2, 3, -1, -1, 1],
         [4, 3, -1, -1, 1],
         [4, 5, -1, -1, 1],
+        [6, 7, -1, -1, 1],
+        [8, 7, -1, -1, 1],
+        [8, 9, -1, -1, 1],
       ]
     },
   } as any)

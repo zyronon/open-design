@@ -144,7 +144,7 @@ export default class CanvasUtil2 {
         r && this.children.push(r)
       }
     })
-    console.log(' this.children', this.children)
+    // console.log(' this.children', this.children)
   }
 
   isDesignMode() {

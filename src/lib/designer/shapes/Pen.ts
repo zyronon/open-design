@@ -369,10 +369,14 @@ export class Pen extends ParentShape {
           return r2 && r
         })
 
-        // console.log('closeLines', closeLines)
+        console.log('closeLines', closeLines)
+
+        closeLines.filter((v, i) => {
+
+        })
 
         let closeLinesWithId = closeLines.map((v, i) => ({id: i, line: v}))
-        console.log('closeLinesWithId', closeLinesWithId)
+        // console.log('closeLinesWithId', closeLinesWithId)
 
         let closeAreasRepeat: any[][] = []
 
@@ -388,7 +392,7 @@ export class Pen extends ParentShape {
           visited.push(line.id)
           //找出列表中，包含了当前线条end点的的其他线条
           let arrsEnd = list.filter(w => w.line.slice(0, 2).includes(end) && w.id !== line.id)
-          console.log('arrsEnd', line.line, JSON.stringify(arrsEnd.map(v => v.line)))
+          // console.log('arrsEnd', line.line, JSON.stringify(arrsEnd.map(v => v.line)))
           while (arrsEnd.length !== 0) {
             if (arrsEnd.length === 1) {
               //这里用复制一遍。因为后续的其他遍历，可能也会碰到这条线，然后方向是相反的，又去改变头和尾
@@ -410,15 +414,17 @@ export class Pen extends ParentShape {
               visited.push(a.id)
               save.push(a)
               if (end === start) {
+                // console.log('1')
                 return [save]
               }
               //如果当前线段与线段们中的任一组成了回路，那么就是一个新的封闭图
               let isCloseIndex = save.findIndex(b => b.line[0] === end)
               if (isCloseIndex > -1) {
+                // console.log(2)
                 return [save.slice(isCloseIndex)]
               }
               arrsEnd = list.filter(w => w.line.slice(0, 2).includes(end) && w.id !== a.id)
-              console.log('arrsEnd', line, JSON.stringify(arrsEnd.map(v => v.line)))
+              // console.log('arrsEnd', line, JSON.stringify(arrsEnd.map(v => v.line)))
               // console.log('---')
             } else {
               for (let i = 0; i < arrsEnd.length; i++) {
@@ -440,11 +446,13 @@ export class Pen extends ParentShape {
                 newSave.push(a)
                 let isCloseIndex = newSave.findIndex(b => b.line[0] === newEnd)
                 if (isCloseIndex > -1) {
+                  // console.log(3,newSave.map(v=>v.line))
                   let closeArea = newSave.slice(isCloseIndex)
                   if (!check(closeArea)) {
                     closeAreasRepeat = closeAreasRepeat.concat([closeArea])
                   }
                 } else if (newEnd === start) {
+                  // console.log(4)
                   if (!check(newSave)) {
                     closeAreasRepeat = closeAreasRepeat.concat([newSave])
                   }
@@ -471,7 +479,7 @@ export class Pen extends ParentShape {
               let end = currentLine.line[1]
               let r = findCloseArea(start, end, currentLine, array.slice(), [currentLine])
               // console.log('r',r)
-              console.log('-----', r)
+              // console.log('-----', r)
               if (r.length) {
                 if (!check(r[0])) {
                   closeAreasRepeat = closeAreasRepeat.concat(r)

@@ -6,7 +6,7 @@ import draw from "../utils/draw"
 import { ParentShape } from "./core/ParentShape";
 import { BaseEvent2, EditType, LinePath, LineShape, LineType, P, ShapeStatus } from "../types/type"
 import { BaseShape } from "./core/BaseShape"
-import { PenConfig, PenNetworkLine } from "../config/PenConfig"
+import { PenConfig, PenNetworkLine, PenNetworkNode } from "../config/PenConfig"
 import { Math2 } from "../utils/math"
 import { cloneDeep, eq } from "lodash"
 import { Bezier } from "bezier-js"
@@ -192,13 +192,13 @@ export class Pen extends ParentShape {
 
   getFillPath() {
     let showTime = false
-    let showFill = false
+    let showFill = true
     if (showTime) {
       console.time()
     }
     let fillPath = new Path2D()
 
-    const drawFillArea = (nodes: any[], ctrlNodes: any[], closeAreasId: any[]) => {
+    const drawFillArea = (nodes: PenNetworkNode[], ctrlNodes: P[], closeAreasId: any[]) => {
       if (showFill) {
         let newNodes = cloneDeep(nodes)
         let newCtrlNodes = cloneDeep(ctrlNodes)
@@ -206,6 +206,7 @@ export class Pen extends ParentShape {
           let startPoint = newNodes[v[0].line[0]]
           let endPoint = newNodes[v[0].line[1]]
           fillPath.moveTo2(startPoint)
+          console.log('v', startPoint, JSON.stringify(v.map(a => a.line)))
           v.map((w: any) => {
             let line = w.line
             let lineType = line[4]
@@ -492,6 +493,8 @@ export class Pen extends ParentShape {
           closeAreasId.sort((a, b) => a.area.length - b.area.length)
           console.log('closeAreasId', closeAreasId)
           let waitDelId: number[] = []
+
+          //筛选重叠的图形：有两条边以上相同的即为重叠的图形
           closeAreasId.map((a, i, arr) => {
             if (waitDelId.includes(a.id)) return
             let aids = a.area.map((l: any) => l.id)
@@ -516,36 +519,6 @@ export class Pen extends ParentShape {
           })
 
           // console.log('waitDelId',waitDelId)
-
-          //筛选重叠的图形：有两条边以上相同的即为重叠的图形
-          // closeAreasId.map((a: any, i: number) => {
-          //   if (waitDelId.includes(a.id)) return
-          //   let ids = a.area.map((l: any) => l.id)
-          //   console.log('ids', ids)
-          //   let q: any[] = closeAreasIdCopy.filter((b: any, j: number) => {
-          //     let count = 0
-          //     if (i !== j) {
-          //       b.area.map((c: any) => {
-          //         if (ids.find((id: any) => id === c.id)) {
-          //           count++
-          //         }
-          //       })
-          //     }
-          //     return count >= 2
-          //   })
-          //
-          //   if (q.length) {
-          //     let n = q.concat([a])
-          //     let s = n.sort((a: any, b: any) => a.area.length - b.area.length).map(s => s.id)
-          //     if (a.id !== s[0]) {
-          //       let r = closeAreasIdCopy.findIndex(b => b.id === a.id)
-          //       if (r) {
-          //         closeAreasIdCopy.splice(r, 1)
-          //       }
-          //       waitDelId = waitDelId.concat([a.id])
-          //     }
-          //   }
-          // })
 
           waitDelId.map(v1 => {
             let r = closeAreasId.findIndex(b => b.id === v1)
@@ -595,7 +568,8 @@ export class Pen extends ParentShape {
             ctx.restore()
           })
 
-          drawFillArea(newNodes, newCtrlNodes, closeAreasId)
+          drawFillArea(newNodes, newCtrlNodes, closeAreasId.slice(3, 4))
+          // drawFillArea(newNodes, newCtrlNodes, closeAreasId.slice(4, 5))
 
           this.conf.cache.nodes = newNodes
           this.conf.cache.paths = newPaths

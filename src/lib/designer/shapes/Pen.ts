@@ -500,7 +500,8 @@ export class Pen extends ParentShape {
           // console.log('closeAreasId', closeAreasId)
           let waitDelId: number[] = []
 
-          //筛选重叠的图形：有两条边以上相同的即为重叠的图形
+          //TODO　筛选重叠的图形
+          //2024-02-02 当前的删除方式有问题，共用两条边以上的不一定重叠
           let test = false
           if (test) {
             closeAreasId.map((a, i, arr) => {

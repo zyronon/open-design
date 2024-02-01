@@ -1,16 +1,6 @@
 import {BaseShape} from "../shapes/core/BaseShape"
 import EventBus from "../event/eventBus"
-import {
-  BaseEvent2,
-  BezierPointType,
-  EditModeType,
-  EditType,
-  EventTypes,
-  getP2,
-  P,
-  ShapeStatus,
-  ShapeType
-} from "../types/type"
+import {BaseEvent2, EditModeType, EditType, EventTypes, P, ShapeStatus, ShapeType} from "../types/type"
 import {cloneDeep} from "lodash"
 import {Colors, defaultConfig} from "../utils/constant"
 import {mat4} from "gl-matrix"
@@ -21,7 +11,6 @@ import draw from "../utils/draw"
 import {BoxSelection} from "../shapes/BoxSelection";
 import {EventKeys} from "../event/eventKeys";
 import {Pen} from "../shapes/Pen";
-import {nanoid} from "@reduxjs/toolkit";
 import {HandleMirroring} from "../config/PenConfig";
 // import {Pen} from "../shapes/Pen"
 
@@ -95,6 +84,7 @@ export default class CanvasUtil2 {
   }
 
   set mode(val) {
+    // console.log('val', val,this._mode)
     if (val !== this._mode) {
       // this.editModeType = EditModeType.Select
       this._mode = val
@@ -320,9 +310,10 @@ export default class CanvasUtil2 {
 
   onKeyDown = (e: any) => {
     if (this.isMouseDown) return
-    // console.log('onKeyDown', e.keyCode)
+    console.log('onKeyDown', e.keyCode)
+    let code = e.keyCode
     //Esc
-    if (e.keyCode === 27) {
+    if (code === 27) {
       if (this.editShape) {
         if (this.editShape.status === ShapeStatus.Edit) {
           if (this.editShape.editStartPointInfo.type) {
@@ -345,7 +336,7 @@ export default class CanvasUtil2 {
       }
     }
     //Del
-    if (e.keyCode === 46) {
+    if (code === 46) {
       if (this.editShape) {
         if (this.editShape.status === ShapeStatus.Edit) {
           let {pointIndex, lineIndex, type} = this.editShape.editStartPointInfo
@@ -390,6 +381,11 @@ export default class CanvasUtil2 {
       this.editShape = undefined
       this.hoverShape = undefined
     }
+    // P
+    if (code === 80) {
+      this.setMode(ShapeType.PEN)
+    }
+
     this.render()
   }
 

@@ -64,7 +64,10 @@ class Design extends React.Component<any, IState> {
       val && this.setState({handScale: val})
     })
     EventBus.on(EventTypes.onModeChange, (val: ShapeType) => {
-      this.setState({mode: val})
+      // console.log('sss', val)
+      if ([ShapeType.PEN, ShapeType.PENCIL].includes(val)) {
+        this.setCanvasUtilMode(val, 'drawType4')
+      }
     })
     this.setState({drawCount: 0})
     let canvas: HTMLCanvasElement = this.canvasRef.current!

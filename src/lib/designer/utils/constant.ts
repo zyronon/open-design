@@ -1413,7 +1413,7 @@ export const rects: any[] = [
         getPenPoint({x: 100, y: 50}),
         getPenPoint({x: -150, y: 50}),
         getPenPoint({x: 50, y: 250}),
-        getPenPoint({x: 50, y: -50}),
+        getPenPoint({x: 50, y: 70}),
         getPenPoint({x: 250, y: 50}),
         getPenPoint({x: 250, y: 200}),
         getPenPoint({x: 350, y: 200}),

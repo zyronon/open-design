@@ -96,10 +96,10 @@ export class Pen extends ParentShape {
     ctx.strokeStyle = Colors.Line2
     ctx.fillStyle = fillColor
 
-    this.getFillPath(ctx)
-
     let strokePath = this.getStrokePath()
     ctx.stroke(strokePath)
+
+    this.getFillPath(ctx)
 
     //渲染hover在线上时，线段的中心点
     if ((this.editHover.type === EditType.Line
@@ -383,13 +383,14 @@ export class Pen extends ParentShape {
         }
 
         let visited: number[] = []
+        let showLog = false
 
         //寻找封闭图
         const findCloseArea = (start: number, end: number, line: any, list: any[], save: any[]) => {
           visited.push(line.id)
           //找出列表中，包含了当前线条end点的的其他线条
           let containEndPointLines = list.filter(w => w.line.slice(0, 2).includes(end) && w.id !== line.id)
-          // console.log('包含0', '当前：', line.line, 'save', JSON.stringify(save.map(v => v.line)), '包含', JSON.stringify(containEndPointLines.map(v => v.line)),)
+          showLog && console.log('包含0', '当前：', line.line, 'save', JSON.stringify(save.map(v => v.line)), '包含', JSON.stringify(containEndPointLines.map(v => v.line)),)
           while (containEndPointLines.length !== 0) {
             if (containEndPointLines.length === 1) {
               //这里用复制一遍。因为后续的其他遍历，可能也会碰到这条线，然后方向是相反的，又去改变头和尾
@@ -408,20 +409,21 @@ export class Pen extends ParentShape {
                   a.line[3] = temp
                 }
               }
-              visited.push(a.id)
               save.push(a)
               if (end === start) {
-                // console.log(1, '当前：', line, 'save', JSON.stringify(save.map(v => v.line)))
+                showLog && console.log(1, '当前：', line, 'save', JSON.stringify(save.map(v => v.line)))
+                visited.push(a.id)
                 return [save]
               }
               //如果当前线段与线段们中的任一组成了回路，那么就是一个新的封闭图
               let isCloseIndex = save.findIndex(b => b.line[0] === end)
               if (isCloseIndex > -1) {
-                // console.log(2, '当前：', line, 'save', JSON.stringify(save.map(v => v.line)))
+                showLog && console.log(2, '当前：', line, 'save', JSON.stringify(save.map(v => v.line)))
+                visited.push(a.id)
                 return [save.slice(isCloseIndex)]
               }
               containEndPointLines = list.filter(w => w.line.slice(0, 2).includes(end) && w.id !== a.id)
-              // console.log('包含1', '当前：', line, 'save', JSON.stringify(save.map(v => v.line)), '包含', JSON.stringify(containEndPointLines.map(v => v.line)))
+              showLog && console.log('包含1', '当前：', line, 'save', JSON.stringify(save.map(v => v.line)), '包含', JSON.stringify(containEndPointLines.map(v => v.line)))
             } else {
               for (let i = 0; i < containEndPointLines.length; i++) {
                 let newSave = save.slice()
@@ -439,27 +441,31 @@ export class Pen extends ParentShape {
                     a.line[3] = temp
                   }
                 }
+
                 newSave.push(a)
                 let isCloseIndex = newSave.findIndex(b => b.line[0] === newEnd)
                 if (isCloseIndex > -1) {
                   let closeArea = newSave.slice(isCloseIndex)
                   if (!check(closeArea)) {
+                    visited.push(a.id)
                     closeAreasRepeat = closeAreasRepeat.concat([closeArea])
                   }
-                  // console.log(3, '当前：', a.line, 'save', JSON.stringify(newSave.map(v => v.line)), '区域', closeAreasRepeat)
+                  showLog && console.log(3, '当前：', a.line, 'save', JSON.stringify(newSave.map(v => v.line)), '区域', closeAreasRepeat)
                 } else if (newEnd === start) {
                   if (!check(newSave)) {
+                    visited.push(a.id)
                     closeAreasRepeat = closeAreasRepeat.concat([newSave])
                   }
-                  // console.log(4, '当前：', a.line, 'save', JSON.stringify(newSave.map(v => v.line)), '区域', closeAreasRepeat)
+                  showLog && console.log(4, '当前：', a.line, 'save', JSON.stringify(newSave.map(v => v.line)), '区域', closeAreasRepeat)
                 } else {
                   let r = findCloseArea(start, newEnd, a, list, newSave)
                   if (r.length) {
                     if (!check(r[0])) {
+                      visited.push(a.id)
                       closeAreasRepeat = closeAreasRepeat.concat(r)
                     }
                   }
-                  // console.log(5, '当前：', a.line, 'save', JSON.stringify(newSave.map(v => v.line)), '区域', closeAreasRepeat)
+                  showLog && console.log(5, '当前：', a.line, 'save', JSON.stringify(newSave.map(v => v.line)), '区域', closeAreasRepeat)
                 }
               }
               return []
@@ -485,7 +491,7 @@ export class Pen extends ParentShape {
             }
           })
 
-          // console.log('closeAreasRepeat', closeAreasRepeat)
+          console.log('closeAreasRepeat', closeAreasRepeat)
           // closeAreasRepeat.map(v => {
           //   console.log(JSON.stringify(v.map(a => a.line)))
           // })
@@ -495,41 +501,42 @@ export class Pen extends ParentShape {
           let waitDelId: number[] = []
 
           //筛选重叠的图形：有两条边以上相同的即为重叠的图形
-          closeAreasId.map((a, i, arr) => {
-            if (waitDelId.includes(a.id)) return
-            let aids = a.area.map((l: any) => l.id)
-            let q: any[] = arr.slice(i + 1).filter((b: any, j: number) => {
-              let count = 0
-              let bids = b.area.map((l: any) => l.id)
-              aids.map(id => {
-                if (bids.includes(id)) {
-                  count++
-                }
+          let test = false
+          if (test) {
+            closeAreasId.map((a, i, arr) => {
+              if (waitDelId.includes(a.id)) return
+              let aids = a.area.map((l: any) => l.id)
+              let q: any[] = arr.slice(i + 1).filter((b: any, j: number) => {
+                let count = 0
+                let bids = b.area.map((l: any) => l.id)
+                aids.map(id => {
+                  if (bids.includes(id)) {
+                    count++
+                  }
+                })
+                return count >= 2
               })
-              return count >= 2
-            })
-            // console.log('aids', aids)
-            // console.log('q', q)
+              // console.log('aids', aids)
+              // console.log('q', q)
 
-            if (q.length) {
-              if (a.area.length < q[0].area.length) {
-                waitDelId.push(a.id)
+              if (q.length) {
+                if (a.area.length < q[0].area.length) {
+                  // waitDelId.push(a.id)
+                }
               }
-            }
-          })
-
-          // console.log('waitDelId',waitDelId)
-
-          waitDelId.map(v1 => {
-            let r = closeAreasId.findIndex(b => b.id === v1)
-            if (r) {
-              closeAreasId.splice(r, 1)
-            }
-          })
+            })
+            // console.log('waitDelId',waitDelId)
+            waitDelId.map(v1 => {
+              let r = closeAreasId.findIndex(b => b.id === v1)
+              if (r) {
+                closeAreasId.splice(r, 1)
+              }
+            })
+          }
 
           // console.log('closeAreasId', closeAreasId)
           // closeAreasId.map(v => {
-          // console.log(JSON.stringify(v.area.map(a => a.line)))
+          //   console.log(JSON.stringify(v.area.map(a => a.line)))
           // })
           // console.log('visited', cloneDeep(Array.from(new Set(visited))))
 

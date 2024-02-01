@@ -5,6 +5,28 @@ import {Rect} from "../lib/designer/config/BaseConfig"
 export {}
 
 declare global {
+  interface CanvasFunc {
+    //三次贝塞尔曲线
+    bezierCurveTo2(cp1: P, cp2: P, end: P): void
+
+    //二次贝塞尔曲线
+    quadraticCurveTo2(cp1: P, end: P): void
+
+    moveTo2(cp1: P): void
+
+    lineTo2(cp1: P): void
+
+    translate2(p: P): void
+
+    rect2(p: Rect): void
+
+    fillRect2(p: Rect): void
+
+    strokeRect2(p: Rect): void
+
+    arcTo2(p: P, p1: P, r: number): void
+  }
+
   interface CanvasRenderingContext2D {
     //三次贝塞尔曲线
     bezierCurveTo2(cp1: P, cp2: P, end: P): void
@@ -27,22 +49,7 @@ declare global {
     arcTo2(p: P, p1: P, r: number): void
   }
 
-  interface Path2D extends CanvasRenderingContext2D {
-    //三次贝塞尔曲线
-    bezierCurveTo2(cp1: P, cp2: P, end: P): void
-
-    //二次贝塞尔曲线
-    quadraticCurveTo2(cp1: P, end: P): void
-
-    moveTo2(cp1: P): void
-
-    lineTo2(cp1: P): void
-
-    translate2(p: P): void
-
-    rect2(p: Rect): void
-
-    // arcTo2(p: P, p1: P, r: number): void
+  interface Path2D extends CanvasFunc {
   }
 
   interface Math {
@@ -60,7 +67,7 @@ declare global {
   }
 }
 
-let Context2D: CanvasRenderingContext2D = {
+let Context2D: CanvasFunc = {
   bezierCurveTo2: function (cp1, cp2, end) {
     this.bezierCurveTo(cp1.x, cp1.y, cp2.x, cp2.y, end.x, end.y)
   },

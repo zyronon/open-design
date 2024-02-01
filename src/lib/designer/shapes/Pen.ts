@@ -46,13 +46,12 @@ export class Pen extends ParentShape {
     ctx.strokeStyle = borderColor
     ctx.fillStyle = fillColor
 
-    let fillPath = this.getFillPath()
-    ctx.fill(fillPath)
-    // ctx.fill(fillPath, 'nonzero')
-    // ctx.fill(fillPath, 'evenodd')
-
     let strokePath = this.getStrokePath()
     ctx.stroke(strokePath)
+
+    this.getFillPath(ctx)
+    // ctx.fill(fillPath, 'nonzero')
+    // ctx.fill(fillPath, 'evenodd')
 
     // ctx.strokeStyle = 'white'
     // ctx.stroke(fillPath)
@@ -97,8 +96,7 @@ export class Pen extends ParentShape {
     ctx.strokeStyle = Colors.Line2
     ctx.fillStyle = fillColor
 
-    let fillPath = this.getFillPath()
-    ctx.fill(fillPath)
+    this.getFillPath(ctx)
 
     let strokePath = this.getStrokePath()
     ctx.stroke(strokePath)
@@ -190,45 +188,47 @@ export class Pen extends ParentShape {
     return []
   }
 
-  getFillPath() {
+  getFillPath(ctx: CanvasRenderingContext2D) {
     let showTime = false
     let showFill = true
     if (showTime) {
       console.time()
     }
-    let fillPath = new Path2D()
 
     const drawFillArea = (nodes: PenNetworkNode[], ctrlNodes: P[], closeAreasId: any[]) => {
       if (showFill) {
         let newNodes = cloneDeep(nodes)
         let newCtrlNodes = cloneDeep(ctrlNodes)
-        closeAreasId.map(s => s.area).map(v => {
+        closeAreasId.map(s => s.area).map((v: any []) => {
           let startPoint = newNodes[v[0].line[0]]
           let endPoint = newNodes[v[0].line[1]]
-          fillPath.moveTo2(startPoint)
-          console.log('v', startPoint, JSON.stringify(v.map(a => a.line)))
+          let path = new Path2D()
+          path.moveTo2(startPoint)
+          // console.log('v', startPoint, JSON.stringify(v.map(a => a.line)))
           v.map((w: any) => {
             let line = w.line
             let lineType = line[4]
             endPoint = newNodes[line[1]]
             switch (lineType) {
               case LineType.Line:
-                fillPath.lineTo2(endPoint)
+                path.lineTo2(endPoint)
                 break
               case LineType.Bezier3:
                 // console.log('newCtrlNodes[line[2]]',newCtrlNodes[line[2]])
                 // console.log('newCtrlNodes[line[3]]',newCtrlNodes[line[3]])
                 // console.log('endPoint',endPoint)
-                fillPath.bezierCurveTo2(newCtrlNodes[line[2]], newCtrlNodes[line[3]], endPoint)
+                path.bezierCurveTo2(newCtrlNodes[line[2]], newCtrlNodes[line[3]], endPoint)
                 break
               case LineType.Bezier2:
                 let cp: number = 0
                 if (line[2] !== -1) cp = line[2]
                 if (line[3] !== -1) cp = line[3]
-                fillPath.quadraticCurveTo2(newCtrlNodes[cp], endPoint)
+                path.quadraticCurveTo2(newCtrlNodes[cp], endPoint)
                 break
             }
           })
+          // path.closePath()
+          ctx.fill(path)
         })
       }
     }
@@ -389,7 +389,7 @@ export class Pen extends ParentShape {
           visited.push(line.id)
           //找出列表中，包含了当前线条end点的的其他线条
           let containEndPointLines = list.filter(w => w.line.slice(0, 2).includes(end) && w.id !== line.id)
-          console.log('包含0', '当前：', line.line, 'save', JSON.stringify(save.map(v => v.line)), '包含', JSON.stringify(containEndPointLines.map(v => v.line)),)
+          // console.log('包含0', '当前：', line.line, 'save', JSON.stringify(save.map(v => v.line)), '包含', JSON.stringify(containEndPointLines.map(v => v.line)),)
           while (containEndPointLines.length !== 0) {
             if (containEndPointLines.length === 1) {
               //这里用复制一遍。因为后续的其他遍历，可能也会碰到这条线，然后方向是相反的，又去改变头和尾
@@ -411,17 +411,17 @@ export class Pen extends ParentShape {
               visited.push(a.id)
               save.push(a)
               if (end === start) {
-                console.log(1, '当前：', line, 'save', JSON.stringify(save.map(v => v.line)))
+                // console.log(1, '当前：', line, 'save', JSON.stringify(save.map(v => v.line)))
                 return [save]
               }
               //如果当前线段与线段们中的任一组成了回路，那么就是一个新的封闭图
               let isCloseIndex = save.findIndex(b => b.line[0] === end)
               if (isCloseIndex > -1) {
-                console.log(2, '当前：', line, 'save', JSON.stringify(save.map(v => v.line)))
+                // console.log(2, '当前：', line, 'save', JSON.stringify(save.map(v => v.line)))
                 return [save.slice(isCloseIndex)]
               }
               containEndPointLines = list.filter(w => w.line.slice(0, 2).includes(end) && w.id !== a.id)
-              console.log('包含1', '当前：', line, 'save', JSON.stringify(save.map(v => v.line)), '包含', JSON.stringify(containEndPointLines.map(v => v.line)))
+              // console.log('包含1', '当前：', line, 'save', JSON.stringify(save.map(v => v.line)), '包含', JSON.stringify(containEndPointLines.map(v => v.line)))
             } else {
               for (let i = 0; i < containEndPointLines.length; i++) {
                 let newSave = save.slice()
@@ -446,12 +446,12 @@ export class Pen extends ParentShape {
                   if (!check(closeArea)) {
                     closeAreasRepeat = closeAreasRepeat.concat([closeArea])
                   }
-                  console.log(3, '当前：', a.line, 'save', JSON.stringify(newSave.map(v => v.line)), '区域', closeAreasRepeat)
+                  // console.log(3, '当前：', a.line, 'save', JSON.stringify(newSave.map(v => v.line)), '区域', closeAreasRepeat)
                 } else if (newEnd === start) {
                   if (!check(newSave)) {
                     closeAreasRepeat = closeAreasRepeat.concat([newSave])
                   }
-                  console.log(4, '当前：', a.line, 'save', JSON.stringify(newSave.map(v => v.line)), '区域', closeAreasRepeat)
+                  // console.log(4, '当前：', a.line, 'save', JSON.stringify(newSave.map(v => v.line)), '区域', closeAreasRepeat)
                 } else {
                   let r = findCloseArea(start, newEnd, a, list, newSave)
                   if (r.length) {
@@ -459,7 +459,7 @@ export class Pen extends ParentShape {
                       closeAreasRepeat = closeAreasRepeat.concat(r)
                     }
                   }
-                  console.log(5, '当前：', a.line, 'save', JSON.stringify(newSave.map(v => v.line)), '区域', closeAreasRepeat)
+                  // console.log(5, '当前：', a.line, 'save', JSON.stringify(newSave.map(v => v.line)), '区域', closeAreasRepeat)
                 }
               }
               return []
@@ -485,13 +485,13 @@ export class Pen extends ParentShape {
             }
           })
 
-          console.log('closeAreasRepeat', closeAreasRepeat)
-          closeAreasRepeat.map(v => {
-            console.log(JSON.stringify(v.map(a => a.line)))
-          })
+          // console.log('closeAreasRepeat', closeAreasRepeat)
+          // closeAreasRepeat.map(v => {
+          //   console.log(JSON.stringify(v.map(a => a.line)))
+          // })
           let closeAreasId = closeAreasRepeat.map((v, i) => ({id: i, area: v}))
           closeAreasId.sort((a, b) => a.area.length - b.area.length)
-          console.log('closeAreasId', closeAreasId)
+          // console.log('closeAreasId', closeAreasId)
           let waitDelId: number[] = []
 
           //筛选重叠的图形：有两条边以上相同的即为重叠的图形
@@ -508,8 +508,8 @@ export class Pen extends ParentShape {
               })
               return count >= 2
             })
-            console.log('aids', aids)
-            console.log('q', q)
+            // console.log('aids', aids)
+            // console.log('q', q)
 
             if (q.length) {
               if (a.area.length < q[0].area.length) {
@@ -527,10 +527,10 @@ export class Pen extends ParentShape {
             }
           })
 
-          console.log('closeAreasId', closeAreasId)
-          closeAreasId.map(v => {
-            console.log(JSON.stringify(v.area.map(a => a.line)))
-          })
+          // console.log('closeAreasId', closeAreasId)
+          // closeAreasId.map(v => {
+          // console.log(JSON.stringify(v.area.map(a => a.line)))
+          // })
           // console.log('visited', cloneDeep(Array.from(new Set(visited))))
 
           // console.log('newNodes', cloneDeep(newNodes))
@@ -568,7 +568,7 @@ export class Pen extends ParentShape {
             ctx.restore()
           })
 
-          drawFillArea(newNodes, newCtrlNodes, closeAreasId.slice(3, 4))
+          drawFillArea(newNodes, newCtrlNodes, closeAreasId)
           // drawFillArea(newNodes, newCtrlNodes, closeAreasId.slice(4, 5))
 
           this.conf.cache.nodes = newNodes
@@ -583,7 +583,6 @@ export class Pen extends ParentShape {
     if (showTime) {
       console.timeEnd()
     }
-    return fillPath
   }
 
   getStrokePath() {

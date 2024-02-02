@@ -4,6 +4,6 @@ const EventKeys = {
   ON_CONF_CHANGE: 'onChangeConf',
   SET_CONF: 'setConf',
   POINT_INFO:'pointInfo',
-  MODE:'mode',
+  OPTION_MODE:'option_mode',
 }
 export {EventKeys}

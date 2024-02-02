@@ -136,6 +136,8 @@ export interface BaseConfig extends Layout, Geometry, Text {
   penNetwork: PenNetwork
   cache: PenNetwork & {areas: any[], linePoints: Map<string, number>}
   isCache: boolean
+  //是否是一个点或者一条线
+  isPointOrLine: boolean
 }
 
 export enum FontFamily {

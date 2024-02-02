@@ -11,20 +11,20 @@ import {
   ShapeStatus,
   ShapeType
 } from "../../types/type"
-import CanvasUtil2 from "../../engine/CanvasUtil2"
-import {clone, cloneDeep, merge} from "lodash"
-import {getShapeFromConfig} from "../../utils/common"
+import CanvasUtil2, { CU } from "../../engine/CanvasUtil2"
+import { clone, cloneDeep, merge } from "lodash"
+import { getShapeFromConfig } from "../../utils/common"
 import EventBus from "../../event/eventBus"
-import {BaseConfig, Rect} from "../../config/BaseConfig"
+import { BaseConfig, Rect } from "../../config/BaseConfig"
 import helper from "../../utils/helper"
 import draw from "../../utils/draw"
-import {defaultConfig} from "../../utils/constant"
-import {Math2} from "../../utils/math"
-import {Bezier} from "../../utils/bezier"
-import {BBox, Bezier as BezierJs} from "bezier-js";
-import {EventKeys} from "../../event/eventKeys";
-import {HandleMirroring, PenNetworkLine, PenNetworkNode} from "../../config/PenConfig";
-import {generateNode} from "../../utils/template"
+import { defaultConfig } from "../../utils/constant"
+import { Math2 } from "../../utils/math"
+import { Bezier } from "../../utils/bezier"
+import { BBox, Bezier as BezierJs } from "bezier-js";
+import { EventKeys } from "../../event/eventKeys";
+import { HandleMirroring, PenNetworkLine, PenNetworkNode } from "../../config/PenConfig";
+import { generateNode } from "../../utils/template"
 
 export class BaseShape {
   hoverType: MouseOptionType = MouseOptionType.None
@@ -44,10 +44,8 @@ export class BaseShape {
   constructor(props: ShapeProps) {
     // console.log('props', clone(props))
     this.conf = helper.initConf(props.conf, props.parent?.conf)
-    if (this.conf.isCustom) {
-      //如果是一条线，或一个点，计算出来有问题
-      this.calcNewCenterAndWidthAndHeight()
-    }
+    //如果是一条线，或一个点，计算出来有问题
+    this.calcNewCenterAndWidthAndHeight()
     this.parent = props.parent
     this.original = cloneDeep(this.conf)
     // console.log('config', clone(this.conf))
@@ -87,7 +85,7 @@ export class BaseShape {
         cu.mode = ShapeType.EDIT
       }
       this._status = val
-      EventBus.emit(EventKeys.MODE, this._status)
+      EventBus.emit(EventKeys.OPTION_MODE, this._status)
       CanvasUtil2.getInstance().render()
     }
   }
@@ -1080,7 +1078,7 @@ export class BaseShape {
         let {pointIndex, lineIndex, type} = this.editStartPointInfo
         if (!type) return
 
-        if (type === EditType.Point) {
+        if (type === EditType.Point)  {
           // console.log('pen-onMouseMove', lastPoint.center, event.point)
           let lastPoint = nodes[pointIndex]
           let ctx = cu.ctx
@@ -1117,7 +1115,7 @@ export class BaseShape {
               ctx.beginPath()
               ctx.moveTo2(fixLastPoint)
               ctx.strokeStyle = defaultConfig.strokeStyle
-              if (lastPoint.cps[1] !== -1) {
+              if (lastPoint.cps.length && lastPoint.cps[1] !== -1) {
                 let cp = ctrlNodes[lastPoint.cps[1]]
                 let fixLastPointCp2 = {
                   x: center.x + cp.x,
@@ -1256,9 +1254,9 @@ export class BaseShape {
     maxX = maxY = 0
     minX = minY = Infinity
 
-    let checkLine = (startPoint: PenNetworkNode) => {
-      let x = center.x + startPoint.x
-      let y = center.y + startPoint.y
+    let checkLine = (node: PenNetworkNode) => {
+      let x = center.x + node.x
+      let y = center.y + node.y
       if (x > maxX) maxX = x
       if (x < minX) minX = x
       if (y > maxY) maxY = y
@@ -1306,6 +1304,7 @@ export class BaseShape {
 
     let newWidth = maxX - minX
     let newHeight = maxY - minY
+
     let newCenter = {
       x: minX + newWidth / 2,
       y: minY + newHeight / 2,
@@ -1332,6 +1331,21 @@ export class BaseShape {
     if (realRotation) {
       newCenter = Math2.getRotatedPoint(newCenter, center, realRotation)
     }
+    // console.log('newCenter', newCenter)
+    //TODO
+    if (newWidth === 0 || newHeight === 0) {
+      this.conf.isPointOrLine = true
+      let w = 10 / CU.i().handScale
+      if (newWidth === 0) {
+        newWidth = w
+      }
+      if (newHeight === 0) {
+        newHeight = w
+      }
+    } else {
+      this.conf.isPointOrLine = false
+    }
+
     this.conf.center = newCenter
     this.conf.layout.w = newWidth
     this.conf.layout.h = newHeight
@@ -1601,7 +1615,7 @@ export class BaseShape {
             ]
           } else {
             let zhiLine
-            let wanLine: {line: any; id?: number}
+            let wanLine: { line: any; id?: number }
             let zhiP
             let zhiIndex
             let wanP: P
@@ -1976,7 +1990,7 @@ export class BaseShape {
     return point
   }
 
-  lineGet(t: number, {p0, p1}: {p0: P, p1: P}) {
+  lineGet(t: number, {p0, p1}: { p0: P, p1: P }) {
 
 
   }

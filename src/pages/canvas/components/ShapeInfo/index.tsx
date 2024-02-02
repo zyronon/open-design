@@ -59,7 +59,7 @@ const ShapeInfo = (props: any) => {
       EventKeys.ON_CONF_CHANGE,
       EventKeys.SELECT_SHAPE,
       EventKeys.POINT_INFO,
-      EventKeys.MODE,
+      EventKeys.OPTION_MODE,
     ]
     EventBus.on(EventKeys.ON_CONF_CHANGE, () => {
       shape.current && setConf(cloneDeep(shape.current.conf))
@@ -72,8 +72,8 @@ const ShapeInfo = (props: any) => {
       // console.log('pointInfo', val)
       setPointInfo(val)
     })
-    EventBus.on(EventKeys.MODE, (val: any) => {
-      // console.log('MODE', val)
+    EventBus.on(EventKeys.OPTION_MODE, (val: any) => {
+      // console.log('OPTION_MODE', val)
       setMode(val)
     })
     return () => {

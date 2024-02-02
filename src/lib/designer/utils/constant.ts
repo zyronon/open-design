@@ -1,8 +1,8 @@
-import {FontWeight, P, ShapeType, StrokeAlign, TextMode} from "../types/type"
-import {FontFamily, TextAlign} from "../config/TextConfig"
-import {getPenPoint, HandleMirroring, PenConfig} from "../config/PenConfig"
+import { FontWeight, P, ShapeType, StrokeAlign, TextMode } from "../types/type"
+import { FontFamily, TextAlign } from "../config/TextConfig"
+import { getPenPoint, HandleMirroring, PenConfig } from "../config/PenConfig"
 import helper from "./helper";
-import {BaseConfig} from "../config/BaseConfig";
+import { BaseConfig } from "../config/BaseConfig";
 
 export const fontFamilies = [
   {
@@ -877,5 +877,29 @@ export const rects: any[] = [
         [8, 9, -1, -1, 1],
       ]
     },
+  } as any),
+  helper.getDefaultShapeConfig({
+    "layout": {
+      "x": 174,
+      "y": 29,
+      "w": 359,
+      "h": 148
+    },
+    name: 'Pen',
+    "fillColor": "#4C4C4C",
+    type: ShapeType.PEN,
+    isCustom: true,
+    penNetwork: {
+      regions: [],
+      nodes: [
+        getPenPoint({x: 0, y: 0}),
+        getPenPoint({x: 110, y: 150}),
+      ],
+      ctrlNodes: [],
+      paths: [
+        [0, 1, -1, -1, 1]
+      ]
+    },
   } as any)
+
 ]

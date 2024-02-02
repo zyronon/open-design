@@ -1,7 +1,7 @@
-import {P, P2} from "../types/type"
-import {BaseConfig, Rect} from "../config/BaseConfig"
-import {Colors, defaultConfig} from "./constant"
-import {jiaodu2hudu} from "../../../utils"
+import { P, P2 } from "../types/type"
+import { BaseConfig, Rect } from "../config/BaseConfig"
+import { Colors, defaultConfig } from "./constant"
+import { jiaodu2hudu } from "../../../utils"
 import CanvasUtil2 from "../engine/CanvasUtil2"
 
 export default {
@@ -128,43 +128,59 @@ export default {
   clear(rect: Rect, ctx: any) {
     ctx.clearRect(rect.x, rect.y, rect.w, rect.h)
   },
-  selected(ctx: CanvasRenderingContext2D, layout: any) {
+  selected(ctx: CanvasRenderingContext2D, layout: any, isPointOrLine = false) {
     let {x, y, w, h,} = layout
     ctx.strokeStyle = defaultConfig.strokeStyle
-
-    ctx.beginPath()
-    ctx.rect(x, y, w, h)
-    ctx.closePath()
-    ctx.stroke()
 
     let cu = CanvasUtil2.getInstance()
     let d = 4 / cu.handScale
     let r = 2 / cu.handScale
     ctx.fillStyle = Colors.White
-    this.roundRect(ctx, {
-      x: x - d,
-      y: y - d,
-      w: 2 * d,
-      h: 2 * d,
-    }, r,)
-    this.roundRect(ctx, {
-      x: x + w - d,
-      y: y - d,
-      w: 2 * d,
-      h: 2 * d,
-    }, r,)
-    this.roundRect(ctx, {
-      x: x + w - d,
-      y: y + h - d,
-      w: 2 * d,
-      h: 2 * d,
-    }, r,)
-    this.roundRect(ctx, {
-      x: x - d,
-      y: y + h - d,
-      w: 2 * d,
-      h: 2 * d,
-    }, r,)
+    if (isPointOrLine) {
+      this.roundRect(ctx, {
+        x: x,
+        y: y,
+        w: 2 * d,
+        h: 2 * d,
+      }, r,)
+      this.roundRect(ctx, {
+        x: x + w,
+        y: y + h,
+        w: 2 * d,
+        h: 2 * d,
+      }, r,)
+    } else {
+
+      ctx.beginPath()
+      ctx.rect(x, y, w, h)
+      ctx.closePath()
+      ctx.stroke()
+
+      this.roundRect(ctx, {
+        x: x - d,
+        y: y - d,
+        w: 2 * d,
+        h: 2 * d,
+      }, r,)
+      this.roundRect(ctx, {
+        x: x + w - d,
+        y: y - d,
+        w: 2 * d,
+        h: 2 * d,
+      }, r,)
+      this.roundRect(ctx, {
+        x: x + w - d,
+        y: y + h - d,
+        w: 2 * d,
+        h: 2 * d,
+      }, r,)
+      this.roundRect(ctx, {
+        x: x - d,
+        y: y + h - d,
+        w: 2 * d,
+        h: 2 * d,
+      }, r,)
+    }
   },
   edit(ctx: CanvasRenderingContext2D, config: any) {
     let {

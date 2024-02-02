@@ -82,7 +82,7 @@ export class Pen extends ParentShape {
     //容器hover时只需要描边矩形就行了
     let strokePath = this.getStrokePath()
     ctx.stroke(strokePath)
-    draw.selected(ctx, newLayout)
+    draw.selected(ctx, newLayout, this.conf.isPointOrLine)
   }
 
   drawEdit(ctx: CanvasRenderingContext2D, newLayout: Rect): any {
@@ -491,7 +491,7 @@ export class Pen extends ParentShape {
             }
           })
 
-          console.log('closeAreasRepeat', closeAreasRepeat)
+          // console.log('closeAreasRepeat', closeAreasRepeat)
           // closeAreasRepeat.map(v => {
           //   console.log(JSON.stringify(v.map(a => a.line)))
           // })

@@ -1,5 +1,5 @@
-import {LineType, P} from "../types/type";
-import {BaseConfig} from "./BaseConfig"
+import { LineType, P } from "../types/type";
+import { BaseConfig } from "./BaseConfig"
 
 export type StrokeCap =
   'NONE'
@@ -40,8 +40,8 @@ export function getPenPoint(val: P) {
       cornerRadius: 0,
       realCornerRadius: 0,
       handleMirroring: HandleMirroring.RightAngle,
-      cornerCps: [],
-      cps: [],
+      cornerCps: [-1, -1],
+      cps: [-1, -1],
     },
     ...val
   }

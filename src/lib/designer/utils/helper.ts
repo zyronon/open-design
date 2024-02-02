@@ -453,6 +453,7 @@ export default {
       isMask: false,
       effects: [],
       isCache: false,
+      isPointOrLine: false,
       penNetwork: {
         ctrlNodes: [],
         paths: [],

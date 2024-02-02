@@ -12,7 +12,7 @@ import {
   ShapeType
 } from "../../types/type"
 import CanvasUtil2, { CU } from "../../engine/CanvasUtil2"
-import { clone, cloneDeep, merge } from "lodash"
+import { cloneDeep, merge } from "lodash"
 import { getShapeFromConfig } from "../../utils/common"
 import EventBus from "../../event/eventBus"
 import { BaseConfig, Rect } from "../../config/BaseConfig"
@@ -44,8 +44,11 @@ export class BaseShape {
   constructor(props: ShapeProps) {
     // console.log('props', clone(props))
     this.conf = helper.initConf(props.conf, props.parent?.conf)
+    console.log('this.conf', cloneDeep(this.conf))
     //如果是一条线，或一个点，计算出来有问题
     this.calcNewCenterAndWidthAndHeight()
+    console.log('this.conf', cloneDeep(this.conf))
+
     this.parent = props.parent
     this.original = cloneDeep(this.conf)
     // console.log('config', clone(this.conf))
@@ -83,6 +86,7 @@ export class BaseShape {
         }
         cu.editShape = this
         cu.mode = ShapeType.EDIT
+        cu.editModeType = EditModeType.Select
       }
       this._status = val
       EventBus.emit(EventKeys.OPTION_MODE, this._status)
@@ -1078,7 +1082,7 @@ export class BaseShape {
         let {pointIndex, lineIndex, type} = this.editStartPointInfo
         if (!type) return
 
-        if (type === EditType.Point)  {
+        if (type === EditType.Point) {
           // console.log('pen-onMouseMove', lastPoint.center, event.point)
           let lastPoint = nodes[pointIndex]
           let ctx = cu.ctx
@@ -1247,7 +1251,7 @@ export class BaseShape {
 
   calcNewCenterAndWidthAndHeight() {
     if (!this.conf.isCustom) return
-    let {center, realRotation, flipHorizontal, flipVertical} = this.conf
+    let {center, realRotation, flipHorizontal, flipVertical, layout} = this.conf
     const {nodes, paths, ctrlNodes} = this.conf.penNetwork
 
     let maxX: number, minX: number, maxY: number, minY: number
@@ -1295,6 +1299,12 @@ export class BaseShape {
       }
     })
 
+    //处理只有一个点的情况
+    if (paths.length === 0) {
+      minY = maxY = layout.x
+      minX = maxX = layout.y
+    }
+
     // console.log(
     //   'maxX', maxX,
     //   'minX', minX,
@@ -1309,6 +1319,7 @@ export class BaseShape {
       x: minX + newWidth / 2,
       y: minY + newHeight / 2,
     }
+    // console.log('newCenter', newCenter)
 
     //因为lineShapes的点的值，是相对于center的。所以还需要修正。新center减去老center得到偏移量
     //点的值再减去偏移值，就是以新center为相对值的点值
@@ -1333,13 +1344,13 @@ export class BaseShape {
     }
     // console.log('newCenter', newCenter)
     //TODO
-    if (newWidth === 0 || newHeight === 0) {
+    if (newWidth === 0 || newHeight === 0 || paths.length === 0) {
       this.conf.isPointOrLine = true
       let w = 10 / CU.i().handScale
-      if (newWidth === 0) {
+      if ([0, Infinity].includes(newWidth)) {
         newWidth = w
       }
-      if (newHeight === 0) {
+      if ([0, Infinity].includes(newHeight)) {
         newHeight = w
       }
     } else {

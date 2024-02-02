@@ -840,7 +840,7 @@ export const rects: any[] = [
     "commonPoints": [],
   },
   helper.getDefaultShapeConfig({
-    use: false,
+    use: true,
     "layout": {
       "x": 174,
       "y": 29,
@@ -893,11 +893,11 @@ export const rects: any[] = [
       regions: [],
       nodes: [
         getPenPoint({x: 0, y: 0}),
-        getPenPoint({x: 110, y: 150}),
+        // getPenPoint({x: 110, y: 150}),
       ],
       ctrlNodes: [],
       paths: [
-        [0, 1, -1, -1, 1]
+        // [0, 1, -1, -1, 1]
       ]
     },
   } as any)

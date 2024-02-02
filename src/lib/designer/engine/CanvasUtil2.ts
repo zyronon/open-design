@@ -1,17 +1,17 @@
-import {BaseShape} from "../shapes/core/BaseShape"
+import { BaseShape } from "../shapes/core/BaseShape"
 import EventBus from "../event/eventBus"
-import {BaseEvent2, EditModeType, EditType, EventTypes, P, ShapeStatus, ShapeType} from "../types/type"
-import {cloneDeep} from "lodash"
-import {Colors, defaultConfig} from "../utils/constant"
-import {mat4} from "gl-matrix"
-import {getShapeFromConfig} from "../utils/common"
-import {BaseConfig} from "../config/BaseConfig"
+import { BaseEvent2, EditModeType, EditType, EventTypes, P, ShapeStatus, ShapeType } from "../types/type"
+import { cloneDeep } from "lodash"
+import { Colors, defaultConfig } from "../utils/constant"
+import { mat4 } from "gl-matrix"
+import { getShapeFromConfig } from "../utils/common"
+import { BaseConfig } from "../config/BaseConfig"
 import helper from "../utils/helper"
 import draw from "../utils/draw"
-import {BoxSelection} from "../shapes/BoxSelection";
-import {EventKeys} from "../event/eventKeys";
-import {Pen} from "../shapes/Pen";
-import {HandleMirroring} from "../config/PenConfig";
+import { BoxSelection } from "../shapes/BoxSelection";
+import { EventKeys } from "../event/eventKeys";
+import { Pen } from "../shapes/Pen";
+import { getPenPoint } from "../config/PenConfig";
 // import {Pen} from "../shapes/Pen"
 
 const out: any = new Float32Array([
@@ -415,9 +415,8 @@ export default class CanvasUtil2 {
 
   onMouseDown(e: BaseEvent2,) {
     if (e.capture) return
-    console.log('onMouseDown', e)
     if (this.editShape) return
-    // console.log('cu-onMouseDown', e)
+    console.log('cu-onMouseDown', e)
     this.selectedShapeParent.map((shape: BaseShape) => shape.isCapture = true)
     if (this.selectedShape) {
       this.selectedShape.status = ShapeStatus.Normal
@@ -440,15 +439,7 @@ export default class CanvasUtil2 {
               isCustom: true,
               penNetwork: {
                 nodes: [
-                  {
-                    x: this.mouseStart.x,
-                    y: this.mouseStart.y,
-                    cornerRadius: 0,
-                    realCornerRadius: 0,
-                    handleMirroring: HandleMirroring.RightAngle,
-                    cornerCps: [],
-                    cps: []
-                  },
+                  getPenPoint({x: 0, y: 0}),
                 ],
                 ctrlNodes: [],
                 paths: []
@@ -456,11 +447,17 @@ export default class CanvasUtil2 {
             } as any),
           })
           this.editShape.status = ShapeStatus.Edit
+          this.editShape.editStartPointInfo = {
+            type: EditType.Point,
+            lineIndex: -1,
+            pointIndex: 0,
+            cpIndex: -1
+          }
           this.editModeType = EditModeType.Edit
-          EventBus.emit(EventTypes.onMouseDown, this.editShape)
           this.children.push(this.editShape)
           this.render()
           this.mode = ShapeType.EDIT
+          EventBus.emit(EventTypes.onMouseDown, this.editShape)
       }
     }
   }

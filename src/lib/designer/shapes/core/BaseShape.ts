@@ -44,10 +44,10 @@ export class BaseShape {
   constructor(props: ShapeProps) {
     // console.log('props', clone(props))
     this.conf = helper.initConf(props.conf, props.parent?.conf)
-    console.log('this.conf', cloneDeep(this.conf))
+    // console.log('this.conf', cloneDeep(this.conf))
     //如果是一条线，或一个点，计算出来有问题
     this.calcNewCenterAndWidthAndHeight()
-    console.log('this.conf', cloneDeep(this.conf))
+    // console.log('this.conf', cloneDeep(this.conf))
 
     this.parent = props.parent
     this.original = cloneDeep(this.conf)
@@ -73,12 +73,8 @@ export class BaseShape {
       }
       if (val === ShapeStatus.Select) {
         this.editStartPointInfo = cloneDeep(this.defaultCurrentOperationInfo)
-        //TODO 会导致子组件选中后，再选中父组件时，无法取消子组件
-        // cu.selectedShape = this
         cu.editShape = undefined
         cu.mode = ShapeType.SELECT
-        // TODO　先这样。一时半会儿用不到parents
-        cu.setSelectShape(this, [])
       }
       if (val === ShapeStatus.Edit) {
         if (!this.conf.lineShapes.length) {
@@ -486,7 +482,7 @@ export class BaseShape {
     if (this.enterType !== MouseOptionType.None || this.mouseDown || this.status === ShapeStatus.Edit) {
       //把事件消费了，不然父级会使用
       event.stopPropagation()
-      this.emit(event, parents)
+      this.dispatch(event, parents)
       return true
     }
 
@@ -521,7 +517,7 @@ export class BaseShape {
         }
         //顺序不能反，先消费事件。因为emit里面可能会恢复事件。
         event.stopPropagation()
-        this.emit(event, parents)
+        this.dispatch(event, parents)
       }
       return true
     } else {
@@ -548,7 +544,7 @@ export class BaseShape {
     }
   }
 
-  emit(event: BaseEvent2, p: BaseShape[] = []) {
+  dispatch(event: BaseEvent2, p: BaseShape[] = []) {
     // @ts-ignore
     this['_' + event.type]?.(event, p)
   }

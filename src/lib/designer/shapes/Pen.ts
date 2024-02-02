@@ -25,7 +25,7 @@ export class Pen extends ParentShape {
   beforeEvent(event: BaseEvent2): boolean {
     if (this.status === ShapeStatus.Edit) {
       event.stopPropagation()
-      super.emit(event, [])
+      super.dispatch(event, [])
       return true
     }
     return false
@@ -46,10 +46,11 @@ export class Pen extends ParentShape {
     ctx.strokeStyle = borderColor
     ctx.fillStyle = fillColor
 
+    this.getFillPath(ctx)
+
     let strokePath = this.getStrokePath()
     ctx.stroke(strokePath)
 
-    this.getFillPath(ctx)
     // ctx.fill(fillPath, 'nonzero')
     // ctx.fill(fillPath, 'evenodd')
 
@@ -96,10 +97,11 @@ export class Pen extends ParentShape {
     ctx.strokeStyle = Colors.Line2
     ctx.fillStyle = fillColor
 
+    this.getFillPath(ctx)
+
     let strokePath = this.getStrokePath()
     ctx.stroke(strokePath)
 
-    this.getFillPath(ctx)
 
     //渲染hover在线上时，线段的中心点
     if ((this.editHover.type === EditType.Line

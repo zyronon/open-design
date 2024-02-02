@@ -1,17 +1,17 @@
-import { BaseShape } from "../shapes/core/BaseShape"
+import {BaseShape} from "../shapes/core/BaseShape"
 import EventBus from "../event/eventBus"
-import { BaseEvent2, EditModeType, EditType, EventTypes, P, ShapeStatus, ShapeType } from "../types/type"
-import { cloneDeep } from "lodash"
-import { Colors, defaultConfig } from "../utils/constant"
-import { mat4 } from "gl-matrix"
-import { getShapeFromConfig } from "../utils/common"
-import { BaseConfig } from "../config/BaseConfig"
+import {BaseEvent2, EditModeType, EditType, EventTypes, P, ShapeStatus, ShapeType} from "../types/type"
+import {cloneDeep} from "lodash"
+import {Colors, defaultConfig} from "../utils/constant"
+import {mat4} from "gl-matrix"
+import {getShapeFromConfig} from "../utils/common"
+import {BaseConfig} from "../config/BaseConfig"
 import helper from "../utils/helper"
 import draw from "../utils/draw"
-import { BoxSelection } from "../shapes/BoxSelection";
-import { EventKeys } from "../event/eventKeys";
-import { Pen } from "../shapes/Pen";
-import { getPenPoint } from "../config/PenConfig";
+import {BoxSelection} from "../shapes/BoxSelection";
+import {EventKeys} from "../event/eventKeys";
+import {Pen} from "../shapes/Pen";
+import {getPenPoint} from "../config/PenConfig";
 // import {Pen} from "../shapes/Pen"
 
 const out: any = new Float32Array([
@@ -97,7 +97,8 @@ export default class CanvasUtil2 {
   }
 
   set selectedShape(val) {
-    // console.log('val',val)
+    // if (!val) debugger
+    console.log('selectedShape', val)
     this._selectedShape = val
   }
 
@@ -314,6 +315,7 @@ export default class CanvasUtil2 {
     let code = e.keyCode
     //Esc
     if (code === 27) {
+      console.log('esc', this.editShape)
       if (this.editShape) {
         if (this.editShape.status === ShapeStatus.Edit) {
           if (this.editShape.editStartPointInfo.type) {
@@ -324,15 +326,18 @@ export default class CanvasUtil2 {
             this.editShape.tempPoint = undefined
             return this.render()
           }
-          this.editShape.status = ShapeStatus.Select
           this.selectedShape = this.editShape
+          this.selectedShape.status = ShapeStatus.Select
           this.editShape = undefined
           this.mode = ShapeType.SELECT
           return this.render()
         }
       }
+      console.log('this.selectedShape', this.selectedShape)
       if (this.selectedShape) {
-        this.selectedShape = undefined
+        this.selectedShape.status = ShapeStatus.Hover
+        this.selectedShapeParent = []
+        this.selectedShape = null
       }
     }
     //Del
@@ -429,7 +434,7 @@ export default class CanvasUtil2 {
     if (!this.isDesignMode()) {
       switch (this.mode) {
         case ShapeType.PEN:
-          this.editShape = new Pen({
+          let pen = new Pen({
             conf: helper.getDefaultShapeConfig({
               layout: {x: this.mouseStart.x, y: this.mouseStart.y, w: 1, h: 1},
               // layout: {x: 0, y: 0, w: 0, h: 0},
@@ -446,6 +451,7 @@ export default class CanvasUtil2 {
               },
             } as any),
           })
+          this.editShape = pen
           this.editShape.status = ShapeStatus.Edit
           this.editShape.editStartPointInfo = {
             type: EditType.Point,
@@ -455,6 +461,7 @@ export default class CanvasUtil2 {
           }
           this.editModeType = EditModeType.Edit
           this.children.push(this.editShape)
+          this.setSelectShape(pen, [])
           this.render()
           this.mode = ShapeType.EDIT
           EventBus.emit(EventTypes.onMouseDown, this.editShape)

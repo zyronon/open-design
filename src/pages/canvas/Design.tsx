@@ -65,7 +65,7 @@ class Design extends React.Component<any, IState> {
     })
     EventBus.on(EventTypes.onModeChange, (val: ShapeType) => {
       // console.log('sss', val)
-      this.setState({mode: val})
+      this.setState({mode: val, editModeType: EditModeType.Select})
       if ([ShapeType.PEN, ShapeType.PENCIL].includes(val)) {
         this.setCanvasUtilMode(val, 'drawType4')
       }

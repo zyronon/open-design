@@ -1,15 +1,15 @@
 import CanvasUtil2 from "../engine/CanvasUtil2"
-import { BaseConfig, Rect } from "../config/BaseConfig"
+import {BaseConfig, Rect} from "../config/BaseConfig"
 import helper from "../utils/helper"
-import { Colors, defaultConfig } from "../utils/constant"
+import {Colors, defaultConfig} from "../utils/constant"
 import draw from "../utils/draw"
-import { ParentShape } from "./core/ParentShape";
-import { BaseEvent2, EditType, LinePath, LineShape, LineType, P, ShapeStatus } from "../types/type"
-import { BaseShape } from "./core/BaseShape"
-import { PenConfig, PenNetworkLine, PenNetworkNode } from "../config/PenConfig"
-import { Math2 } from "../utils/math"
-import { cloneDeep, eq } from "lodash"
-import { Bezier } from "bezier-js"
+import {ParentShape} from "./core/ParentShape";
+import {BaseEvent2, EditType, LinePath, LineShape, LineType, P, ShapeStatus} from "../types/type"
+import {BaseShape} from "./core/BaseShape"
+import {PenConfig, PenNetworkLine, PenNetworkNode} from "../config/PenConfig"
+import {Math2} from "../utils/math"
+import {cloneDeep, eq} from "lodash"
+import {Bezier} from "bezier-js"
 
 export class Pen extends ParentShape {
   mouseDown: boolean = false
@@ -102,25 +102,11 @@ export class Pen extends ParentShape {
     let strokePath = this.getStrokePath()
     ctx.stroke(strokePath)
 
-
-    //渲染hover在线上时，线段的中心点
-    if ((this.editHover.type === EditType.Line
-        || this.editHover.type === EditType.CenterPoint)
-      && this.editHover.lineIndex !== -1
-    ) {
-      draw.drawRound(ctx, this.hoverLineCenterPoint)
-    }
     const {nodes, paths, ctrlNodes} = this._conf.penNetwork
-
-    //绘制所有点
-    nodes.map(point => {
-      // if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
-      // if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
-      draw.drawRound(ctx, point)
-    })
 
     ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
     ctx.fillStyle = 'red'
+    //绘制所有点
     this._conf.cache.nodes.map((point, i) => {
       // if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
       // if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
@@ -129,28 +115,68 @@ export class Pen extends ParentShape {
     })
 
     let {pointIndex, type} = this.editStartPointInfo
-    //再绘制选中的当前点和控制点，之所以分开绘制，是因为遮盖问题
-    if (type === EditType.Point || type === EditType.ControlPoint) {
-      let currentPoint = nodes[pointIndex]
-      let points = paths.filter(p => p.slice(0, 2).includes(pointIndex)).reduce((p: number[], c: PenNetworkLine) => {
-        if (!p.includes(c[0])) p.push(c[0])
-        if (!p.includes(c[1])) p.push(c[1])
-        return p
-      }, []).map(v => nodes[v])
 
-      points.map(point => {
-        point.cps.map(v => {
-          if (v !== -1) draw.controlPoint(ctx, ctrlNodes[v], point)
+    // console.log(' this.editStartPointInfo', this.editStartPointInfo)
+    // console.log(' this.editHover', this.editHover)
+    //再绘制选中的当前点和控制点，之所以分开绘制，是因为遮盖问题
+    if (type) {
+      if (type === EditType.Point || type === EditType.ControlPoint) {
+        let currentPoint = nodes[pointIndex]
+        //找到包含当前点的所有线条，如果其他线条是曲线，还需要显示对应的控制点
+        let points = paths.filter(p => p.slice(0, 2).includes(pointIndex)).reduce((p: number[], c: PenNetworkLine) => {
+          if (!p.includes(c[0])) p.push(c[0])
+          if (!p.includes(c[1])) p.push(c[1])
+          return p
+        }, []).map(v => nodes[v])
+
+        points.map(point => {
+          point.cps.map(v => {
+            if (v !== -1) draw.controlPoint(ctx, ctrlNodes[v], point)
+          })
+          if (eq(point, currentPoint)) {
+            draw.currentPoint(ctx, point)
+          } else {
+            draw.drawRound(ctx, point)
+          }
         })
-        if (eq(point, currentPoint)) {
-          draw.currentPoint(ctx, point)
-        } else {
-          draw.drawRound(ctx, point)
+        // draw.currentPoint(ctx, point)
+      }
+    } else {
+      //渲染hover在线上时，线段的中心点
+      let {pointIndex, lineIndex, type} = this.editHover
+      if (type === EditType.Point) {
+        let currentPoint = nodes[pointIndex]
+        draw.drawRound(ctx, currentPoint, 5)
+      }
+      if ((type === EditType.Line || type === EditType.CenterPoint) && lineIndex !== -1) {
+        //TODO 提成统一方法
+        let line = paths[lineIndex]
+        let lineType = line[4]
+        let startPoint = nodes[line[0]]
+        let endPoint = nodes[line[1]]
+        ctx.strokeStyle = Colors.Hover_Line
+        ctx.moveTo2(startPoint)
+        switch (lineType) {
+          case LineType.Line:
+            ctx.lineTo2(endPoint)
+            break
+          case LineType.Bezier3:
+            ctx.bezierCurveTo2(ctrlNodes[line[2]], ctrlNodes[line[3]], endPoint)
+            break
+          case LineType.Bezier2:
+            let cp: number = 0
+            if (line[2] !== -1) cp = line[2]
+            if (line[3] !== -1) cp = line[3]
+            ctx.quadraticCurveTo2(ctrlNodes[cp], endPoint)
+            break
         }
-      })
-      // draw.currentPoint(ctx, point)
+        ctx.stroke()
+
+        draw.drawRound(ctx, this.hoverLineCenterPoint)
+      }
     }
 
+    // console.log('this.tempPoint',this.tempPoint)
     if (this.tempPoint) {
       draw.currentPoint(ctx, this.tempPoint)
     }

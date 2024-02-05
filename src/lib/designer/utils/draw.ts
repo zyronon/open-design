@@ -289,6 +289,7 @@ export default {
     let {x, y} = rect
     ctx.save()
     ctx.lineWidth = defaultConfig.lineWidth / cu.handScale
+    // ctx.lineWidth = 1 / cu.handScale
     ctx.fillStyle = Colors.White
     ctx.strokeStyle = defaultConfig.strokeStyle
     ctx.beginPath()
@@ -320,20 +321,7 @@ export default {
     ctx.fill()
     ctx.stroke()
   },
-  round2(ctx: any, rect: any, r: number,) {
-    let {x, y} = rect
-    ctx.beginPath()
-    ctx.strokeStyle = defaultConfig.strokeStyle
-    ctx.fillStyle = Colors.White
-    ctx.arc(x, y, r, 0, 2 * Math.PI)
-    ctx.fill()
-    ctx.stroke()
-    ctx.beginPath()
-    ctx.arc(x, y, r / 2.5, 0, 2 * Math.PI)
-    ctx.fillStyle = defaultConfig.strokeStyle
-    ctx.fill()
-    ctx.closePath()
-  },
+  //带圆角的矩形
   roundRect(ctx: any, rect: any, r: number,) {
     let {x, y, w, h} = rect
     let w2 = w / 2, h2 = h / 2

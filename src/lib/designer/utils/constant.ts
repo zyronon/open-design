@@ -44,6 +44,7 @@ export const fontSize = [
 
 export const Colors = {
   Primary: '#4B75F6FF',
+  Hover_Line: 'rgb(135,160,236)',
   Select: 'rgba(75,117,246,0.1)',
   Line: 'rgb(217,217,217)',
   Line2: 'rgb(140,140,140)',

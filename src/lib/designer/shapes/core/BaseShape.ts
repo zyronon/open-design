@@ -11,20 +11,20 @@ import {
   ShapeStatus,
   ShapeType
 } from "../../types/type"
-import CanvasUtil2, { CU } from "../../engine/CanvasUtil2"
-import { cloneDeep, merge } from "lodash"
-import { getShapeFromConfig } from "../../utils/common"
+import CanvasUtil2, {CU} from "../../engine/CanvasUtil2"
+import {cloneDeep, merge} from "lodash"
+import {getShapeFromConfig} from "../../utils/common"
 import EventBus from "../../event/eventBus"
-import { BaseConfig, Rect } from "../../config/BaseConfig"
+import {BaseConfig, Rect} from "../../config/BaseConfig"
 import helper from "../../utils/helper"
 import draw from "../../utils/draw"
-import { defaultConfig } from "../../utils/constant"
-import { Math2 } from "../../utils/math"
-import { Bezier } from "../../utils/bezier"
-import { BBox, Bezier as BezierJs } from "bezier-js";
-import { EventKeys } from "../../event/eventKeys";
-import { HandleMirroring, PenNetworkLine, PenNetworkNode } from "../../config/PenConfig";
-import { generateNode } from "../../utils/template"
+import {defaultConfig} from "../../utils/constant"
+import {Math2} from "../../utils/math"
+import {Bezier} from "../../utils/bezier"
+import {BBox, Bezier as BezierJs} from "bezier-js";
+import {EventKeys} from "../../event/eventKeys";
+import {HandleMirroring, PenNetworkLine, PenNetworkNode} from "../../config/PenConfig";
+import {generateNode} from "../../utils/template"
 
 export class BaseShape {
   hoverType: MouseOptionType = MouseOptionType.None

@@ -150,11 +150,11 @@ export default {
         h: 2 * d,
       }, r,)
     } else {
-
       ctx.beginPath()
       ctx.rect(x, y, w, h)
       ctx.closePath()
       ctx.stroke()
+      ctx.lineWidth = 1 / cu.handScale;
 
       this.roundRect(ctx, {
         x: x - d,

@@ -272,6 +272,7 @@ export type CurrentOperationInfo = {
   pointIndex: number,
   cpIndex: number
   lineCenterPoint?: P,
+  hoverPoint?: P,
 }
 
 export enum TextMode {

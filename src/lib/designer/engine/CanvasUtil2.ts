@@ -1,17 +1,17 @@
-import {BaseShape} from "../shapes/core/BaseShape"
+import { BaseShape } from "../shapes/core/BaseShape"
 import EventBus from "../event/eventBus"
-import {BaseEvent2, EditModeType, EditType, EventTypes, P, ShapeStatus, ShapeType} from "../types/type"
-import {cloneDeep} from "lodash"
-import {Colors, defaultConfig} from "../utils/constant"
-import {mat4} from "gl-matrix"
-import {getShapeFromConfig} from "../utils/common"
-import {BaseConfig} from "../config/BaseConfig"
+import { BaseEvent2, EditModeType, EditType, EventTypes, P, ShapeStatus, ShapeType } from "../types/type"
+import { cloneDeep } from "lodash"
+import { Colors, defaultConfig } from "../utils/constant"
+import { mat4 } from "gl-matrix"
+import { getShapeFromConfig } from "../utils/common"
+import { BaseConfig } from "../config/BaseConfig"
 import helper from "../utils/helper"
 import draw from "../utils/draw"
-import {BoxSelection} from "../shapes/BoxSelection";
-import {EventKeys} from "../event/eventKeys";
-import {Pen} from "../shapes/Pen";
-import {getPenPoint} from "../config/PenConfig";
+import { BoxSelection } from "../shapes/BoxSelection";
+import { EventKeys } from "../event/eventKeys";
+import { Pen } from "../shapes/Pen";
+import { getPenPoint } from "../config/PenConfig";
 // import {Pen} from "../shapes/Pen"
 
 const out: any = new Float32Array([
@@ -98,7 +98,7 @@ export default class CanvasUtil2 {
 
   set selectedShape(val) {
     // if (!val) debugger
-    console.log('selectedShape', val)
+    // console.log('selectedShape', val)
     this._selectedShape = val
   }
 
@@ -311,11 +311,11 @@ export default class CanvasUtil2 {
 
   onKeyDown = (e: any) => {
     if (this.isMouseDown) return
-    console.log('onKeyDown', e.keyCode)
+    // console.log('onKeyDown', e.keyCode)
     let code = e.keyCode
     //Esc
     if (code === 27) {
-      console.log('esc', this.editShape)
+      // console.log('esc', this.editShape)
       if (this.editShape) {
         if (this.editShape.status === ShapeStatus.Edit) {
           if (this.editShape.editStartPointInfo.type) {
@@ -329,6 +329,15 @@ export default class CanvasUtil2 {
           this.selectedShape = this.editShape
           this.selectedShape.status = ShapeStatus.Select
           this.editShape = undefined
+          this.mode = ShapeType.SELECT
+          return this.render()
+        }
+        //TODO canvas失去焦点了，无法响应
+        if (this.editModeType === EditModeType.Edit) {
+          this.selectedShape = this.editShape
+          this.selectedShape.status = ShapeStatus.Select
+          this.editShape = undefined
+          this.editModeType = EditModeType.Select
           this.mode = ShapeType.SELECT
           return this.render()
         }
@@ -421,7 +430,7 @@ export default class CanvasUtil2 {
   onMouseDown(e: BaseEvent2,) {
     if (e.capture) return
     if (this.editShape) return
-    console.log('cu-onMouseDown', e)
+    // console.log('cu-onMouseDown', e)
     this.selectedShapeParent.map((shape: BaseShape) => shape.isCapture = true)
     if (this.selectedShape) {
       this.selectedShape.status = ShapeStatus.Normal

@@ -1,15 +1,15 @@
 import CanvasUtil2 from "../engine/CanvasUtil2"
-import {BaseConfig, Rect} from "../config/BaseConfig"
+import { BaseConfig, Rect } from "../config/BaseConfig"
 import helper from "../utils/helper"
-import {Colors, defaultConfig} from "../utils/constant"
+import { Colors, defaultConfig } from "../utils/constant"
 import draw from "../utils/draw"
-import {ParentShape} from "./core/ParentShape";
-import {BaseEvent2, EditType, LinePath, LineShape, LineType, P, ShapeStatus} from "../types/type"
-import {BaseShape} from "./core/BaseShape"
-import {PenConfig, PenNetworkLine, PenNetworkNode} from "../config/PenConfig"
-import {Math2} from "../utils/math"
-import {cloneDeep, eq} from "lodash"
-import {Bezier} from "bezier-js"
+import { ParentShape } from "./core/ParentShape";
+import { BaseEvent2, EditType, LinePath, LineShape, LineType, P, ShapeStatus } from "../types/type"
+import { BaseShape } from "./core/BaseShape"
+import { PenConfig, PenNetworkLine, PenNetworkNode } from "../config/PenConfig"
+import { Math2 } from "../utils/math"
+import { cloneDeep, eq } from "lodash"
+import { Bezier } from "bezier-js"
 
 export class Pen extends ParentShape {
   mouseDown: boolean = false
@@ -104,44 +104,8 @@ export class Pen extends ParentShape {
 
     const {nodes, paths, ctrlNodes} = this._conf.penNetwork
 
-    ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
-    ctx.fillStyle = 'red'
-    //绘制所有点
-    this._conf.cache.nodes.map((point, i) => {
-      // if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
-      // if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
-      draw.drawRound(ctx, point)
-      ctx.fillText(i + '', point.x, point.y)
-    })
-
-    let {pointIndex, type} = this.editStartPointInfo
-
-    // console.log(' this.editStartPointInfo', this.editStartPointInfo)
-    // console.log(' this.editHover', this.editHover)
-    //再绘制选中的当前点和控制点，之所以分开绘制，是因为遮盖问题
-    if (type) {
-      if (type === EditType.Point || type === EditType.ControlPoint) {
-        let currentPoint = nodes[pointIndex]
-        //找到包含当前点的所有线条，如果其他线条是曲线，还需要显示对应的控制点
-        let points = paths.filter(p => p.slice(0, 2).includes(pointIndex)).reduce((p: number[], c: PenNetworkLine) => {
-          if (!p.includes(c[0])) p.push(c[0])
-          if (!p.includes(c[1])) p.push(c[1])
-          return p
-        }, []).map(v => nodes[v])
-
-        points.map(point => {
-          point.cps.map(v => {
-            if (v !== -1) draw.controlPoint(ctx, ctrlNodes[v], point)
-          })
-          if (eq(point, currentPoint)) {
-            draw.currentPoint(ctx, point)
-          } else {
-            draw.drawRound(ctx, point)
-          }
-        })
-        // draw.currentPoint(ctx, point)
-      }
-    } else {
+    //下面有同名变量，这里加个if条件，避免变量作用域的问题
+    if (true) {
       //渲染hover在线上时，线段的中心点
       let {pointIndex, lineIndex, type} = this.editHover
       if (type === EditType.Point) {
@@ -171,16 +135,50 @@ export class Pen extends ParentShape {
             break
         }
         ctx.stroke()
-
-        draw.drawRound(ctx, this.hoverLineCenterPoint)
+        draw.drawRound(ctx, this.editHover.lineCenterPoint)
       }
+    }
+
+    ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
+    ctx.fillStyle = 'red'
+    //绘制所有点
+    this._conf.cache.nodes.map((point, i) => {
+      // if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
+      // if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
+      draw.drawRound(ctx, point)
+      ctx.fillText(i + '', point.x, point.y)
+    })
+
+    // console.log(' this.editStartPointInfo', this.editStartPointInfo)
+    // console.log(' this.editHover', this.editHover)
+
+    let {pointIndex, type} = this.editStartPointInfo
+    //再绘制选中的当前点和控制点，之所以分开绘制，是因为遮盖问题
+    if (type === EditType.Point || type === EditType.ControlPoint) {
+      let currentPoint = nodes[pointIndex]
+      //找到包含当前点的所有线条，如果其他线条是曲线，还需要显示对应的控制点
+      let points = paths.filter(p => p.slice(0, 2).includes(pointIndex)).reduce((p: number[], c: PenNetworkLine) => {
+        if (!p.includes(c[0])) p.push(c[0])
+        if (!p.includes(c[1])) p.push(c[1])
+        return p
+      }, []).map(v => nodes[v])
+
+      points.map(point => {
+        point.cps.map(v => {
+          if (v !== -1) draw.controlPoint(ctx, ctrlNodes[v], point)
+        })
+        if (eq(point, currentPoint)) {
+          draw.currentPoint(ctx, point)
+        } else {
+          draw.drawRound(ctx, point)
+        }
+      })
     }
 
     // console.log('this.tempPoint',this.tempPoint)
     if (this.tempPoint) {
       draw.currentPoint(ctx, this.tempPoint)
     }
-
     ctx.restore()
   }
 
@@ -414,6 +412,7 @@ export class Pen extends ParentShape {
         let showLog = false
 
         //寻找封闭图
+        //TODO 2024-02-06此方法会计算出太多的封闭图
         const findCloseArea = (start: number, end: number, line: any, list: any[], save: any[]) => {
           visited.push(line.id)
           //找出列表中，包含了当前线条end点的的其他线条
@@ -568,14 +567,6 @@ export class Pen extends ParentShape {
           //   console.log(JSON.stringify(v.area.map(a => a.line)))
           // })
           // console.log('visited', cloneDeep(Array.from(new Set(visited))))
-
-          // console.log('newNodes', cloneDeep(newNodes))
-          // console.log('lineMaps', cloneDeep(lineMaps))
-          // console.log('newPaths', cloneDeep(newPaths))
-          // console.log('closeLines', cloneDeep(closeLines))
-          // console.log('closeLinesWithId', cloneDeep(closeLinesWithId))
-          // console.log('closeAreasRepeat----', cloneDeep(closeAreasRepeat))
-          // console.log('closeAreas----', cloneDeep(closeAreasId.map(v => v.area)))
 
           let cu = CanvasUtil2.getInstance()
           let {ctx} = cu

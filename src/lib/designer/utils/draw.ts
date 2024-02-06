@@ -289,7 +289,6 @@ export default {
     let {x, y} = rect
     ctx.save()
     ctx.lineWidth = defaultConfig.lineWidth / cu.handScale
-    // ctx.lineWidth = 1 / cu.handScale
     ctx.fillStyle = Colors.White
     ctx.strokeStyle = defaultConfig.strokeStyle
     ctx.beginPath()

@@ -127,11 +127,10 @@ class Design extends React.Component<any, IState> {
 
   copy2 = () => {
     console.log(this.state.cu.print2())
-    navigator.clipboard.writeText(JSON.stringify(this.state.cu.print2()[0], null, 2))
+    navigator.clipboard.writeText(JSON.stringify(this.state.cu.print2(), null, 2))
       .then(() => {
         message.success('复制成功,带id')
       })
-
   }
 
   setCanvasUtilMode = (mode: ShapeType, key: any) => {

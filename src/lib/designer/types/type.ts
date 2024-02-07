@@ -33,7 +33,7 @@ export type IState = {
   },
   handScale: number,
   oldHandScale: number,
-  sPoint: {x: number, y: number},
+  sPoint: { x: number, y: number },
   activeHand: boolean,
   fps: number,
   currentMat: any
@@ -273,6 +273,7 @@ export type CurrentOperationInfo = {
   cpIndex: number
   lineCenterPoint?: P,
   hoverPoint?: P,
+  hoverPointT?: number,
 }
 
 export enum TextMode {

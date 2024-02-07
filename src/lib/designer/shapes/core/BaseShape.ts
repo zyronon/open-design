@@ -11,20 +11,20 @@ import {
   ShapeStatus,
   ShapeType
 } from "../../types/type"
-import CanvasUtil2, { CU } from "../../engine/CanvasUtil2"
-import { cloneDeep, merge } from "lodash"
-import { getShapeFromConfig } from "../../utils/common"
+import CanvasUtil2, {CU} from "../../engine/CanvasUtil2"
+import {cloneDeep, merge} from "lodash"
+import {getShapeFromConfig} from "../../utils/common"
 import EventBus from "../../event/eventBus"
-import { BaseConfig, Rect } from "../../config/BaseConfig"
+import {BaseConfig, Rect} from "../../config/BaseConfig"
 import helper from "../../utils/helper"
 import draw from "../../utils/draw"
-import { defaultConfig } from "../../utils/constant"
-import { Math2 } from "../../utils/math"
-import { Bezier } from "../../utils/bezier"
-import { BBox, Bezier as BezierJs } from "bezier-js";
-import { EventKeys } from "../../event/eventKeys";
-import { HandleMirroring, PenNetworkLine, PenNetworkNode } from "../../config/PenConfig";
-import { generateNode } from "../../utils/template"
+import {defaultConfig} from "../../utils/constant"
+import {Math2} from "../../utils/math"
+import {Bezier} from "../../utils/bezier"
+import {BBox, Bezier as BezierJs} from "bezier-js";
+import {EventKeys} from "../../event/eventKeys";
+import {HandleMirroring, PenNetworkLine, PenNetworkNode} from "../../config/PenConfig";
+import {generateNode} from "../../utils/template"
 
 export class BaseShape {
   hoverType: MouseOptionType = MouseOptionType.None
@@ -286,6 +286,7 @@ export class BaseShape {
         }
         if (helper.isInPoint(fixMousePoint, returnData.lineCenterPoint, judgePointDistance)) {
           console.log('hover在线的中点上')
+          returnData.hoverPointT = 0.5
           returnData.type = EditType.CenterPoint
         }
         return returnData
@@ -885,6 +886,18 @@ export class BaseShape {
               this.editStartPointInfo.type = EditType.Point
             } else {
               //TODO 如果是按在线上
+              console.log(2, result)
+              helper.splitLine(this.conf.penNetwork, result)
+              let lastPoint = nodes[espi.pointIndex]
+              if (lastPoint.cps[1] !== -1) {
+                paths.push([espi.pointIndex, nodes.length - 1, lastPoint.cps[1], -1, LineType.Bezier2])
+              } else {
+                paths.push([espi.pointIndex, nodes.length - 1, -1, -1, LineType.Line])
+              }
+              this.editStartPointInfo.lineIndex = -1
+              this.editStartPointInfo.pointIndex = nodes.length - 1
+              this.editStartPointInfo.type = EditType.Point
+              this.tempPoint = undefined
             }
           } else {
             let lastPoint = nodes[espi.pointIndex]
@@ -906,10 +919,12 @@ export class BaseShape {
               this.editStartPointInfo.type = EditType.Point
               this.tempPoint = undefined
             } else {
-              //TODO 如果是按在线上
-              console.log(1,result)
+              helper.splitLine(this.conf.penNetwork, result)
+              this.editStartPointInfo.lineIndex = -1
+              this.editStartPointInfo.pointIndex = result.pointIndex
+              this.editStartPointInfo.type = EditType.Point
+              this.tempPoint = undefined
             }
-
           } else {
             if (this.tempPoint) {
               let startPoint: PenNetworkNode = {

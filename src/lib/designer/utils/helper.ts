@@ -1,12 +1,13 @@
-import { BaseConfig } from "../config/BaseConfig"
-import { getRotatedPoint } from "../../../utils"
-import { v4 as uuid } from 'uuid'
-import { cloneDeep, inRange, merge } from "lodash"
-import { BezierPoint, Line, LineType, P, StrokeAlign } from "../types/type"
-import { Colors, defaultConfig } from "./constant"
-import { Bezier } from "./bezier"
-import { Math2 } from "./math"
-import { PenNetworkLine, PenNetworkNode } from "../config/PenConfig"
+import {BaseConfig} from "../config/BaseConfig"
+import {getRotatedPoint} from "../../../utils"
+import {v4 as uuid} from 'uuid'
+import {cloneDeep, inRange, merge} from "lodash"
+import {BezierPoint, CurrentOperationInfo, EditType, Line, LineType, P, StrokeAlign} from "../types/type"
+import {Colors, defaultConfig} from "./constant"
+import {Bezier} from "./bezier"
+import {Math2} from "./math"
+import {HandleMirroring, PenNetwork, PenNetworkLine, PenNetworkNode} from "../config/PenConfig"
+import {Bezier as BezierJs} from "bezier-js";
 
 export default {
   /**
@@ -629,4 +630,97 @@ export default {
     // 射线穿过多边形边界的次数为奇数时点在多边形内
     return flag
   },
+  //分割线条
+  splitLine(penNetwork: PenNetwork, result: CurrentOperationInfo) {
+    const {nodes, paths, ctrlNodes} = penNetwork
+    let {lineIndex, pointIndex, hoverPoint, hoverPointT} = result
+
+    let point: PenNetworkNode = {
+      ...hoverPoint!,
+      cornerRadius: 0,
+      realCornerRadius: 0,
+      handleMirroring: HandleMirroring.RightAngle,
+      cornerCps: [-1, -1],
+      cps: [-1, -1],
+    }
+    let line: PenNetworkLine = paths[lineIndex]
+    let lineType = line[4]
+    if (lineType === LineType.Line) {
+      nodes.push(point)
+      let newPointIndex = nodes.length - 1;
+      paths.splice(lineIndex + 1, 0, [newPointIndex, line[1], -1, -1, LineType.Line])
+      line[1] = newPointIndex
+    } else {
+      let startPoint = nodes[line[0]]
+      let endPoint = nodes[line[1]]
+      let p0 = ctrlNodes[line[2]]
+      let p1 = ctrlNodes[line[3]]
+      let b: BezierJs
+      if (lineType === LineType.Bezier2) {
+        let cp: P
+        if (line[2] !== -1) cp = p0
+        if (line[3] !== -1) cp = p1
+        b = new BezierJs(startPoint, cp!, endPoint)
+      }
+      if (lineType === LineType.Bezier3) {
+        b = new BezierJs(startPoint, p0, p1, endPoint)
+      }
+      let {left, right} = b!.split(hoverPointT!)
+
+      if (p0) {
+        p0.x = left.points[1].x
+        p0.y = left.points[1].y
+      } else {
+        //如果没有控制点，那么加一个
+        ctrlNodes.push(left.points[1])
+        line[2] = ctrlNodes.length - 1
+        //记得同步到point里面的cps里面去
+        startPoint.cps[1] = line[2]
+      }
+
+      if (startPoint.handleMirroring === HandleMirroring.MirrorAngleAndLength) {
+        startPoint.handleMirroring = HandleMirroring.MirrorAngle
+      } else {
+        startPoint.handleMirroring = HandleMirroring.NoMirror
+      }
+
+      //如果是三次曲线，会在多出的中间点出加上控制点。所以这里要取第2个值，第一个值是中间点的控制点
+      let cpIndex = lineType === LineType.Bezier3 ? 2 : 1
+      if (p1) {
+        p1.x = right.points[cpIndex].x
+        p1.y = right.points[cpIndex].y
+      } else {
+        ctrlNodes.push(right.points[cpIndex])
+        line[3] = ctrlNodes.length - 1
+        endPoint.cps[0] = line[3]
+      }
+
+      if (endPoint.handleMirroring === HandleMirroring.MirrorAngleAndLength) {
+        endPoint.handleMirroring = HandleMirroring.MirrorAngle
+      } else {
+        endPoint.handleMirroring = HandleMirroring.NoMirror
+      }
+
+      //先定义，后push的，所以length不减1
+      let newLine: PenNetworkLine = [nodes.length, line[1], -1, line[3], LineType.Bezier2]
+      if (lineType === LineType.Bezier3) {
+        ctrlNodes.push(left.points[2])
+        ctrlNodes.push(right.points[1])
+        point.handleMirroring = HandleMirroring.MirrorAngleAndLength
+        point.cps = [ctrlNodes.length - 2, ctrlNodes.length - 1]
+        newLine = [nodes.length, line[1], ctrlNodes.length - 1, line[3], LineType.Bezier3]
+        line[3] = ctrlNodes.length - 2
+      } else {
+        line[3] = -1
+      }
+      nodes.push(point)
+      paths.splice(lineIndex + 1, 0, newLine)
+      line[1] = nodes.length - 1
+      // console.log('b2', b!.bbox())
+    }
+    result.lineIndex = -1
+    result.pointIndex = nodes.length - 1
+    result.type = EditType.Point
+    return result
+  }
 }

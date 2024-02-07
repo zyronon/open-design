@@ -272,13 +272,15 @@ export class BaseShape {
     for (let lineIndex = 0; lineIndex < paths.length; lineIndex++) {
       let line = paths[lineIndex]
       let lineType = line[4]
-      if (helper.isInLine(fixMousePoint, line, lineType, nodes, ctrlNodes)) {
+      let result = helper.isInLine(fixMousePoint, line, lineType, nodes, ctrlNodes)
+      if (result.is) {
         console.log('在线上')
         let returnData = {
           type: EditType.Line,
           lineIndex,
           lineCenterPoint: helper.getLineCenterPoint(line, lineType, nodes, ctrlNodes),
           hoverPoint: fixMousePoint,
+          hoverPointT: result.t,
           pointIndex: -1,
           cpIndex: -1
         }
@@ -905,7 +907,7 @@ export class BaseShape {
               this.tempPoint = undefined
             } else {
               //TODO 如果是按在线上
-              console.log(1)
+              console.log(1,result)
             }
 
           } else {

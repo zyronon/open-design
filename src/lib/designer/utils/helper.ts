@@ -1,14 +1,12 @@
-import {BaseConfig} from "../config/BaseConfig"
-import {getRotatedPoint} from "../../../utils"
-import {v4 as uuid} from 'uuid'
-import {cloneDeep, inRange, merge} from "lodash"
-import {BezierPoint, BezierPointType, getP2, Line, LineType, P, P2, StrokeAlign} from "../types/type"
-import {Colors, defaultConfig} from "./constant"
-import {Bezier} from "./bezier"
-import {Math2} from "./math"
-import EventBus from "../event/eventBus";
-import {EventKeys} from "../event/eventKeys";
-import {PenNetworkNode, PenNetworkLine} from "../config/PenConfig"
+import { BaseConfig } from "../config/BaseConfig"
+import { getRotatedPoint } from "../../../utils"
+import { v4 as uuid } from 'uuid'
+import { cloneDeep, inRange, merge } from "lodash"
+import { BezierPoint, Line, LineType, P, StrokeAlign } from "../types/type"
+import { Colors, defaultConfig } from "./constant"
+import { Bezier } from "./bezier"
+import { Math2 } from "./math"
+import { PenNetworkLine, PenNetworkNode } from "../config/PenConfig"
 
 export default {
   /**
@@ -534,16 +532,26 @@ export default {
     return (target.x - r < judge.x && judge.x < target.x + r) &&
       (target.y - r < judge.y && judge.y < target.y + r)
   },
-  isInLine(target: P, line: PenNetworkLine, lineType: LineType, nodes: PenNetworkNode[], ctrlNodes: P[]): boolean {
+  isInLine(target: P, line: PenNetworkLine, lineType: LineType, nodes: PenNetworkNode[], ctrlNodes: P[]): {
+    t: number,
+    is: boolean
+  } {
     let start = nodes[line[0]]
     let end = nodes[line[1]]
     let line1 = Math2.getHypotenuse2(target, start)
     let line2 = Math2.getHypotenuse2(target, end)
     let line3 = Math2.getHypotenuse2(start, end)
+    let result = {
+      t: 0,
+      is: false
+    }
     if (lineType === LineType.Line) {
       // let d = 0.02
       let d = 0.04
-      return inRange(line1 + line2, line3 - d, line3 + d);
+      result.is = inRange(line1 + line2, line3 - d, line3 + d);
+      if (result.is) {
+        result.t = Math2.getLineT({p1: start, p2: end}, target)
+      }
     }
     let p1 = ctrlNodes[line[2]]
     let p2 = ctrlNodes[line[3]]
@@ -559,10 +567,10 @@ export default {
       if (t2.length === 1) t = t2[0]
       if (t !== -1) {
         let p = Bezier.getPointByT_2(t, [start, cp!, end])
-        let r = this.isInPoint(target, p, 4)
         // console.log('p', target, p, r)
         // console.log('t', t)
-        return r
+        result.is = this.isInPoint(target, p, 4)
+        result.t = t
       }
     }
     if (lineType === LineType.Bezier3) {
@@ -571,12 +579,12 @@ export default {
       if (t1.length || t2.length) {
         let t = t1[0] ?? t2[0]
         let p = Bezier.getPointByT_3(t, [start, p1, p2, end])
-        let r = this.isInPoint(target, p, 4)
         // console.log('p', target, p, r)
-        return r
+        result.is = this.isInPoint(target, p, 4)
+        result.t = t
       }
     }
-    return false
+    return result
   },
 
   //TODO 废弃

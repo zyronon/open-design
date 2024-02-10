@@ -722,5 +722,25 @@ export default {
     result.pointIndex = nodes.length - 1
     result.type = EditType.Point
     return result
+  },
+  getBoxCenter(points: P[]) {
+    let maxX: number, minX: number, maxY: number, minY: number
+    maxX = maxY = 0
+    minX = minY = Infinity
+    points.map((v: P) => {
+      if (v.x > maxX) maxX = v.x
+      if (v.x < minX) minX = v.x
+      if (v.y > maxY) maxY = v.y
+      if (v.y < minY) minY = v.y
+    })
+
+    // console.log(minX, maxX, minY, maxY)
+
+    let center = {x: 0, y: 0}
+    center.x = minX + (maxX - minX) / 2
+    center.y = minY + (maxY - minY) / 2
+
+    // console.log('c', center)
+    return center
   }
 }

@@ -399,20 +399,21 @@ export class Pen extends ParentShape {
 
         console.log('closeLines', closeLines)
 
-        let allPointIndexs: any[] = []
-        closeLines.map(v => {
-          allPointIndexs = allPointIndexs.concat(v.slice(0, 2))
-        })
-
-        allPointIndexs = Array.from(new Set(allPointIndexs))
-        console.log('allPointIndexs', allPointIndexs)
-
-        let allPoints = allPointIndexs.map(v => {
-          return newNodes[v]
-        })
-
-        helper.getBoxCenter(allPoints)
-        console.log('allPoints', allPoints)
+        // let allPointIndexs: any[] = []
+        // closeLines.map(v => {
+        //   allPointIndexs = allPointIndexs.concat(v.slice(0, 2))
+        // })
+        //
+        // allPointIndexs = Array.from(new Set(allPointIndexs))
+        // console.log('allPointIndexs', allPointIndexs)
+        //
+        // let allPoints = allPointIndexs.map(v => {
+        //   return newNodes[v]
+        // })
+        //
+        // let center = helper.getBoxCenter(allPoints)
+        // console.log('allPoints', allPoints)
+        // console.log('center',center)
 
         let closeLinesWithId = closeLines.map((v, i) => ({id: i, line: v}))
         // console.log('closeLinesWithId', closeLinesWithId)
@@ -578,7 +579,7 @@ export class Pen extends ParentShape {
             })
           }
 
-          // console.log('closeAreasId', closeAreasId)
+          console.log('closeAreasId', closeAreasId)
           // closeAreasId.map(v => {
           //   console.log(JSON.stringify(v.area.map(a => a.line)))
           // })

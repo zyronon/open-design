@@ -1,15 +1,15 @@
 import CanvasUtil2 from "../engine/CanvasUtil2"
-import {BaseConfig, Rect} from "../config/BaseConfig"
+import { BaseConfig, Rect } from "../config/BaseConfig"
 import helper from "../utils/helper"
-import {Colors, defaultConfig} from "../utils/constant"
+import { Colors, defaultConfig } from "../utils/constant"
 import draw from "../utils/draw"
-import {ParentShape} from "./core/ParentShape";
-import {BaseEvent2, EditType, LinePath, LineShape, LineType, P, ShapeStatus} from "../types/type"
-import {BaseShape} from "./core/BaseShape"
-import {PenConfig, PenNetworkLine, PenNetworkNode} from "../config/PenConfig"
-import {Math2} from "../utils/math"
-import {cloneDeep, eq} from "lodash"
-import {Bezier} from "bezier-js"
+import { ParentShape } from "./core/ParentShape";
+import { BaseEvent2, EditType, LinePath, LineShape, LineType, P, ShapeStatus } from "../types/type"
+import { BaseShape } from "./core/BaseShape"
+import { PenConfig, PenNetworkLine, PenNetworkNode } from "../config/PenConfig"
+import { Math2 } from "../utils/math"
+import { cloneDeep, eq } from "lodash"
+import { Bezier } from "bezier-js"
 
 export class Pen extends ParentShape {
   mouseDown: boolean = false
@@ -398,6 +398,37 @@ export class Pen extends ParentShape {
         })
 
         console.log('closeLines', closeLines)
+        console.log(newNodes)
+
+        const fn = (currentLine: PenNetworkLine, index: number, array: PenNetworkLine[], save: PenNetworkLine[]) => {
+          let startPoint = currentLine[0]
+          let endPoint = currentLine[1]
+          let containEndPointLines = array.filter((w, i) => w.slice(0, 2).includes(endPoint) && i !== index)
+          if (index === 0) {
+            let tempList: any[] = []
+            let lastD = Infinity
+            let l = []
+            containEndPointLines.map(v => {
+              let end
+              if (v[0] === endPoint) {
+                end = v[1]
+              } else {
+                end = v[0]
+              }
+              let d = Math2.getDegree(newNodes[endPoint], newNodes[end], newNodes[startPoint])
+              if (d < lastD) {
+                lastD = d
+                l = v
+              }
+            })
+            console.log('c', containEndPointLines, l)
+          }
+        }
+
+        let save: PenNetworkLine[] = []
+        closeLines.map((line, index, array) => {
+          fn(line, index, array, [line])
+        })
 
         // let allPointIndexs: any[] = []
         // closeLines.map(v => {
@@ -546,7 +577,7 @@ export class Pen extends ParentShape {
 
           //TODO　筛选重叠的图形
           //2024-02-02 当前的删除方式有问题，共用两条边以上的不一定重叠
-          let test = true
+          let test = false
           if (test) {
             closeAreasId.map((a, i, arr) => {
               if (waitDelId.includes(a.id)) return
@@ -579,7 +610,7 @@ export class Pen extends ParentShape {
             })
           }
 
-          console.log('closeAreasId', closeAreasId)
+          // console.log('closeAreasId', closeAreasId)
           // closeAreasId.map(v => {
           //   console.log(JSON.stringify(v.area.map(a => a.line)))
           // })

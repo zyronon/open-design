@@ -567,6 +567,11 @@ export class BaseShape {
 
       if (type) {
         if (type !== EditType.Line) {
+          //关联的线条，边缘点需要特殊处理
+          let relationLines = paths.filter(v => v[0] === pointIndex || v[1] === pointIndex)
+
+          console.log('r', relationLines)
+
           let point = nodes[pointIndex]
           if (point.handleMirroring !== HandleMirroring.RightAngle) {
             point.cps = [-1, -1]

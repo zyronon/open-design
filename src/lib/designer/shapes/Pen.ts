@@ -142,7 +142,8 @@ export class Pen extends ParentShape {
     ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
     ctx.fillStyle = 'red'
     //绘制所有点
-    this._conf.cache.nodes.map((point, i) => {
+    // this._conf.cache.nodes.map((point, i) => {
+    nodes.map((point, i) => {
       // if (point.cp1.use) draw.controlPoint(ctx, point.cp1, point.center)
       // if (point.cp2.use) draw.controlPoint(ctx, point.cp2, point.center)
       draw.drawRound(ctx, point)
@@ -480,36 +481,7 @@ export class Pen extends ParentShape {
             // console.log(JSON.stringify(v.map(a => a.line)))
           })
 
-
-          let cu = CanvasUtil2.getInstance()
-          let {ctx} = cu
-          ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
-          newNodes.map((point, i) => {
-            ctx.fillText(i + '', point.x, point.y)
-            // draw.drawRound(ctx, point)
-          })
-
-          cu.waitRenderOtherStatusFunc.push(() => {
-            ctx.save()
-            draw.calcPosition(ctx, this.conf)
-            ctx.strokeStyle = 'red'
-            ctx.fillStyle = 'red'
-            closeLinesWithId.map(line => {
-              // let startPoint = newNodes[line.line[0]]
-              // let endPoint = newNodes[line.line[1]]
-              // ctx.moveTo2(startPoint)
-              // ctx.lineTo2(endPoint)
-              // cu.ctx.font = `400 16rem "SourceHanSansCN", sans-serif`
-              // let a = helper.getStraightLineCenterPoint(startPoint, endPoint)
-              // ctx.fillText(`${line.line[0]}-${line.line[1]}:${line.id}`, a.x - 20, a.y)
-              // ctx.fillText(`${line.id}`, a.x, a.y)
-            })
-            // ctx.stroke()
-            ctx.restore()
-          })
-
           drawFillArea(newNodes, newCtrlNodes, closeAreas)
-          // drawFillArea(newNodes, newCtrlNodes, closeAreasId.slice(4, 5))
 
           this.conf.cache.nodes = newNodes
           this.conf.cache.paths = newPaths

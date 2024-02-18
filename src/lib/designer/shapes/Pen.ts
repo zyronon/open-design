@@ -1,15 +1,15 @@
 import CanvasUtil2 from "../engine/CanvasUtil2"
-import { BaseConfig, Rect } from "../config/BaseConfig"
+import {BaseConfig, Rect} from "../config/BaseConfig"
 import helper from "../utils/helper"
-import { Colors, defaultConfig } from "../utils/constant"
+import {Colors, defaultConfig} from "../utils/constant"
 import draw from "../utils/draw"
-import { ParentShape } from "./core/ParentShape";
-import { BaseEvent2, EditType, LinePath, LineShape, LineType, P, ShapeStatus } from "../types/type"
-import { BaseShape } from "./core/BaseShape"
-import { PenConfig, PenNetworkLine, PenNetworkNode } from "../config/PenConfig"
-import { Math2 } from "../utils/math"
-import { cloneDeep, eq } from "lodash"
-import { Bezier } from "bezier-js"
+import {ParentShape} from "./core/ParentShape";
+import {BaseEvent2, EditType, LinePath, LineShape, LineType, P, ShapeStatus} from "../types/type"
+import {BaseShape} from "./core/BaseShape"
+import {PenConfig, PenNetworkLine, PenNetworkNode} from "../config/PenConfig"
+import {Math2} from "../utils/math"
+import {cloneDeep, eq} from "lodash"
+import {Bezier} from "bezier-js"
 
 export class Pen extends ParentShape {
   mouseDown: boolean = false
@@ -221,11 +221,11 @@ export class Pen extends ParentShape {
       console.time()
     }
 
-    const drawFillArea = (nodes: PenNetworkNode[], ctrlNodes: P[], closeAreasId: any[]) => {
+    const drawFillArea = (nodes: PenNetworkNode[], ctrlNodes: P[], closeAreas: any[]) => {
       if (showFill) {
         let newNodes = cloneDeep(nodes)
         let newCtrlNodes = cloneDeep(ctrlNodes)
-        closeAreasId.map(s => s.area).map((v: any []) => {
+        closeAreas.map((v: any []) => {
           let startPoint = newNodes[v[0].line[0]]
           let endPoint = newNodes[v[0].line[1]]
           let path = new Path2D()
@@ -389,232 +389,97 @@ export class Pen extends ParentShape {
 
         // console.log('newPaths', newPaths)
 
-        let closeLines: any[] = []
-        //筛选掉终点没人连的
-        closeLines = newPaths.filter((v, i) => {
-          let r = newPaths.find((w, j) => ((v[0] === w[1] || v[0] === w[0]) && i !== j))
-          let r2 = newPaths.find((w, j) => ((v[1] === w[1] || v[1] === w[0]) && i !== j))
-          return r2 && r
-        })
-
-        console.log('closeLines', closeLines)
-        console.log(newNodes)
-
-        const fn = (currentLine: PenNetworkLine, index: number, array: PenNetworkLine[], save: PenNetworkLine[]) => {
-          let startPoint = currentLine[0]
-          let endPoint = currentLine[1]
-          let containEndPointLines = array.filter((w, i) => w.slice(0, 2).includes(endPoint) && i !== index)
-          if (index === 0) {
-            let tempList: any[] = []
-            let lastD = Infinity
-            let l = []
-            containEndPointLines.map(v => {
-              let end
-              if (v[0] === endPoint) {
-                end = v[1]
-              } else {
-                end = v[0]
-              }
-              let d = Math2.getDegree(newNodes[endPoint], newNodes[end], newNodes[startPoint])
-              if (d < lastD) {
-                lastD = d
-                l = v
-              }
-            })
-            console.log('c', containEndPointLines, l)
-          }
+        let lastTemp = []
+        let closeLines: any[] = newPaths
+        //筛选掉终点没人连的，可能存在N条线段一直连着，但不形成闭合。一次筛选筛不完整
+        while (closeLines.length !== lastTemp.length) {
+          lastTemp = cloneDeep(closeLines)
+          closeLines = closeLines.filter((v, i) => {
+            let r = closeLines.find((w, j) => ((v[0] === w[1] || v[0] === w[0]) && i !== j))
+            let r2 = closeLines.find((w, j) => ((v[1] === w[1] || v[1] === w[0]) && i !== j))
+            return r2 && r
+          })
         }
 
-        let save: PenNetworkLine[] = []
-        closeLines.map((line, index, array) => {
-          fn(line, index, array, [line])
-        })
-
-        // let allPointIndexs: any[] = []
-        // closeLines.map(v => {
-        //   allPointIndexs = allPointIndexs.concat(v.slice(0, 2))
-        // })
-        //
-        // allPointIndexs = Array.from(new Set(allPointIndexs))
-        // console.log('allPointIndexs', allPointIndexs)
-        //
-        // let allPoints = allPointIndexs.map(v => {
-        //   return newNodes[v]
-        // })
-        //
-        // let center = helper.getBoxCenter(allPoints)
-        // console.log('allPoints', allPoints)
-        // console.log('center',center)
+        // console.log('closeLines', closeLines)
+        // console.log(newNodes)
 
         let closeLinesWithId = closeLines.map((v, i) => ({id: i, line: v}))
         // console.log('closeLinesWithId', closeLinesWithId)
 
-        let closeAreasRepeat: any[][] = []
-
-        const check = (lines: any[]) => {
-          let listIndexStr = lines.map(v => v.id).sort((a, b) => a - b).join('')
-          return closeAreasRepeat.find(w => w.map(w => w.id).sort((a, b) => a - b).join('') === listIndexStr)
-        }
-
-        let visited: number[] = []
-        let showLog = false
-
         //寻找封闭图
-        //TODO 2024-02-06此方法会计算出太多的封闭图
-        const findCloseArea = (start: number, end: number, line: any, list: any[], save: any[]) => {
-          visited.push(line.id)
-          //找出列表中，包含了当前线条end点的的其他线条
-          let containEndPointLines = list.filter(w => w.line.slice(0, 2).includes(end) && w.id !== line.id)
-          showLog && console.log('包含0', '当前：', line.line, 'save', JSON.stringify(save.map(v => v.line)), '包含', JSON.stringify(containEndPointLines.map(v => v.line)),)
-          while (containEndPointLines.length !== 0) {
-            if (containEndPointLines.length === 1) {
-              //这里用复制一遍。因为后续的其他遍历，可能也会碰到这条线，然后方向是相反的，又去改变头和尾
-              let a = cloneDeep(containEndPointLines[0])
-              let line = a.line
-              if (line[0] === end) {
-                end = line[1]
-              } else {
-                end = line[0]
-                //交换顺序
-                a.line[0] = a.line[1]
-                a.line[1] = end
-                if (a.line[4] !== LineType.Line) {
-                  let temp = a.line[2]
-                  a.line[2] = a.line[3]
-                  a.line[3] = temp
-                }
-              }
-              save.push(a)
-              if (end === start) {
-                showLog && console.log(1, '当前：', line, 'save', JSON.stringify(save.map(v => v.line)))
-                visited.push(a.id)
-                return [save]
-              }
-              //如果当前线段与线段们中的任一组成了回路，那么就是一个新的封闭图
-              let isCloseIndex = save.findIndex(b => b.line[0] === end)
-              if (isCloseIndex > -1) {
-                showLog && console.log(2, '当前：', line, 'save', JSON.stringify(save.map(v => v.line)))
-                visited.push(a.id)
-                return [save.slice(isCloseIndex)]
-              }
-              containEndPointLines = list.filter(w => w.line.slice(0, 2).includes(end) && w.id !== a.id)
-              showLog && console.log('包含1', '当前：', line, 'save', JSON.stringify(save.map(v => v.line)), '包含', JSON.stringify(containEndPointLines.map(v => v.line)))
+        //参考：https://www.zhihu.com/question/47044473
+        let c = 0
+        const fn = (start, end, currentLine: any, array: any[], save: any[]) => {
+          c++
+          // if (c > 6) return []
+          let startPoint1 = currentLine.line[0]
+          let endPoint1 = currentLine.line[1]
+          let containEndPointLines = array.filter((w, i) => w.line.slice(0, 2).includes(endPoint1) && w.id !== currentLine.id)
+          let lastD = Infinity
+          let l
+          containEndPointLines.map(a => {
+            let end
+            let line = a.line
+            if (line[0] === endPoint1) {
+              end = line[1]
             } else {
-              for (let i = 0; i < containEndPointLines.length; i++) {
-                let newSave = save.slice()
-                let a = cloneDeep(containEndPointLines[i])
-                let newEnd = -1
-                if (a.line[0] === end) {
-                  newEnd = a.line[1]
-                } else {
-                  newEnd = a.line[0]
-                  a.line[0] = a.line[1]
-                  a.line[1] = newEnd
-                  if (a.line[4] !== LineType.Line) {
-                    let temp = a.line[2]
-                    a.line[2] = a.line[3]
-                    a.line[3] = temp
-                  }
-                }
-
-                newSave.push(a)
-                let isCloseIndex = newSave.findIndex(b => b.line[0] === newEnd)
-                if (isCloseIndex > -1) {
-                  let closeArea = newSave.slice(isCloseIndex)
-                  if (!check(closeArea)) {
-                    visited.push(a.id)
-                    closeAreasRepeat = closeAreasRepeat.concat([closeArea])
-                  }
-                  showLog && console.log(3, '当前：', a.line, 'save', JSON.stringify(newSave.map(v => v.line)), '区域', closeAreasRepeat)
-                } else if (newEnd === start) {
-                  if (!check(newSave)) {
-                    visited.push(a.id)
-                    closeAreasRepeat = closeAreasRepeat.concat([newSave])
-                  }
-                  showLog && console.log(4, '当前：', a.line, 'save', JSON.stringify(newSave.map(v => v.line)), '区域', closeAreasRepeat)
-                } else {
-                  let r = findCloseArea(start, newEnd, a, list, newSave)
-                  if (r.length) {
-                    if (!check(r[0])) {
-                      visited.push(a.id)
-                      closeAreasRepeat = closeAreasRepeat.concat(r)
-                    }
-                  }
-                  showLog && console.log(5, '当前：', a.line, 'save', JSON.stringify(newSave.map(v => v.line)), '区域', closeAreasRepeat)
-                }
+              end = line[0]
+              //交换顺序
+              a.line[0] = a.line[1]
+              a.line[1] = end
+              if (a.line[4] !== LineType.Line) {
+                let temp = a.line[2]
+                a.line[2] = a.line[3]
+                a.line[3] = temp
               }
-              return []
             }
+            let d = Math2.getDegree(newNodes[endPoint1], newNodes[end], newNodes[startPoint1])
+            // console.log('d', d, currentLine.line, line, startPoint1, endPoint1, end)
+            if (d < lastD) {
+              lastD = d
+              l = cloneDeep(a)
+            }
+          })
+          // console.log('c', containEndPointLines, l)
+          if (l) {
+            //此处是针对，一条线段同时连接两个闭合图形的特殊情况
+            let r = save.find(v => v.id === l.id)
+            if (r) return []
+
+            save.push(l)
+            if (l.line[1] === start) {
+              return save
+            }
+            return fn(start, end, l, array, save)
           }
           return []
         }
 
+        let closeAreas: any[] = []
+
+        const check2 = (lines: any[]) => {
+          let listIndexStr = lines.map(v => v.id).sort((a, b) => a - b).join('')
+          return closeAreas.find(w => w.map(w => w.id).sort((a, b) => a - b).join('') === listIndexStr)
+        }
+
         //TODO 想想，如果只有两条直线，那么根本无需检测，肯定没有封闭图。如果是曲线呢？
         if (closeLinesWithId.length >= 2 && true) {
-          closeLinesWithId.map((currentLine, index, array) => {
-            if (!visited.includes(currentLine.id)) {
-              let start = currentLine.line[0]
-              let end = currentLine.line[1]
-              let r = findCloseArea(start, end, currentLine, array.slice(), [currentLine])
-              // console.log('r',r)
-              if (r.length) {
-                if (!check(r[0])) {
-                  closeAreasRepeat = closeAreasRepeat.concat(r)
-                }
-              }
-              // console.log('-----', r)
+          closeLinesWithId.map((currentLine, i, array) => {
+            let start = currentLine.line[0]
+            let end = currentLine.line[1]
+            let r = fn(start, end, currentLine, array.slice(), [cloneDeep(currentLine)])
+            if (r.length && !check2(r)) {
+              closeAreas.push(r)
             }
           })
+          // console.log('save', save)
+          console.log('save', closeAreas.length)
 
-          // console.log('closeAreasRepeat', closeAreasRepeat)
-          // closeAreasRepeat.map(v => {
-          //   console.log(JSON.stringify(v.map(a => a.line)))
-          // })
-          let closeAreasId = closeAreasRepeat.map((v, i) => ({id: i, area: v}))
-          closeAreasId.sort((a, b) => a.area.length - b.area.length)
-          // console.log('closeAreasId', closeAreasId)
-          let waitDelId: number[] = []
+          closeAreas.map(v => {
+            // console.log(JSON.stringify(v.map(a => a.line)))
+          })
 
-          //TODO　筛选重叠的图形
-          //2024-02-02 当前的删除方式有问题，共用两条边以上的不一定重叠
-          let test = false
-          if (test) {
-            closeAreasId.map((a, i, arr) => {
-              if (waitDelId.includes(a.id)) return
-              let aids = a.area.map((l: any) => l.id)
-              let q: any[] = arr.slice(i + 1).filter((b: any, j: number) => {
-                let count = 0
-                let bids = b.area.map((l: any) => l.id)
-                aids.map(id => {
-                  if (bids.includes(id)) {
-                    count++
-                  }
-                })
-                return count >= 2
-              })
-              // console.log('aids', aids)
-              // console.log('q', q)
-
-              if (q.length) {
-                if (a.area.length < q[0].area.length) {
-                  waitDelId.push(a.id)
-                }
-              }
-            })
-            // console.log('waitDelId',waitDelId)
-            waitDelId.map(v1 => {
-              let r = closeAreasId.findIndex(b => b.id === v1)
-              if (r) {
-                closeAreasId.splice(r, 1)
-              }
-            })
-          }
-
-          // console.log('closeAreasId', closeAreasId)
-          // closeAreasId.map(v => {
-          //   console.log(JSON.stringify(v.area.map(a => a.line)))
-          // })
-          // console.log('visited', cloneDeep(Array.from(new Set(visited))))
 
           let cu = CanvasUtil2.getInstance()
           let {ctx} = cu
@@ -643,13 +508,13 @@ export class Pen extends ParentShape {
             ctx.restore()
           })
 
-          drawFillArea(newNodes, newCtrlNodes, closeAreasId)
+          drawFillArea(newNodes, newCtrlNodes, closeAreas)
           // drawFillArea(newNodes, newCtrlNodes, closeAreasId.slice(4, 5))
 
           this.conf.cache.nodes = newNodes
           this.conf.cache.paths = newPaths
           this.conf.cache.ctrlNodes = newCtrlNodes
-          this.conf.cache.areas = closeAreasId
+          this.conf.cache.areas = closeAreas
           this.conf.isCache = true
         }
       }

@@ -568,7 +568,7 @@ export class BaseShape {
       if (type) {
         if (type !== EditType.Line) {
           //关联的线条，边缘点需要特殊处理
-          let relationLines = paths.filter(v => v[0] === pointIndex || v[1] === pointIndex)
+          let relationLines = paths.filter((line, index) => line.slice(0, 2).includes(pointIndex))
 
           console.log('r', relationLines)
 
@@ -588,47 +588,76 @@ export class BaseShape {
               }
             })
           } else {
-            //TODO　无法为第一个或最后一个生成控制点
-            let preLine: PenNetworkLine = undefined as any
-            let nextLine: PenNetworkLine = undefined as any
-            let relationLine = paths.filter((line, index) => line.slice(0, 2).includes(pointIndex))
-            for (let i = 0; i < relationLine.length; i++) {
-              let curLine = relationLine[i]
-              if (curLine[1] === pointIndex) {
-                if (!preLine) {
-                  preLine = curLine
+            if (relationLines.length === 1) {
+              let cp1 = {x: point.x - 100, y: point.y}
+              let cp2 = {x: point.x + 100, y: point.y}
+              ctrlNodes.push(cp1)
+              ctrlNodes.push(cp2)
+              point.cps = [ctrlNodes.length - 2, ctrlNodes.length - 1]
+              let currentLine = relationLines[0]
+              let otherPoint = nodes[currentLine[0] === pointIndex ? currentLine[1] : currentLine[0]]
+              //如果是二次曲线，只需要改变空的那个控制点，其他控制点保持不变
+              if (currentLine[4] === LineType.Bezier2) {
+                currentLine[4] = LineType.Bezier3
+                if (otherPoint.x >= point.x) {
+                  if (currentLine[3] === -1) currentLine[3] = point.cps[1]
+                  else currentLine[2] = point.cps[1]
+                } else {
+                  if (currentLine[3] === -1) currentLine[3] = point.cps[0]
+                  else currentLine[2] = point.cps[0]
+                }
+              } else {
+                currentLine[4] = LineType.Bezier2
+                if (otherPoint.x >= point.x) {
+                  currentLine[2] = point.cps[0]
+                  currentLine[3] = point.cps[1]
+                } else {
+                  currentLine[2] = point.cps[1]
+                  currentLine[3] = point.cps[0]
                 }
               }
-              if (curLine[0] === pointIndex) {
-                nextLine = curLine
+              point.handleMirroring = HandleMirroring.MirrorAngleAndLength
+            } else {
+              let preLine: PenNetworkLine = undefined as any
+              let nextLine: PenNetworkLine = undefined as any
+              for (let i = 0; i < relationLines.length; i++) {
+                let curLine = relationLines[i]
+                if (curLine[1] === pointIndex) {
+                  if (!preLine) {
+                    preLine = curLine
+                  }
+                }
+                if (curLine[0] === pointIndex) {
+                  nextLine = curLine
+                }
               }
+              console.log('nextLine', nextLine, 'preLine', preLine)
+              if (!preLine && !nextLine) return console.error('没有前后线')
+              let previousPointInfo = nodes[preLine[0]]
+              let nextPointInfo = nodes[nextLine[1]]
+              // console.log(previousPointInfo, nextPointInfo, point)
+              let {l, r} = Bezier.getTargetPointControlPoints(
+                  previousPointInfo,
+                  point,
+                  nextPointInfo)
+              console.log(l, r)
+              ctrlNodes.push(l)
+              ctrlNodes.push(r)
+              point.cps = [ctrlNodes.length - 2, ctrlNodes.length - 1]
+              preLine[3] = point.cps[0]
+              nextLine[2] = point.cps[1]
+              if (nextLine[4] === LineType.Bezier2) {
+                nextLine[4] = LineType.Bezier3
+              } else {
+                nextLine[4] = LineType.Bezier2
+              }
+              if (preLine[4] === LineType.Bezier2) {
+                preLine[4] = LineType.Bezier3
+              } else {
+                preLine[4] = LineType.Bezier2
+              }
+              point.handleMirroring = HandleMirroring.MirrorAngleAndLength
             }
-            console.log('nextLine', nextLine, 'preLine', preLine)
-            if (!preLine && !nextLine) return console.error('没有前后线')
-            let previousPointInfo = nodes[preLine[0]]
-            let nextPointInfo = nodes[nextLine[1]]
-            // console.log(previousPointInfo, nextPointInfo, point)
-            let {l, r} = Bezier.getTargetPointControlPoints(
-              previousPointInfo,
-              point,
-              nextPointInfo)
-            console.log(l, r)
-            ctrlNodes.push(l)
-            ctrlNodes.push(r)
-            point.cps = [ctrlNodes.length - 2, ctrlNodes.length - 1]
-            preLine[3] = point.cps[0]
-            nextLine[2] = point.cps[1]
-            if (nextLine[4] === LineType.Bezier2) {
-              nextLine[4] = LineType.Bezier3
-            } else {
-              nextLine[4] = LineType.Bezier2
-            }
-            if (preLine[4] === LineType.Bezier2) {
-              preLine[4] = LineType.Bezier3
-            } else {
-              preLine[4] = LineType.Bezier2
-            }
-            point.handleMirroring = HandleMirroring.MirrorAngleAndLength
           }
           cu.render()
         } else {

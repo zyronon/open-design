@@ -68,8 +68,8 @@ export default {
     return r
   },
   initConf(conf: BaseConfig, pConf?: BaseConfig) {
-    if (conf.id) return conf
     conf = this.getDefaultShapeConfig(conf)
+    if (conf.id) return conf
     let {
       layout: {x, y, w, h}, flipHorizontal, flipVertical
     } = conf

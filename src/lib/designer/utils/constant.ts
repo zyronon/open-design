@@ -904,7 +904,7 @@ export const rects: any[] = [
     },
   } as any),
   {
-    "use": true,
+    "use": false,
     "lineWidth": 1.5,
     "fillColor": "rgb(58,58,58)",
     "borderColor": "rgb(140,140,140)",
@@ -917,8 +917,8 @@ export const rects: any[] = [
     "commonPoints": [],
     "rotation": 0,
     "layout": {
-      "x": 96,
-      "y": 21,
+      "x": 359,
+      "y": 80,
       "w": 494,
       "h": 315
     },
@@ -1235,8 +1235,8 @@ export const rects: any[] = [
       "ctrlNodes": [],
       "paths": [
         [
-          15,
           0,
+          15,
           -1,
           -1,
           1
@@ -1263,8 +1263,8 @@ export const rects: any[] = [
           1
         ],
         [
+          16,
           1,
-          16,
           -1,
           -1,
           1
@@ -1277,8 +1277,8 @@ export const rects: any[] = [
           1
         ],
         [
-          17,
           2,
+          17,
           -1,
           -1,
           1
@@ -1291,8 +1291,8 @@ export const rects: any[] = [
           1
         ],
         [
+          18,
           13,
-          18,
           -1,
           -1,
           1
@@ -1312,22 +1312,22 @@ export const rects: any[] = [
           1
         ],
         [
+          16,
           14,
-          16,
-          -1,
-          -1,
-          1
-        ],
-        [
-          16,
-          4,
           -1,
           -1,
           1
         ],
         [
           4,
+          16,
+          -1,
+          -1,
+          1
+        ],
+        [
           17,
+          4,
           -1,
           -1,
           1
@@ -1361,8 +1361,8 @@ export const rects: any[] = [
           1
         ],
         [
-          19,
           1,
+          19,
           -1,
           -1,
           1
@@ -1653,94 +1653,10 @@ export const rects: any[] = [
       "areas": [
         [
           {
-            "id": 2,
+            "id": 0,
             "line": [
+              15,
               13,
-              14,
-              -1,
-              -1,
-              1
-            ]
-          },
-          {
-            "id": 11,
-            "line": [
-              14,
-              16,
-              -1,
-              -1,
-              1
-            ]
-          },
-          {
-            "id": 5,
-            "line": [
-              16,
-              17,
-              -1,
-              -1,
-              1
-            ]
-          },
-          {
-            "id": 14,
-            "line": [
-              17,
-              18,
-              -1,
-              -1,
-              1
-            ]
-          },
-          {
-            "id": 8,
-            "line": [
-              18,
-              13,
-              -1,
-              -1,
-              1
-            ]
-          }
-        ],
-        [
-          {
-            "id": 3,
-            "line": [
-              14,
-              1,
-              -1,
-              -1,
-              1
-            ]
-          },
-          {
-            "id": 4,
-            "line": [
-              1,
-              16,
-              -1,
-              -1,
-              1
-            ]
-          },
-          {
-            "id": 11,
-            "line": [
-              16,
-              14,
-              -1,
-              -1,
-              1
-            ]
-          }
-        ],
-        [
-          {
-            "id": 6,
-            "line": [
-              17,
-              2,
               -1,
               -1,
               1
@@ -1749,7 +1665,7 @@ export const rects: any[] = [
           {
             "id": 7,
             "line": [
-              2,
+              13,
               18,
               -1,
               -1,
@@ -1760,6 +1676,122 @@ export const rects: any[] = [
             "id": 14,
             "line": [
               18,
+              15,
+              -1,
+              -1,
+              1
+            ]
+          }
+        ],
+        [
+          {
+            "id": 1,
+            "line": [
+              13,
+              14,
+              -1,
+              -1,
+              1
+            ]
+          },
+          {
+            "id": 10,
+            "line": [
+              14,
+              16,
+              -1,
+              -1,
+              1
+            ]
+          },
+          {
+            "id": 4,
+            "line": [
+              16,
+              17,
+              -1,
+              -1,
+              1
+            ]
+          },
+          {
+            "id": 13,
+            "line": [
+              17,
+              18,
+              -1,
+              -1,
+              1
+            ]
+          },
+          {
+            "id": 7,
+            "line": [
+              18,
+              13,
+              -1,
+              -1,
+              1
+            ]
+          }
+        ],
+        [
+          {
+            "id": 2,
+            "line": [
+              14,
+              1,
+              -1,
+              -1,
+              1
+            ]
+          },
+          {
+            "id": 3,
+            "line": [
+              1,
+              16,
+              -1,
+              -1,
+              1
+            ]
+          },
+          {
+            "id": 10,
+            "line": [
+              16,
+              14,
+              -1,
+              -1,
+              1
+            ]
+          }
+        ],
+        [
+          {
+            "id": 5,
+            "line": [
+              17,
+              2,
+              -1,
+              -1,
+              1
+            ]
+          },
+          {
+            "id": 6,
+            "line": [
+              2,
+              18,
+              -1,
+              -1,
+              1
+            ]
+          },
+          {
+            "id": 13,
+            "line": [
+              18,
               17,
               -1,
               -1,
@@ -1769,7 +1801,7 @@ export const rects: any[] = [
         ],
         [
           {
-            "id": 9,
+            "id": 8,
             "line": [
               13,
               3,
@@ -1779,7 +1811,7 @@ export const rects: any[] = [
             ]
           },
           {
-            "id": 10,
+            "id": 9,
             "line": [
               3,
               14,
@@ -1789,7 +1821,7 @@ export const rects: any[] = [
             ]
           },
           {
-            "id": 2,
+            "id": 1,
             "line": [
               14,
               13,
@@ -1801,7 +1833,7 @@ export const rects: any[] = [
         ],
         [
           {
-            "id": 12,
+            "id": 11,
             "line": [
               16,
               4,
@@ -1811,7 +1843,7 @@ export const rects: any[] = [
             ]
           },
           {
-            "id": 13,
+            "id": 12,
             "line": [
               4,
               17,
@@ -1821,7 +1853,7 @@ export const rects: any[] = [
             ]
           },
           {
-            "id": 5,
+            "id": 4,
             "line": [
               17,
               16,
@@ -1835,28 +1867,28 @@ export const rects: any[] = [
           {
             "id": 15,
             "line": [
-              18,
-              15,
+              3,
+              1,
               -1,
               -1,
               1
             ]
           },
           {
-            "id": 1,
+            "id": 2,
             "line": [
-              15,
-              13,
+              1,
+              14,
               -1,
               -1,
               1
             ]
           },
           {
-            "id": 8,
+            "id": 9,
             "line": [
-              13,
-              18,
+              14,
+              3,
               -1,
               -1,
               1
@@ -1864,112 +1896,28 @@ export const rects: any[] = [
           }
         ],
         [
+          {
+            "id": 19,
+            "line": [
+              19,
+              7,
+              -1,
+              -1,
+              1
+            ]
+          },
+          {
+            "id": 18,
+            "line": [
+              7,
+              6,
+              -1,
+              -1,
+              1
+            ]
+          },
           {
             "id": 17,
-            "line": [
-              3,
-              1,
-              -1,
-              -1,
-              1
-            ]
-          },
-          {
-            "id": 3,
-            "line": [
-              1,
-              14,
-              -1,
-              -1,
-              1
-            ]
-          },
-          {
-            "id": 10,
-            "line": [
-              14,
-              3,
-              -1,
-              -1,
-              1
-            ]
-          }
-        ],
-        [
-          {
-            "id": 18,
-            "line": [
-              1,
-              19,
-              -1,
-              -1,
-              1
-            ]
-          },
-          {
-            "id": 21,
-            "line": [
-              19,
-              7,
-              -1,
-              -1,
-              1
-            ]
-          },
-          {
-            "id": 20,
-            "line": [
-              7,
-              6,
-              -1,
-              -1,
-              1
-            ]
-          },
-          {
-            "id": 19,
-            "line": [
-              6,
-              19,
-              -1,
-              -1,
-              1
-            ]
-          },
-          {
-            "id": 18,
-            "line": [
-              19,
-              1,
-              -1,
-              -1,
-              1
-            ]
-          }
-        ],
-        [
-          {
-            "id": 21,
-            "line": [
-              19,
-              7,
-              -1,
-              -1,
-              1
-            ]
-          },
-          {
-            "id": 20,
-            "line": [
-              7,
-              6,
-              -1,
-              -1,
-              1
-            ]
-          },
-          {
-            "id": 19,
             "line": [
               6,
               19,
@@ -1998,37 +1946,208 @@ export const rects: any[] = [
       "y": 131
     },
     "absolute": {
-      "x": 96,
-      "y": 21
+      "x": 359,
+      "y": 80
     },
     "original": {
-      "x": 96,
-      "y": 21
+      "x": 359,
+      "y": 80
     },
     "center": {
-      "x": 343,
-      "y": 178.5
+      "x": 606,
+      "y": 237.5
     },
     "box": {
-      "leftX": 96,
-      "rightX": 590,
-      "topY": 21,
-      "bottomY": 336,
+      "leftX": 359,
+      "rightX": 853,
+      "topY": 80,
+      "bottomY": 395,
       "topLeft": {
-        "x": 96,
-        "y": 21
+        "x": 359,
+        "y": 80
       },
       "topRight": {
-        "x": 590,
-        "y": 21
+        "x": 853,
+        "y": 80
       },
       "bottomLeft": {
-        "x": 96,
-        "y": 336
+        "x": 359,
+        "y": 395
       },
       "bottomRight": {
-        "x": 590,
-        "y": 336
+        "x": 853,
+        "y": 395
+      }
+    },
+    "strokeAlign": "INSIDE",
+    "isComplete": true
+  },
+  {
+    "lineWidth": 1.5,
+    "fillColor": "rgb(58,58,58)",
+    "borderColor": "rgb(140,140,140)",
+    "children": [],
+    "flipHorizontal": false,
+    "flipVertical": false,
+    "radius": 0,
+    "lineShapes": [],
+    "cacheLineShapes": [],
+    "commonPoints": [],
+    "rotation": 0,
+    "layout": {
+      "x": 359,
+      "y": 190.5,
+      "w": 119.5,
+      "h": 91.5
+    },
+    "isCustom": true,
+    "isVisible": false,
+    "isLocked": false,
+    "cornerSmooth": 0,
+    "cornerRadius": 0,
+    "topLeftRadius": 0,
+    "topRightRadius": 0,
+    "bottomLeftRadius": 0,
+    "bottomRightRadius": 0,
+    "opacity": 0,
+    "blendMode": 0,
+    "isMask": false,
+    "effects": [],
+    "isCache": false,
+    "isPointOrLine": false,
+    "penNetwork": {
+      "ctrlNodes": [
+        {
+          "x": -18.875,
+          "y": -63.125
+        },
+        {
+          "x": -78.625,
+          "y": -17.374999999999996
+        },
+        {
+          "x": -159.75,
+          "y": 45.75
+        },
+        {
+          "x": 40.25,
+          "y": 45.75
+        }
+      ],
+      "paths": [
+        [
+          0,
+          1,
+          -1,
+          0,
+          2
+        ],
+        [
+          1,
+          2,
+          1,
+          2,
+          3
+        ]
+      ],
+      "nodes": [
+        {
+          "x": 59.75,
+          "y": -45.75,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -48.75,
+          "y": -40.25,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "MirrorAngleAndLength",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            0,
+            1
+          ]
+        },
+        {
+          "x": -59.75,
+          "y": 45.75,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "MirrorAngleAndLength",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            3,
+            2
+          ]
+        }
+      ],
+      "regions": []
+    },
+    "use": true,
+    "name": "Pen",
+    "type": "PEN",
+    "id": "514ed7d9-cb72-4f01-b3ea-6d0512d5293e",
+    "percent": {
+      "x": 0,
+      "y": 0
+    },
+    "relativeCenter": {
+      "x": 0,
+      "y": 0
+    },
+    "realRotation": 0,
+    "start": {
+      "x": 215,
+      "y": 131
+    },
+    "absolute": {
+      "x": 359,
+      "y": 190.5
+    },
+    "original": {
+      "x": 359,
+      "y": 190.5
+    },
+    "center": {
+      "x": 418.75,
+      "y": 236.25
+    },
+    "box": {
+      "leftX": 359,
+      "rightX": 478.5,
+      "topY": 190.5,
+      "bottomY": 282,
+      "topLeft": {
+        "x": 359,
+        "y": 190.5
+      },
+      "topRight": {
+        "x": 478.5,
+        "y": 190.5
+      },
+      "bottomLeft": {
+        "x": 359,
+        "y": 282
+      },
+      "bottomRight": {
+        "x": 478.5,
+        "y": 282
       }
     },
     "strokeAlign": "INSIDE",

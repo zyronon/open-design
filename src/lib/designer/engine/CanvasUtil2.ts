@@ -356,15 +356,18 @@ export default class CanvasUtil2 {
           let {pointIndex, lineIndex, type} = this.editShape.editStartPointInfo
           const {nodes, paths, ctrlNodes} = this.editShape.conf.penNetwork
           if (type === EditType.Line) {
-            //TODO 这里删除nodes，要考虑有无其他线条再使用。。。。
             this.editShape.editStartPointInfo = cloneDeep(this.editShape.defaultCurrentOperationInfo)
             let line = paths[lineIndex]
             let startIndex = line[0]
             let endIndex = line[1]
-            paths.splice(lineIndex, 1)
-            let isUseStartIndex = paths.some(v => (v[0] === startIndex || v[1] === startIndex))
-            let isUseEndIndex = paths.some(v => (v[0] === endIndex || v[1] === endIndex))
+            let cp1Index = line[2]
+            let cp2Index = line[3]
 
+            paths.splice(lineIndex, 1)
+            let isUseStartIndex = paths.some(v => v.slice(0, 2).includes(startIndex))
+            let isUseEndIndex = paths.some(v => v.slice(0, 2).includes(endIndex))
+
+            //移动线段上的起点和终点
             paths.map(v => {
               let d = 0
               if (v[0] > startIndex && !isUseStartIndex) d++
@@ -375,6 +378,35 @@ export default class CanvasUtil2 {
               if (v[1] > endIndex && !isUseEndIndex) d++
               v[1] -= d
             })
+
+            line[2] > -1 && ctrlNodes.splice(line[2], 1)
+            line[3] > -1 && ctrlNodes.splice(line[3], 1)
+
+            //修复 点的控制点列表的下标
+            nodes.map(v => {
+              if (cp1Index > -1) {
+                if (v.cps[0] > -1) {
+                  if (v.cps[0] === cp1Index) v.cps[0] = -1
+                  if (v.cps[0] > cp1Index) v.cps[0] -= 1
+                }
+                if (v.cps[1] > -1) {
+                  if (v.cps[1] === cp1Index) v.cps[1] = -1
+                  if (v.cps[1] > cp1Index) v.cps[1] -= 1
+                }
+              }
+              if (cp2Index > -1) {
+                if (v.cps[0] > -1) {
+                  if (v.cps[0] === cp2Index) v.cps[0] = -1
+                  if (v.cps[0] > cp2Index) v.cps[0] -= 1
+                }
+                if (v.cps[1] > -1) {
+                  if (v.cps[1] === cp2Index) v.cps[1] = -1
+                  if (v.cps[1] > cp2Index) v.cps[1] -= 1
+                }
+              }
+            })
+
+            //删除控制点
             if (startIndex > endIndex) {
               if (!isUseStartIndex) nodes.splice(startIndex, 1)
               if (!isUseEndIndex) nodes.splice(endIndex, 1)
@@ -382,7 +414,19 @@ export default class CanvasUtil2 {
               if (!isUseEndIndex) nodes.splice(endIndex, 1)
               if (!isUseStartIndex) nodes.splice(startIndex, 1)
             }
-            //TODO　可以考虑把控制点也删除了，虽然不删除也无关紧要
+
+            //判断并删除线段的控制点下标
+            paths.map(v => {
+              let d = 0
+              if (v[2] > cp1Index && cp1Index > -1) d++
+              if (v[2] > cp2Index && cp2Index > -1) d++
+              v[2] -= d
+              d = 0
+              if (v[3] > cp1Index && cp1Index > -1) d++
+              if (v[3] > cp2Index && cp2Index > -1) d++
+              v[3] -= d
+            })
+
             return this.render()
           }
         }

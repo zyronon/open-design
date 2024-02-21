@@ -1,21 +1,23 @@
 ### 简体中文 | [English](README.md)
 
-## 此代码仅供学习，请勿用于商业用途
+## 预览
+
+[稳定版在线预览DEMO](https://open-designs-v2.netlify.app)
+
+[开发版在线预览DEMO](https://open-designs.netlify.app)
+
 
 ## Open-Design
 
-**Open-Design** 是一个使用 Canvas 绘制图形，基于[ React ](https://reactjs.org/)的在线设计工具，如果您使用过Figma\MasterGo，那么你将很熟悉。
+**Open-Design** 项目是一个使用 Canvas 绘制图形，基于[ React ](https://reactjs.org/)的在线UI设计工具，如果您使用过Figma\MasterGo，那么你将很熟悉。
+代码完全开源，可私有化部署，不必担心数据泄露问题。
 由 [React](https://reactjs.org/)、Canvas、[gl-matrix](https://glmatrix.net/)、[antd](https://ant.design)
 、[Redux](https://redux.js.org/)
 实现。
 
-## 预览
-
-[在线预览DEMO](http://ttentau.top/design)
-
-## 了解更多
-
-[一些技术总结](NOTE.md)
+## 主要特性
+- 支持Sketch/Figma/MasterGo的所有图形绘制功能
+- 支持多人协作实时编辑、评论
 
 ## 怎么运行
 
@@ -35,6 +37,10 @@ npm run start
 # 访问
 Chrome浏览器访问 http://localhost:8000
 ```
+
+## 了解更多
+
+[一些技术总结](NOTE.md)
 
 ## 问题反馈
 

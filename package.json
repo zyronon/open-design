@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "cross-env vite",
-    "build": "cross-env tsc && vite build",
+    "build": "cross-env vite build",
+    "build2": "cross-env tsc && vite build",
     "preview": "cross-env vite preview"
   },
   "dependencies": {

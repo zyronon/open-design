@@ -121,3 +121,9 @@ console.log('2-3这条边最大的radius（对边）值', a2 * tan)
 ```
 # 问题
 - 渲染所有闭合区域，用path保存所有路径再统一绘制会出问题，直接用ctx即时绘制就没问题
+
+# 一些未归档的资料
+- https://paulbourke.net/geometry/pointlineplane/
+- https://github.com/locationtech/jts
+- https://dev.opencascade.org/doc/refman/html/class_geom2d_a_p_i___inter_curve_curve.html#a9b569dd0038675203dbee5c33f6849d2
+- https://www.v2ex.com/t/1028316

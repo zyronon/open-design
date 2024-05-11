@@ -1562,7 +1562,6 @@ export class BaseShape {
           let centerLine: PenNetworkLine
 
           if (line0.line[4] === LineType.Line && line1.line[4] === LineType.Line) {
-
             let {
               adjacentSide,
               tan,

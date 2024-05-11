@@ -4,7 +4,7 @@ import helper from "../utils/helper"
 import {Colors, defaultConfig} from "../utils/constant"
 import draw from "../utils/draw"
 import {ParentShape} from "./core/ParentShape";
-import {BaseEvent2, EditType, LinePath, LineShape, LineType, P, ShapeStatus} from "../types/type"
+import {BaseEvent2, EditType, LineShape, LineType, P, ShapeStatus} from "../types/type"
 import {BaseShape} from "./core/BaseShape"
 import {PenConfig, PenNetworkLine, PenNetworkNode} from "../config/PenConfig"
 import {Math2} from "../utils/math"

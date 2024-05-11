@@ -1,5 +1,5 @@
-import { LineType, P } from "../types/type";
-import { BaseConfig } from "./BaseConfig"
+import {LineType, P} from "../types/type";
+import {BaseConfig} from "./BaseConfig"
 
 export type StrokeCap =
   'NONE'
@@ -65,4 +65,9 @@ export interface PenNetwork {
 
 export interface PenConfig extends BaseConfig {
   // penNetwork: PenNetwork
+}
+
+export interface TempLine {
+  id: number,
+  line: PenNetworkLine
 }

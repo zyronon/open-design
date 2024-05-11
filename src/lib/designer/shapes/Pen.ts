@@ -6,7 +6,7 @@ import draw from "../utils/draw"
 import {ParentShape} from "./core/ParentShape";
 import {BaseEvent2, EditType, LineShape, LineType, P, ShapeStatus} from "../types/type"
 import {BaseShape} from "./core/BaseShape"
-import {PenConfig, PenNetworkLine, PenNetworkNode} from "../config/PenConfig"
+import {PenConfig, PenNetworkLine, PenNetworkNode, TempLine} from "../config/PenConfig"
 import {Math2} from "../utils/math"
 import {cloneDeep, eq} from "lodash"
 import {Bezier} from "bezier-js"
@@ -316,8 +316,8 @@ export class Pen extends ParentShape {
         // console.log('lineMaps', lineMaps)
 
         //将有交点的线段分割
-        let newPaths: any[] = []
-        paths.map((line, index) => {
+        let newPaths: PenNetworkLine[] = []
+        paths.map((line: PenNetworkLine, index) => {
           let lineMap = lineMaps.get(index)
           if (lineMap) {
             lineMap.sort((a, b) => {
@@ -325,7 +325,7 @@ export class Pen extends ParentShape {
             })
             let lineType = line[4]
             if (lineType === LineType.Line) {
-              let newLines: any = [line]
+              let newLines: PenNetworkLine[] = [line]
               lineMap.map(v => {
                 // console.log('v',v)
                 let lastLine = newLines[newLines.length - 1]
@@ -348,14 +348,14 @@ export class Pen extends ParentShape {
               } else {
                 splitCurve = new Bezier(p1, ctrlNodes[line[2]], ctrlNodes[line[3]], p2)
               }
-              let newLines: any = [line]
+              let newLines: PenNetworkLine[] = [line]
               lineMap.map(v => {
                 // console.log('v',v)
                 let lastLine = newLines[newLines.length - 1]
                 newLines.pop()
                 let split = splitCurve!.split(v.t)
                 let leftPoints = split.left.points
-                let newLine = []
+                let newLine: PenNetworkLine = [0, 0, 0, 0, LineType.Line]
                 if (leftPoints.length === 3) {
                   newCtrlNodes.push(leftPoints[1])
                   newLine = [lastLine[0], v.index, newCtrlNodes.length - 1, -1, lineType]
@@ -367,7 +367,7 @@ export class Pen extends ParentShape {
 
                 splitCurve = split.right
                 let rightPoints = split.right.points
-                let rightNewLine = []
+                let rightNewLine: PenNetworkLine = [0, 0, 0, 0, LineType.Line]
                 if (rightPoints.length === 3) {
                   newCtrlNodes.push(rightPoints[1])
                   rightNewLine = [v.index, lastLine[1], newCtrlNodes.length - 1, -1, lineType]
@@ -391,7 +391,7 @@ export class Pen extends ParentShape {
         // console.log('newPaths', newPaths)
 
         let lastTemp = []
-        let closeLines: any[] = newPaths
+        let closeLines: PenNetworkLine[] = newPaths
         //筛选掉终点没人连的，可能存在N条线段一直连着，但不形成闭合。一次筛选筛不完整
         while (closeLines.length !== lastTemp.length) {
           lastTemp = cloneDeep(closeLines)
@@ -405,20 +405,20 @@ export class Pen extends ParentShape {
         // console.log('closeLines', closeLines)
         // console.log(newNodes)
 
-        let closeLinesWithId = closeLines.map((v, i) => ({id: i, line: v}))
+        let closeLinesWithId: TempLine[] = closeLines.map((v, i) => ({id: i, line: v}))
         // console.log('closeLinesWithId', closeLinesWithId)
 
         //寻找封闭图
         //参考：https://www.zhihu.com/question/47044473
         let c = 0
-        const fn = (start, end, currentLine: any, array: any[], save: any[]) => {
+        const fn = (start: number, end: number, currentLine: TempLine, array: TempLine[], save: TempLine[]): TempLine[] => {
           c++
           // if (c > 6) return []
           let startPoint1 = currentLine.line[0]
           let endPoint1 = currentLine.line[1]
           let containEndPointLines = array.filter((w, i) => w.line.slice(0, 2).includes(endPoint1) && w.id !== currentLine.id)
           let lastD = Infinity
-          let l
+          let l: TempLine
           containEndPointLines.map(a => {
             let end
             let line = a.line
@@ -443,6 +443,7 @@ export class Pen extends ParentShape {
             }
           })
           // console.log('c', containEndPointLines, l)
+          // @ts-ignore
           if (l) {
             //此处是针对，一条线段同时连接两个闭合图形的特殊情况
             let r = save.find(v => v.id === l.id)
@@ -459,7 +460,7 @@ export class Pen extends ParentShape {
 
         let closeAreas: any[] = []
 
-        const check2 = (lines: any[]) => {
+        const check2 = (lines: TempLine[]) => {
           let listIndexStr = lines.map(v => v.id).sort((a, b) => a - b).join('')
           return closeAreas.find(w => w.map((x: any) => x.id).sort((a: any, b: any) => a - b).join('') === listIndexStr)
         }
@@ -467,9 +468,9 @@ export class Pen extends ParentShape {
         //TODO 想想，如果只有两条直线，那么根本无需检测，肯定没有封闭图。如果是曲线呢？
         if (closeLinesWithId.length >= 2 && true) {
           closeLinesWithId.map((currentLine, i, array) => {
-            let start = currentLine.line[0]
-            let end = currentLine.line[1]
-            let r = fn(start, end, currentLine, array.slice(), [cloneDeep(currentLine)])
+            let startIndex = currentLine.line[0]
+            let endIndex = currentLine.line[1]
+            let r = fn(startIndex, endIndex, currentLine, array.slice(), [cloneDeep(currentLine)])
             if (r.length && !check2(r)) {
               closeAreas.push(r)
             }

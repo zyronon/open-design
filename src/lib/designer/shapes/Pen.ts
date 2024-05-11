@@ -461,7 +461,7 @@ export class Pen extends ParentShape {
 
         const check2 = (lines: any[]) => {
           let listIndexStr = lines.map(v => v.id).sort((a, b) => a - b).join('')
-          return closeAreas.find(w => w.map(w => w.id).sort((a, b) => a - b).join('') === listIndexStr)
+          return closeAreas.find(w => w.map((x: any) => x.id).sort((a: any, b: any) => a - b).join('') === listIndexStr)
         }
 
         //TODO 想想，如果只有两条直线，那么根本无需检测，肯定没有封闭图。如果是曲线呢？

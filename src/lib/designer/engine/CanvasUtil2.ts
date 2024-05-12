@@ -196,7 +196,6 @@ export default class CanvasUtil2 {
       // ctx.scale(currentMat[0], currentMat[5])
     }
     this.storedTransform = this.ctx.getTransform()
-    this.ctx.save()
     this.ctx.lineCap = 'round'
     // console.log('this.children,', this.children)
     for (let i = 0; i < this.children.length; i++) {
@@ -204,7 +203,6 @@ export default class CanvasUtil2 {
       shape.render(this.ctx)
     }
     this.boxSelection?.render(this.ctx)
-    this.ctx.restore()
     this.waitRenderOtherStatusFunc.map(cb => cb())
     this.waitRenderOtherStatusFunc = []
     this.ctx.restore()

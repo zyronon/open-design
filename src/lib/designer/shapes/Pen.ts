@@ -40,6 +40,7 @@ export class Pen extends ParentShape {
     let {
       fillColor, lineWidth, borderColor, center
     } = this.conf
+    // this.log('drawShape',)
 
     ctx.lineWidth = lineWidth ?? defaultConfig.lineWidth
     ctx.lineCap = "round"
@@ -88,12 +89,10 @@ export class Pen extends ParentShape {
 
   drawEdit(ctx: CanvasRenderingContext2D, newLayout: Rect): any {
     // this.log('drawEdit',)
-    ctx.save()
     let {
       fillColor
     } = this.conf
 
-    ctx.save()
     ctx.strokeStyle = Colors.Line2
     ctx.fillStyle = fillColor
 
@@ -180,7 +179,6 @@ export class Pen extends ParentShape {
     if (this.tempPoint) {
       draw.currentPoint(ctx, this.tempPoint)
     }
-    ctx.restore()
   }
 
   isInShape(mousePoint: P, cu: CanvasUtil2): boolean {
@@ -222,7 +220,7 @@ export class Pen extends ParentShape {
       console.time()
     }
 
-    const drawFillArea = (nodes: PenNetworkNode[], ctrlNodes: P[], closeAreas: any[]) => {
+    const drawCloseArea = (nodes: PenNetworkNode[], ctrlNodes: P[], closeAreas: any[]) => {
       if (showFill) {
         let newNodes = cloneDeep(nodes)
         let newCtrlNodes = cloneDeep(ctrlNodes)
@@ -262,7 +260,7 @@ export class Pen extends ParentShape {
 
     if (this.conf.isCache && false) {
       const {nodes, paths, ctrlNodes, areas: closeAreasId = []} = this._conf.cache
-      drawFillArea(nodes, ctrlNodes, closeAreasId)
+      drawCloseArea(nodes, ctrlNodes, closeAreasId)
     } else {
       this.checkAcr()
       const {nodes, paths, ctrlNodes} = this._conf.cache
@@ -412,7 +410,7 @@ export class Pen extends ParentShape {
         //参考：https://www.zhihu.com/question/47044473
         let c = 0
         const fn = (start: number, end: number, currentLine: TempLine, array: TempLine[], save: TempLine[]): TempLine[] => {
-          c++
+          // c++
           // if (c > 6) return []
           let startPoint1 = currentLine.line[0]
           let endPoint1 = currentLine.line[1]
@@ -435,6 +433,7 @@ export class Pen extends ParentShape {
                 a.line[3] = temp
               }
             }
+            // 计算角度
             let d = Math2.getDegree(newNodes[endPoint1], newNodes[end], newNodes[startPoint1])
             // console.log('d', d, currentLine.line, line, startPoint1, endPoint1, end)
             if (d < lastD) {
@@ -460,7 +459,8 @@ export class Pen extends ParentShape {
 
         let closeAreas: any[] = []
 
-        const check2 = (lines: TempLine[]) => {
+        //检测封闭图形是否重复
+        const checkCloseAreaRepeat = (lines: TempLine[]) => {
           let listIndexStr = lines.map(v => v.id).sort((a, b) => a - b).join('')
           return closeAreas.find(w => w.map((x: any) => x.id).sort((a: any, b: any) => a - b).join('') === listIndexStr)
         }
@@ -471,18 +471,17 @@ export class Pen extends ParentShape {
             let startIndex = currentLine.line[0]
             let endIndex = currentLine.line[1]
             let r = fn(startIndex, endIndex, currentLine, array.slice(), [cloneDeep(currentLine)])
-            if (r.length && !check2(r)) {
+            if (r.length && !checkCloseAreaRepeat(r)) {
               closeAreas.push(r)
             }
           })
-          // console.log('save', save)
           // console.log('closeAreas 长度', closeAreas.length)
 
           closeAreas.map(v => {
             // console.log(JSON.stringify(v.map(a => a.line)))
           })
 
-          drawFillArea(newNodes, newCtrlNodes, closeAreas)
+          drawCloseArea(newNodes, newCtrlNodes, closeAreas)
 
           this.conf.cache.nodes = newNodes
           this.conf.cache.paths = newPaths

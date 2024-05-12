@@ -63,11 +63,12 @@ const Bezier = {
     let cpL = Math2.getRotatedPoint(cpR, targetPoint, 180)
 
     //这里计算出的cpR，是固定的在当前点的右边。比较哪个点离cpR更近，需要视情况调换两个值用于绘制曲线。
-    let cpAndPreviousPointLength1 = Math2.getHypotenuse2(cpR, previousPoint)
-    let cpAndPreviousPointLength2 = Math2.getHypotenuse2(cpR, nextPoint)
-    if (cpAndPreviousPointLength1 > cpAndPreviousPointLength2) {
-      return {l: cpL, r: cpR}
-    }
+    //2024/5/12 这里不需要再处理点的方位使其固定在targetPoint的左右边，调用方会判断
+    // let cpAndPreviousPointLength1 = Math2.getHypotenuse2(cpR, previousPoint)
+    // let cpAndPreviousPointLength2 = Math2.getHypotenuse2(cpR, nextPoint)
+    // if (cpAndPreviousPointLength1 > cpAndPreviousPointLength2) {
+    //   return {l: cpL, r: cpR}
+    // }
     return {l: cpR, r: cpL}
     //下面是直接将X加上b的x，代入直线方程求y，会出现方向正确，但d点与b点的长度不等于X的问题
     // let dx = X + targetPoint.x

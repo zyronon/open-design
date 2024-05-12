@@ -411,6 +411,7 @@ export class BaseShape {
     let newLayout = {...this.conf.layout, x, y}
     // let newLayout = {...this.conf.layout, }
     // console.log('this.status', this.status)
+    // console.log('newLayout',newLayout,this.conf.center)
     if (this.status === ShapeStatus.Edit) {
       this.drawEdit(ctx, newLayout)
     } else {
@@ -442,6 +443,8 @@ export class BaseShape {
     if (this.status !== ShapeStatus.Normal) {
       CanvasUtil2.getInstance().waitRenderOtherStatusFunc.push(() => this.renderOtherStatus(ctx, newLayout))
     }
+    // console.log('render')
+
     // this.renderOtherStatus(ctx, {x, y})
   }
 
@@ -463,7 +466,7 @@ export class BaseShape {
   }
 
   log(val: string) {
-    console.log(this.conf.name, ':', val)
+    console.log(this.conf.name, ':', val, ',id:', this.conf.id)
   }
 
   /** @desc 事件转发方法
@@ -568,12 +571,93 @@ export class BaseShape {
       if (type) {
         if (type !== EditType.Line) {
           //关联的线条，边缘点需要特殊处理
-          let relationLines = paths.filter((line, index) => line.slice(0, 2).includes(pointIndex))
-
-          console.log('r', relationLines)
-
+          let relationLines = paths.filter((line) => line.slice(0, 2).includes(pointIndex))
+          if (relationLines.length === 0) return
           let point = nodes[pointIndex]
-          if (point.handleMirroring !== HandleMirroring.RightAngle) {
+          // console.log('relationLines', relationLines)
+          // console.log('point.handleMirroring', point.handleMirroring)
+          if (point.handleMirroring === HandleMirroring.RightAngle) {
+            switch (relationLines.length) {
+              case 1:
+                let cp1 = {x: point.x - 100, y: point.y}
+                let cp2 = {x: point.x + 100, y: point.y}
+                ctrlNodes.push(cp1)
+                ctrlNodes.push(cp2)
+                point.cps = [ctrlNodes.length - 2, ctrlNodes.length - 1]
+                let currentLine = relationLines[0]
+                let otherPoint = nodes[currentLine[0] === pointIndex ? currentLine[1] : currentLine[0]]
+                //如果是二次曲线，只需要改变空的那个控制点，其他控制点保持不变
+                if (currentLine[4] === LineType.Bezier2) {
+                  currentLine[4] = LineType.Bezier3
+                  //如果另一个点在当前点的右边
+                  if (otherPoint.x >= point.x) {
+                    if (currentLine[3] === -1) currentLine[3] = point.cps[1]
+                    else currentLine[2] = point.cps[1]
+                  } else {
+                    if (currentLine[3] === -1) currentLine[3] = point.cps[0]
+                    else currentLine[2] = point.cps[0]
+                  }
+                } else {
+                  currentLine[4] = LineType.Bezier2
+                  if (otherPoint.x >= point.x) {
+                    currentLine[2] = point.cps[0]
+                    currentLine[3] = point.cps[1]
+                  } else {
+                    currentLine[2] = point.cps[1]
+                    currentLine[3] = point.cps[0]
+                  }
+                }
+                point.handleMirroring = HandleMirroring.MirrorAngleAndLength
+                break
+              case 2:
+                let line0 = relationLines[0]
+                let line1 = relationLines[1]
+                let line0NodeIndex = line0[0] === pointIndex ? line0[1] : line0[0]
+                let line1NodeIndex = line1[0] === pointIndex ? line1[1] : line1[0]
+                let node0 = nodes[line0NodeIndex]
+                let node1 = nodes[line1NodeIndex]
+                let {l, r} = Bezier.getTargetPointControlPoints(
+                  node0,
+                  point,
+                  node1)
+                // console.log(l, r)
+                ctrlNodes.push(l)
+                ctrlNodes.push(r)
+                point.cps = [ctrlNodes.length - 2, ctrlNodes.length - 1]
+
+                //判断l或r，与其中一个点x连成的线条，是否与另一条线交叉。不交叉说明l或r应该是x的cp点
+                let rr = Math2.isIntersection(node0, point, node1, l)
+                if (rr) {
+                  line1[0] === pointIndex ? (line1[2] = point.cps[1]) : (line1[3] = point.cps[1])
+                  line0[0] === pointIndex ? (line0[2] = point.cps[0]) : (line0[3] = point.cps[0])
+                } else {
+                  if (line1[0] === pointIndex) {
+                    line1[2] = point.cps[0]
+                  } else {
+                    line1[3] = point.cps[0]
+                  }
+                  if (line0[0] === pointIndex) {
+                    line0[2] = point.cps[1]
+                  } else {
+                    line0[3] = point.cps[1]
+                  }
+                }
+
+                if (line0[4] === LineType.Bezier2) {
+                  line0[4] = LineType.Bezier3
+                } else {
+                  line0[4] = LineType.Bezier2
+                }
+                if (line1[4] === LineType.Bezier2) {
+                  line1[4] = LineType.Bezier3
+                } else {
+                  line1[4] = LineType.Bezier2
+                }
+                point.handleMirroring = HandleMirroring.MirrorAngleAndLength
+                break
+              default:
+            }
+          } else {
             point.cps = [-1, -1]
             point.handleMirroring = HandleMirroring.RightAngle
             paths.map((line, index) => {
@@ -587,77 +671,6 @@ export class BaseShape {
                 }
               }
             })
-          } else {
-            if (relationLines.length === 1) {
-              let cp1 = {x: point.x - 100, y: point.y}
-              let cp2 = {x: point.x + 100, y: point.y}
-              ctrlNodes.push(cp1)
-              ctrlNodes.push(cp2)
-              point.cps = [ctrlNodes.length - 2, ctrlNodes.length - 1]
-              let currentLine = relationLines[0]
-              let otherPoint = nodes[currentLine[0] === pointIndex ? currentLine[1] : currentLine[0]]
-              //如果是二次曲线，只需要改变空的那个控制点，其他控制点保持不变
-              if (currentLine[4] === LineType.Bezier2) {
-                currentLine[4] = LineType.Bezier3
-                if (otherPoint.x >= point.x) {
-                  if (currentLine[3] === -1) currentLine[3] = point.cps[1]
-                  else currentLine[2] = point.cps[1]
-                } else {
-                  if (currentLine[3] === -1) currentLine[3] = point.cps[0]
-                  else currentLine[2] = point.cps[0]
-                }
-              } else {
-                currentLine[4] = LineType.Bezier2
-                if (otherPoint.x >= point.x) {
-                  currentLine[2] = point.cps[0]
-                  currentLine[3] = point.cps[1]
-                } else {
-                  currentLine[2] = point.cps[1]
-                  currentLine[3] = point.cps[0]
-                }
-              }
-              point.handleMirroring = HandleMirroring.MirrorAngleAndLength
-            } else {
-              let preLine: PenNetworkLine = undefined as any
-              let nextLine: PenNetworkLine = undefined as any
-              for (let i = 0; i < relationLines.length; i++) {
-                let curLine = relationLines[i]
-                if (curLine[1] === pointIndex) {
-                  if (!preLine) {
-                    preLine = curLine
-                  }
-                }
-                if (curLine[0] === pointIndex) {
-                  nextLine = curLine
-                }
-              }
-              console.log('nextLine', nextLine, 'preLine', preLine)
-              if (!preLine && !nextLine) return console.error('没有前后线')
-              let previousPointInfo = nodes[preLine[0]]
-              let nextPointInfo = nodes[nextLine[1]]
-              // console.log(previousPointInfo, nextPointInfo, point)
-              let {l, r} = Bezier.getTargetPointControlPoints(
-                  previousPointInfo,
-                  point,
-                  nextPointInfo)
-              console.log(l, r)
-              ctrlNodes.push(l)
-              ctrlNodes.push(r)
-              point.cps = [ctrlNodes.length - 2, ctrlNodes.length - 1]
-              preLine[3] = point.cps[0]
-              nextLine[2] = point.cps[1]
-              if (nextLine[4] === LineType.Bezier2) {
-                nextLine[4] = LineType.Bezier3
-              } else {
-                nextLine[4] = LineType.Bezier2
-              }
-              if (preLine[4] === LineType.Bezier2) {
-                preLine[4] = LineType.Bezier3
-              } else {
-                preLine[4] = LineType.Bezier2
-              }
-              point.handleMirroring = HandleMirroring.MirrorAngleAndLength
-            }
           }
           cu.render()
         } else {

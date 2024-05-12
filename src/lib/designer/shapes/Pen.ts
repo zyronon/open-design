@@ -476,7 +476,7 @@ export class Pen extends ParentShape {
             }
           })
           // console.log('save', save)
-          console.log('save', closeAreas.length)
+          // console.log('closeAreas 长度', closeAreas.length)
 
           closeAreas.map(v => {
             // console.log(JSON.stringify(v.map(a => a.line)))

@@ -2,7 +2,7 @@ import { P, P2 } from "../types/type"
 import { BaseConfig, Rect } from "../config/BaseConfig"
 import { Colors, defaultConfig } from "./constant"
 import { jiaodu2hudu } from "../../../utils"
-import CanvasUtil2 from "../engine/CanvasUtil2"
+import CanvasUtil from "../engine/CanvasUtil"
 
 export default {
   /** @desc 计算位置
@@ -132,7 +132,7 @@ export default {
     let {x, y, w, h,} = layout
     ctx.strokeStyle = defaultConfig.strokeStyle
 
-    let cu = CanvasUtil2.getInstance()
+    let cu = CanvasUtil.getInstance()
     let d = 4 / cu.handScale
     let r = 2 / cu.handScale
     ctx.fillStyle = Colors.White
@@ -192,7 +192,7 @@ export default {
     ctx.rect(x, y, w, h)
     ctx.closePath()
     ctx.stroke()
-    let cu = CanvasUtil2.getInstance()
+    let cu = CanvasUtil.getInstance()
     let d = 4 / cu.handScale
     this.clear({
       x: x - d,
@@ -261,7 +261,7 @@ export default {
     // this.round(topLeft, r2, ctx, ShapeType.SELECT)
   },
   controlPoint(ctx: CanvasRenderingContext2D, rect: any, center: P) {
-    let handScale = CanvasUtil2.getInstance().handScale
+    let handScale = CanvasUtil.getInstance().handScale
     let d = 3 / handScale
     let {x, y, w = 2 * d, h = 2 * d, lineWidth = 1} = rect
     let ow = w / 2
@@ -285,7 +285,7 @@ export default {
     ctx.restore()
   },
   drawRound(ctx: any, rect: any, r: number = 4) {
-    let cu = CanvasUtil2.getInstance()
+    let cu = CanvasUtil.getInstance()
     let {x, y} = rect
     ctx.save()
     ctx.lineWidth = defaultConfig.lineWidth / cu.handScale
@@ -299,7 +299,7 @@ export default {
     ctx.restore()
   },
   currentPoint(ctx: any, rect: any, r: number = 6) {
-    let cu = CanvasUtil2.getInstance()
+    let cu = CanvasUtil.getInstance()
     let {x, y} = rect
     ctx.save()
     ctx.lineWidth = defaultConfig.lineWidth / cu.handScale

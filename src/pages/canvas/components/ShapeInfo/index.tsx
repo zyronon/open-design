@@ -30,7 +30,7 @@ import EventBus from "../../../../lib/designer/event/eventBus";
 import {EventKeys} from "../../../../lib/designer/event/eventKeys";
 import {clone, cloneDeep} from "lodash";
 import {fontFamilies, fontSize, fontWeight} from "../../../../lib/designer/utils/constant";
-import CanvasUtil2 from "../../../../lib/designer/engine/CanvasUtil2"
+import CanvasUtil from "../../../../lib/designer/engine/CanvasUtil"
 import {HandleMirroring, PenNetworkNode} from "../../../../lib/designer/config/PenConfig";
 
 enum ChangeColorType {

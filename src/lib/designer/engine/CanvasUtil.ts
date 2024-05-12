@@ -1,17 +1,18 @@
-import { BaseShape } from "../shapes/core/BaseShape"
+import {BaseShape} from "../shapes/core/BaseShape"
 import EventBus from "../event/eventBus"
-import { BaseEvent2, EditModeType, EditType, EventTypes, P, ShapeStatus, ShapeType } from "../types/type"
-import { cloneDeep } from "lodash"
-import { Colors, defaultConfig } from "../utils/constant"
-import { mat4 } from "gl-matrix"
-import { getShapeFromConfig } from "../utils/common"
-import { BaseConfig } from "../config/BaseConfig"
+import {BaseEvent2, EditModeType, EditType, EventTypes, P, ShapeStatus, ShapeType} from "../types/type"
+import {cloneDeep} from "lodash"
+import {Colors, defaultConfig} from "../utils/constant"
+import {mat4} from "gl-matrix"
+import {getShapeFromConfig} from "../utils/common"
+import {BaseConfig} from "../config/BaseConfig"
 import helper from "../utils/helper"
 import draw from "../utils/draw"
-import { BoxSelection } from "../shapes/BoxSelection";
-import { EventKeys } from "../event/eventKeys";
-import { Pen } from "../shapes/Pen";
-import { getPenPoint } from "../config/PenConfig";
+import {BoxSelection} from "../shapes/BoxSelection";
+import {EventKeys} from "../event/eventKeys";
+import {Pen} from "../shapes/Pen";
+import {getPenPoint} from "../config/PenConfig";
+import {Rectangle} from "../shapes/Rectangle";
 // import {Pen} from "../shapes/Pen"
 
 const out: any = new Float32Array([
@@ -20,15 +21,15 @@ const out: any = new Float32Array([
   0, 0, 0, 0,
   0, 0, 0, 0,
 ])
-export default class CanvasUtil2 {
-  static instance: CanvasUtil2
+export default class CanvasUtil {
+  static instance: CanvasUtil
 
   static getInstance(canvas?: HTMLCanvasElement) {
     if (canvas) {
       if (this.instance) {
         this.instance.init(canvas)
       } else {
-        this.instance = new CanvasUtil2(canvas)
+        this.instance = new CanvasUtil(canvas)
       }
     }
     return this.instance
@@ -85,6 +86,9 @@ export default class CanvasUtil2 {
 
   set mode(val) {
     // console.log('val', val,this._mode)
+    if (val === 'SELECT' && this._mode === 'RECTANGLE'){
+      // debugger
+    }
     if (val !== this._mode) {
       // this.editModeType = EditModeType.Select
       this._mode = val
@@ -135,7 +139,7 @@ export default class CanvasUtil2 {
         r && this.children.push(r)
       }
     })
-    // console.log(' this.children', this.children)
+    // console.log('children', this.children)
   }
 
   isDesignMode() {
@@ -516,6 +520,9 @@ export default class CanvasUtil2 {
           this.render()
           this.mode = ShapeType.EDIT
           EventBus.emit(EventTypes.onMouseDown, this.editShape)
+          break
+        default:
+          break
       }
     }
   }
@@ -524,48 +531,53 @@ export default class CanvasUtil2 {
     if (e.capture) return
     // console.log('cu-onMouseMove', e)
     if (this.isMouseDown) {
+      console.log(1, this.mode)
       let w = e.point.x - this.mouseStart.x
       let h = e.point.y - this.mouseStart.y
       switch (this.mode) {
-        // case ShapeType.RECTANGLE:
-        //   if (this.newShape) {
-        //     this.newShape.conf.w = w
-        //     this.newShape.conf.h = h
-        //     this.newShape.conf.center = {
-        //       x: this.newShape.conf.x + (w / 2),
-        //       y: this.newShape.conf.y + (h / 2)
-        //     }
-        //     //太小了select都看不见
-        //     if (w > 10) {
-        //       this.newShape.status = ShapeStatus.Select
-        //     }
-        //     // EventBus.emit(EventMapTypes.onMouseMove, this.newShape)
-        //     this.newShape.conf = helper.initConf(this.newShape.conf)
-        //     this.render()
-        //   } else {
-        //     let x = this.mouseStart.x
-        //     let y = this.mouseStart.y
-        //     this.newShape = new Rectangle({
-        //       "x": x,
-        //       "y": y,
-        //       "abX": 0,
-        //       "abY": 0,
-        //       "w": 0,
-        //       "h": 0,
-        //       "rotate": 0,
-        //       "lineWidth": 2,
-        //       "type": ShapeType.RECTANGLE,
-        //       "color": "gray",
-        //       "radius": 0,
-        //       "children": [],
-        //       "borderColor": "rgb(216,216,216)",
-        //       "fillColor": "rgb(216,216,216)",
-        //     })
-        //     EventBus.emit(EventTypes.onMouseDown, this.newShape)
-        //     this.children.push(this.newShape)
-        //   }
-        //   // this.drawNewShape(coordinate)
-        //   break
+        case ShapeType.RECTANGLE:
+          console.log(2)
+          if (this.newShape) {
+            this.newShape.conf.layout.w = w
+            this.newShape.conf.layout.h = h
+            this.newShape.conf.center = {
+              x: this.newShape.conf.layout.x + (w / 2),
+              y: this.newShape.conf.layout.y + (h / 2)
+            }
+            //太小了select都看不见
+            if (w > 10) {
+              // this.newShape.status = ShapeStatus.Select
+            }
+            // EventBus.emit(EventMapTypes.onMouseMove, this.newShape)
+            this.newShape.conf = helper.calcConf(this.newShape.conf)
+            console.log('this.newShape.conf',cloneDeep(this.newShape.conf.box))
+            this.render()
+          } else {
+            let x = this.mouseStart.x
+            let y = this.mouseStart.y
+            this.newShape = new Rectangle({
+              conf: {
+                layout: {
+                  "x": x,
+                  "y": y,
+                  "w": 0,
+                  "h": 0,
+                },
+                "rotate": 0,
+                "lineWidth": 2,
+                "type": ShapeType.RECTANGLE,
+                "color": "gray",
+                "radius": 0,
+                "children": [],
+                "borderColor": "rgb(216,216,216)",
+                "fillColor": "rgb(216,216,216)",
+              }
+            })
+            EventBus.emit(EventTypes.onMouseDown, this.newShape)
+            this.children.push(this.newShape)
+          }
+          // this.drawNewShape(coordinate)
+          break
         case ShapeType.MOVE:
           const transform = new Float32Array([
             1, 0, 0, 0,
@@ -610,6 +622,7 @@ export default class CanvasUtil2 {
           this.ctx.fillStyle = Colors.Select
           this.ctx.fillRect2(layout)
           this.ctx.strokeRect2(layout)
+          break
       }
     }
   }
@@ -706,7 +719,7 @@ export default class CanvasUtil2 {
   }
 }
 
-export class CU extends CanvasUtil2 {
+export class CU extends CanvasUtil {
   static r() {
     this.getInstance().render()
   }

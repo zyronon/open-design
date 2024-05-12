@@ -1,4 +1,4 @@
-import CanvasUtil2 from "../engine/CanvasUtil2"
+import CanvasUtil from "../engine/CanvasUtil"
 import {BaseConfig} from "../config/BaseConfig"
 import {BaseShape} from "../shapes/core/BaseShape"
 
@@ -45,7 +45,7 @@ export type IState = {
   usePen: boolean,
   enterPen: boolean,
   isEdit: boolean,
-  cu: CanvasUtil2,
+  cu: CanvasUtil,
   mode: ShapeType,
   editModeType: EditModeType,
   drawCount: number
@@ -152,6 +152,7 @@ export interface P2 extends P {
 }
 
 //贝塞尔点的类型
+//TODO 已废弃
 export enum BezierPointType {
   RightAngle = 'RightAngle',//直角
   MirrorAngleAndLength = 'MirrorAngleAndLength',//完全对称
@@ -174,11 +175,13 @@ export interface BezierPoint {
   type: BezierPointType,
 }
 
+//TODO 已废弃
 export enum PointType {
   Single = 'Single',
   Common = 'Common',
 }
 
+//TODO 已废弃
 export interface PointInfo {
   type: PointType,
   targetId?: string,
@@ -190,11 +193,13 @@ export type Line = {
   endPoint: BezierPoint
 }
 
+//TODO 已废弃
 export type LineShape = {
   close: boolean,
   points: PointInfo[]
 }
 
+//TODO 已废弃
 export type LinePath = {
   close: boolean,
   path: Path2D

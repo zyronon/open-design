@@ -1,5 +1,6 @@
 import {ShapeProps, ShapeType} from "../types/type"
 import {Pen} from "../shapes/Pen"
+import {Rectangle} from "../shapes/Rectangle";
 
 export const getShapeFromConfig = (props: ShapeProps): any => {
   const {conf} = props
@@ -8,9 +9,9 @@ export const getShapeFromConfig = (props: ShapeProps): any => {
     // case ShapeType.FRAME:
     //   r = new Frame(props)
     //   break
-    // case ShapeType.RECTANGLE:
-    //   r = new Rectangle(props)
-    //   break
+    case ShapeType.RECTANGLE:
+      r = new Rectangle(props)
+      break
     // case ShapeType.ELLIPSE:
     //   r = new Ellipse(props)
     //   break

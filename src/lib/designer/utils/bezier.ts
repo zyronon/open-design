@@ -274,7 +274,6 @@ const Bezier = {
   dist(x1: number, y1: number, x2: number, y2: number) {
     return ((x1 - x2) ** 2 + (y2 - y1) ** 2) ** 0.5
   },
-
   //https://pomax.github.io/bezierinfo/zh-CN/index.html#circleintersection
   //查寻曲线上与圆相交的点
   findClosest(center: P, LUT: any[], pd2: number, pd1: number, radius: number, distanceEpsilon = 5) {

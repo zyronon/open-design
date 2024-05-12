@@ -100,12 +100,6 @@ export interface BaseConfig extends Layout, Geometry, Text {
   children: any[],
   flipVertical: boolean,
   flipHorizontal: boolean,
-  //所有的线条图形。一个图形默认由N个连续的点组成闭合的条线组成。但编辑模式下，可以删除特定的点，或新增另一条线
-  lineShapes: LineShape[],
-  cacheLineShapes: LineShape[],
-  //存放多条线时共用到的点
-  commonPoints: BezierPoint[],
-
   /**
    * @desc 是否是自定义图形
    * 默认的图形，都是固定的渲染方式

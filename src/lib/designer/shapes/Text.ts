@@ -6,7 +6,7 @@ import {Colors, defaultConfig} from "../utils/constant"
 import {BaseEvent2, TextMode} from "../types/type";
 import {BaseShape} from "./core/BaseShape";
 import {Cancer} from "@icon-park/react";
-import CanvasUtil2, {CU} from "../engine/CanvasUtil2";
+import CanvasUtil, {CU} from "../engine/CanvasUtil";
 import helper from "../utils/helper"
 
 export class Text extends ParentShape {
@@ -22,7 +22,7 @@ export class Text extends ParentShape {
   onDbClick(event: BaseEvent2, parents: BaseShape[]): boolean {
     let {x, y, w, h,} = this._config.layout
 
-    let cu = CanvasUtil2.getInstance()
+    let cu = CanvasUtil.getInstance()
     let id = 'text-input'
     let input: HTMLElement = document.querySelector('#' + id) ?? document.createElement('textarea')
     input.id = id

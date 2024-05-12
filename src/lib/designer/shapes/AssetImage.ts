@@ -1,6 +1,6 @@
 import {BaseConfig, Rect} from "../config/BaseConfig"
 import {ParentShape} from "./core/ParentShape";
-import CanvasUtil2 from "../engine/CanvasUtil2";
+import CanvasUtil from "../engine/CanvasUtil";
 
 export class AssetImage extends ParentShape {
   img: any = undefined
@@ -25,7 +25,7 @@ export class AssetImage extends ParentShape {
       }
       img.onload = () => {
         this.img = img
-        CanvasUtil2.getInstance().nextRender()
+        CanvasUtil.getInstance().nextRender()
       }
     }
   }

@@ -1,10 +1,10 @@
-import CanvasUtil2 from "../engine/CanvasUtil2"
+import CanvasUtil, {CU} from "../engine/CanvasUtil"
 import {BaseConfig, Rect} from "../config/BaseConfig"
 import helper from "../utils/helper"
 import {Colors, defaultConfig} from "../utils/constant"
 import draw from "../utils/draw"
 import {ParentShape} from "./core/ParentShape";
-import {BaseEvent2, EditType, LineShape, LineType, P, ShapeStatus} from "../types/type"
+import {BaseEvent2, EditType, LineType, P, ShapeStatus} from "../types/type"
 import {BaseShape} from "./core/BaseShape"
 import {PenConfig, PenNetworkLine, PenNetworkNode, TempLine} from "../config/PenConfig"
 import {Math2} from "../utils/math"
@@ -55,9 +55,6 @@ export class Pen extends ParentShape {
     // ctx.fill(fillPath, 'nonzero')
     // ctx.fill(fillPath, 'evenodd')
 
-    // ctx.strokeStyle = 'white'
-    // ctx.stroke(fillPath)
-
     //绘制所有点
     ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
     ctx.fillStyle = 'red'
@@ -66,10 +63,8 @@ export class Pen extends ParentShape {
       // draw.drawRound(ctx, point)
     })
     this._conf.cache.ctrlNodes.map((point, i) => {
-      // draw.drawRound(ctx, point)
+      draw.drawRound(ctx, point)
     })
-
-    // draw.drawRound(ctx, {x: 0, y: 0})
   }
 
   drawHover(ctx: CanvasRenderingContext2D, newLayout: Rect): any {
@@ -81,7 +76,6 @@ export class Pen extends ParentShape {
 
   drawSelected(ctx: CanvasRenderingContext2D, newLayout: Rect): any {
     ctx.strokeStyle = defaultConfig.strokeStyle
-    //容器hover时只需要描边矩形就行了
     let strokePath = this.getStrokePath()
     ctx.stroke(strokePath)
     draw.selected(ctx, newLayout, this.conf.isPointOrLine)
@@ -181,11 +175,11 @@ export class Pen extends ParentShape {
     }
   }
 
-  isInShape(mousePoint: P, cu: CanvasUtil2): boolean {
+  isInShape(mousePoint: P, cu: CanvasUtil): boolean {
     return helper.isInBox(mousePoint, this.conf.box)
   }
 
-  isInShapeOnSelect(p: P, cu: CanvasUtil2): boolean {
+  isInShapeOnSelect(p: P, cu: CanvasUtil): boolean {
     return false
   }
 
@@ -209,8 +203,7 @@ export class Pen extends ParentShape {
     return false
   }
 
-  getCustomPoint(): LineShape[] {
-    return []
+  shape2PenNetwork() {
   }
 
   getFillPath(ctx: CanvasRenderingContext2D) {
@@ -851,7 +844,7 @@ export class Pen extends ParentShape {
           // })
           // console.log('visited', cloneDeep(Array.from(new Set(visited))))
 
-          let cu = CanvasUtil2.getInstance()
+          let cu = CanvasUtil.getInstance()
           let {ctx} = cu
           ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
           newNodes.map((point, i) => {
@@ -920,5 +913,14 @@ export class Pen extends ParentShape {
       }
     })
     return strokePath
+  }
+
+  toPen() {
+    let cu = CU.i()
+    let rIndex = cu.children.findIndex(v => v.conf.id === this.conf.id)
+    if (rIndex > -1) {
+      let shape = cu.children[rIndex]
+
+    }
   }
 }

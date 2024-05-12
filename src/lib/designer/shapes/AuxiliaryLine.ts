@@ -1,5 +1,5 @@
 // import {BaseShape} from "./BaseShape"
-// import CanvasUtil2 from "../CanvasUtil2"
+// import CanvasUtil from "../CanvasUtil"
 // import {BaseEvent2, P} from "../utils/type"
 // import {BaseConfig} from "../config/BaseConfig"
 //
@@ -21,11 +21,11 @@
 //   beforeShapeIsIn() {
 //     return false
 //   }
-//   isInOnSelect(p: P, cu: CanvasUtil2): boolean {
+//   isInOnSelect(p: P, cu: CanvasUtil): boolean {
 //     return false
 //   }
 //
-//   isHoverIn(p: P, cu: CanvasUtil2): boolean {
+//   isHoverIn(p: P, cu: CanvasUtil): boolean {
 //     return super.isInBox(p)
 //   }
 //

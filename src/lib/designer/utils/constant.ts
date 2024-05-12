@@ -937,8 +937,7 @@ export const rects: any[] = [
     "isCache": true,
     "isPointOrLine": false,
     "penNetwork": {
-      "ctrlNodes": [
-      ],
+      "ctrlNodes": [],
       "paths": [
         [
           0,
@@ -1005,32 +1004,7 @@ export const rects: any[] = [
       "regions": []
     },
     "cache": {
-      "ctrlNodes": [
-        {
-          "x": -64.125,
-          "y": -105.125
-        },
-        {
-          "x": -123.875,
-          "y": -59.375
-        },
-        {
-          "x": -205,
-          "y": 3.75
-        },
-        {
-          "x": -5,
-          "y": 3.75
-        },
-        {
-          "x": 28.625,
-          "y": 108.625
-        },
-        {
-          "x": 57.375,
-          "y": 66.875
-        }
-      ],
+      "ctrlNodes": [],
       "paths": [
         [
           0,
@@ -1123,7 +1097,7 @@ export const rects: any[] = [
     "use": true,
     "name": "两条曲线",
     "type": "PEN",
-    "id": null,
+    "id": "ef812aa3-a98c-48c5-a2c5-2a7eaa07447a",
     "percent": {
       "x": 0,
       "y": 0
@@ -1134,8 +1108,8 @@ export const rects: any[] = [
     },
     "realRotation": 0,
     "start": {
-      "x": 215,
-      "y": 131
+      "x": 507,
+      "y": 186.5
     },
     "absolute": {
       "x": 507,
@@ -1187,9 +1161,9 @@ export const rects: any[] = [
     "commonPoints": [],
     "rotation": 0,
     "layout": {
-      "x": 47.5,
-      "y": 49,
-      "w": 250,
+      "x": 102.5,
+      "y": 82,
+      "w": 313.5,
       "h": 250
     },
     "isCustom": true,
@@ -1251,11 +1225,18 @@ export const rects: any[] = [
           -1,
           -1,
           1
+        ],
+        [
+          4,
+          7,
+          -1,
+          -1,
+          1
         ]
       ],
       "nodes": [
         {
-          "x": 25,
+          "x": -6.75,
           "y": -125,
           "cornerRadius": 0,
           "realCornerRadius": 0,
@@ -1270,7 +1251,7 @@ export const rects: any[] = [
           ]
         },
         {
-          "x": 25,
+          "x": -6.75,
           "y": 25,
           "cornerRadius": 0,
           "realCornerRadius": 0,
@@ -1285,7 +1266,7 @@ export const rects: any[] = [
           ]
         },
         {
-          "x": 125,
+          "x": 93.25,
           "y": -75,
           "cornerRadius": 0,
           "realCornerRadius": 0,
@@ -1300,7 +1281,7 @@ export const rects: any[] = [
           ]
         },
         {
-          "x": -125,
+          "x": -156.75,
           "y": -75,
           "cornerRadius": 0,
           "realCornerRadius": 0,
@@ -1315,7 +1296,7 @@ export const rects: any[] = [
           ]
         },
         {
-          "x": 75,
+          "x": 43.25,
           "y": 125,
           "cornerRadius": 0,
           "realCornerRadius": 0,
@@ -1330,7 +1311,7 @@ export const rects: any[] = [
           ]
         },
         {
-          "x": 75,
+          "x": 43.25,
           "y": -55,
           "cornerRadius": 0,
           "realCornerRadius": 0,
@@ -1345,8 +1326,23 @@ export const rects: any[] = [
           ]
         },
         {
-          "x": 75,
+          "x": 43.25,
           "y": 60,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": 156.75,
+          "y": 11,
           "cornerRadius": 0,
           "realCornerRadius": 0,
           "handleMirroring": "RightAngle",
@@ -1367,13 +1363,13 @@ export const rects: any[] = [
       "paths": [
         [
           0,
-          7,
+          8,
           -1,
           -1,
           1
         ],
         [
-          7,
+          8,
           1,
           -1,
           -1,
@@ -1395,13 +1391,13 @@ export const rects: any[] = [
         ],
         [
           2,
-          7,
+          8,
           -1,
           -1,
           1
         ],
         [
-          7,
+          8,
           3,
           -1,
           -1,
@@ -1420,11 +1416,18 @@ export const rects: any[] = [
           -1,
           -1,
           1
+        ],
+        [
+          4,
+          7,
+          -1,
+          -1,
+          1
         ]
       ],
       "nodes": [
         {
-          "x": 25,
+          "x": -6.75,
           "y": -125,
           "cornerRadius": 0,
           "realCornerRadius": 0,
@@ -1439,7 +1442,7 @@ export const rects: any[] = [
           ]
         },
         {
-          "x": 25,
+          "x": -6.75,
           "y": 25,
           "cornerRadius": 0,
           "realCornerRadius": 0,
@@ -1454,7 +1457,7 @@ export const rects: any[] = [
           ]
         },
         {
-          "x": 125,
+          "x": 93.25,
           "y": -75,
           "cornerRadius": 0,
           "realCornerRadius": 0,
@@ -1469,7 +1472,7 @@ export const rects: any[] = [
           ]
         },
         {
-          "x": -125,
+          "x": -156.75,
           "y": -75,
           "cornerRadius": 0,
           "realCornerRadius": 0,
@@ -1484,7 +1487,7 @@ export const rects: any[] = [
           ]
         },
         {
-          "x": 75,
+          "x": 43.25,
           "y": 125,
           "cornerRadius": 0,
           "realCornerRadius": 0,
@@ -1499,7 +1502,7 @@ export const rects: any[] = [
           ]
         },
         {
-          "x": 75,
+          "x": 43.25,
           "y": -55,
           "cornerRadius": 0,
           "realCornerRadius": 0,
@@ -1514,7 +1517,7 @@ export const rects: any[] = [
           ]
         },
         {
-          "x": 75,
+          "x": 43.25,
           "y": 60,
           "cornerRadius": 0,
           "realCornerRadius": 0,
@@ -1529,7 +1532,22 @@ export const rects: any[] = [
           ]
         },
         {
-          "x": 25,
+          "x": 156.75,
+          "y": 11,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -6.75,
           "y": -75
         }
       ],
@@ -1539,7 +1557,7 @@ export const rects: any[] = [
           {
             "id": 0,
             "line": [
-              7,
+              8,
               1,
               -1,
               -1,
@@ -1570,7 +1588,7 @@ export const rects: any[] = [
             "id": 3,
             "line": [
               2,
-              7,
+              8,
               -1,
               -1,
               1
@@ -1597,37 +1615,140 @@ export const rects: any[] = [
       "y": 29
     },
     "absolute": {
-      "x": 47.5,
-      "y": 49
+      "x": 102.5,
+      "y": 82
     },
     "original": {
-      "x": 47.5,
-      "y": 49
+      "x": 102.5,
+      "y": 82
     },
     "center": {
-      "x": 172.5,
-      "y": 174
+      "x": 259.25,
+      "y": 207
     },
     "box": {
-      "leftX": 47.5,
-      "rightX": 297.5,
-      "topY": 49,
-      "bottomY": 299,
+      "leftX": 102.5,
+      "rightX": 416,
+      "topY": 82,
+      "bottomY": 332,
       "topLeft": {
-        "x": 47.5,
-        "y": 49
+        "x": 102.5,
+        "y": 82
       },
       "topRight": {
-        "x": 297.5,
-        "y": 49
+        "x": 416,
+        "y": 82
       },
       "bottomLeft": {
-        "x": 47.5,
-        "y": 299
+        "x": 102.5,
+        "y": 332
       },
       "bottomRight": {
-        "x": 297.5,
-        "y": 299
+        "x": 416,
+        "y": 332
+      }
+    },
+    "strokeAlign": "INSIDE",
+    "isComplete": true
+  },
+  {
+    use: true,
+    "lineWidth": 2,
+    "fillColor": "rgb(216,216,216)",
+    "borderColor": "rgb(216,216,216)",
+    "children": [],
+    "flipHorizontal": false,
+    "flipVertical": false,
+    "radius": 0,
+    "lineShapes": [],
+    "cacheLineShapes": [],
+    "commonPoints": [],
+    "rotation": 0,
+    "layout": {
+      "x": 676,
+      "y": 87,
+      "w": 270,
+      "h": 216
+    },
+    "isCustom": false,
+    "isVisible": false,
+    "isLocked": false,
+    "cornerSmooth": 0,
+    "cornerRadius": 0,
+    "topLeftRadius": 0,
+    "topRightRadius": 0,
+    "bottomLeftRadius": 0,
+    "bottomRightRadius": 0,
+    "opacity": 0,
+    "blendMode": 0,
+    "isMask": false,
+    "effects": [],
+    "isCache": false,
+    "isPointOrLine": false,
+    "penNetwork": {
+      "ctrlNodes": [],
+      "paths": [],
+      "nodes": [],
+      "regions": []
+    },
+    "cache": {
+      "ctrlNodes": [],
+      "paths": [],
+      "nodes": [],
+      "regions": []
+    },
+    "x": 676,
+    "y": 87,
+    "w": 270,
+    "h": 216,
+    "rotate": 0,
+    "type": "RECTANGLE",
+    "color": "gray",
+    "percent": {
+      "x": 0,
+      "y": 0
+    },
+    "relativeCenter": {
+      "x": 0,
+      "y": 0
+    },
+    "realRotation": 0,
+    "start": {
+      "x": 676,
+      "y": 87
+    },
+    "absolute": {
+      "x": 676,
+      "y": 87
+    },
+    "original": {
+      "x": 676,
+      "y": 87
+    },
+    "center": {
+      "x": 811,
+      "y": 195
+    },
+    "box": {
+      "leftX": 676,
+      "rightX": 676,
+      "topY": 87,
+      "bottomY": 87,
+      "topLeft": {
+        "x": 676,
+        "y": 87
+      },
+      "topRight": {
+        "x": 676,
+        "y": 87
+      },
+      "bottomLeft": {
+        "x": 676,
+        "y": 87
+      },
+      "bottomRight": {
+        "x": 676,
+        "y": 87
       }
     },
     "strokeAlign": "INSIDE",

@@ -16,7 +16,7 @@
 //   StrokeAlign
 // } from "../types/type"
 // import {Math2} from "../utils/math"
-// import CanvasUtil2 from "../engine/CanvasUtil2"
+// import CanvasUtil from "../engine/CanvasUtil"
 // import {v4 as uuid} from "uuid"
 // import {Bezier} from "../utils/bezier"
 // import helper from "../utils/helper"
@@ -218,7 +218,7 @@
 //
 //   onMouseMove(event: BaseEvent2, parents: BaseShape[]): boolean {
 //     let {x: cx, y: cy,} = event.point
-//     let cu = CanvasUtil2.getInstance()
+//     let cu = CanvasUtil.getInstance()
 //
 //     // const {layout: {x, y, w, h}, center} = this.conf
 //     // let lineIndex = -1
@@ -374,7 +374,7 @@
 //           }
 //         }
 //         this._conf.isComplete = false
-//         this.conf.lineShapes = this.getCustomPoint()
+//         this.conf.lineShapes = this.shape2PenNetwork()
 //         cu.render()
 //       }
 //       draw.drawRound(cu.ctx, event.point)
@@ -414,7 +414,7 @@
 //     return false
 //   }
 //
-//   getCustomPoint(): LineShape[] {
+//   shape2PenNetwork() {
 //     let {
 //       totalLength = 4, startT = 0
 //     } = this._conf
@@ -638,11 +638,11 @@
 //     }
 //   }
 //
-//   isInShape(mousePoint: P, cu: CanvasUtil2): boolean {
+//   isInShape(mousePoint: P, cu: CanvasUtil): boolean {
 //     return helper.isInBox(mousePoint, this.conf.box)
 //   }
 //
-//   isInShapeOnSelect(mousePoint: P, cu: CanvasUtil2): boolean {
+//   isInShapeOnSelect(mousePoint: P, cu: CanvasUtil): boolean {
 //     let {
 //       center
 //     } = this._conf
@@ -684,7 +684,7 @@
 //     this.getCps()
 //     this.getOperatePoint()
 //     if (!this._conf.isComplete) {
-//       this.conf.lineShapes = this.getCustomPoint()
+//       this.conf.lineShapes = this.shape2PenNetwork()
 //     }
 //   }
 //

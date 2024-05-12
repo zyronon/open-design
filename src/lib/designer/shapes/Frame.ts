@@ -1,5 +1,5 @@
 // import {BaseShape} from "./core/BaseShape"
-// import CanvasUtil2 from "../engine/CanvasUtil2"
+// import CanvasUtil from "../engine/CanvasUtil"
 // import {BaseEvent2, LineShape, P, ShapeProps, ShapeStatus, StrokeAlign} from "../types/type"
 // import {BaseConfig, Rect} from "../config/BaseConfig"
 // import draw from "../utils/draw"
@@ -12,7 +12,7 @@
 //
 //   constructor(props: ShapeProps) {
 //     super(props)
-//     let cu = CanvasUtil2.getInstance()
+//     let cu = CanvasUtil.getInstance()
 //     cu.ctx.font = `400 18rem "SourceHanSansCN", sans-serif`
 //     let m = cu.ctx.measureText(this.conf.name)
 //     this.conf.nameWidth = m.width
@@ -30,7 +30,7 @@
 //     }
 //   }
 //
-//   isInShapeOnSelect(p: P, cu: CanvasUtil2): boolean {
+//   isInShapeOnSelect(p: P, cu: CanvasUtil): boolean {
 //     return false
 //   }
 //
@@ -62,7 +62,7 @@
 //       && original.y > y && y > original.y - 18
 //   }
 //
-//   isInShape(mousePoint: P, cu: CanvasUtil2): boolean {
+//   isInShape(mousePoint: P, cu: CanvasUtil): boolean {
 //     if (this.isOnlyHoverInName()) {
 //       // return this.isInName(mousePoint)
 //       return this.isInName(mousePoint) || helper.isInBox(mousePoint, this.conf.box)
@@ -146,7 +146,7 @@
 //
 //     //文字
 //     ctx.fillStyle = defaultConfig.strokeStyle
-//     let cu = CanvasUtil2.getInstance()
+//     let cu = CanvasUtil.getInstance()
 //     ctx.font = `400 ${16 / cu.handScale}rem "SourceHanSansCN", sans-serif`
 //     let text = `${w.toFixed(2)} x ${h.toFixed(2)}`
 //     let m = ctx.measureText(text)
@@ -196,7 +196,7 @@
 //   drawEdit(ctx: CanvasRenderingContext2D, conf: BaseConfig): void {
 //   }
 //
-//   getCustomPoint(): LineShape[] {
+//   shape2PenNetwork() {
 //     return []
 //   }
 //

@@ -11,7 +11,7 @@ import {message} from "antd"
 import Left from "./components/Left/left"
 import EventBus from "../../lib/designer/event/eventBus"
 import cx from "classnames"
-import CanvasUtil2 from "../../lib/designer/engine/CanvasUtil2"
+import CanvasUtil from "../../lib/designer/engine/CanvasUtil"
 import ShapeInfo from "./components/ShapeInfo"
 
 
@@ -82,7 +82,7 @@ class Design extends React.Component<any, IState> {
     })
     this.setState({drawCount: 0})
     let canvas: HTMLCanvasElement = this.canvasRef.current!
-    const c = CanvasUtil2.getInstance(canvas)
+    const c = CanvasUtil.getInstance(canvas)
     c.clear()
     // let r = []
     // for (let i = 0; i < 50; i++) {

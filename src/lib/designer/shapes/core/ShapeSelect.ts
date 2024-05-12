@@ -1,5 +1,5 @@
 import {P} from "../../types/type";
-import CanvasUtil2 from "../../engine/CanvasUtil2";
+import CanvasUtil from "../../engine/CanvasUtil";
 import helper from "../../utils/helper";
 import {Math2} from "../../utils/math";
 import {ShapeEdit} from "./ShapeEdit";
@@ -7,7 +7,7 @@ import {ShapeEdit} from "./ShapeEdit";
 export class ShapeSelect extends ShapeEdit {
   //移动图形
   move(point: P) {
-    let cu = CanvasUtil2.getInstance()
+    let cu = CanvasUtil.getInstance()
     let {x, y,} = point
     this.moved = true
 
@@ -24,7 +24,7 @@ export class ShapeSelect extends ShapeEdit {
   dragTopLeftRotation(point: P) {
     // console.log('dragTopLeftRotation')
     let {x, y,} = point
-    let cu = CanvasUtil2.getInstance()
+    let cu = CanvasUtil.getInstance()
     let {center, original,} = this.conf
     let current = {x, y}
     // console.log('x-------', x, '          y--------', y)
@@ -48,7 +48,7 @@ export class ShapeSelect extends ShapeEdit {
   dragTopLeft(point: P) {
     // console.log('dragTopLeft')
     let {x, y,} = point
-    let cu = CanvasUtil2.getInstance()
+    let cu = CanvasUtil.getInstance()
     const conf = this.conf
     let {realRotation} = conf
     let isReverseW = false
@@ -104,7 +104,7 @@ export class ShapeSelect extends ShapeEdit {
   dragTop(point: P) {
     // console.log('拖动上边')
     let {x, y,} = point
-    let cu = CanvasUtil2.getInstance()
+    let cu = CanvasUtil.getInstance()
     let conf = this.conf
     let isReverseW = false
     const {realRotation} = conf
@@ -155,7 +155,7 @@ export class ShapeSelect extends ShapeEdit {
   dragBottom(point: P) {
     // console.log('拖动下边')
     let {x, y,} = point
-    let cu = CanvasUtil2.getInstance()
+    let cu = CanvasUtil.getInstance()
     let conf = this.conf
     let isReverseW = false
     const {realRotation} = conf
@@ -206,7 +206,7 @@ export class ShapeSelect extends ShapeEdit {
   dragLeft(point: P) {
     // console.log('拖动左边')
     let {x, y,} = point
-    let cu = CanvasUtil2.getInstance()
+    let cu = CanvasUtil.getInstance()
     let conf = this.conf
     const {realRotation} = conf
     let isReverseW = false
@@ -265,7 +265,7 @@ export class ShapeSelect extends ShapeEdit {
   dragRight(point: P) {
     // console.log('拖动右边')
     let {x, y,} = point
-    let cu = CanvasUtil2.getInstance()
+    let cu = CanvasUtil.getInstance()
     let conf = this.conf
     const {realRotation} = conf
     let isReverseW = false

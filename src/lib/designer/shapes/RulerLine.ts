@@ -1,6 +1,6 @@
 // import {BaseShape} from "./BaseShape"
 // import {BaseEvent2, P} from "../utils/type"
-// import CanvasUtil2 from "../CanvasUtil2"
+// import CanvasUtil from "../CanvasUtil"
 // import {BaseConfig} from "../config/BaseConfig"
 //
 // export class RulerLine extends BaseShape {
@@ -28,7 +28,7 @@
 //     return false
 //   }
 //
-//   isInShapeChild(mousePoint: P, cu: CanvasUtil2): boolean {
+//   isInShapeChild(mousePoint: P, cu: CanvasUtil): boolean {
 //     const {x, y} = mousePoint
 //     let r = 0 < x && x < cu.canvasRect.width
 //       && 0 < y && y < 20
@@ -40,7 +40,7 @@
 //     return r
 //   }
 //
-//   isInShapeOnSelect(p: P, cu: CanvasUtil2): boolean {
+//   isInShapeOnSelect(p: P, cu: CanvasUtil): boolean {
 //     return false
 //   }
 //
@@ -49,7 +49,7 @@
 //   }
 //
 //   drawShape(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {
-//     let cu = CanvasUtil2.getInstance()
+//     let cu = CanvasUtil.getInstance()
 //     if (this.isHorizontal()) {
 //       ctx.rect(xy.x, xy.y, cu.canvasRect.width, 1)
 //     } else {

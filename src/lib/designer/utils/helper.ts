@@ -148,10 +148,7 @@ export default {
       bottomRight,
     }
     conf.strokeAlign = StrokeAlign.INSIDE
-    if (!conf.lineShapes) {
-      conf.lineShapes = []
-      conf.commonPoints = []
-    }
+
     if (conf.isCustom === undefined) conf.isCustom = false
     // @ts-ignore
     if (conf.isComplete === undefined) conf.isComplete = true
@@ -314,11 +311,6 @@ export default {
       bottomRight,
     }
     conf.strokeAlign = StrokeAlign.INSIDE
-    if (!conf.lineShapes) {
-      conf.lineShapes = []
-      conf.commonPoints = []
-    }
-
     // console.log('initConf', conf)
     return conf
   },

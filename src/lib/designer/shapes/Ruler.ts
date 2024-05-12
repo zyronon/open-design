@@ -1,6 +1,6 @@
 // import {BaseShape} from "./BaseShape"
 // import {BaseEvent2, P, ShapeType} from "../utils/type"
-// import CanvasUtil2 from "../CanvasUtil2"
+// import CanvasUtil from "../CanvasUtil"
 // import {BaseConfig} from "../config/BaseConfig"
 // import {RulerLine} from "./RulerLine"
 // import helper from "../utils/helper"
@@ -21,7 +21,7 @@
 //
 //   mouseMoveChild(event: BaseEvent2, parents: BaseShape[]): boolean {
 //     if (this.enter) {
-//       let cu = CanvasUtil2.getInstance()
+//       let cu = CanvasUtil.getInstance()
 //       if (cu.newShape) {
 //         if (this.isHorizontal()) {
 //           cu.newShape.conf.y = event.point.y
@@ -59,7 +59,7 @@
 //   }
 //
 //   mouseUpChild(event: BaseEvent2, parents: BaseShape[]): boolean {
-//     let cu = CanvasUtil2.getInstance()
+//     let cu = CanvasUtil.getInstance()
 //     cu.newShape = undefined
 //     return false
 //   }
@@ -68,7 +68,7 @@
 //     return this.conf.data?.direction === 'horizontal'
 //   }
 //
-//   isInShapeChild(mousePoint: P, cu: CanvasUtil2): boolean {
+//   isInShapeChild(mousePoint: P, cu: CanvasUtil): boolean {
 //     const {x, y} = mousePoint
 //     let r
 //     if (this.isHorizontal()) {
@@ -91,12 +91,12 @@
 //     return r
 //   }
 //
-//   isInShapeOnSelect(p: P, cu: CanvasUtil2): boolean {
+//   isInShapeOnSelect(p: P, cu: CanvasUtil): boolean {
 //     return false
 //   }
 //
 //   drawShape(ctx: CanvasRenderingContext2D, xy: P, parent?: BaseConfig): any {
-//     let cu = CanvasUtil2.getInstance()
+//     let cu = CanvasUtil.getInstance()
 //     if (this.isHorizontal()) {
 //       ctx.rect(0, 0, cu.canvasRect.width, 20)
 //     } else {

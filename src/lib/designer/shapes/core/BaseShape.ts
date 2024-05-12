@@ -3,7 +3,6 @@ import {
   CurrentOperationInfo,
   EditModeType,
   EditType,
-  LineShape,
   LineType,
   MouseOptionType,
   P,
@@ -11,7 +10,7 @@ import {
   ShapeStatus,
   ShapeType
 } from "../../types/type"
-import CanvasUtil2, {CU} from "../../engine/CanvasUtil2"
+import CanvasUtil, {CU} from "../../engine/CanvasUtil"
 import {cloneDeep, merge} from "lodash"
 import {getShapeFromConfig} from "../../utils/common"
 import EventBus from "../../event/eventBus"
@@ -42,7 +41,7 @@ export class BaseShape {
   parent?: BaseShape
 
   constructor(props: ShapeProps) {
-    // console.log('props', clone(props))
+    // console.log('props', cloneDeep(props))
     this.conf = helper.initConf(props.conf, props.parent?.conf)
     // console.log('this.conf', cloneDeep(this.conf))
     //如果是一条线，或一个点，计算出来有问题
@@ -65,7 +64,7 @@ export class BaseShape {
   }
 
   set status(val) {
-    let cu = CanvasUtil2.getInstance()
+    let cu = CanvasUtil.getInstance()
     if (val !== this._status) {
       if (this._status === ShapeStatus.Edit) {
         this.calcNewCenterAndWidthAndHeight()
@@ -77,8 +76,8 @@ export class BaseShape {
         cu.mode = ShapeType.SELECT
       }
       if (val === ShapeStatus.Edit) {
-        if (!this.conf.lineShapes.length) {
-          this.conf.lineShapes = this.getCustomPoint()
+        if (!this.conf.penNetwork.paths.length) {
+          this.shape2PenNetwork()
         }
         cu.editShape = this
         cu.mode = ShapeType.EDIT
@@ -86,7 +85,7 @@ export class BaseShape {
       }
       this._status = val
       EventBus.emit(EventKeys.OPTION_MODE, this._status)
-      CanvasUtil2.getInstance().render()
+      CanvasUtil.getInstance().render()
     }
   }
 
@@ -97,7 +96,7 @@ export class BaseShape {
   set isSelectHover(val) {
     if (val !== this._isSelectHover) {
       this._isSelectHover = val
-      CanvasUtil2.getInstance().render()
+      CanvasUtil.getInstance().render()
     }
   }
 
@@ -140,12 +139,12 @@ export class BaseShape {
   }
 
   //子类判断是否在图形上
-  isInShape(mousePoint: P, cu: CanvasUtil2): boolean {
+  isInShape(mousePoint: P, cu: CanvasUtil): boolean {
     return helper.isInBox(mousePoint, this.conf.box)
   }
 
   //当select时，判断是否在图形上
-  isInShapeOnSelect(p: P, cu: CanvasUtil2): boolean {
+  isInShapeOnSelect(p: P, cu: CanvasUtil): boolean {
     return false
   }
 
@@ -163,9 +162,8 @@ export class BaseShape {
     return false
   }
 
-  //获取自定义的点
-  getCustomPoint(): LineShape[] {
-    return []
+  //图形转线条
+  shape2PenNetwork() {
   }
 
   getStatus() {
@@ -220,7 +218,7 @@ export class BaseShape {
    * 4、当前hoverType等于空
    * 再判断是否捕获、是否是设计模式
    * */
-  canTransmitChildren(cu: CanvasUtil2): boolean {
+  canTransmitChildren(cu: CanvasUtil): boolean {
     if (this.hoverType !== MouseOptionType.None) return false
     if (this.conf.type === ShapeType.FRAME) {
       if (this.children.length && !this.parent) {
@@ -322,7 +320,7 @@ export class BaseShape {
     return {type: undefined, pointIndex: -1, lineIndex: -1, cpIndex: -1}
   }
 
-  _isInShape(mousePoint: P, cu: CanvasUtil2): boolean {
+  _isInShape(mousePoint: P, cu: CanvasUtil): boolean {
     //如果操作中，那么永远返回ture，保持事件一直直接传递到当前图形上
     if (this.mouseDown || this.enterType !== MouseOptionType.None) return true
     if (this.beforeIsInShape()) return true
@@ -407,6 +405,7 @@ export class BaseShape {
     if (w === 0 || h === 0) {
       return
     }
+    // this.log('render')
     let {x, y} = draw.calcPosition(ctx, this.conf)
     let newLayout = {...this.conf.layout, x, y}
     // let newLayout = {...this.conf.layout, }
@@ -421,7 +420,7 @@ export class BaseShape {
     //恢复本次图形渲染前的矩阵变换。
     //可以用ctx.restore() 来恢复，但那样会导致clip方法裁剪的区域也被恢复（即仅作用于本组件）。
     //导致后续绘制子组件时，如果超出父组件边界时，无法被裁剪。
-    let nv = CanvasUtil2.getInstance().storedTransform
+    let nv = CanvasUtil.getInstance().storedTransform
     ctx.setTransform(nv.a, nv.b, nv.c, nv.d, nv.e, nv.f)
 
     if (false) {
@@ -441,7 +440,7 @@ export class BaseShape {
     ctx.restore()
 
     if (this.status !== ShapeStatus.Normal) {
-      CanvasUtil2.getInstance().waitRenderOtherStatusFunc.push(() => this.renderOtherStatus(ctx, newLayout))
+      CanvasUtil.getInstance().waitRenderOtherStatusFunc.push(() => this.renderOtherStatus(ctx, newLayout))
     }
     // console.log('render')
 
@@ -449,7 +448,7 @@ export class BaseShape {
   }
 
   renderOtherStatus(ctx: CanvasRenderingContext2D, newLayout: Rect) {
-    let cu = CanvasUtil2.getInstance()
+    let cu = CanvasUtil.getInstance()
     ctx.save()
     draw.calcPosition(ctx, this.conf)
     ctx.lineWidth = 2 / cu.handScale
@@ -496,10 +495,10 @@ export class BaseShape {
       return true
     }
 
-    let cu = CanvasUtil2.getInstance()
+    let cu = CanvasUtil.getInstance()
 
     //只有在状态是普通或者hover时，需要判断父级是否裁剪。因为选中和编辑时，所有事件都能直接传递到图形上
-    if (this.status == ShapeStatus.Normal || this.status === ShapeStatus.Hover) {
+    if (this.status === ShapeStatus.Normal || this.status === ShapeStatus.Hover) {
       //如果有父级，并且父级还裁剪了，那么先判断是否在父级里面
       if (!parents?.filter(item => item.conf.clip).every(item => item._isInShape(point, cu))) {
         if (this.status === ShapeStatus.Hover) this.status = ShapeStatus.Normal
@@ -564,7 +563,7 @@ export class BaseShape {
     // console.log('core-dblclick', this.editStartPointInfo, this.editHover)
     if (this.onDbClick(event, parents)) return
     if (this.status === ShapeStatus.Edit) {
-      let cu = CanvasUtil2.getInstance()
+      let cu = CanvasUtil.getInstance()
       const {pointIndex, type} = this.editStartPointInfo
       const {nodes, paths, ctrlNodes} = this.conf.penNetwork
 
@@ -656,6 +655,7 @@ export class BaseShape {
                 point.handleMirroring = HandleMirroring.MirrorAngleAndLength
                 break
               default:
+              //TODO 超过两条边时
             }
           } else {
             point.cps = [-1, -1]
@@ -690,7 +690,7 @@ export class BaseShape {
     EventBus.emit(EventKeys.SELECT_SHAPE, this)
     if (this.onMouseDown(event, parents)) return
 
-    let cu = CanvasUtil2.getInstance()
+    let cu = CanvasUtil.getInstance()
     this.original = cloneDeep(this.conf)
     cu.mouseStart = cloneDeep(event.point)
     cu.fixMouseStart = cloneDeep(event.point)
@@ -1046,7 +1046,7 @@ export class BaseShape {
     }
 
     if (this.status === ShapeStatus.Edit) {
-      let cu = CanvasUtil2.getInstance()
+      let cu = CanvasUtil.getInstance()
       let {center, realRotation, flipHorizontal, flipVertical} = this.conf
       const {nodes, paths, ctrlNodes} = this.conf.penNetwork
 
@@ -1055,7 +1055,6 @@ export class BaseShape {
         // console.log('this.editEnter', this.editEnter)
         //未选中任何内容，还属于判断阶段
         if (type) {
-          this.originalLineShapes = cloneDeep(this.conf.lineShapes)
 
           //TODO 是否可以统一反转？
           //反转到0度，好判断
@@ -1300,7 +1299,7 @@ export class BaseShape {
     this.conf = helper.calcConf(conf, this.parent?.conf)
     if (flipType === 'Symmetric') {
       this.childrenSymmetricFlip(type, this.conf.center)
-      CanvasUtil2.getInstance().render()
+      CanvasUtil.getInstance().render()
     } else {
       this.childrenDiagonalFlip(type, this.conf)
     }
@@ -1464,8 +1463,6 @@ export class BaseShape {
     EventBus.emit(EventKeys.ON_CONF_CHANGE)
   }
 
-  originalLineShapes: LineShape[] = []
-
   pointRadiusChange(e: any, val: any) {
     let point = this.getPoint({
       type: EditType.Point,
@@ -1480,7 +1477,7 @@ export class BaseShape {
       this.conf.isCache = false
     }
     this.checkAcr3(val.pointIndex, e)
-    CanvasUtil2.getInstance().render()
+    CanvasUtil.getInstance().render()
     EventBus.emit(EventKeys.POINT_INFO, Object.assign({}, val, {point}))
   }
 
@@ -1822,7 +1819,7 @@ export class BaseShape {
           newPaths.push({id: newPaths.length + 1, line: newLine1!})
           newPaths.push({id: newPaths.length + 1, line: centerLine!})
 
-          let cu = CanvasUtil2.getInstance()
+          let cu = CanvasUtil.getInstance()
           cu.waitRenderOtherStatusFunc.push(() => {
             let ctx = cu.ctx
             ctx.save()

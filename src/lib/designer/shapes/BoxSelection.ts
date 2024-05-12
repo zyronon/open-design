@@ -1,7 +1,7 @@
 import {BaseShape} from "./core/BaseShape";
 import {BaseEvent2, LineShape, MouseOptionType, P, ShapeStatus} from "../types/type";
 import draw from "../utils/draw";
-import CanvasUtil2 from "../engine/CanvasUtil2";
+import CanvasUtil from "../engine/CanvasUtil";
 import {BaseConfig, Rect} from "../config/BaseConfig";
 import helper from "../utils/helper"
 import {ParentShape} from "./core/ParentShape";
@@ -14,7 +14,7 @@ export class BoxSelection extends ParentShape {
   // this.render()
   // }
 
-  checkChildren(layout: Rect, cu: CanvasUtil2) {
+  checkChildren(layout: Rect, cu: CanvasUtil) {
     let selectionShapes: BaseShape[] = []
     cu.children.map(shape => {
       if (helper.isInBox(shape.conf.absolute, layout)) {
@@ -91,15 +91,15 @@ export class BoxSelection extends ParentShape {
     draw.selected(ctx, newLayout)
   }
 
-  getCustomPoint(): LineShape[] {
+  shape2PenNetwork() {
     return [];
   }
 
-  isInShape(mousePoint: P, cu: CanvasUtil2): boolean {
+  isInShape(mousePoint: P, cu: CanvasUtil): boolean {
     return helper.isInBox(mousePoint, this.conf.box)
   }
 
-  isInShapeOnSelect(p: P, cu: CanvasUtil2): boolean {
+  isInShapeOnSelect(p: P, cu: CanvasUtil): boolean {
     return false;
   }
 
@@ -128,7 +128,7 @@ export class BoxSelection extends ParentShape {
     console.log(this.mouseDown)
     console.log(this.enterType)
     if (!this.moved && this.enterType === MouseOptionType.None) {
-      let cu = CanvasUtil2.getInstance()
+      let cu = CanvasUtil.getInstance()
       cu.boxSelection = undefined
       cu.render()
     }

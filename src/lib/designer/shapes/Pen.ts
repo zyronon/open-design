@@ -924,11 +924,21 @@ export class Pen extends ParentShape {
     }
     let rIndex = list.findIndex(v => v.conf.id === this.conf.id)
     this.conf.type = ShapeType.PEN
+    this.conf.name = ShapeType.PEN
+    this.conf.id = ShapeType.PEN
+    //TODO 当前图形的children未处理
     let ins = new Pen({conf: cloneDeep(this.conf), parent: this.parent})
     if (rIndex > -1) {
+      list[rIndex] = null
       list[rIndex] = ins
     }
     ins.status = ShapeStatus.Select
+    cu.hoverShape = undefined
+    cu.hoverShapeParent = []
+    cu.editShape = undefined
+    cu.selectedShape = undefined
+    //TODO cu.selectedShapeParent 未处理
+    cu.selectedShape = ins
     return ins
   }
 }

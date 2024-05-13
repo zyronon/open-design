@@ -7,6 +7,7 @@ import {ShapeEdit} from "./ShapeEdit";
 export class ShapeSelect extends ShapeEdit {
   //移动图形
   move(point: P) {
+    this.log('move')
     let cu = CanvasUtil.getInstance()
     let {x, y,} = point
     this.moved = true
@@ -14,6 +15,7 @@ export class ShapeSelect extends ShapeEdit {
     this.conf.center.x = this.original.center.x + (x - cu.mouseStart.x)
     this.conf.center.y = this.original.center.y + (y - cu.mouseStart.y)
 
+    console.log('this.conf.center',this.conf.center)
     this.conf = helper.calcConf(this.conf, this.parent?.conf)
     this.notifyConfUpdate()
     this.calcChildrenConf()

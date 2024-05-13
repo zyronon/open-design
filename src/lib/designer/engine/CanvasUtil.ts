@@ -508,6 +508,7 @@ export default class CanvasUtil {
           })
           this.editShape = pen
           this.editShape.status = ShapeStatus.Edit
+          console.log(1)
           this.editShape.editStartPointInfo = {
             type: EditType.Point,
             lineIndex: -1,

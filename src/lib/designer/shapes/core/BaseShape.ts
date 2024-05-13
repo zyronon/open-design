@@ -81,6 +81,7 @@ export class BaseShape {
 
   set status(val) {
     let cu = CanvasUtil.getInstance()
+    console.log('set-staus', this.conf.name, val, this._status)
     if (val !== this._status) {
       if (this._status === ShapeStatus.Edit) {
         this.calcNewCenterAndWidthAndHeight()
@@ -103,6 +104,8 @@ export class BaseShape {
       EventBus.emit(EventKeys.OPTION_MODE, this._status)
       cu.render()
     }
+    console.log('set-staus', this.conf.name, val, this._status)
+
   }
 
   get isSelectHover() {
@@ -560,7 +563,7 @@ export class BaseShape {
   }
 
   _dblclick(event: BaseEvent2, parents: BaseShape[] = []) {
-    // console.log('on-dblclick',)
+    console.log('on-dblclick', this.conf.name, this._status)
     // console.log('core-dblclick', this.editStartPointInfo, this.editHover)
     if (this.onDbClick(event, parents)) return
     if (this.status === ShapeStatus.Edit) {
@@ -678,11 +681,10 @@ export class BaseShape {
           this.status = ShapeStatus.Select
         }
       } else {
+        //2024/5/13这里必须先把原来的图形的状态改为Select，不然后面toPen生成的Pen的状态一直是Edit，不知道是为什么
+        this.status = ShapeStatus.Select
         if (this.conf.isCustom && this.constructor.name !== 'Pen') {
           this.toPen()
-          // cu.setSelectShape(ins, ins.parent)
-        }else {
-          this.status = ShapeStatus.Select
         }
       }
     } else {
@@ -693,10 +695,13 @@ export class BaseShape {
   _mousedown(event: BaseEvent2, parents: BaseShape[] = []) {
     // this.log('core-mousedown')
     // console.log('mousedown', this.conf.name, this.enterType, this.hoverType)
+
     EventBus.emit(EventKeys.SELECT_SHAPE, this)
     if (this.onMouseDown(event, parents)) return
 
     let cu = CanvasUtil.getInstance()
+    // console.log('_mousedown', this.conf.name, this.conf.id, this._status, cu.children)
+
     this.original = cloneDeep(this.conf)
     cu.mouseStart = cloneDeep(event.point)
     cu.fixMouseStart = cloneDeep(event.point)
@@ -1008,7 +1013,7 @@ export class BaseShape {
   }
 
   _mousemove(event: BaseEvent2, parents: BaseShape[] = []) {
-    // console.log('mousemove', this.conf.name, this.enterType, this.hoverType)
+    // console.log('mousemove', this.conf.name, this._status)
     if (this.onMouseMove(event, parents)) return
 
     if (this.status === ShapeStatus.Normal) {

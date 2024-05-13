@@ -373,7 +373,7 @@
 //
 //         }
 //         this._conf.isComplete = false
-//         this.conf.lineShapes = this.shape2PenNetwork()
+//         this.conf.lineShapes = this.getPenNetwork()
 //         cu.render()
 //       }
 //       draw.drawRound(cu.ctx, event.point)
@@ -451,7 +451,7 @@
 //     return false
 //   }
 //
-//   shape2PenNetwork() {
+//   getPenNetwork() {
 //     let {
 //       totalLength = 4, startT = 0
 //     } = this._conf
@@ -712,7 +712,7 @@
 //     this.getCps()
 //     this.getOperatePoint()
 //     if (!this._conf.isComplete) {
-//       this.conf.lineShapes = this.shape2PenNetwork()
+//       this.conf.lineShapes = this.getPenNetwork()
 //     }
 //   }
 //

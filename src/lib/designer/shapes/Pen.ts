@@ -4,7 +4,7 @@ import helper from "../utils/helper"
 import {Colors, defaultConfig} from "../utils/constant"
 import draw from "../utils/draw"
 import {ParentShape} from "./core/ParentShape";
-import {BaseEvent2, EditType, LineType, P, ShapeStatus} from "../types/type"
+import {BaseEvent2, EditType, LineType, P, ShapeStatus, ShapeType} from "../types/type"
 import {BaseShape} from "./core/BaseShape"
 import {PenConfig, PenNetworkLine, PenNetworkNode, TempLine} from "../config/PenConfig"
 import {Math2} from "../utils/math"
@@ -36,6 +36,7 @@ export class Pen extends ParentShape {
   }
 
   drawShape(ctx: CanvasRenderingContext2D, newLayout: Rect, parent?: BaseConfig): any {
+    // console.log('Pen drawShape')
     if (this.status === ShapeStatus.Edit) return
     let {
       fillColor, lineWidth, borderColor, center
@@ -203,7 +204,7 @@ export class Pen extends ParentShape {
     return false
   }
 
-  shape2PenNetwork() {
+  getPenNetwork() {
   }
 
   getFillPath(ctx: CanvasRenderingContext2D) {
@@ -917,10 +918,17 @@ export class Pen extends ParentShape {
 
   toPen() {
     let cu = CU.i()
-    let rIndex = cu.children.findIndex(v => v.conf.id === this.conf.id)
-    if (rIndex > -1) {
-      let shape = cu.children[rIndex]
-
+    let list = cu.children
+    if (this.parent) {
+      list = this.parent.children
     }
+    let rIndex = list.findIndex(v => v.conf.id === this.conf.id)
+    this.conf.type = ShapeType.PEN
+    let ins = new Pen({conf: cloneDeep(this.conf), parent: this.parent})
+    if (rIndex > -1) {
+      list[rIndex] = ins
+    }
+    ins.status = ShapeStatus.Select
+    return ins
   }
 }

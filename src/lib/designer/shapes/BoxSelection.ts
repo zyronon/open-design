@@ -91,7 +91,7 @@ export class BoxSelection extends ParentShape {
     draw.selected(ctx, newLayout)
   }
 
-  shape2PenNetwork() {
+  getPenNetwork() {
     return [];
   }
 

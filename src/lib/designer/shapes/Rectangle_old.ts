@@ -328,7 +328,7 @@
 //     return false
 //   }
 //
-//   shape2PenNetwork() {
+//   getPenNetwork() {
 //     let {w, h} = this._config.layout
 //     //这里的xy这样设置是因为，渲染时的起点是center
 //     let x = -w / 2, y = -h / 2

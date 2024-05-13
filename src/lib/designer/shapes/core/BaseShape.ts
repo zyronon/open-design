@@ -24,6 +24,7 @@ import {BBox, Bezier as BezierJs} from "bezier-js";
 import {EventKeys} from "../../event/eventKeys";
 import {HandleMirroring, PenNetworkLine, PenNetworkNode} from "../../config/PenConfig";
 import {generateNode} from "../../utils/template"
+import {Pen} from "../Pen";
 
 export class BaseShape {
   hoverType: MouseOptionType = MouseOptionType.None
@@ -39,6 +40,21 @@ export class BaseShape {
   diagonal: P = {x: 0, y: 0}//对面的点（和handlePoint相反的点），如果handlePoint是中间点，那么这个也是中间点
   handLineCenterPoint: P = {x: 0, y: 0}//鼠标按住那条边的中间点（当前角度），非鼠标点
   parent?: BaseShape
+
+  defaultCurrentOperationInfo: CurrentOperationInfo = {
+    type: undefined,
+    lineIndex: -1,
+    pointIndex: -1,
+    cpIndex: -1
+  }
+  //编辑模式下：选择状态时，选中的点，用于与编辑状态时按下的点相连
+  editStartPointInfo: CurrentOperationInfo = cloneDeep(this.defaultCurrentOperationInfo)
+  //编辑模式下，鼠标hover时保存的信息
+  editHover: CurrentOperationInfo = cloneDeep(this.defaultCurrentOperationInfo)
+  //编辑模式下，鼠标按下时保存的信息
+  editEnter: CurrentOperationInfo = cloneDeep(this.defaultCurrentOperationInfo)
+  //编辑模式下，编辑状态时，临时点，要与鼠标的点的点相连接
+  tempPoint?: P
 
   constructor(props: ShapeProps) {
     // console.log('props', cloneDeep(props))
@@ -77,7 +93,7 @@ export class BaseShape {
       }
       if (val === ShapeStatus.Edit) {
         if (!this.conf.penNetwork.paths.length) {
-          this.shape2PenNetwork()
+          this.getPenNetwork()
         }
         cu.editShape = this
         cu.mode = ShapeType.EDIT
@@ -85,7 +101,7 @@ export class BaseShape {
       }
       this._status = val
       EventBus.emit(EventKeys.OPTION_MODE, this._status)
-      CanvasUtil.getInstance().render()
+      cu.render()
     }
   }
 
@@ -163,7 +179,7 @@ export class BaseShape {
   }
 
   //图形转线条
-  shape2PenNetwork() {
+  getPenNetwork() {
   }
 
   getStatus() {
@@ -227,21 +243,6 @@ export class BaseShape {
     }
     return !this.isCapture || !cu.isDesignMode()
   }
-
-  defaultCurrentOperationInfo: CurrentOperationInfo = {
-    type: undefined,
-    lineIndex: -1,
-    pointIndex: -1,
-    cpIndex: -1
-  }
-  //编辑模式下：选择状态时，选中的点，用于与编辑状态时按下的点相连
-  editStartPointInfo: CurrentOperationInfo = cloneDeep(this.defaultCurrentOperationInfo)
-  //编辑模式下，鼠标hover时保存的信息
-  editHover: CurrentOperationInfo = cloneDeep(this.defaultCurrentOperationInfo)
-  //编辑模式下，鼠标按下时保存的信息
-  editEnter: CurrentOperationInfo = cloneDeep(this.defaultCurrentOperationInfo)
-  //编辑模式下，编辑状态时，临时点，要与鼠标的点的点相连接
-  tempPoint?: P
 
   checkMousePointOnEditStatus(point: P): CurrentOperationInfo {
     // console.log('------------------')
@@ -568,7 +569,7 @@ export class BaseShape {
       const {nodes, paths, ctrlNodes} = this.conf.penNetwork
 
       if (type) {
-        if (type !== EditType.Line) {
+        if (type === EditType.Point) {
           //关联的线条，边缘点需要特殊处理
           let relationLines = paths.filter((line) => line.slice(0, 2).includes(pointIndex))
           if (relationLines.length === 0) return
@@ -677,7 +678,12 @@ export class BaseShape {
           this.status = ShapeStatus.Select
         }
       } else {
-        this.status = ShapeStatus.Select
+        if (this.conf.isCustom && this.constructor.name !== 'Pen') {
+          this.toPen()
+          // cu.setSelectShape(ins, ins.parent)
+        }else {
+          this.status = ShapeStatus.Select
+        }
       }
     } else {
       this.status = ShapeStatus.Edit
@@ -2097,4 +2103,9 @@ export class BaseShape {
 
 
   }
+
+  toPen(): BaseShape {
+    return this
+  }
+
 }

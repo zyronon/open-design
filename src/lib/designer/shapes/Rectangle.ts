@@ -34,6 +34,20 @@ export class Rectangle extends Pen {
     //   }
     //   this._dblclick(event)
     // }
+
+    // let check = ['drawShape', 'drawHover']
+    // check.map(m => {
+    //   let s = super[m]
+    //   this[m] = new Proxy(this[m], {
+    //     apply(target, ctx, args) {
+    //       console.log('Rectangle drawShape apply', ctx.conf.isCustom)
+    //       if (ctx.conf.isCustom) {
+    //         return s.apply(ctx, args)
+    //       }
+    //       return target.apply(ctx, args)
+    //     }
+    //   })
+    // })
   }
 
   get _conf(): BaseConfig {
@@ -83,6 +97,8 @@ export class Rectangle extends Pen {
   }
 
   drawShape(ctx: CanvasRenderingContext2D, newLayout: Rect, parent?: BaseConfig) {
+    // console.log('Rectangle drawShape')
+    // super.drawShape(ctx, newLayout, parent)
     if (this.status === ShapeStatus.Edit) return
     let {
       radius,
@@ -188,7 +204,7 @@ export class Rectangle extends Pen {
     return false
   }
 
-  shape2PenNetwork() {
+  getPenNetwork() {
     let {w, h} = this._conf.layout
     const {nodes, paths,} = this._conf.penNetwork
 
@@ -250,5 +266,4 @@ export class Rectangle extends Pen {
   onMouseDowned(event: BaseEvent2, parents: BaseShape[]): boolean {
     return false;
   }
-
 }

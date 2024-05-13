@@ -1652,7 +1652,6 @@ export const rects: any[] = [
     "isComplete": true
   },
   {
-    use: true,
     "lineWidth": 2,
     "fillColor": "rgb(216,216,216)",
     "borderColor": "rgb(216,216,216)",
@@ -1665,12 +1664,12 @@ export const rects: any[] = [
     "commonPoints": [],
     "rotation": 0,
     "layout": {
-      "x": 676,
-      "y": 87,
-      "w": 270,
-      "h": 216
+      "x": 607,
+      "y": 73,
+      "w": 339,
+      "h": 230
     },
-    "isCustom": false,
+    "isCustom": true,
     "isVisible": false,
     "isLocked": false,
     "cornerSmooth": 0,
@@ -1683,20 +1682,299 @@ export const rects: any[] = [
     "blendMode": 0,
     "isMask": false,
     "effects": [],
-    "isCache": false,
+    "isCache": true,
     "isPointOrLine": false,
     "penNetwork": {
       "ctrlNodes": [],
-      "paths": [],
-      "nodes": [],
+      "paths": [
+        [
+          0,
+          1,
+          -1,
+          -1,
+          1
+        ],
+        [
+          1,
+          2,
+          -1,
+          -1,
+          1
+        ],
+        [
+          2,
+          3,
+          -1,
+          -1,
+          1
+        ],
+        [
+          3,
+          4,
+          -1,
+          -1,
+          1
+        ],
+        [
+          4,
+          0,
+          -1,
+          -1,
+          1
+        ]
+      ],
+      "nodes": [
+        {
+          "x": -92.5,
+          "y": -115,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": 169.5,
+          "y": -101,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": 169.5,
+          "y": 115,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -92.5,
+          "y": 101,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -169.5,
+          "y": -6,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        }
+      ],
       "regions": []
     },
     "cache": {
       "ctrlNodes": [],
-      "paths": [],
-      "nodes": [],
-      "regions": []
+      "paths": [
+        [
+          0,
+          1,
+          -1,
+          -1,
+          1
+        ],
+        [
+          1,
+          2,
+          -1,
+          -1,
+          1
+        ],
+        [
+          2,
+          3,
+          -1,
+          -1,
+          1
+        ],
+        [
+          3,
+          4,
+          -1,
+          -1,
+          1
+        ],
+        [
+          4,
+          0,
+          -1,
+          -1,
+          1
+        ]
+      ],
+      "nodes": [
+        {
+          "x": -92.5,
+          "y": -115,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": 169.5,
+          "y": -101,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": 169.5,
+          "y": 115,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -92.5,
+          "y": 101,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -169.5,
+          "y": -6,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        }
+      ],
+      "regions": [],
+      "areas": [
+        [
+          {
+            "id": 0,
+            "line": [
+              0,
+              1,
+              -1,
+              -1,
+              1
+            ]
+          },
+          {
+            "id": 1,
+            "line": [
+              1,
+              2,
+              -1,
+              -1,
+              1
+            ]
+          },
+          {
+            "id": 2,
+            "line": [
+              2,
+              3,
+              -1,
+              -1,
+              1
+            ]
+          },
+          {
+            "id": 3,
+            "line": [
+              3,
+              4,
+              -1,
+              -1,
+              1
+            ]
+          },
+          {
+            "id": 4,
+            "line": [
+              4,
+              0,
+              -1,
+              -1,
+              1
+            ]
+          }
+        ]
+      ]
     },
+    "use": true,
     "x": 676,
     "y": 87,
     "w": 270,
@@ -1718,41 +1996,42 @@ export const rects: any[] = [
       "y": 87
     },
     "absolute": {
-      "x": 676,
-      "y": 87
+      "x": 607,
+      "y": 73
     },
     "original": {
-      "x": 676,
-      "y": 87
+      "x": 607,
+      "y": 73
     },
     "center": {
-      "x": 811,
-      "y": 195
+      "x": 776.5,
+      "y": 188
     },
     "box": {
-      "leftX": 676,
-      "rightX": 676,
-      "topY": 87,
-      "bottomY": 87,
+      "leftX": 607,
+      "rightX": 946,
+      "topY": 73,
+      "bottomY": 303,
       "topLeft": {
-        "x": 676,
-        "y": 87
+        "x": 607,
+        "y": 73
       },
       "topRight": {
-        "x": 676,
-        "y": 87
+        "x": 946,
+        "y": 73
       },
       "bottomLeft": {
-        "x": 676,
-        "y": 87
+        "x": 607,
+        "y": 303
       },
       "bottomRight": {
-        "x": 676,
-        "y": 87
+        "x": 946,
+        "y": 303
       }
     },
     "strokeAlign": "INSIDE",
-    "isComplete": true
+    "isComplete": true,
+    "id": "2eef40cf-584f-4a05-b326-049c4b8d25a6"
   }
 ]
 

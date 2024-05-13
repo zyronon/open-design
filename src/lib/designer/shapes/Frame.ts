@@ -196,7 +196,7 @@
 //   drawEdit(ctx: CanvasRenderingContext2D, conf: BaseConfig): void {
 //   }
 //
-//   shape2PenNetwork() {
+//   getPenNetwork() {
 //     return []
 //   }
 //

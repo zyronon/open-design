@@ -81,7 +81,6 @@ export class BaseShape {
 
   set status(val) {
     let cu = CanvasUtil.getInstance()
-    console.log('set-staus', this.conf.name, val, this._status)
     if (val !== this._status) {
       if (this._status === ShapeStatus.Edit) {
         this.calcNewCenterAndWidthAndHeight()
@@ -104,8 +103,6 @@ export class BaseShape {
       EventBus.emit(EventKeys.OPTION_MODE, this._status)
       cu.render()
     }
-    console.log('set-staus', this.conf.name, val, this._status)
-
   }
 
   get isSelectHover() {
@@ -563,7 +560,7 @@ export class BaseShape {
   }
 
   _dblclick(event: BaseEvent2, parents: BaseShape[] = []) {
-    console.log('on-dblclick', this.conf.name, this._status)
+    // console.log('on-dblclick', this.conf.name, this._status)
     // console.log('core-dblclick', this.editStartPointInfo, this.editHover)
     if (this.onDbClick(event, parents)) return
     if (this.status === ShapeStatus.Edit) {
@@ -1081,6 +1078,7 @@ export class BaseShape {
           const {nodes: oldNodes, paths: oldPaths, ctrlNodes: oldCtrlNodes} = this.original.penNetwork
 
           if (type === EditType.ControlPoint) {
+            this.conf.isCustom = true
             let point = nodes[pointIndex]
             let cp0 = ctrlNodes[point.cps[0]]
             let oldCp0 = oldCtrlNodes[point.cps[0]]
@@ -1124,12 +1122,14 @@ export class BaseShape {
           }
 
           if (type === EditType.Point || type === EditType.CenterPoint) {
+            this.conf.isCustom = true
             this.movePoint(pointIndex, event.movement)
             this.conf.isCache = false
             cu.render()
           }
 
           if (type === EditType.Line) {
+            this.conf.isCustom = true
             this.movePoint(paths[lineIndex][0], event.movement)
             this.movePoint(paths[lineIndex][1], event.movement)
             this.conf.isCache = false
@@ -1189,6 +1189,8 @@ export class BaseShape {
         if (!type) return
 
         if (type === EditType.Point) {
+          this.conf.isCustom = true
+
           // console.log('pen-onMouseMove', lastPoint.center, event.point)
           let lastPoint = nodes[pointIndex]
           let ctx = cu.ctx

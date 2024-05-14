@@ -936,6 +936,7 @@ export class Pen extends ParentShape {
     cu.hoverShape = undefined
     cu.hoverShapeParent = []
     cu.editShape = undefined
+    cu.newShape = undefined
     cu.selectedShape = undefined
     //TODO cu.selectedShapeParent 未处理
     cu.selectedShape = ins

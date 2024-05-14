@@ -236,7 +236,8 @@ export enum MouseOptionType {
 export enum ShapeStatus {
   Normal = 'Normal',
   Hover = 'Hover',
-  Select = 'Select',
+  Select = 'Select',//手动选中时的状态，联动修改canvas的画布状态为 select
+  NewSelect = 'NewSelect',//创建时的选中状态，仅展示用，这些canvas画布的状态不能改变.所以单独新增一个状态
   // SelectHover = 'SelectHover',
   Edit = 'Edit'
 }

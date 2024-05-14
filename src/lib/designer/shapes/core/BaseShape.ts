@@ -459,7 +459,7 @@ export class BaseShape {
     if (this.status === ShapeStatus.Hover) {
       this.drawHover(ctx, newLayout)
     }
-    if (this.status === ShapeStatus.Select) {
+    if ([ShapeStatus.Select,ShapeStatus.NewSelect].includes(this.status)) {
       this.drawSelected(ctx, newLayout)
       if (this.isSelectHover) {
         this.drawSelectedHover(ctx, newLayout)

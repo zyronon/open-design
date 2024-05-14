@@ -67,6 +67,7 @@ export default class CanvasUtil {
   mouseStart: P = {x: 0, y: 0} //鼠标起点
   fixMouseStart: P = {x: 0, y: 0} //修正后的鼠标起点（修正为0度）
   isMouseDown: boolean = false
+  isOnNewShape: boolean = false //是否是在新生成图形
   drawShapeConfig: any = null
   newShape: BaseShape | undefined
   cursor: string = 'default'
@@ -86,9 +87,7 @@ export default class CanvasUtil {
 
   set mode(val) {
     // console.log('val', val,this._mode)
-    if (val === 'SELECT' && this._mode === 'RECTANGLE'){
-      // debugger
-    }
+
     if (val !== this._mode) {
       // this.editModeType = EditModeType.Select
       this._mode = val
@@ -535,8 +534,12 @@ export default class CanvasUtil {
       console.log(1, this.mode)
       let w = e.point.x - this.mouseStart.x
       let h = e.point.y - this.mouseStart.y
+      if (this.isOnNewShape) {
+
+      }
       switch (this.mode) {
         case ShapeType.RECTANGLE:
+          this.isOnNewShape = true
           console.log(2)
           if (this.newShape) {
             this.newShape.conf.layout.w = w
@@ -547,11 +550,10 @@ export default class CanvasUtil {
             }
             //太小了select都看不见
             if (w > 10) {
-              // this.newShape.status = ShapeStatus.Select
+              this.newShape.status = ShapeStatus.NewSelect
             }
             // EventBus.emit(EventMapTypes.onMouseMove, this.newShape)
             this.newShape.conf = helper.calcConf(this.newShape.conf)
-            console.log('this.newShape.conf',cloneDeep(this.newShape.conf.box))
             this.render()
           } else {
             let x = this.mouseStart.x
@@ -635,6 +637,7 @@ export default class CanvasUtil {
       this.isMouseDown = false
       if (this.newShape) {
         this.setSelectShape(this.newShape!, [])
+        this.newShape.status = ShapeStatus.Select
         this.newShape = undefined
       }
       if (this.mode === ShapeType.SELECT) {

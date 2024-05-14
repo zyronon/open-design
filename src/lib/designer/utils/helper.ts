@@ -422,7 +422,6 @@ export default {
       radius: 0,
       lineShapes: [],
       cacheLineShapes: [],
-      commonPoints: [],
       rotation: 0,
       layout: {
         "x": 0,

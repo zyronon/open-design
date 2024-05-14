@@ -913,7 +913,6 @@ export const rects: any[] = [
     "radius": 0,
     "lineShapes": [],
     "cacheLineShapes": [],
-    "commonPoints": [],
     "rotation": 0,
     "layout": {
       "x": 507,
@@ -1094,7 +1093,8 @@ export const rects: any[] = [
         ]
       ]
     },
-    "use": true,
+    "commonPoints": [],
+    "use": false,
     "name": "两条曲线",
     "type": "PEN",
     "id": "ef812aa3-a98c-48c5-a2c5-2a7eaa07447a",
@@ -1158,7 +1158,6 @@ export const rects: any[] = [
     "radius": 0,
     "lineShapes": [],
     "cacheLineShapes": [],
-    "commonPoints": [],
     "rotation": 0,
     "layout": {
       "x": 102.5,
@@ -1597,7 +1596,8 @@ export const rects: any[] = [
         ]
       ]
     },
-    "use": true,
+    "commonPoints": [],
+    "use": false,
     "name": "2",
     "type": "PEN",
     "id": "bf0599cb-0b06-4cae-a337-71780af9e35c",
@@ -1658,16 +1658,15 @@ export const rects: any[] = [
     "children": [],
     "flipHorizontal": false,
     "flipVertical": false,
-    "radius": 59,
+    "radius": 30,
     "lineShapes": [],
     "cacheLineShapes": [],
-    "commonPoints": [],
     "rotation": 0,
     "layout": {
-      "x": 714.2665368038374,
-      "y": 103.125,
-      "w": 272.7334631961627,
-      "h": 259.90886287625415
+      "x": 726,
+      "y": 154,
+      "w": 179,
+      "h": 181
     },
     "isCustom": true,
     "isVisible": false,
@@ -1682,34 +1681,17 @@ export const rects: any[] = [
     "blendMode": 0,
     "isMask": false,
     "effects": [],
-    "isCache": true,
+    "isCache": false,
     "isPointOrLine": false,
     "penNetwork": {
-      "ctrlNodes": [
-        {
-          "x": -41.38326840191871,
-          "y": 157.67056856187293
-        },
-        {
-          "x": -153.8832684019187,
-          "y": 84.17056856187293
-        },
-        {
-          "x": -30.133268401918713,
-          "y": -157.82943143812707
-        },
-        {
-          "x": -147.1332684019187,
-          "y": -46.32943143812707
-        }
-      ],
+      "ctrlNodes": [],
       "paths": [
         [
           0,
           1,
-          2,
           -1,
-          2
+          -1,
+          1
         ],
         [
           1,
@@ -1722,38 +1704,23 @@ export const rects: any[] = [
           2,
           3,
           -1,
-          0,
-          2
+          -1,
+          1
         ],
         [
           3,
           0,
-          1,
-          3,
-          3
+          -1,
+          -1,
+          1
         ]
       ],
       "nodes": [
         {
-          "x": -88.63326840191871,
-          "y": -102.07943143812707,
-          "cornerRadius": 0,
-          "realCornerRadius": 0,
-          "handleMirroring": "MirrorAngleAndLength",
-          "cornerCps": [
-            -1,
-            -1
-          ],
-          "cps": [
-            2,
-            3
-          ]
-        },
-        {
-          "x": 136.3667315980813,
-          "y": -102.07943143812707,
-          "cornerRadius": 0,
-          "realCornerRadius": 0,
+          "x": -89.5,
+          "y": -90.5,
+          "cornerRadius": 30,
+          "realCornerRadius": 30,
           "handleMirroring": "RightAngle",
           "cornerCps": [
             -1,
@@ -1765,10 +1732,10 @@ export const rects: any[] = [
           ]
         },
         {
-          "x": 136.3667315980813,
-          "y": 44.920568561872926,
-          "cornerRadius": 0,
-          "realCornerRadius": 0,
+          "x": 89.5,
+          "y": -90.5,
+          "cornerRadius": 30,
+          "realCornerRadius": 30,
           "handleMirroring": "RightAngle",
           "cornerCps": [
             -1,
@@ -1780,18 +1747,33 @@ export const rects: any[] = [
           ]
         },
         {
-          "x": -97.63326840191871,
-          "y": 120.92056856187293,
-          "cornerRadius": 0,
-          "realCornerRadius": 0,
-          "handleMirroring": "MirrorAngleAndLength",
+          "x": 89.5,
+          "y": 90.5,
+          "cornerRadius": 30,
+          "realCornerRadius": 30,
+          "handleMirroring": "RightAngle",
           "cornerCps": [
             -1,
             -1
           ],
           "cps": [
-            0,
-            1
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -89.5,
+          "y": 90.5,
+          "cornerRadius": 30,
+          "realCornerRadius": 30,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
           ]
         }
       ],
@@ -1800,71 +1782,145 @@ export const rects: any[] = [
     "cache": {
       "ctrlNodes": [
         {
-          "x": -41.38326840191871,
-          "y": 157.67056856187293
+          "x": -76.0685424949238,
+          "y": -90.5
         },
         {
-          "x": -153.8832684019187,
-          "y": 84.17056856187293
+          "x": -89.5,
+          "y": -77.0685424949238
         },
         {
-          "x": -30.133268401918713,
-          "y": -157.82943143812707
+          "x": 89.5,
+          "y": -77.0685424949238
         },
         {
-          "x": -147.1332684019187,
-          "y": -46.32943143812707
+          "x": 76.0685424949238,
+          "y": -90.5
+        },
+        {
+          "x": 76.0685424949238,
+          "y": 90.5
+        },
+        {
+          "x": 89.5,
+          "y": 77.0685424949238
         }
       ],
       "paths": [
         [
+          4,
+          5,
           0,
           1,
-          2,
-          -1,
-          2
+          3
         ],
         [
-          1,
           2,
+          6,
           -1,
           -1,
           1
         ],
         [
+          7,
+          4,
+          -1,
+          -1,
+          1
+        ],
+        [
+          6,
+          7,
           2,
           3,
-          -1,
-          0,
-          2
+          3
         ],
         [
           3,
-          0,
-          1,
-          3,
+          8,
+          -1,
+          -1,
+          1
+        ],
+        [
+          9,
+          6,
+          -1,
+          -1,
+          1
+        ],
+        [
+          8,
+          9,
+          4,
+          5,
           3
         ]
       ],
       "nodes": [
         {
-          "x": -88.63326840191871,
-          "y": -102.07943143812707,
-          "cornerRadius": 0,
-          "realCornerRadius": 0,
-          "handleMirroring": "MirrorAngleAndLength",
+          "x": -89.5,
+          "y": -90.5,
+          "cornerRadius": 30,
+          "realCornerRadius": 30,
+          "handleMirroring": "RightAngle",
           "cornerCps": [
             -1,
             -1
           ],
           "cps": [
-            2,
-            3
+            -1,
+            -1
           ]
         },
         {
-          "x": 136.3667315980813,
-          "y": -102.07943143812707,
+          "x": 89.5,
+          "y": -90.5,
+          "cornerRadius": 30,
+          "realCornerRadius": 30,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": 89.5,
+          "y": 90.5,
+          "cornerRadius": 30,
+          "realCornerRadius": 30,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -89.5,
+          "y": 90.5,
+          "cornerRadius": 30,
+          "realCornerRadius": 30,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": -59.5,
+          "y": -90.5,
           "cornerRadius": 0,
           "realCornerRadius": 0,
           "handleMirroring": "RightAngle",
@@ -1878,8 +1934,8 @@ export const rects: any[] = [
           ]
         },
         {
-          "x": 136.3667315980813,
-          "y": 44.920568561872926,
+          "x": -89.5,
+          "y": -60.5,
           "cornerRadius": 0,
           "realCornerRadius": 0,
           "handleMirroring": "RightAngle",
@@ -1893,71 +1949,73 @@ export const rects: any[] = [
           ]
         },
         {
-          "x": -97.63326840191871,
-          "y": 120.92056856187293,
+          "x": 89.5,
+          "y": -60.5,
           "cornerRadius": 0,
           "realCornerRadius": 0,
-          "handleMirroring": "MirrorAngleAndLength",
+          "handleMirroring": "RightAngle",
           "cornerCps": [
             -1,
             -1
           ],
           "cps": [
-            0,
-            1
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": 59.5,
+          "y": -90.5,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": 59.5,
+          "y": 90.5,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
+          ]
+        },
+        {
+          "x": 89.5,
+          "y": 60.5,
+          "cornerRadius": 0,
+          "realCornerRadius": 0,
+          "handleMirroring": "RightAngle",
+          "cornerCps": [
+            -1,
+            -1
+          ],
+          "cps": [
+            -1,
+            -1
           ]
         }
       ],
-      "regions": [],
-      "areas": [
-        [
-          {
-            "id": 0,
-            "line": [
-              0,
-              1,
-              2,
-              -1,
-              2
-            ]
-          },
-          {
-            "id": 1,
-            "line": [
-              1,
-              2,
-              -1,
-              -1,
-              1
-            ]
-          },
-          {
-            "id": 2,
-            "line": [
-              2,
-              3,
-              -1,
-              0,
-              2
-            ]
-          },
-          {
-            "id": 3,
-            "line": [
-              3,
-              0,
-              1,
-              3,
-              3
-            ]
-          }
-        ]
-      ]
+      "regions": []
     },
+    "commonPoints": [],
     "rotate": 0,
     "type": "PEN",
     "color": "gray",
-    "id": "PEN",
+    "id": "6421bd8c-dbf2-4b82-b8b4-7ea0b75d5423",
     "percent": {
       "x": 0,
       "y": 0
@@ -1968,46 +2026,45 @@ export const rects: any[] = [
     },
     "realRotation": 0,
     "start": {
-      "x": 771,
-      "y": 143
+      "x": 726,
+      "y": 154
     },
     "absolute": {
-      "x": 714.2665368038374,
-      "y": 103.125
+      "x": 726,
+      "y": 154
     },
     "original": {
-      "x": 714.2665368038374,
-      "y": 103.125
+      "x": 726,
+      "y": 154
     },
     "center": {
-      "x": 850.6332684019187,
-      "y": 233.07943143812707
+      "x": 815.5,
+      "y": 244.5
     },
     "box": {
-      "leftX": 714.2665368038374,
-      "rightX": 987,
-      "topY": 103.125,
-      "bottomY": 363.03386287625415,
+      "leftX": 726,
+      "rightX": 905,
+      "topY": 154,
+      "bottomY": 335,
       "topLeft": {
-        "x": 714.2665368038374,
-        "y": 103.125
+        "x": 726,
+        "y": 154
       },
       "topRight": {
-        "x": 987,
-        "y": 103.125
+        "x": 905,
+        "y": 154
       },
       "bottomLeft": {
-        "x": 714.2665368038374,
-        "y": 363.03386287625415
+        "x": 726,
+        "y": 335
       },
       "bottomRight": {
-        "x": 987,
-        "y": 363.03386287625415
+        "x": 905,
+        "y": 335
       }
     },
     "strokeAlign": "INSIDE",
-    "isComplete": true,
-    "name": "PEN"
+    "isComplete": true
   }
 ]
 

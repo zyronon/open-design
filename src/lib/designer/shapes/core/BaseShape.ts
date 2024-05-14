@@ -92,7 +92,7 @@ export class BaseShape {
         cu.mode = ShapeType.SELECT
       }
       if (val === ShapeStatus.Edit) {
-        if (!this.conf.penNetwork.paths.length) {
+        if (!this.conf.isCustom) {
           this.getPenNetwork()
         }
         cu.editShape = this

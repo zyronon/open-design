@@ -32,7 +32,7 @@ export interface PenNetworkNode {
   cps: number[]
 }
 
-export function getPenPoint(val: P) {
+export function getPenPoint(val: any) {
   return {
     ...{
       x: 0,

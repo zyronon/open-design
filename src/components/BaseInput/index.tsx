@@ -1,8 +1,9 @@
-import {KeyboardEvent, memo, MouseEvent, ReactNode, useRef, useState} from "react";
+import {KeyboardEvent, memo, MouseEvent, ReactNode, useRef} from "react";
 // import './index.scss'
 import styles from './index.module.scss'
 import cx from "classnames";
-import {useCreation, useMemoizedFn} from "ahooks"
+import {useMemoizedFn} from "ahooks"
+import mouseIcon from '@/assets/image/cursor/ew-resize.png'
 
 interface IProps {
   prefix?: ReactNode,
@@ -19,7 +20,7 @@ export default memo((props: IProps) => {
     value = '', onChange = (e: any) => {
     }
   } = props
-  const start = useRef<{x: number, y: number}>({x: 0, y: 0})
+  const start = useRef<{ x: number, y: number }>({x: 0, y: 0})
   const cursor = useRef<HTMLImageElement>()
   const img = {
     w: 20,
@@ -74,7 +75,7 @@ export default memo((props: IProps) => {
     if (!cursor.current) {
       cursor.current = document.createElement('img')
       cursor.current.classList.add('cursor')
-      cursor.current.src = require('@/assets/image/cursor/ew-resize.png')
+      cursor.current.src = mouseIcon
       document.body.append(cursor.current)
     }
 

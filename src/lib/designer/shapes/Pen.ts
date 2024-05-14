@@ -64,7 +64,7 @@ export class Pen extends ParentShape {
       // draw.drawRound(ctx, point)
     })
     this._conf.cache.ctrlNodes.map((point, i) => {
-      draw.drawRound(ctx, point)
+      // draw.drawRound(ctx, point)
     })
   }
 
@@ -258,6 +258,7 @@ export class Pen extends ParentShape {
     } else {
       this.checkAcr()
       const {nodes, paths, ctrlNodes} = this._conf.cache
+      console.log('paths',cloneDeep(paths))
       if (paths.length) {
         //TODO 有空了记得渲染三次自相交的图
         let selfIntersectionLines: PenNetworkLine[] = []

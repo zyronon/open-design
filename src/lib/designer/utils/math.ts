@@ -4,6 +4,7 @@ import {PenNetworkLine, PenNetworkNode} from "../config/PenConfig";
 import {Bezier, Split} from "bezier-js";
 
 const Math2 = {
+  //获取斜边长，通常用于获取两个点的距离
   getHypotenuse2(p1: P, p2: P): number {
     let {x: p1X, y: p1Y} = p1
     let {x: p2X, y: p2Y} = p2

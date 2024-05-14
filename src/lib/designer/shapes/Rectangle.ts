@@ -204,23 +204,6 @@ export class Rectangle extends Pen {
     return false
   }
 
-  getPenNetwork() {
-    let {w, h} = this._conf.layout
-    const {nodes, paths,} = this._conf.penNetwork
-
-    //这里的xy这样设置是因为，渲染时的起点是center
-    let x = -w / 2, y = -h / 2
-    nodes.push(getPenPoint({x, y}))
-    nodes.push(getPenPoint({x: x + w, y: y}))
-    nodes.push(getPenPoint({x: x + w, y: y + h}))
-    nodes.push(getPenPoint({x: x, y: y + h}))
-
-    paths.push([0, 1, -1, -1, LineType.Line])
-    paths.push([1, 2, -1, -1, LineType.Line])
-    paths.push([2, 3, -1, -1, LineType.Line])
-    paths.push([3, 0, -1, -1, LineType.Line])
-  }
-
   onMouseDown(event: BaseEvent2, parents: BaseShape[]) {
     // console.log('childMouseDown', this.editHover)
     this.rectEnterType = this.rectHoverType
@@ -243,6 +226,32 @@ export class Rectangle extends Pen {
     return false
   }
 
+  onMouseDowned(event: BaseEvent2, parents: BaseShape[]): boolean {
+    return false;
+  }
+
+  getPenNetwork() {
+    let {w, h} = this._conf.layout
+    let r = this._conf.radius
+    this._conf.penNetwork.nodes = []
+    this._conf.penNetwork.paths = []
+    const {nodes, paths,} = this._conf.penNetwork
+
+    let rr = {cornerRadius: r, realCornerRadius: r}
+
+    //这里的xy这样设置是因为，渲染时的起点是center
+    let x = -w / 2, y = -h / 2
+    nodes.push(getPenPoint({x, y, ...rr}))
+    nodes.push(getPenPoint({x: x + w, y: y, ...rr}))
+    nodes.push(getPenPoint({x: x + w, y: y + h, ...rr}))
+    nodes.push(getPenPoint({x: x, y: y + h, ...rr}))
+
+    paths.push([0, 1, -1, -1, LineType.Line])
+    paths.push([1, 2, -1, -1, LineType.Line])
+    paths.push([2, 3, -1, -1, LineType.Line])
+    paths.push([3, 0, -1, -1, LineType.Line])
+  }
+
   getShapePath(layout: Rect = this.conf.layout, r: number = this.conf.radius): Path2D {
     // if (this._conf.isCustom) {
     //   return super.getCustomShapePath()
@@ -263,7 +272,4 @@ export class Rectangle extends Pen {
     return path
   }
 
-  onMouseDowned(event: BaseEvent2, parents: BaseShape[]): boolean {
-    return false;
-  }
 }

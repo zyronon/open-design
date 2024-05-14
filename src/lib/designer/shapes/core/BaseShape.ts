@@ -25,6 +25,7 @@ import {EventKeys} from "../../event/eventKeys";
 import {HandleMirroring, PenNetworkLine, PenNetworkNode} from "../../config/PenConfig";
 import {generateNode} from "../../utils/template"
 import {Pen} from "../Pen";
+import {nanoid} from "@reduxjs/toolkit";
 
 export class BaseShape {
   hoverType: MouseOptionType = MouseOptionType.None
@@ -456,7 +457,7 @@ export class BaseShape {
     if (this.status === ShapeStatus.Hover) {
       this.drawHover(ctx, newLayout)
     }
-    if ([ShapeStatus.Select,ShapeStatus.NewSelect].includes(this.status)) {
+    if ([ShapeStatus.Select, ShapeStatus.NewSelect].includes(this.status)) {
       this.drawSelected(ctx, newLayout)
       if (this.isSelectHover) {
         this.drawSelectedHover(ctx, newLayout)
@@ -1559,20 +1560,24 @@ export class BaseShape {
 
   checkAcr2() {
     const {nodes, paths, ctrlNodes} = this.conf.penNetwork
-    let newPaths = cloneDeep(paths).map((v, i) => ({id: i, line: v}))
+    let newPaths = cloneDeep(paths).map((v, i) => ({id: nanoid(), line: v}))
     let newNodes = cloneDeep(nodes)
     let newCtrlNodes = cloneDeep(ctrlNodes)
 
     nodes.map((currentNode, nodeIndex) => {
+      // console.log('--', currentNode)
       // let nodeIndex = 0
       // let currentNode = nodes[nodeIndex]
       let r = currentNode.realCornerRadius
       if (r) {
         //找到包含这个点的所有边
         let lines = newPaths.filter(p => p.line.slice(0, 2).includes(nodeIndex))
+        // console.log('lines', lines, newPaths)
         if (lines.length === 2) {
           let line0 = lines[0]
           let line1 = lines[1]
+          // console.log('line0', cloneDeep(line0.line))
+          // console.log('line1', cloneDeep(line1.line))
           let line0NodeIndex = line0.line[0] === nodeIndex ? line0.line[1] : line0.line[0]
           let line1NodeIndex = line1.line[0] === nodeIndex ? line1.line[1] : line1.line[0]
           let node0 = newNodes[line0NodeIndex]
@@ -1828,23 +1833,26 @@ export class BaseShape {
           let r2 = newPaths.findIndex(v => v.id === line1.id)
           newPaths.splice(r2, 1)
 
-          newPaths.push({id: newPaths.length + 1, line: newLine0!})
-          newPaths.push({id: newPaths.length + 1, line: newLine1!})
-          newPaths.push({id: newPaths.length + 1, line: centerLine!})
+          newPaths.push({id: nanoid(), line: newLine0!})
+          newPaths.push({id: nanoid(), line: newLine1!})
+          newPaths.push({id: nanoid(), line: centerLine!})
+          // console.log('newLine0', cloneDeep(newLine0))
+          // console.log('newLine1', cloneDeep(newLine1))
+          // console.log('centerLine', cloneDeep(centerLine))
+          // console.log('newPaths', JSON.stringify(newPaths,))
 
           let cu = CanvasUtil.getInstance()
           cu.waitRenderOtherStatusFunc.push(() => {
             let ctx = cu.ctx
-            ctx.save()
-            // draw.calcPosition(ctx, this.conf)
+            draw.calcPosition(ctx, this.conf)
             // draw.round2(ctx, curve0RightPoints[curve0RightPoints.length - 2], 4)
             // draw.round2(ctx, curve1RightPoints[curve1RightPoints.length - 2], 4)
-            // draw.round2(ctx, arcP0, 4)
-            // draw.round2(ctx, arcP1, 4)
-            // draw.round2(ctx, currentNode, 4)
-            // draw.round2(ctx, arcCenter, 4)
-            // draw.round2(ctx, arc[0], 4)
-            // draw.round2(ctx, arc[1], 4)
+            // draw.drawRound(ctx, arcP0, 4)
+            // draw.drawRound(ctx, arcP1, 4)
+            // draw.drawRound(ctx, currentNode, 4)
+            // draw.drawRound(ctx, arcCenter, 4)
+            // draw.drawRound(ctx, arc[0], 4)
+            // draw.drawRound(ctx, arc[1], 4)
             //
             // ctx.moveTo2(arcP0)
             // ctx.bezierCurveTo2(curve0LeftPoints[curve0LeftPoints.length - 2],
@@ -1852,7 +1860,6 @@ export class BaseShape {
             // ctx.moveTo2(arcP0)
             // ctx.arcTo2(currentNode, arcP1, newR)
             // ctx.stroke()
-            ctx.restore()
           })
         }
       }

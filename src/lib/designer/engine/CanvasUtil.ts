@@ -206,7 +206,11 @@ export default class CanvasUtil {
       shape.render(this.ctx)
     }
     this.boxSelection?.render(this.ctx)
-    this.waitRenderOtherStatusFunc.map(cb => cb())
+    this.waitRenderOtherStatusFunc.map(cb => {
+      this.ctx.save()
+      cb()
+      this.ctx.restore()
+    })
     this.waitRenderOtherStatusFunc = []
     this.ctx.restore()
   }

@@ -1,10 +1,8 @@
 ### English | [简体中文](README-zh_CN.md)
 
 ## Preview Demo
-
-[Stable version online demo](https://open-designs-v2.netlify.app)
-
-[Development version online demo](https://open-designs.netlify.app)
+ 
+[Online demo](https://open-design-git-vite-dev-zyronons-projects.vercel.app/)
 
 
 ## Open-Design
